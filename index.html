@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Shanmukhan — solo builder of software products, self-hosted on a Raspberry Pi at home. Personal site at lahari.org." />
+  <title>Shanmukhan — lahari.org</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #07090a;
+      --surface: #101412;
+      --surface-2: #161c19;
+      --text: #f5f8f6;
+      --muted: #9fada6;
+      --line: rgba(255,255,255,.09);
+      --line-strong: rgba(255,255,255,.17);
+      --accent: #34d399;
+      --accent-2: #60a5fa;
+      --accent-3: #f0b849;
+      --max: 980px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 10% -5%, rgba(52,211,153,.20), transparent 32%),
+        radial-gradient(circle at 95% 5%, rgba(96,165,250,.14), transparent 32%),
+        radial-gradient(circle at 50% 100%, rgba(240,184,73,.06), transparent 40%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      opacity: .035;
+      mix-blend-mode: overlay;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    a { color: var(--accent-2); text-decoration: none; }
+    a.plain { color: inherit; }
+
+    .container {
+      width: min(calc(100% - 40px), var(--max));
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    ::selection { background: var(--accent); color: #05130c; }
+
+    /* Nav */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      backdrop-filter: blur(18px);
+      background: linear-gradient(180deg, rgba(52,211,153,.10), rgba(7,9,10,.88) 78%);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .nav-inner {
+      height: 66px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-family: "Space Grotesk", Inter, sans-serif;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      font-size: 1.05rem;
+      color: var(--text);
+    }
+
+    .brand-mark {
+      width: 20px;
+      height: 20px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 0 14px rgba(52,211,153,.55);
+      flex: none;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 26px;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .nav-links a { color: var(--muted); position: relative; }
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--line-strong);
+      color: var(--text) !important;
+      font-size: .82rem;
+      font-weight: 600;
+      transition: border-color .2s ease, transform .2s ease;
+    }
+    .nav-cta:hover { border-color: var(--accent); transform: translateY(-1px); }
+
+    /* Hero */
+    header.hero {
+      padding: 96px 0 60px;
+      position: relative;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,.03);
+      color: #cbd6cf;
+      font-size: .82rem;
+      margin-bottom: 26px;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 12px var(--accent);
+      animation: pulse 2.2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: .6; }
+    }
+
+    h1 {
+      font-family: "Space Grotesk", Inter, sans-serif;
+      font-size: clamp(2.6rem, 6.4vw, 4.6rem);
+      letter-spacing: -.03em;
+      line-height: 1.03;
+      margin: 0 0 24px;
+    }
+
+    h1 .accent {
+      background: linear-gradient(110deg, #fff 15%, var(--accent) 55%, var(--accent-2) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      background-size: 200% 100%;
+      animation: shine 8s ease-in-out infinite;
+    }
+
+    @keyframes shine {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .lede {
+      font-size: 1.14rem;
+      color: var(--muted);
+      max-width: 62ch;
+      margin: 0 0 36px;
+    }
+
+    .hero-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 56px; }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 20px;
+      border-radius: 12px;
+      background: var(--text);
+      color: #06120c;
+      font-weight: 700;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .button:hover { transform: translateY(-2px); box-shadow: 0 12px 28px -10px rgba(52,211,153,.5); }
+
+    .button-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 20px;
+      border-radius: 12px;
+      border: 1px solid var(--line-strong);
+      color: var(--text);
+      font-weight: 600;
+      transition: border-color .2s ease, background .2s ease;
+    }
+    .button-ghost:hover { border-color: var(--accent); background: rgba(52,211,153,.08); }
+
+    /* Stat strip (visitor counter lives here) */
+    .stat-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      border-top: 1px solid var(--line);
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.02);
+    }
+
+    .stat {
+      padding: 22px 20px;
+      border-right: 1px solid var(--line);
+      position: relative;
+    }
+    .stat:last-child { border-right: none; }
+
+    .stat b {
+      display: block;
+      font-family: "Space Grotesk", Inter, sans-serif;
+      font-size: 1.9rem;
+      letter-spacing: -.03em;
+      min-height: 1.2em;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: .8rem;
+    }
+
+    .stat.is-live b { color: var(--accent); }
+    .stat.is-live b.is-loading { color: var(--muted); }
+
+    /* Sections */
+    section { padding: 80px 0; border-top: 1px solid var(--line); position: relative; }
+
+    .section-heading { margin-bottom: 40px; max-width: 640px; }
+
+    .section-heading .kicker {
+      display: block;
+      color: var(--accent);
+      font-size: .82rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .section-heading h2 {
+      margin: 0 0 14px;
+      font-family: "Space Grotesk", Inter, sans-serif;
+      font-size: clamp(1.8rem, 3.6vw, 2.6rem);
+      letter-spacing: -.03em;
+    }
+
+    .section-heading p { margin: 0; color: var(--muted); }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1);
+    }
+    .reveal.in-view { opacity: 1; transform: translateY(0); }
+
+    /* Journey timeline */
+    .timeline {
+      position: relative;
+      padding-left: 28px;
+      border-left: 1px solid var(--line-strong);
+      display: grid;
+      gap: 34px;
+    }
+
+    .timeline li {
+      list-style: none;
+      position: relative;
+    }
+
+    .timeline li::before {
+      content: "";
+      position: absolute;
+      left: -33px;
+      top: 4px;
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(52,211,153,.15);
+    }
+
+    .timeline .t-year {
+      font-family: "Space Grotesk", Inter, sans-serif;
+      font-size: .82rem;
+      color: var(--accent);
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .timeline h3 { margin: 0 0 6px; font-size: 1.15rem; }
+    .timeline p { margin: 0; color: var(--muted); max-width: 60ch; }
+
+    /* Principles grid */
+    .principles {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .principle {
+      padding: 28px;
+      border-radius: 20px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      transition: border-color .25s ease, transform .25s ease;
+    }
+    .principle:hover { border-color: var(--line-strong); transform: translateY(-3px); }
+
+    .principle .p-icon {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: rgba(255,255,255,.06);
+      margin-bottom: 14px;
+      font-size: 1rem;
+    }
+
+    .principle h3 { margin: 0 0 8px; font-size: 1.08rem; }
+    .principle p { color: var(--muted); margin: 0; font-size: .94rem; }
+
+    /* Products strip */
+    .products-strip {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .product-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      color: var(--text);
+      font-size: .92rem;
+      transition: border-color .2s ease, transform .2s ease, background .2s ease;
+    }
+    .product-pill:hover {
+      border-color: var(--accent);
+      background: rgba(52,211,153,.08);
+      transform: translateY(-2px);
+      text-decoration: none;
+    }
+    .product-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-3); }
+
+    /* Play section */
+    .play-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .game-card {
+      padding: 28px;
+      border-radius: 20px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .game-head { display: flex; gap: 14px; align-items: flex-start; }
+
+    .game-icon {
+      width: 40px;
+      height: 40px;
+      flex: none;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: rgba(255,255,255,.06);
+      font-size: 1.2rem;
+    }
+
+    .game-head h3 { margin: 0 0 4px; font-size: 1.1rem; }
+    .game-sub { margin: 0; color: var(--muted); font-size: .88rem; }
+
+    /* Root Access (mastermind) */
+    .mm-board { display: grid; gap: 8px; }
+    .mm-row { display: grid; grid-template-columns: repeat(4, 32px) 1fr; gap: 8px; align-items: center; }
+
+    .mm-peg {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--line-strong);
+      background: rgba(255,255,255,.04);
+      transition: transform .15s ease;
+    }
+    .mm-peg.filled { border-color: transparent; }
+    .mm-row.current .mm-peg { cursor: pointer; }
+    .mm-row.current .mm-peg:hover { transform: scale(1.08); }
+
+    .mm-feedback { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; }
+    .mm-feedback i {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--line-strong);
+      font-style: normal;
+    }
+    .mm-feedback i.black { background: var(--text); }
+    .mm-feedback i.white { background: transparent; border: 1px solid var(--text); }
+
+    .mm-palette { display: flex; gap: 10px; flex-wrap: wrap; }
+    .mm-swatch {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: transform .15s ease, border-color .15s ease;
+    }
+    .mm-swatch:hover { transform: scale(1.1); }
+
+    .mm-controls { display: flex; gap: 10px; flex-wrap: wrap; }
+    .mm-btn {
+      padding: 9px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--line-strong);
+      background: transparent;
+      color: var(--text);
+      font-weight: 600;
+      font-size: .85rem;
+      cursor: pointer;
+      transition: border-color .2s ease, background .2s ease, opacity .2s ease;
+      font-family: inherit;
+    }
+    .mm-btn:hover:not(:disabled) { border-color: var(--accent); background: rgba(52,211,153,.08); }
+    .mm-btn:disabled { opacity: .4; cursor: not-allowed; }
+    .mm-submit { background: var(--text); color: #06120c; border-color: transparent; }
+    .mm-submit:hover:not(:disabled) { opacity: .9; background: var(--text); }
+
+    .mm-status { margin: 0; color: var(--muted); font-size: .85rem; min-height: 1.4em; }
+    .mm-status.win { color: var(--accent); }
+    .mm-status.lose { color: var(--accent-3); }
+
+    /* Keep It Up (runner) */
+    .runner-wrap {
+      position: relative;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+    }
+    #runner-canvas { display: block; touch-action: manipulation; }
+
+    .runner-overlay {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      background: rgba(7,9,10,.6);
+      backdrop-filter: blur(2px);
+      padding: 16px;
+      text-align: center;
+    }
+    .runner-overlay[hidden] { display: none; }
+    .runner-overlay .button { font-size: .85rem; padding: 11px 18px; }
+
+    .runner-stats { display: flex; gap: 20px; color: var(--muted); font-size: .88rem; }
+    .runner-stats b { color: var(--text); font-family: "Space Grotesk", Inter, sans-serif; }
+
+    /* Visitor spotlight */
+    .visitor-card {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 30px;
+      align-items: center;
+      padding: 38px;
+      border-radius: 24px;
+      border: 1px solid var(--line);
+      background:
+        radial-gradient(480px circle at 0% 0%, rgba(52,211,153,.14), transparent 60%),
+        var(--surface);
+    }
+
+    .counter-ring {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: conic-gradient(var(--accent) 0deg, var(--accent-2) 260deg, rgba(255,255,255,.06) 260deg);
+      flex: none;
+      position: relative;
+    }
+
+    .counter-ring::before {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border-radius: 50%;
+      background: var(--surface);
+    }
+
+    .counter-value {
+      position: relative;
+      z-index: 1;
+      font-family: "Space Grotesk", Inter, sans-serif;
+      font-size: 1.7rem;
+      font-weight: 700;
+      letter-spacing: -.02em;
+    }
+
+    .counter-value.is-loading { color: var(--muted); font-size: 1.1rem; }
+
+    .visitor-copy h3 { margin: 0 0 8px; font-size: 1.25rem; }
+    .visitor-copy p { margin: 0; color: var(--muted); }
+    .visitor-copy .fine { margin-top: 10px; font-size: .82rem; color: #7c8b83; }
+
+    /* Signature quote */
+    .quote-block {
+      padding: 40px;
+      border-radius: 24px;
+      border: 1px dashed var(--line-strong);
+      background: rgba(255,255,255,.02);
+      text-align: center;
+    }
+
+    .quote-block blockquote {
+      margin: 0 0 14px;
+      font-family: "Space Grotesk", Inter, sans-serif;
+      font-size: clamp(1.3rem, 2.6vw, 1.7rem);
+      letter-spacing: -.02em;
+      line-height: 1.4;
+    }
+
+    .quote-block cite {
+      font-style: normal;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    /* Footer */
+    footer {
+      padding: 42px 0 60px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: .88rem;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    footer b { color: var(--text); }
+
+    @media (max-width: 760px) {
+      .nav-links { display: none; }
+      .stat-strip { grid-template-columns: repeat(2, 1fr); }
+      .stat:nth-child(2) { border-right: none; }
+      .principles { grid-template-columns: 1fr; }
+      .play-grid { grid-template-columns: 1fr; }
+      .mm-row { grid-template-columns: repeat(4, 28px) 1fr; }
+      .mm-peg { width: 28px; height: 28px; }
+      .visitor-card { grid-template-columns: 1fr; text-align: center; justify-items: center; }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <div class="container nav-inner">
+      <a class="brand" href="#"><span class="brand-mark"></span>Shanmukhan</a>
+      <div class="nav-links">
+        <a href="#about">About</a>
+        <a href="#journey">Journey</a>
+        <a href="#now">Now</a>
+        <a href="#play">Play</a>
+        <a href="#visitors">Visitors</a>
+        <a class="nav-cta" href="https://shanmukhan.com/" target="_blank" rel="noopener">See my products →</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+
+    <header class="hero">
+      <div class="container">
+        <div class="eyebrow">Personal site · self-hosted on a Raspberry Pi</div>
+
+        <h1>Hi, I'm <span class="accent">Shanmukhan</span>.</h1>
+
+        <p class="lede">
+          I build software products, end to end, alone — idea, backend, app,
+          and the Raspberry Pi this very page is served from. This is my
+          home base: a quiet place to point people to, away from the noise
+          of a product page.
+        </p>
+
+        <div class="hero-actions">
+          <a class="button" href="https://shanmukhan.com/" target="_blank" rel="noopener">Explore what I've built →</a>
+          <a class="button-ghost" href="#about">Read my story</a>
+        </div>
+
+        <div class="stat-strip reveal">
+          <div class="stat">
+            <b>6</b>
+            <span>Live products</span>
+          </div>
+          <div class="stat">
+            <b>1</b>
+            <span>Solo builder</span>
+          </div>
+          <div class="stat">
+            <b>100%</b>
+            <span>Self-hosted</span>
+          </div>
+          <div class="stat is-live">
+            <b class="is-loading" id="stat-visits">—</b>
+            <span>People who've stopped by</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section id="about">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="kicker">About</span>
+          <h2>Building things, one problem at a time.</h2>
+          <p>
+            I care more about whether something is genuinely useful than
+            whether it's technically impressive. Every product I've shipped
+            started the same way — noticing a real, specific annoyance and
+            deciding to just go fix it.
+          </p>
+        </div>
+        <p style="color: var(--muted); max-width: 62ch;">
+          I design, code, and ship everything myself — from the idea to the
+          backend to the app in your hand — and I run the infrastructure
+          myself too. Nothing here sits behind a big cloud provider; it's all
+          served from a small computer at home, which I like precisely
+          because it forces everything to stay simple and honest.
+        </p>
+      </div>
+    </section>
+
+    <section id="journey">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="kicker">Journey</span>
+          <h2>How this came together.</h2>
+        </div>
+
+        <ul class="timeline">
+          <li class="reveal">
+            <div class="t-year">The starting point</div>
+            <h3>Started building solo.</h3>
+            <p>Decided to build products end-to-end myself rather than wait for the "right team" — idea, code, design, and ship.</p>
+          </li>
+          <li class="reveal">
+            <div class="t-year">Shipping</div>
+            <h3>Turned ideas into six live products.</h3>
+            <p>SparkCards, EllieEats, Nirvana, VaultZero, NexaLink, and more — each one built around a real problem, not a technology looking for a use.</p>
+          </li>
+          <li class="reveal">
+            <div class="t-year">Infrastructure</div>
+            <h3>Brought it all home — literally.</h3>
+            <p>Moved hosting onto a Raspberry Pi at home: Apache, TLS, reverse proxies, systemd services, all self-managed instead of rented.</p>
+          </li>
+          <li class="reveal">
+            <div class="t-year">Today</div>
+            <h3>This page.</h3>
+            <p>A small personal home base at <strong>lahari.org</strong> — not another product, just a place that's simply, quietly mine.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="philosophy">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="kicker">Philosophy</span>
+          <h2>How I think about building.</h2>
+        </div>
+
+        <div class="principles">
+          <div class="principle reveal">
+            <div class="p-icon">🎯</div>
+            <h3>Start with a real problem.</h3>
+            <p>The product comes after the problem, never before it.</p>
+          </div>
+          <div class="principle reveal">
+            <div class="p-icon">🧩</div>
+            <h3>Keep it simple.</h3>
+            <p>Software should remove complexity, not add to it.</p>
+          </div>
+          <div class="principle reveal">
+            <div class="p-icon">🔁</div>
+            <h3>Build, test, improve.</h3>
+            <p>Working software teaches you more than a plan ever will.</p>
+          </div>
+          <div class="principle reveal">
+            <div class="p-icon">🍓</div>
+            <h3>Own what you can.</h3>
+            <p>This whole site runs from a Raspberry Pi at home — no rented cloud in between.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="now">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="kicker">Now</span>
+          <h2>What I'm building.</h2>
+          <p>A quick look at the products this same hands-on approach has produced so far.</p>
+        </div>
+
+        <div class="products-strip reveal">
+          <a class="product-pill" href="https://sparkcards.shanmukhan.com/" target="_blank" rel="noopener"><span class="dot"></span>SparkCards</a>
+          <a class="product-pill" href="https://ellieeats.in/" target="_blank" rel="noopener"><span class="dot"></span>EllieEats</a>
+          <a class="product-pill" href="https://nirvana.shanmukhan.com/" target="_blank" rel="noopener"><span class="dot"></span>Nirvana</a>
+          <a class="product-pill" href="https://vaultzero.in/" target="_blank" rel="noopener"><span class="dot"></span>VaultZero</a>
+          <a class="product-pill" href="https://nexalink.shanmukhan.com/" target="_blank" rel="noopener"><span class="dot"></span>NexaLink</a>
+          <a class="product-pill" href="https://shanmukhan.com/" target="_blank" rel="noopener"><span class="dot"></span>See all →</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="play">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="kicker">Play</span>
+          <h2>Two small games, just because.</h2>
+          <p>
+            Not everything here has to be a lesson in self-hosting. These
+            run entirely in your browser — no server call, no tracking —
+            built the same way as everything else on this page: for fun,
+            and because I could.
+          </p>
+        </div>
+
+        <div class="play-grid">
+          <div class="game-card reveal" id="game-code">
+            <div class="game-head">
+              <div class="game-icon">🔐</div>
+              <div>
+                <h3>Root Access</h3>
+                <p class="game-sub">Crack today's 4-peg code in 8 tries. One code a day, same for every visitor.</p>
+              </div>
+            </div>
+
+            <div class="mm-board" id="mm-board"></div>
+            <div class="mm-palette" id="mm-palette"></div>
+
+            <div class="mm-controls">
+              <button class="mm-btn mm-submit" id="mm-submit" disabled>Guess</button>
+              <button class="mm-btn mm-clear" id="mm-clear" type="button">Clear</button>
+              <button class="mm-btn mm-share" id="mm-share" type="button" hidden>Copy result</button>
+            </div>
+
+            <p class="mm-status" id="mm-status">Pick 4 colors, then hit Guess.</p>
+          </div>
+
+          <div class="game-card reveal" id="game-runner">
+            <div class="game-head">
+              <div class="game-icon">⚡</div>
+              <div>
+                <h3>Keep It Up</h3>
+                <p class="game-sub">Jump the little Pi over every outage. One tap, endless run, beat your own best.</p>
+              </div>
+            </div>
+
+            <div class="runner-wrap">
+              <canvas id="runner-canvas" height="220"></canvas>
+              <div class="runner-overlay" id="runner-overlay">
+                <button class="button" id="runner-start" type="button">Tap or press Space to start</button>
+              </div>
+            </div>
+
+            <div class="runner-stats">
+              <span>Score <b id="runner-score">0</b></span>
+              <span>Best <b id="runner-best">0</b></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="visitors">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="kicker">Visitors</span>
+          <h2>You're part of this page's story too.</h2>
+        </div>
+
+        <div class="visitor-card reveal">
+          <div class="counter-ring">
+            <div class="counter-value is-loading" id="counter-value">—</div>
+          </div>
+          <div class="visitor-copy">
+            <h3>Thanks for stopping by.</h3>
+            <p>
+              That number is a real, running count of page loads on this
+              site — served straight from the same Raspberry Pi, no
+              analytics platform involved.
+            </p>
+            <p class="fine">No cookies. No tracking. Just an honest counter.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="quote">
+      <div class="container">
+        <div class="quote-block reveal">
+          <blockquote>"Ideas are cheap. Working software is what actually teaches you anything."</blockquote>
+          <cite>— a rule I try to build by</cite>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <div>© <span id="year"></span> <b>Shanmukhan</b></div>
+      <div>Hosted at home on a Raspberry Pi · <a href="https://shanmukhan.com/" target="_blank" rel="noopener">shanmukhan.com</a></div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // Reveal-on-scroll
+    var revealEls = document.querySelectorAll(".reveal");
+    if ("IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in-view");
+            io.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: "0px 0px -60px 0px" });
+      revealEls.forEach(function (el) { io.observe(el); });
+    } else {
+      revealEls.forEach(function (el) { el.classList.add("in-view"); });
+    }
+
+    // Visitor counter — one fetch, used in both the stat strip and the
+    // dedicated visitors section.
+    fetch("/api/visits", { cache: "no-store" })
+      .then(function (res) {
+        if (!res.ok) throw new Error("bad response");
+        return res.json();
+      })
+      .then(function (data) {
+        var formatted = data.count.toLocaleString();
+        var big = document.getElementById("counter-value");
+        var stat = document.getElementById("stat-visits");
+        big.textContent = formatted;
+        big.classList.remove("is-loading");
+        stat.textContent = formatted;
+        stat.classList.remove("is-loading");
+      })
+      .catch(function () {
+        ["counter-value", "stat-visits"].forEach(function (id) {
+          var el = document.getElementById(id);
+          el.textContent = "—";
+          el.title = "Visitor counter is unavailable right now.";
+        });
+      });
+  </script>
+
+  <script>
+    // Root Access — a daily Mastermind-style code-cracker. New secret code
+    // each calendar day, seeded deterministically so every visitor gets the
+    // same puzzle. Progress persists in localStorage only (no server call,
+    // no tracking — same honesty rule as the visitor counter).
+    (function () {
+      var COLORS = ["#34d399", "#60a5fa", "#f0b849", "#f87171", "#c084fc", "#f5f8f6"];
+      var CODE_LENGTH = 4;
+      var MAX_TRIES = 8;
+      var EPOCH = Date.UTC(2026, 0, 1);
+
+      function pad(n) { return n < 10 ? "0" + n : "" + n; }
+
+      function todayKey() {
+        var d = new Date();
+        return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+      }
+
+      function dayNumber() {
+        var now = new Date();
+        var utcToday = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+        return Math.floor((utcToday - EPOCH) / 86400000) + 1;
+      }
+
+      function mulberry32(seed) {
+        return function () {
+          seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+          var t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+          t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+      }
+
+      function secretForToday() {
+        var seed = parseInt(todayKey().replace(/-/g, ""), 10);
+        var rand = mulberry32(seed);
+        var code = [];
+        for (var i = 0; i < CODE_LENGTH; i++) code.push(Math.floor(rand() * COLORS.length));
+        return code;
+      }
+
+      function scoreGuess(secret, guess) {
+        var black = 0, white = 0;
+        var secretLeft = [], guessLeft = [];
+        for (var i = 0; i < CODE_LENGTH; i++) {
+          if (guess[i] === secret[i]) black++;
+          else { secretLeft.push(secret[i]); guessLeft.push(guess[i]); }
+        }
+        var counts = {};
+        secretLeft.forEach(function (c) { counts[c] = (counts[c] || 0) + 1; });
+        guessLeft.forEach(function (c) { if (counts[c] > 0) { white++; counts[c]--; } });
+        return { black: black, white: white };
+      }
+
+      var board = document.getElementById("mm-board");
+      if (!board) return;
+
+      var palette = document.getElementById("mm-palette");
+      var submitBtn = document.getElementById("mm-submit");
+      var clearBtn = document.getElementById("mm-clear");
+      var shareBtn = document.getElementById("mm-share");
+      var statusEl = document.getElementById("mm-status");
+
+      var secret = secretForToday();
+      var storeKey = "lahari-code-" + todayKey();
+      var current = [];
+
+      function load() {
+        try {
+          var raw = localStorage.getItem(storeKey);
+          if (raw) return JSON.parse(raw);
+        } catch (e) {}
+        return { guesses: [], finished: false, win: false };
+      }
+
+      var state = load();
+
+      function save() {
+        try { localStorage.setItem(storeKey, JSON.stringify(state)); } catch (e) {}
+      }
+
+      function filledCount() {
+        return current.filter(function (x) { return x !== undefined; }).length;
+      }
+
+      function revealSecret() {
+        if (board.querySelector(".mm-answer")) return;
+        var row = document.createElement("div");
+        row.className = "mm-row mm-answer";
+        for (var c = 0; c < CODE_LENGTH; c++) {
+          var peg = document.createElement("div");
+          peg.className = "mm-peg filled";
+          peg.style.background = COLORS[secret[c]];
+          row.appendChild(peg);
+        }
+        var label = document.createElement("div");
+        label.style.color = "var(--muted)";
+        label.style.fontSize = ".8rem";
+        label.textContent = "← today's code";
+        row.appendChild(label);
+        board.appendChild(row);
+      }
+
+      function render() {
+        board.innerHTML = "";
+        for (var r = 0; r < MAX_TRIES; r++) {
+          var row = document.createElement("div");
+          row.className = "mm-row";
+          var guessRow = state.guesses[r];
+          var isCurrent = !state.finished && r === state.guesses.length;
+          if (isCurrent) row.classList.add("current");
+
+          for (var c = 0; c < CODE_LENGTH; c++) {
+            var peg = document.createElement("div");
+            peg.className = "mm-peg";
+            var colorIdx = guessRow ? guessRow.guess[c] : (isCurrent ? current[c] : undefined);
+            if (colorIdx !== undefined) {
+              peg.classList.add("filled");
+              peg.style.background = COLORS[colorIdx];
+            }
+            if (isCurrent) {
+              (function (slot) {
+                peg.addEventListener("click", function () { current[slot] = undefined; render(); });
+              })(c);
+            }
+            row.appendChild(peg);
+          }
+
+          var fb = document.createElement("div");
+          fb.className = "mm-feedback";
+          if (guessRow) {
+            for (var b = 0; b < guessRow.feedback.black; b++) {
+              var d1 = document.createElement("i"); d1.className = "black"; fb.appendChild(d1);
+            }
+            for (var w = 0; w < guessRow.feedback.white; w++) {
+              var d2 = document.createElement("i"); d2.className = "white"; fb.appendChild(d2);
+            }
+          }
+          row.appendChild(fb);
+          board.appendChild(row);
+        }
+
+        submitBtn.disabled = state.finished || filledCount() !== CODE_LENGTH;
+        shareBtn.hidden = !state.finished;
+
+        if (state.finished) {
+          statusEl.textContent = state.win
+            ? "Cracked it in " + state.guesses.length + "/" + MAX_TRIES + ". New code tomorrow."
+            : "Out of tries — new code tomorrow.";
+          statusEl.className = "mm-status " + (state.win ? "win" : "lose");
+          if (!state.win) revealSecret();
+        } else {
+          statusEl.textContent = "Pick " + CODE_LENGTH + " colors, then hit Guess. Attempt " +
+            (state.guesses.length + 1) + " of " + MAX_TRIES + ".";
+          statusEl.className = "mm-status";
+        }
+      }
+
+      COLORS.forEach(function (color, idx) {
+        var sw = document.createElement("div");
+        sw.className = "mm-swatch";
+        sw.style.background = color;
+        sw.title = "Color " + (idx + 1);
+        sw.addEventListener("click", function () {
+          if (state.finished) return;
+          var slot = current.findIndex(function (x) { return x === undefined; });
+          if (slot === -1 && current.length < CODE_LENGTH) slot = current.length;
+          if (slot === -1) return;
+          current[slot] = idx;
+          render();
+        });
+        palette.appendChild(sw);
+      });
+
+      clearBtn.addEventListener("click", function () {
+        current = [];
+        render();
+      });
+
+      submitBtn.addEventListener("click", function () {
+        if (filledCount() !== CODE_LENGTH) return;
+        var guess = current.slice();
+        var feedback = scoreGuess(secret, guess);
+        state.guesses.push({ guess: guess, feedback: feedback });
+        if (feedback.black === CODE_LENGTH) { state.finished = true; state.win = true; }
+        else if (state.guesses.length >= MAX_TRIES) { state.finished = true; state.win = false; }
+        current = [];
+        save();
+        render();
+      });
+
+      shareBtn.addEventListener("click", function () {
+        var lines = [
+          "Root Access — lahari.org 🔐",
+          "Day #" + dayNumber() + " — " + (state.win ? state.guesses.length + "/" + MAX_TRIES : "X/" + MAX_TRIES),
+          ""
+        ];
+        state.guesses.forEach(function (g) {
+          var s = "";
+          for (var i = 0; i < g.feedback.black; i++) s += "⬛";
+          for (var i = 0; i < g.feedback.white; i++) s += "⬜";
+          for (var i = g.feedback.black + g.feedback.white; i < CODE_LENGTH; i++) s += "·";
+          lines.push(s);
+        });
+        var text = lines.join("\n");
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function () {
+            shareBtn.textContent = "Copied!";
+            setTimeout(function () { shareBtn.textContent = "Copy result"; }, 1600);
+          }).catch(function () {});
+        }
+      });
+
+      render();
+    })();
+
+    // Keep It Up — an endless runner. The site already uses 🍓 as a
+    // stand-in for the Raspberry Pi (see the Philosophy section), so it's
+    // the runner here too, jumping over outages. Purely client-side; only
+    // the personal best is remembered, in localStorage.
+    (function () {
+      var canvas = document.getElementById("runner-canvas");
+      if (!canvas) return;
+      var ctx = canvas.getContext("2d");
+      var wrap = canvas.parentElement;
+      var overlay = document.getElementById("runner-overlay");
+      var startBtn = document.getElementById("runner-start");
+      var scoreEl = document.getElementById("runner-score");
+      var bestEl = document.getElementById("runner-best");
+
+      var BEST_KEY = "lahari-runner-best";
+      var best = 0;
+      try { best = parseInt(localStorage.getItem(BEST_KEY), 10) || 0; } catch (e) {}
+      bestEl.textContent = best;
+
+      var H = 220;
+      var W = 600;
+      var dpr = window.devicePixelRatio || 1;
+      var GROUND_Y, GRAVITY = 2600, JUMP_V = -820;
+      var OBSTACLE_EMOJIS = ["⚡", "🐛", "☁️"];
+
+      function resize() {
+        W = wrap.clientWidth || 600;
+        canvas.style.width = W + "px";
+        canvas.style.height = H + "px";
+        canvas.width = Math.round(W * dpr);
+        canvas.height = Math.round(H * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        GROUND_Y = H - 34;
+        draw();
+      }
+
+      var state = "idle"; // idle | running | over
+      var player, obstacles, speed, score, spawnTimer, nextSpawn, lastTime;
+
+      function reset() {
+        player = { x: 46, y: GROUND_Y, vy: 0, size: 30, onGround: true };
+        obstacles = [];
+        speed = 220;
+        score = 0;
+        spawnTimer = 0;
+        nextSpawn = 900 + Math.random() * 500;
+        scoreEl.textContent = "0";
+      }
+
+      function startGame() {
+        reset();
+        state = "running";
+        overlay.hidden = true;
+        lastTime = performance.now();
+        requestAnimationFrame(loop);
+      }
+
+      function endGame() {
+        state = "over";
+        var final = Math.floor(score);
+        if (final > best) {
+          best = final;
+          try { localStorage.setItem(BEST_KEY, String(best)); } catch (e) {}
+        }
+        bestEl.textContent = best;
+        overlay.hidden = false;
+        startBtn.textContent = "Score " + final + " — tap to try again";
+      }
+
+      function jump() {
+        if (state === "idle" || state === "over") { startGame(); return; }
+        if (state === "running" && player.onGround) {
+          player.vy = JUMP_V;
+          player.onGround = false;
+        }
+      }
+
+      function loop(now) {
+        if (state !== "running") return;
+        var dt = Math.min((now - lastTime) / 1000, 0.05);
+        lastTime = now;
+
+        speed += dt * 6;
+        score += dt * (speed / 10);
+        scoreEl.textContent = Math.floor(score);
+
+        player.vy += GRAVITY * dt;
+        player.y += player.vy * dt;
+        if (player.y >= GROUND_Y) {
+          player.y = GROUND_Y;
+          player.vy = 0;
+          player.onGround = true;
+        }
+
+        spawnTimer += dt * 1000;
+        if (spawnTimer >= nextSpawn) {
+          spawnTimer = 0;
+          nextSpawn = Math.max(500, 1000 - speed) + Math.random() * 500;
+          obstacles.push({
+            x: W + 20,
+            emoji: OBSTACLE_EMOJIS[Math.floor(Math.random() * OBSTACLE_EMOJIS.length)],
+            size: 28
+          });
+        }
+
+        obstacles.forEach(function (o) { o.x -= speed * dt; });
+        obstacles = obstacles.filter(function (o) { return o.x > -40; });
+
+        for (var i = 0; i < obstacles.length; i++) {
+          var o = obstacles[i];
+          var pad = 8;
+          var px = player.x, py = player.y - player.size;
+          var ox = o.x, oy = GROUND_Y - o.size + 6;
+          if (px + pad < ox + o.size - pad && px + player.size - pad > ox + pad &&
+              py + pad < oy + o.size - pad && py + player.size - pad > oy + pad) {
+            endGame();
+            return;
+          }
+        }
+
+        draw();
+        requestAnimationFrame(loop);
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, W, H);
+
+        ctx.strokeStyle = "rgba(255,255,255,.15)";
+        ctx.beginPath();
+        ctx.moveTo(0, GROUND_Y + 2);
+        ctx.lineTo(W, GROUND_Y + 2);
+        ctx.stroke();
+
+        ctx.font = "28px system-ui, sans-serif";
+        ctx.textBaseline = "bottom";
+        ctx.fillText("🍓", player.x, player.y + 4);
+
+        if (obstacles) {
+          obstacles.forEach(function (o) { ctx.fillText(o.emoji, o.x, GROUND_Y + 6); });
+        }
+      }
+
+      window.addEventListener("resize", resize);
+      reset();
+      resize();
+
+      startBtn.addEventListener("click", function (e) { e.stopPropagation(); jump(); });
+      canvas.addEventListener("pointerdown", jump);
+      window.addEventListener("keydown", function (e) {
+        if (e.code !== "Space" && e.code !== "ArrowUp") return;
+        var rect = document.getElementById("game-runner").getBoundingClientRect();
+        if (rect.bottom > 0 && rect.top < window.innerHeight) {
+          e.preventDefault();
+          jump();
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>
