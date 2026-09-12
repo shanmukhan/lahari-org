@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="description" content="Shanmukhan's Science Lab — animated, interactive science experiments: gravity, eclipses, relativity, atoms, the periodic table and more. Personal site at lahari.org." />
-<title>Science Lab — lahari.org</title>
+<meta name="description" content="Life Science — biology and the living world. More experiments coming soon." />
+<title>Life Science — Science Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -48,22 +48,13 @@
   h1 { font-family: "Space Grotesk", Inter, sans-serif; font-size: clamp(1.5rem, 3.6vw, 2.1rem);
     margin: 0 0 6px; letter-spacing: -.03em; }
   header.hero p { color: var(--muted); max-width: 620px; margin: 0 auto; font-size: .95rem; }
-  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; padding: 16px 0 60px; }
-  .card {
-    display: block; padding: 26px; border-radius: 20px; background: var(--surface);
-    border: 1px solid var(--line); transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
-  }
-  .card:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: 0 16px 34px -14px rgba(52,211,153,.35); }
-  .card .icon { width: 54px; height: 54px; display: grid; place-items: center; border-radius: 14px;
-    background: rgba(255,255,255,.06); font-size: 1.9rem; margin-bottom: 16px; }
-  .card h3 { margin: 0 0 6px; font-size: 1.2rem; color: var(--text); }
-  .card p { margin: 0; color: var(--muted); font-size: .9rem; line-height: 1.5; }
-  .tag { display: inline-block; margin-top: 14px; font-size: .74rem; color: var(--accent);
-    font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+  .empty { max-width: 480px; margin: 40px auto 60px; text-align: center; padding: 34px 26px;
+    border-radius: 20px; background: var(--surface); border: 1px dashed var(--line-strong); }
+  .empty .icon { font-size: 2.4rem; margin-bottom: 10px; }
+  .empty h2 { margin: 0 0 8px; font-size: 1.15rem; }
+  .empty p { margin: 0; color: var(--muted); font-size: .92rem; line-height: 1.55; }
   footer { padding: 30px 0 50px; border-top: 1px solid var(--line); color: var(--muted); font-size: .88rem; text-align: center; }
-  @media (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 700px) { .nav-links a:not(.nav-cta) { display: none; } }
-  @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -72,6 +63,7 @@
   <div class="container nav-inner">
     <a class="brand" href="index.html"><span class="brand-mark"></span>Shanmukhan</a>
     <div class="nav-links">
+      <a href="index.html">&larr; Science Lab</a>
       <a href="play.html">Play</a>
       <a class="nav-cta" href="https://shanmukhan.com/" target="_blank" rel="noopener">See my products →</a>
     </div>
@@ -80,39 +72,25 @@
 
 <header class="hero">
   <div class="container">
-    <h1>🔬 Science Lab</h1>
-    <p>Animated, interactive explainers for the biggest ideas in science — built for curious minds of any age. Pick a topic below.</p>
+    <h1>🧬 Life Science</h1>
+    <p>Biology and the living world.</p>
   </div>
 </header>
 
 <div class="container">
-  <div class="grid" id="grid"></div>
+  <div class="empty">
+    <div class="icon">🌱</div>
+    <h2>More experiments coming soon</h2>
+    <p>Photosynthesis, DNA, and how vaccines work are on the way — check back soon, or explore the other categories in the meantime.</p>
+  </div>
 </div>
 
 <footer>
-  <div class="container">© <span id="year"></span> Shanmukhan · Hosted at home on a Raspberry Pi · <a href="play.html">Play some games</a></div>
+  <div class="container">© <span id="year"></span> Shanmukhan · Hosted at home on a Raspberry Pi · <a href="index.html">Back to Science Lab</a></div>
 </footer>
 
 <script>
 document.getElementById('year').textContent = new Date().getFullYear();
-
-const CATEGORIES = [
-  {href:'category-space.html', icon:'🌌', title:'Space & Universe', desc:'Gravity, eclipses, day and night, zooming to the galaxy, and the Big Bang.', count:5},
-  {href:'category-physics.html', icon:'🌀', title:'Physics in Action', desc:'String theory, relativity, time dilation — the mind-bending stuff.', count:3},
-  {href:'category-atoms.html', icon:'⚛️', title:'Atoms & Matter', desc:'What\'s inside an atom, hydrogen vs helium, and the periodic table.', count:3},
-  {href:'category-tech.html', icon:'🔧', title:'Everyday Tech', desc:'How the machines and gadgets around you actually work.', count:1},
-  {href:'category-life.html', icon:'🧬', title:'Life Science', desc:'Biology and the living world — more experiments coming soon.', count:0},
-];
-
-const grid = document.getElementById('grid');
-CATEGORIES.forEach(c => {
-  const a = document.createElement('a');
-  a.className = 'card';
-  a.href = c.href;
-  const countLabel = c.count === 0 ? 'Coming soon' : c.count + ' experiment' + (c.count === 1 ? '' : 's');
-  a.innerHTML = `<div class="icon">${c.icon}</div><h3>${c.title}</h3><p>${c.desc}</p><span class="tag">${countLabel} →</span>`;
-  grid.appendChild(a);
-});
 </script>
 </body>
 </html>
