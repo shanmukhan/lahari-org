@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Refraction & Lenses</title>
+<style>
+  :root{--bg:#0b1020;--panel:#121830;--accent:#ffd23f;--accent2:#4fd3ff;--text:#eef2ff;--dim:#9aa4cc;}
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
+  .wrap{max-width:960px;margin:0 auto;}
+  a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  header{text-align:center;margin-bottom:20px;}
+  h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  header p{color:var(--dim);font-size:16px;margin:0;}
+  .player{background:#000;border-radius:16px;padding:10px;box-shadow:0 10px 40px rgba(0,0,0,.5),0 0 0 1px #222 inset;}
+  .progress-track{height:8px;background:#1c2340;border-radius:6px;overflow:hidden;margin-bottom:8px;}
+  .progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--accent2),var(--accent));transition:width .05s linear;}
+  canvas{display:block;width:100%;height:auto;background:#04060f;border-radius:10px;}
+  .banner-wrap{text-align:center;}
+  .banner{display:inline-block;margin:8px auto 0;padding:8px 22px;border-radius:999px;font-weight:800;color:#06180f;background:var(--accent2);}
+  .caption{margin-top:6px;background:#000c;border:1px solid #2a3568;border-radius:10px;padding:14px 18px;min-height:56px;font-size:clamp(16px,2.6vw,20px);line-height:1.4;text-align:center;}
+  .caption b{color:var(--accent);}
+  .controls{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:12px;flex-wrap:wrap;}
+  button{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;padding:10px 20px;font-size:15px;cursor:pointer;transition:transform .1s,background .2s;}
+  button:hover{background:#1c2450;transform:translateY(-1px);}
+  button.primary{background:linear-gradient(90deg,var(--accent2),#2f9fe0);color:#03101f;font-weight:700;border:none;}
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:26px;}
+  .step-card{background:var(--panel);border:1px solid #262f5c;border-radius:14px;padding:16px;}
+  .step-card .num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#16151a;font-weight:800;margin-bottom:8px;}
+  .step-card h3{margin:4px 0 6px;font-size:16px;}
+  .step-card p{margin:0;color:var(--dim);font-size:13px;line-height:1.45;}
+  .fact{margin-top:26px;background:linear-gradient(135deg,#1a2140,#0e1330);border:1px solid #2a3568;border-radius:14px;padding:18px 20px;text-align:center;font-size:16px;}
+  .fact b{color:var(--accent2);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="category-physics.html">&larr; Back to Physics in Action</a>
+  <header>
+    <h1>🔍 Refraction & Lenses</h1>
+    <p>Light bends when it enters glass or water — bend it just right, and you've built a magnifying glass.</p>
+  </header>
+
+  <div class="player">
+    <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+    <canvas id="scene" width="900" height="460"></canvas>
+    <div class="banner-wrap"><span class="banner" id="banner">STEP 1</span></div>
+    <div class="caption" id="caption">Press <b>Play</b> to start!</div>
+  </div>
+  <div class="controls">
+    <button class="primary" id="playBtn">▶ Play</button>
+    <button id="restartBtn">⟲ Restart</button>
+  </div>
+
+  <div class="steps">
+    <div class="step-card"><div class="num">1</div><h3>🚗 Light slows down in glass</h3>
+      <p>Light travels slower through glass or water than through air — this slowdown is called <b>refraction</b>.</p></div>
+    <div class="step-card"><div class="num">2</div><h3>↩️ Slowing down bends the path</h3>
+      <p>If light hits the new material at an angle, one side slows before the other — like a car's wheel dragging in mud, the path bends.</p></div>
+    <div class="step-card"><div class="num">3</div><h3>🔍 A curved shape bends light on purpose</h3>
+      <p>A lens is just curved glass — its shape bends every incoming ray so they all meet (or spread) in a controlled way.</p></div>
+    <div class="step-card"><div class="num">4</div><h3>👓 Converging light = magnification</h3>
+      <p>A convex (outward-curved) lens bends light rays inward to a focus point — spreading them back out afterward makes things look bigger.</p></div>
+  </div>
+
+  <div class="fact">
+    🤯 <b>Mind-blowing part:</b> Your own eye has a lens too! It bends incoming light onto your retina at the back of your eye.
+    If that lens is the wrong shape, images focus in front of or behind the retina instead of on it — that's exactly what causes
+    near-sightedness and far-sightedness, fixed by adding glasses with the opposite-shaped lens.
+  </div>
+</div>
+
+<script>
+(function(){
+  const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  const captionEl=document.getElementById('caption'), bannerEl=document.getElementById('banner'), progressBar=document.getElementById('progressBar');
+  const playBtn=document.getElementById('playBtn'), restartBtn=document.getElementById('restartBtn');
+
+  const SCENES=[
+    {t:0,dur:6,banner:'🚗 STEP 1: LIGHT SLOWS IN GLASS',caption:'Light travels fast through air but slower through glass or water — this change in speed is called <b>refraction</b>.'},
+    {t:6,dur:7,banner:'↩️ STEP 2: ANGLED LIGHT BENDS',caption:'Hit the glass at an angle, and one side of the light wave slows before the other — the whole path bends, like a car veering into mud.'},
+    {t:13,dur:7,banner:'🔍 STEP 3: A SHAPED LENS BENDS ON PURPOSE',caption:'A lens is just curved glass — its shape bends every incoming ray in a deliberate, controlled way.'},
+    {t:20,dur:8,banner:'👓 STEP 4: CONVERGING = MAGNIFICATION',caption:'A convex lens bends parallel rays inward to meet at a <b>focus point</b> — that\'s how a magnifying glass makes things look bigger!'},
+  ];
+  const totalDur=28;
+  let simTime=0, playing=false, lastTs=null;
+  function currentScene(t){ for(let i=SCENES.length-1;i>=0;i--) if(t>=SCENES[i].t) return i; return 0; }
+  function label(x,y,text,color){
+    ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
+    const tw=ctx.measureText(text).width;
+    ctx.fillStyle='rgba(4,6,15,0.75)'; ctx.fillRect(x-tw/2-8,y-16,tw+16,22);
+    ctx.fillStyle=color||'#9fc1de'; ctx.fillText(text,x,y);
+  }
+  function drawScene0(local){
+    ctx.fillStyle='rgba(79,211,255,.15)'; ctx.fillRect(W/2,80,W/2-80,300);
+    label(W/2+180,60,'GLASS','#8fd2ff');
+    label(W/4,60,'AIR','#eef2ff');
+    const prog=(local%3)/3;
+    const x = prog<0.5 ? 80+prog*2*(W/2-80) : W/2+(prog-0.5)*2*(W/2-80)*0.6;
+    ctx.fillStyle='#ffd23f'; ctx.beginPath(); ctx.arc(x,230,7,0,Math.PI*2); ctx.fill();
+  }
+  function drawScene1(local){
+    ctx.fillStyle='rgba(79,211,255,.15)'; ctx.fillRect(W/2,80,W/2-80,300);
+    ctx.strokeStyle='rgba(255,255,255,.2)'; ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(W/2,80); ctx.lineTo(W/2,380); ctx.stroke(); ctx.setLineDash([]);
+    ctx.strokeStyle='#ffd23f'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(100,150); ctx.lineTo(W/2,230); ctx.lineTo(W-100,320); ctx.stroke();
+    label(W/2,H-40,'the ray bends at the surface','#ffd23f');
+  }
+  function drawLensShape(cx,cy,h){
+    ctx.fillStyle='rgba(79,211,255,.25)'; ctx.strokeStyle='#8fd2ff'; ctx.lineWidth=2;
+    ctx.beginPath();
+    ctx.moveTo(cx,cy-h);
+    ctx.quadraticCurveTo(cx+40,cy,cx,cy+h);
+    ctx.quadraticCurveTo(cx-40,cy,cx,cy-h);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+  }
+  function drawScene2(local){
+    drawLensShape(W/2,H/2,150);
+    for(let dy=-100;dy<=100;dy+=40){
+      ctx.strokeStyle='#ffd23f'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(80,H/2+dy); ctx.lineTo(W/2-15,H/2+dy*0.9); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(W/2+15,H/2+dy*0.9); ctx.lineTo(W-80,H/2+dy*0.5); ctx.stroke();
+    }
+    label(W/2,60,'a lens = precisely shaped curved glass','#8fd2ff');
+  }
+  function drawScene3(local){
+    drawLensShape(W/2,H/2,150);
+    const focusX=W/2+180;
+    for(let dy=-100;dy<=100;dy+=30){
+      ctx.strokeStyle='#ffd23f'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(80,H/2+dy); ctx.lineTo(W/2,H/2+dy*0.3); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(W/2,H/2+dy*0.3); ctx.lineTo(focusX,H/2); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(focusX,H/2); ctx.lineTo(W-40,H/2+dy*1.3); ctx.stroke();
+    }
+    ctx.fillStyle='#6dffb0'; ctx.beginPath(); ctx.arc(focusX,H/2,5,0,Math.PI*2); ctx.fill();
+    label(focusX,H/2-120,'focus point','#6dffb0');
+    label(W/2,60,'converging rays = magnifying glass effect','#eef2ff');
+  }
+
+  function render(t){
+    ctx.clearRect(0,0,W,H); ctx.fillStyle='#04060f'; ctx.fillRect(0,0,W,H);
+    const idx=currentScene(t), scene=SCENES[idx], local=t-scene.t;
+    bannerEl.textContent=scene.banner; captionEl.innerHTML=scene.caption;
+    if(idx===0) drawScene0(local);
+    else if(idx===1) drawScene1(local);
+    else if(idx===2) drawScene2(local);
+    else drawScene3(local);
+    progressBar.style.width=Math.min(100,(t/totalDur)*100)+'%';
+  }
+  function step(ts){
+    if(!playing) return;
+    if(lastTs===null) lastTs=ts;
+    const dt=Math.min(0.05,(ts-lastTs)/1000); lastTs=ts;
+    simTime+=dt;
+    if(simTime>=totalDur){ simTime=totalDur; render(simTime); pause();
+      captionEl.innerHTML='🎬 The End! Press <b>Restart</b> to watch again.'; return; }
+    render(simTime); requestAnimationFrame(step);
+  }
+  function play(){ if(playing) return; playing=true; lastTs=null; playBtn.textContent='⏸ Pause'; requestAnimationFrame(step); }
+  function pause(){ playing=false; playBtn.textContent='▶ Play'; }
+  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionEl.innerHTML='Press <b>Play</b> to start!'; }
+  playBtn.addEventListener('click',()=>playing?pause():play());
+  restartBtn.addEventListener('click',restart);
+  render(0);
+})();
+</script>
+</body>
+</html>

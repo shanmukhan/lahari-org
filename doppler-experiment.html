@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Doppler Effect</title>
+<style>
+  :root{--bg:#0b1020;--panel:#121830;--accent:#ffd23f;--accent2:#4fd3ff;--text:#eef2ff;--dim:#9aa4cc;}
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
+  .wrap{max-width:960px;margin:0 auto;}
+  a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  header{text-align:center;margin-bottom:20px;}
+  h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  header p{color:var(--dim);font-size:16px;margin:0;}
+  .player{background:#000;border-radius:16px;padding:10px;box-shadow:0 10px 40px rgba(0,0,0,.5),0 0 0 1px #222 inset;}
+  canvas{display:block;width:100%;height:auto;background:#04060f;border-radius:10px;}
+  .caption{margin-top:6px;background:#000c;border:1px solid #2a3568;border-radius:10px;padding:14px 18px;min-height:56px;font-size:clamp(16px,2.6vw,20px);line-height:1.4;text-align:center;}
+  .caption b{color:var(--accent);}
+  .controls{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:12px;flex-wrap:wrap;}
+  button{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;padding:10px 20px;font-size:15px;cursor:pointer;transition:transform .1s,background .2s;}
+  button:hover{background:#1c2450;transform:translateY(-1px);}
+  button.primary{background:linear-gradient(90deg,var(--accent2),#2f9fe0);color:#03101f;font-weight:700;border:none;}
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:26px;}
+  .step-card{background:var(--panel);border:1px solid #262f5c;border-radius:14px;padding:16px;}
+  .step-card .num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#16151a;font-weight:800;margin-bottom:8px;}
+  .step-card h3{margin:4px 0 6px;font-size:16px;}
+  .step-card p{margin:0;color:var(--dim);font-size:13px;line-height:1.45;}
+  .fact{margin-top:26px;background:linear-gradient(135deg,#1a2140,#0e1330);border:1px solid #2a3568;border-radius:14px;padding:18px 20px;text-align:center;font-size:16px;}
+  .fact b{color:var(--accent2);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="category-physics.html">&larr; Back to Physics in Action</a>
+  <header>
+    <h1>🚨 The Doppler Effect</h1>
+    <p>Why does an ambulance siren sound higher as it approaches, then suddenly drop lower as it passes?</p>
+  </header>
+
+  <div class="player">
+    <canvas id="scene" width="900" height="420"></canvas>
+    <div class="caption" id="caption">Press <b>Play</b> to hear (see) it happen!</div>
+  </div>
+  <div class="controls">
+    <button class="primary" id="playBtn">▶ Play</button>
+    <button id="restartBtn">⟲ Restart</button>
+  </div>
+
+  <div class="steps">
+    <div class="step-card"><div class="num">1</div><h3>〰️ Sound waves spread as rings</h3>
+      <p>A moving siren sends out sound waves in circles — like ripples from a stone dropped in a pond.</p></div>
+    <div class="step-card"><div class="num">2</div><h3>➡️ Moving forward squeezes the waves</h3>
+      <p>Since the ambulance moves forward between each wave, the waves ahead of it get squeezed closer together.</p></div>
+    <div class="step-card"><div class="num">3</div><h3>🎵 Squeezed waves = higher pitch</h3>
+      <p>Closer-together waves reach your ear more often per second — and more waves per second sounds like a HIGHER pitch.</p></div>
+    <div class="step-card"><div class="num">4</div><h3>📉 Behind it, waves stretch out</h3>
+      <p>Behind the ambulance, waves get stretched farther apart — fewer per second reaches your ear, sounding LOWER — that's the drop you hear as it passes!</p></div>
+  </div>
+
+  <div class="fact">
+    🤯 <b>Mind-blowing part:</b> This same effect works with LIGHT, not just sound! Stars and galaxies moving away from us stretch
+    their light toward red ("redshift"), and this is one of the key pieces of evidence that the whole universe is expanding.
+  </div>
+</div>
+
+<script>
+(function(){
+  const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  const captionEl=document.getElementById('caption');
+  const playBtn=document.getElementById('playBtn'), restartBtn=document.getElementById('restartBtn');
+  let simTime=0, playing=false, lastTs=null;
+  const totalDur=8;
+  const waves=[];
+  let lastEmit=-1;
+
+  function label(x,y,text,color){
+    ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
+    const tw=ctx.measureText(text).width;
+    ctx.fillStyle='rgba(4,6,15,0.75)'; ctx.fillRect(x-tw/2-8,y-16,tw+16,22);
+    ctx.fillStyle=color||'#9fc1de'; ctx.fillText(text,x,y);
+  }
+  function render(t){
+    ctx.clearRect(0,0,W,H); ctx.fillStyle='#04060f'; ctx.fillRect(0,0,W,H);
+    const carX=80+(t/totalDur)*(W-160);
+    const carY=H/2;
+    if(playing && t-lastEmit>0.35){
+      waves.push({x:carX,y:carY,r:0,born:t});
+      lastEmit=t;
+    }
+    waves.forEach(w=>{
+      w.r=(t-w.born)*220;
+    });
+    for(let i=waves.length-1;i>=0;i--){ if(waves[i].r>500) waves.splice(i,1); }
+    waves.forEach(w=>{
+      ctx.strokeStyle='rgba(79,211,255,'+Math.max(0,0.6-w.r/500)+')'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.arc(w.x,w.y,w.r,0,Math.PI*2); ctx.stroke();
+    });
+    ctx.font='40px Segoe UI'; ctx.textAlign='center'; ctx.fillText('🚑',carX,carY+15);
+    ctx.font='30px Segoe UI'; ctx.fillText('🧍',120,carY+H/3);
+    ctx.font='30px Segoe UI'; ctx.fillText('🧍',W-120,carY+H/3);
+    label(120,carY+H/3+40,'hears HIGHER pitch','#6dffb0');
+    label(W-120,carY+H/3+40,'hears LOWER pitch','#ff9d9d');
+    label(W/2,40,'waves bunch up ahead, spread out behind','#eef2ff');
+  }
+  function step(ts){
+    if(!playing) return;
+    if(lastTs===null) lastTs=ts;
+    const dt=Math.min(0.05,(ts-lastTs)/1000); lastTs=ts;
+    simTime+=dt;
+    if(simTime>=totalDur){
+      simTime=totalDur; render(simTime); pause();
+      captionEl.innerHTML='🎬 The End! Press <b>Restart</b> to watch again.';
+      return;
+    }
+    render(simTime);
+    captionEl.innerHTML = simTime<totalDur/2
+      ? 'The ambulance approaches — waves ahead bunch together (higher pitch)'
+      : 'The ambulance passes — waves behind stretch out (lower pitch)';
+    requestAnimationFrame(step);
+  }
+  function play(){ if(playing) return; playing=true; lastTs=null; playBtn.textContent='⏸ Pause'; requestAnimationFrame(step); }
+  function pause(){ playing=false; playBtn.textContent='▶ Play'; }
+  function restart(){ simTime=0; waves.length=0; lastEmit=-1; render(0); pause(); captionEl.innerHTML='Press <b>Play</b> to hear (see) it happen!'; }
+  playBtn.addEventListener('click',()=>playing?pause():play());
+  restartBtn.addEventListener('click',restart);
+  render(0);
+})();
+</script>
+</body>
+</html>
