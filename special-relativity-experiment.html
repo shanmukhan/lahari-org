@@ -9,7 +9,11 @@
   *{box-sizing:border-box;}
   body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
   .wrap{max-width:960px;margin:0 auto;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
   a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
   header{text-align:center;margin-bottom:20px;}
   h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
   header p{color:var(--dim);font-size:16px;margin:0;}
@@ -43,10 +47,13 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="index.html">&larr; Back to lahari.org</a>
+  <div class="topbar">
+    <a class="back" href="index.html" id="backLink">&larr; Back to lahari.org</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
   <header>
-    <h1>🚀 Special Relativity — Explained Simply</h1>
-    <p>Light always travels at the same speed, no matter how fast YOU are moving. That one weird fact changes everything.</p>
+    <h1 id="pageTitle">🚀 Special Relativity — Explained Simply</h1>
+    <p id="pageSubtitle">Light always travels at the same speed, no matter how fast YOU are moving. That one weird fact changes everything.</p>
   </header>
 
   <div class="player">
@@ -61,23 +68,23 @@
   </div>
 
   <div class="steps">
-    <div class="step-card"><div class="num">1</div><h3>🚗 Normal speeds add up</h3>
-      <p>If you throw a ball forward from a moving car, the ball's speed = car's speed + your throw's speed. That's how speed normally works.</p></div>
-    <div class="step-card"><div class="num">2</div><h3>💡 Light breaks that rule</h3>
-      <p>Einstein realized: no matter how fast you're moving, light always measures at the SAME speed — 300,000 km per second — for everyone.</p></div>
-    <div class="step-card"><div class="num">3</div><h3>⏱️ Something has to give</h3>
-      <p>For light's speed to stay the same for everyone, something else must change instead — and that something is <b>time itself</b>.</p></div>
-    <div class="step-card"><div class="num">4</div><h3>🌌 Space and time are linked</h3>
-      <p>Special relativity says space and time are woven together into one thing: <b>spacetime</b>. Moving through one affects the other.</p></div>
+    <div class="step-card"><div class="num">1</div><h3 id="s1t">🚗 Normal speeds add up</h3>
+      <p id="s1d">If you throw a ball forward from a moving car, the ball's speed = car's speed + your throw's speed. That's how speed normally works.</p></div>
+    <div class="step-card"><div class="num">2</div><h3 id="s2t">💡 Light breaks that rule</h3>
+      <p id="s2d">Einstein realized: no matter how fast you're moving, light always measures at the SAME speed — 300,000 km per second — for everyone.</p></div>
+    <div class="step-card"><div class="num">3</div><h3 id="s3t">⏱️ Something has to give</h3>
+      <p id="s3d">For light's speed to stay the same for everyone, something else must change instead — and that something is <b>time itself</b>.</p></div>
+    <div class="step-card"><div class="num">4</div><h3 id="s4t">🌌 Space and time are linked</h3>
+      <p id="s4d">Special relativity says space and time are woven together into one thing: <b>spacetime</b>. Moving through one affects the other.</p></div>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> GPS satellites orbiting Earth actually experience time slightly differently than we do on the ground,
     because of their speed and altitude. If we didn't correct for relativity, GPS maps would drift off by kilometers within a single day!
   </div>
 
-  <div class="try-title">🧪 Now try it yourself</div>
-  <p class="try-subtitle">Compare a normal ball thrown from a car vs. a flashlight beam from a spaceship.</p>
+  <div class="try-title" id="tryTitle">🧪 Now try it yourself</div>
+  <p class="try-subtitle" id="trySubtitle">Compare a normal ball thrown from a car vs. a flashlight beam from a spaceship.</p>
   <div class="try-card">
     <canvas id="tryScene" width="560" height="280"></canvas>
     <div class="try-controls">
@@ -90,22 +97,127 @@
 </div>
 
 <script>
+const T = {
+  en: {
+    langToggle: 'తెలుగు', backLink: '&larr; Back to lahari.org',
+    pageTitle: '🚀 Special Relativity — Explained Simply',
+    pageSubtitle: 'Light always travels at the same speed, no matter how fast YOU are moving. That one weird fact changes everything.',
+    playBtn: '▶ Play', pauseBtn: '⏸ Pause', restartBtn: '⟲ Restart',
+    captionInitial: 'Press <b>Play</b> to start!',
+    captionEnd: '🎬 The End! Press <b>Restart</b> to watch again.',
+    steps: [
+      ['🚗 Normal speeds add up','If you throw a ball forward from a moving car, the ball\'s speed = car\'s speed + your throw\'s speed. That\'s how speed normally works.'],
+      ['💡 Light breaks that rule','Einstein realized: no matter how fast you\'re moving, light always measures at the SAME speed — 300,000 km per second — for everyone.'],
+      ['⏱️ Something has to give','For light\'s speed to stay the same for everyone, something else must change instead — and that something is <b>time itself</b>.'],
+      ['🌌 Space and time are linked','Special relativity says space and time are woven together into one thing: <b>spacetime</b>. Moving through one affects the other.'],
+    ],
+    fact: '🤯 <b>Mind-blowing part:</b> GPS satellites orbiting Earth actually experience time slightly differently than we do on the ground, because of their speed and altitude. If we didn\'t correct for relativity, GPS maps would drift off by kilometers within a single day!',
+    tryTitle: '🧪 Now try it yourself',
+    trySubtitle: 'Compare a normal ball thrown from a car vs. a flashlight beam from a spaceship.',
+    tryResultDefault: 'Watch how the ball\'s speed adds up, but the light\'s speed never does!',
+    tryResultBall: 'The ball\'s speed = car speed + throw speed. Normal addition!',
+    tryResultLight: 'The light always measures 300,000 km/s — the ship\'s speed never adds to it!',
+    throwBallBtn: '🎾 Throw the ball', shineLightBtn: '💡 Shine the light', tryReset: '↻ Reset',
+    scenes: [
+      ['🚗 STEP 1: SPEEDS NORMALLY ADD UP','A car drives at 60 km/h. Someone in it throws a ball forward at 20 km/h. To someone standing still, the ball moves at <b>80 km/h</b>.'],
+      ['💡 STEP 2: LIGHT DOESN\'T ADD UP','Now imagine a spaceship flying at half the speed of light, shining a flashlight forward. You\'d expect the light to go extra fast — but it doesn\'t!'],
+      ['😲 EVERYONE MEASURES THE SAME SPEED','Whether you\'re standing still or racing alongside in another ship, you both measure that light beam at the exact same speed: <b>300,000 km/s</b>.'],
+      ['⏱️ STEP 3: TIME BENDS INSTEAD','For light\'s speed to stay fixed for everyone, something else has to change when you move fast — and it turns out that something is <b>time itself</b>, which runs slower for the fast traveler.'],
+      ['🌌 SPACE + TIME = SPACETIME','Einstein\'s big idea: space and time aren\'t separate. They\'re one stretchy fabric called <b>spacetime</b> — and speed and gravity can stretch it.'],
+    ],
+    canvas: {
+      carSpeed: 'car: 60 km/h',
+      ballSpeed: 'ball speed (to a bystander) = car speed + throw speed = 80 km/h',
+      shipHalfC: 'spaceship: half light-speed',
+      expectFaster: 'you\'d expect the light to go extra fast because of the ship\'s speed...',
+      movingShip: 'moving ship', stillShip: 'ship standing still',
+      bothBeams: 'both beams measure EXACTLY 300,000 km/s — always!',
+      zigzag: 'to an outside viewer, the light takes a longer zig-zag path',
+      slowClock: 'a longer path at the same fixed speed = more time passes → the moving clock runs slow',
+      spacetimeFabric: 'space and time are woven together into one "spacetime" fabric',
+      carShip: 'car / ship',
+    },
+  },
+  te: {
+    langToggle: 'English', backLink: '&larr; lahari.org కి తిరిగి',
+    pageTitle: '🚀 ప్రత్యేక సాపేక్షత సిద్ధాంతం — సులభంగా వివరణ',
+    pageSubtitle: 'మీరు ఎంత వేగంగా కదిలినా కాంతి ఎప్పుడూ అదే వేగంతో ప్రయాణిస్తుంది. ఈ ఒక్క విచిత్రమైన నిజం ప్రతిదాన్ని మారుస్తుంది.',
+    playBtn: '▶ ప్లే', pauseBtn: '⏸ పాజ్', restartBtn: '⟲ మళ్ళీ మొదలు',
+    captionInitial: 'ప్రారంభించడానికి <b>ప్లే</b> నొక్కండి!',
+    captionEnd: '🎬 ముగింపు! మళ్ళీ చూడటానికి <b>మళ్ళీ మొదలు</b> నొక్కండి.',
+    steps: [
+      ['🚗 సాధారణ వేగాలు కలుస్తాయి','మీరు కదులుతున్న కారు నుండి ముందుకు బంతిని విసిరితే, బంతి వేగం = కారు వేగం + మీ విసురు వేగం. వేగం సాధారణంగా ఇలానే పనిచేస్తుంది.'],
+      ['💡 కాంతి ఆ నియమాన్ని ఉల్లంఘిస్తుంది','ఐన్‌స్టీన్ గ్రహించారు: మీరు ఎంత వేగంగా కదిలినా, కాంతి ఎప్పుడూ అందరికీ అదే వేగంతో — సెకనుకు 3,00,000 కి.మీ — కొలుస్తుంది.'],
+      ['⏱️ ఏదో ఒకటి మారాలి','కాంతి వేగం అందరికీ ఒకేలా ఉండాలంటే, దాని బదులు వేరేది మారాలి — ఆ వేరేదే <b>కాలం</b>.'],
+      ['🌌 అంతరిక్షం మరియు కాలం అనుసంధానించబడి ఉన్నాయి','ప్రత్యేక సాపేక్షత సిద్ధాంతం ప్రకారం అంతరిక్షం మరియు కాలం ఒకదానితో ఒకటి అల్లుకుపోయి ఒకే విషయంగా ఉంటాయి: <b>అంతరిక్ష-కాలం</b>. ఒకదాని గుండా కదలడం రెండోదాన్ని ప్రభావితం చేస్తుంది.'],
+    ],
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> భూమి చుట్టూ తిరిగే GPS ఉపగ్రహాలు వాటి వేగం మరియు ఎత్తు కారణంగా నేలపై మనం అనుభవించే దానికంటే కొద్దిగా భిన్నంగా కాలాన్ని అనుభవిస్తాయి. సాపేక్షత కోసం సరిదిద్దకపోతే, GPS మ్యాప్‌లు ఒక్క రోజులోనే కిలోమీటర్ల దూరం తప్పిపోతాయి!',
+    tryTitle: '🧪 ఇప్పుడు మీరే ప్రయత్నించండి',
+    trySubtitle: 'కారు నుండి విసిరిన సాధారణ బంతిని vs అంతరిక్ష నౌక నుండి టార్చ్ లైట్ కిరణాన్ని పోల్చండి.',
+    tryResultDefault: 'బంతి వేగం ఎలా కలుస్తుందో చూడండి, కానీ కాంతి వేగం ఎప్పుడూ కలవదు!',
+    tryResultBall: 'బంతి వేగం = కారు వేగం + విసురు వేగం. సాధారణ కూడిక!',
+    tryResultLight: 'కాంతి ఎప్పుడూ సెకనుకు 3,00,000 కి.మీ కొలుస్తుంది — నౌక వేగం దానికి ఎప్పుడూ కలవదు!',
+    throwBallBtn: '🎾 బంతిని విసరండి', shineLightBtn: '💡 కాంతిని ప్రసరించండి', tryReset: '↻ రీసెట్',
+    scenes: [
+      ['🚗 దశ 1: వేగాలు సాధారణంగా కలుస్తాయి','ఒక కారు గంటకు 60 కి.మీ వేగంతో వెళుతుంది. అందులో ఉన్న ఎవరైనా బంతిని గంటకు 20 కి.మీ వేగంతో ముందుకు విసురుతారు. నిశ్చలంగా నిలబడిన వారికి, బంతి <b>గంటకు 80 కి.మీ</b> వేగంతో కదులుతుంది.'],
+      ['💡 దశ 2: కాంతి కలవదు','ఇప్పుడు కాంతి వేగంలో సగం వేగంతో ఎగురుతున్న అంతరిక్ష నౌక ముందుకు టార్చ్ లైట్ వెలిగిస్తుందని ఊహించండి. కాంతి అదనంగా వేగంగా వెళుతుందని మీరు ఊహిస్తారు — కానీ అది వెళ్ళదు!'],
+      ['😲 అందరూ ఒకే వేగాన్ని కొలుస్తారు','మీరు నిశ్చలంగా నిలబడినా లేదా మరో నౌకలో పక్కనే పరుగెడుతున్నా, మీరిద్దరూ ఆ కాంతి కిరణాన్ని సరిగ్గా అదే వేగంతో కొలుస్తారు: <b>సెకనుకు 3,00,000 కి.మీ</b>.'],
+      ['⏱️ దశ 3: బదులుగా కాలం వంగుతుంది','కాంతి వేగం అందరికీ స్థిరంగా ఉండాలంటే, మీరు వేగంగా కదిలినప్పుడు వేరేది మారాలి — అది <b>కాలం</b> అని తేలింది, ఇది వేగంగా ప్రయాణించేవారికి నెమ్మదిగా నడుస్తుంది.'],
+      ['🌌 అంతరిక్షం + కాలం = అంతరిక్ష-కాలం','ఐన్‌స్టీన్ యొక్క పెద్ద ఆలోచన: అంతరిక్షం మరియు కాలం వేరు వేరు కావు. అవి <b>అంతరిక్ష-కాలం</b> అనే ఒకే సాగే వస్త్రం — వేగం మరియు గురుత్వాకర్షణ దాన్ని సాగదీయగలవు.'],
+    ],
+    canvas: {
+      carSpeed: 'కారు: గంటకు 60 కి.మీ',
+      ballSpeed: 'బంతి వేగం (పక్కన నిలబడినవారికి) = కారు వేగం + విసురు వేగం = గంటకు 80 కి.మీ',
+      shipHalfC: 'అంతరిక్ష నౌక: కాంతి వేగంలో సగం',
+      expectFaster: 'నౌక వేగం వల్ల కాంతి అదనంగా వేగంగా వెళుతుందని మీరు ఊహిస్తారు...',
+      movingShip: 'కదులుతున్న నౌక', stillShip: 'నిశ్చలంగా ఉన్న నౌక',
+      bothBeams: 'రెండు కిరణాలు సరిగ్గా సెకనుకు 3,00,000 కి.మీ కొలుస్తాయి — ఎప్పుడూ!',
+      zigzag: 'బయటి వీక్షకుడికి, కాంతి పొడవైన జిగ్‌జాగ్ మార్గంలో వెళుతుంది',
+      slowClock: 'అదే స్థిర వేగంతో పొడవైన మార్గం = ఎక్కువ సమయం గడుస్తుంది → కదులుతున్న గడియారం నెమ్మదిగా నడుస్తుంది',
+      spacetimeFabric: 'అంతరిక్షం మరియు కాలం ఒకదానితో ఒకటి అల్లుకుని ఒకే "అంతరిక్ష-కాలం" వస్త్రంగా ఉంటాయి',
+      carShip: 'కారు / నౌక',
+    },
+  }
+};
+let LANG='en';
+function tr(){ return T[LANG]; }
+function applyStaticText(){
+  const t=tr();
+  document.documentElement.lang=LANG;
+  document.getElementById('langToggle').textContent=t.langToggle;
+  document.getElementById('backLink').innerHTML=t.backLink;
+  document.getElementById('pageTitle').textContent=t.pageTitle;
+  document.getElementById('pageSubtitle').textContent=t.pageSubtitle;
+  document.getElementById('restartBtn').textContent=t.restartBtn;
+  for(let i=0;i<4;i++){
+    document.getElementById('s'+(i+1)+'t').textContent=t.steps[i][0];
+    document.getElementById('s'+(i+1)+'d').innerHTML=t.steps[i][1];
+  }
+  document.getElementById('factBox').innerHTML=t.fact;
+  document.getElementById('tryTitle').textContent=t.tryTitle;
+  document.getElementById('trySubtitle').textContent=t.trySubtitle;
+  document.getElementById('throwBall').textContent=t.throwBallBtn;
+  document.getElementById('shineLight').textContent=t.shineLightBtn;
+  document.getElementById('tryReset').textContent=t.tryReset;
+}
+document.getElementById('langToggle').addEventListener('click',()=>{
+  LANG = LANG==='en' ? 'te' : 'en';
+  applyStaticText();
+  if(window.__relRefresh) window.__relRefresh();
+  if(window.__tryRefresh) window.__tryRefresh();
+});
+applyStaticText();
+
 (function(){
   const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
   const W=canvas.width, H=canvas.height;
   const captionEl=document.getElementById('caption'), bannerEl=document.getElementById('banner'), progressBar=document.getElementById('progressBar');
   const playBtn=document.getElementById('playBtn'), restartBtn=document.getElementById('restartBtn');
 
-  const SCENES=[
-    {t:0,dur:7,banner:'🚗 STEP 1: SPEEDS NORMALLY ADD UP',caption:'A car drives at 60 km/h. Someone in it throws a ball forward at 20 km/h. To someone standing still, the ball moves at <b>80 km/h</b>.'},
-    {t:7,dur:8,banner:'💡 STEP 2: LIGHT DOESN\'T ADD UP',caption:'Now imagine a spaceship flying at half the speed of light, shining a flashlight forward. You\'d expect the light to go extra fast — but it doesn\'t!'},
-    {t:15,dur:7,banner:'😲 EVERYONE MEASURES THE SAME SPEED',caption:'Whether you\'re standing still or racing alongside in another ship, you both measure that light beam at the exact same speed: <b>300,000 km/s</b>.'},
-    {t:22,dur:8,banner:'⏱️ STEP 3: TIME BENDS INSTEAD',caption:'For light\'s speed to stay fixed for everyone, something else has to change when you move fast — and it turns out that something is <b>time itself</b>, which runs slower for the fast traveler.'},
-    {t:30,dur:8,banner:'🌌 SPACE + TIME = SPACETIME',caption:'Einstein\'s big idea: space and time aren\'t separate. They\'re one stretchy fabric called <b>spacetime</b> — and speed and gravity can stretch it.'},
-  ];
+  const starts=[0,7,15,22,30];
+  let simTime=0, playing=false, lastTs=null, captionOverride='initial';
   const totalDur=38;
-  let simTime=0, playing=false, lastTs=null;
-  function currentScene(t){ for(let i=SCENES.length-1;i>=0;i--) if(t>=SCENES[i].t) return i; return 0; }
+  function currentScene(t){ for(let i=starts.length-1;i>=0;i--) if(t>=starts[i]) return i; return 0; }
   function label(x,y,text,color){
     ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
     const tw=ctx.measureText(text).width;
@@ -125,47 +237,45 @@
     ctx.strokeStyle='#2a3568'; ctx.beginPath(); ctx.moveTo(60,groundY+30); ctx.lineTo(W-60,groundY+30); ctx.stroke();
     const carX=100+ (local*70)%600;
     drawCar(carX,groundY);
-    label(carX,groundY-40,'car: 60 km/h','#4fd3ff');
+    label(carX,groundY-40,tr().canvas.carSpeed,'#4fd3ff');
     const ballProg=(local%2)/2;
     if(ballProg<0.9){
       const bx=carX+30+ballProg*260;
       ctx.fillStyle='#ffd23f'; ctx.beginPath(); ctx.arc(bx,groundY-4,8,0,Math.PI*2); ctx.fill();
     }
-    label(W/2,60,'ball speed (to a bystander) = car speed + throw speed = 80 km/h','#eef2ff');
+    label(W/2,60,tr().canvas.ballSpeed,'#eef2ff');
   }
   function drawSceneLightNoAdd(local){
     const groundY=H/2+40;
     const shipX=140;
     drawShip(shipX,groundY);
-    label(shipX,groundY-40,'spaceship: half light-speed','#4fd3ff');
+    label(shipX,groundY-40,tr().canvas.shipHalfC,'#4fd3ff');
     const beamProg=(local%1.4)/1.4;
     const bx=shipX+40+beamProg*(W-shipX-100);
     ctx.strokeStyle='#fff6c8'; ctx.lineWidth=4;
     ctx.beginPath(); ctx.moveTo(shipX+40,groundY); ctx.lineTo(bx,groundY); ctx.stroke();
-    label(W/2,60,'you\'d expect the light to go extra fast because of the ship\'s speed...','#ffd23f');
+    label(W/2,60,tr().canvas.expectFaster,'#ffd23f');
   }
   function drawSceneSameSpeed(local){
     const y1=H/2-70, y2=H/2+70;
-    drawShip(140,y1); label(140,y1-40,'moving ship',"#4fd3ff");
-    drawShip(140,y2); label(140,y2-40,'ship standing still','#8fa0d0');
+    drawShip(140,y1); label(140,y1-40,tr().canvas.movingShip,"#4fd3ff");
+    drawShip(140,y2); label(140,y2-40,tr().canvas.stillShip,"#8fa0d0");
     [y1,y2].forEach(y=>{
       const beamProg=(local%1.2)/1.2;
       const bx=180+beamProg*(W-260);
       ctx.strokeStyle='#fff6c8'; ctx.lineWidth=4;
       ctx.beginPath(); ctx.moveTo(180,y); ctx.lineTo(bx,y); ctx.stroke();
     });
-    label(W/2,40,'both beams measure EXACTLY 300,000 km/s — always!','#6dffb0');
+    label(W/2,40,tr().canvas.bothBeams,'#6dffb0');
   }
   function drawSceneTimeBends(local){
     const cx=W/2, cy=H/2;
-    // light clock bouncing photon between two mirrors, ship moving right
     const shipX=(local*40)%(W+200)-100;
     ctx.strokeStyle='#4fd3ff'; ctx.lineWidth=3;
     ctx.strokeRect(shipX-30,cy-60,60,120);
     const bounce=Math.abs(((local*2)%2)-1);
     const py=cy-60+bounce*120;
     ctx.fillStyle='#ffd23f'; ctx.beginPath(); ctx.arc(shipX,py,7,0,Math.PI*2); ctx.fill();
-    // path as seen from outside (zigzag), faded
     ctx.strokeStyle='rgba(255,210,63,.25)'; ctx.lineWidth=2;
     ctx.beginPath();
     for(let i=0;i<40;i++){
@@ -176,8 +286,8 @@
       if(i===0) ctx.moveTo(sx,yy); else ctx.lineTo(sx,yy);
     }
     ctx.stroke();
-    label(W/2,50,'to an outside viewer, the light takes a longer zig-zag path','#8fd2ff');
-    label(W/2,H-40,'a longer path at the same fixed speed = more time passes → the moving clock runs slow','#eef2ff');
+    label(W/2,50,tr().canvas.zigzag,'#8fd2ff');
+    label(W/2,H-40,tr().canvas.slowClock,'#eef2ff');
   }
   function drawSceneSpacetime(local){
     ctx.strokeStyle='rgba(79,211,255,.3)'; ctx.lineWidth=1;
@@ -192,14 +302,14 @@
     const g=ctx.createRadialGradient(W/2,H/2,4,W/2,H/2,50);
     g.addColorStop(0,'#fff'); g.addColorStop(1,'rgba(255,255,255,0)');
     ctx.fillStyle=g; ctx.beginPath(); ctx.arc(W/2,H/2,48,0,Math.PI*2); ctx.fill();
-    label(W/2,H-30,'space and time are woven together into one "spacetime" fabric','#eef2ff');
+    label(W/2,H-30,tr().canvas.spacetimeFabric,'#eef2ff');
   }
 
   function render(t){
     ctx.clearRect(0,0,W,H); ctx.fillStyle='#04060f'; ctx.fillRect(0,0,W,H);
     for(let i=0;i<50;i++){ ctx.fillStyle='rgba(255,255,255,'+(0.08+0.3*((i*37)%10)/10)+')'; ctx.fillRect((i*53)%W,(i*97)%H,2,2); }
-    const idx=currentScene(t), scene=SCENES[idx], local=t-scene.t;
-    bannerEl.textContent=scene.banner; captionEl.innerHTML=scene.caption;
+    const idx=currentScene(t), scene=tr().scenes[idx], local=t-starts[idx];
+    bannerEl.textContent=scene[0]; captionEl.innerHTML=scene[1];
     if(idx===0) drawSceneAddSpeed(local);
     else if(idx===1) drawSceneLightNoAdd(local);
     else if(idx===2) drawSceneSameSpeed(local);
@@ -213,15 +323,24 @@
     const dt=Math.min(0.05,(ts-lastTs)/1000); lastTs=ts;
     simTime+=dt;
     if(simTime>=totalDur){ simTime=totalDur; render(simTime); pause();
-      captionEl.innerHTML='🎬 The End! Press <b>Restart</b> to watch again.'; return; }
+      captionOverride='ended'; captionEl.innerHTML=tr().captionEnd; return; }
+    captionOverride=null;
     render(simTime); requestAnimationFrame(step);
   }
-  function play(){ if(playing) return; playing=true; lastTs=null; playBtn.textContent='⏸ Pause'; requestAnimationFrame(step); }
-  function pause(){ playing=false; playBtn.textContent='▶ Play'; }
-  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionEl.innerHTML='Press <b>Play</b> to start!'; }
+  function play(){ if(playing) return; playing=true; lastTs=null; captionOverride=null; playBtn.textContent=tr().pauseBtn; requestAnimationFrame(step); }
+  function pause(){ playing=false; playBtn.textContent=tr().playBtn; }
+  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionOverride='initial'; captionEl.innerHTML=tr().captionInitial; }
   playBtn.addEventListener('click',()=>playing?pause():play());
   restartBtn.addEventListener('click',restart);
+  playBtn.textContent=tr().playBtn;
   render(0);
+
+  window.__relRefresh=function(){
+    playBtn.textContent = playing ? tr().pauseBtn : tr().playBtn;
+    render(simTime);
+    if(captionOverride==='initial') captionEl.innerHTML=tr().captionInitial;
+    else if(captionOverride==='ended') captionEl.innerHTML=tr().captionEnd;
+  };
 })();
 
 (function(){
@@ -229,11 +348,18 @@
   const w=cv.width,h=cv.height;
   let ballAnim=null, lightAnim=null;
   const resultEl=document.getElementById('tryResult');
+  let lastResult='default';
+  function updateResultText(){
+    const t=tr();
+    if(lastResult==='ball') resultEl.textContent=t.tryResultBall;
+    else if(lastResult==='light') resultEl.textContent=t.tryResultLight;
+    else resultEl.textContent=t.tryResultDefault;
+  }
   function draw(){
     c.clearRect(0,0,w,h); c.fillStyle='#04060f'; c.fillRect(0,0,w,h);
     c.strokeStyle='#2a3568'; c.beginPath(); c.moveTo(20,h/2+70); c.lineTo(w-20,h/2+70); c.stroke();
     c.fillStyle='#4fd3ff'; c.fillRect(40,h/2+40,60,20);
-    c.fillStyle='#eef2ff'; c.font='700 12px Segoe UI'; c.textAlign='center'; c.fillText('car / ship',70,h/2+30);
+    c.fillStyle='#eef2ff'; c.font='700 12px Segoe UI'; c.textAlign='center'; c.fillText(tr().canvas.carShip,70,h/2+30);
     if(ballAnim!==null){
       const x=70+60+ballAnim*(w-200);
       c.fillStyle='#ffd23f'; c.beginPath(); c.arc(x,h/2+50,8,0,Math.PI*2); c.fill();
@@ -245,16 +371,19 @@
   }
   function animateBall(){
     ballAnim=0;
-    const id=setInterval(()=>{ ballAnim+=0.03; draw(); if(ballAnim>=1){ clearInterval(id); resultEl.textContent='The ball\'s speed = car speed + throw speed. Normal addition!'; } },16);
+    const id=setInterval(()=>{ ballAnim+=0.03; draw(); if(ballAnim>=1){ clearInterval(id); lastResult='ball'; updateResultText(); } },16);
   }
   function animateLight(){
     lightAnim=0;
-    const id=setInterval(()=>{ lightAnim+=0.02; draw(); if(lightAnim>=1){ clearInterval(id); resultEl.textContent='The light always measures 300,000 km/s — the ship\'s speed never adds to it!'; } },16);
+    const id=setInterval(()=>{ lightAnim+=0.02; draw(); if(lightAnim>=1){ clearInterval(id); lastResult='light'; updateResultText(); } },16);
   }
   document.getElementById('throwBall').addEventListener('click',animateBall);
   document.getElementById('shineLight').addEventListener('click',animateLight);
-  document.getElementById('tryReset').addEventListener('click',()=>{ ballAnim=null; lightAnim=null; resultEl.textContent='Watch how the ball\'s speed adds up, but the light\'s speed never does!'; draw(); });
+  document.getElementById('tryReset').addEventListener('click',()=>{ ballAnim=null; lightAnim=null; lastResult='default'; updateResultText(); draw(); });
+  updateResultText();
   draw();
+
+  window.__tryRefresh=function(){ updateResultText(); draw(); };
 })();
 </script>
 </body>
