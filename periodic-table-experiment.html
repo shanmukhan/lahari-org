@@ -13,13 +13,13 @@
   header{text-align:center;margin-bottom:20px;}
   h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
   header p{color:var(--dim);font-size:16px;margin:0;}
-  .legend-block{background:var(--panel);border:1px solid #2a3568;border-radius:14px;padding:14px 18px;margin:18px 0;}
+  .legend-block{background:var(--panel);border:1px solid #2a3568;border-radius:14px;padding:14px 18px;margin:22px 0 0;}
   .legend-row{display:flex;flex-wrap:wrap;gap:10px 18px;justify-content:center;align-items:center;}
   .legend-row+.legend-row{margin-top:10px;padding-top:10px;border-top:1px solid #232d54;}
   .legend-label{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--dim);margin-right:4px;}
-  .legend span{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--dim);}
-  .legend i{width:14px;height:14px;border-radius:4px;display:inline-block;}
-  .legend .state-dot{width:10px;height:10px;border-radius:50%;display:inline-block;}
+  .legend-row span{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--dim);}
+  .legend-row i{width:14px;height:14px;border-radius:4px;display:inline-block;flex:none;}
+  .legend-row i.state-dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none;}
   .grid{display:grid;grid-template-columns:repeat(18,minmax(46px,1fr));gap:4px;overflow-x:auto;padding-bottom:10px;}
   .cell{aspect-ratio:1;border-radius:7px;padding:4px 4px;font-size:9px;cursor:pointer;position:relative;
     transition:transform .15s ease,box-shadow .15s ease;display:flex;flex-direction:column;justify-content:space-between;
@@ -55,14 +55,15 @@
     <p>All 118 known elements — the building blocks of everything. Tap any tile to learn more!</p>
   </header>
 
+  <div class="grid" id="grid"></div>
+  <p style="text-align:center;color:var(--dim);font-size:13px;margin-top:10px;">🖱️ Hover a tile to zoom in · tap or click any tile for full details and an atom diagram</p>
+
   <div class="legend-block">
     <div class="legend-row" id="catLegend"></div>
     <div class="legend-row" id="stateLegend">
       <span class="legend-label">Name color = state at room temp:</span>
     </div>
   </div>
-  <div class="grid" id="grid"></div>
-  <p style="text-align:center;color:var(--dim);font-size:13px;margin-top:10px;">🖱️ Hover a tile to zoom in · tap or click any tile for full details and an atom diagram</p>
 
   <div class="fact">
     🤯 <b>Mind-blowing part:</b> Every single thing around you — your phone, your food, the air, even you — is built from combinations
