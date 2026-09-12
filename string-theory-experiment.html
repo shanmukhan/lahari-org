@@ -9,7 +9,11 @@
   *{box-sizing:border-box;}
   body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
   .wrap{max-width:960px;margin:0 auto;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
   a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
   header{text-align:center;margin-bottom:20px;}
   h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
   header p{color:var(--dim);font-size:16px;margin:0;}
@@ -43,10 +47,13 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="index.html">&larr; Back to lahari.org</a>
+  <div class="topbar">
+    <a class="back" href="index.html" id="backLink">&larr; Back to lahari.org</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
   <header>
-    <h1>🎻 String Theory — Explained Simply</h1>
-    <p>What if every tiny particle in the universe is really a tiny, vibrating string — like a guitar string?</p>
+    <h1 id="pageTitle">🎻 String Theory — Explained Simply</h1>
+    <p id="pageSubtitle">What if every tiny particle in the universe is really a tiny, vibrating string — like a guitar string?</p>
   </header>
 
   <div class="player">
@@ -61,24 +68,24 @@
   </div>
 
   <div class="steps">
-    <div class="step-card"><div class="num">1</div><h3>🔎 Zoom into an atom</h3>
-      <p>An atom has a nucleus (protons, neutrons) and electrons. But protons and neutrons are made of even smaller bits: <b>quarks</b>.</p></div>
-    <div class="step-card"><div class="num">2</div><h3>🎸 What if quarks are strings?</h3>
-      <p>String theory guesses that quarks and electrons aren't tiny dots — they're impossibly tiny <b>vibrating strings</b> of energy.</p></div>
-    <div class="step-card"><div class="num">3</div><h3>🎵 Different vibration = different particle</h3>
-      <p>Just like a guitar string makes different notes depending on how it vibrates, a tiny string makes a different <b>particle</b> depending on how IT vibrates.</p></div>
-    <div class="step-card"><div class="num">4</div><h3>🌌 One idea, everything explained?</h3>
-      <p>Scientists like this idea because ONE kind of tiny string, vibrating differently, could explain ALL particles and even gravity — a "theory of everything."</p></div>
+    <div class="step-card"><div class="num">1</div><h3 id="s1t">🔎 Zoom into an atom</h3>
+      <p id="s1d">An atom has a nucleus (protons, neutrons) and electrons. But protons and neutrons are made of even smaller bits: <b>quarks</b>.</p></div>
+    <div class="step-card"><div class="num">2</div><h3 id="s2t">🎸 What if quarks are strings?</h3>
+      <p id="s2d">String theory guesses that quarks and electrons aren't tiny dots — they're impossibly tiny <b>vibrating strings</b> of energy.</p></div>
+    <div class="step-card"><div class="num">3</div><h3 id="s3t">🎵 Different vibration = different particle</h3>
+      <p id="s3d">Just like a guitar string makes different notes depending on how it vibrates, a tiny string makes a different <b>particle</b> depending on how IT vibrates.</p></div>
+    <div class="step-card"><div class="num">4</div><h3 id="s4t">🌌 One idea, everything explained?</h3>
+      <p id="s4d">Scientists like this idea because ONE kind of tiny string, vibrating differently, could explain ALL particles and even gravity — a "theory of everything."</p></div>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> String theory says these strings might vibrate in more directions than we can see —
     maybe <b>10 dimensions</b> in total, with extra ones curled up so tiny we'd never notice them, like a hidden fold in space itself.
     Nobody has proven this yet — it's still one of science's biggest unsolved puzzles!
   </div>
 
-  <div class="try-title">🧪 Now try it yourself</div>
-  <p class="try-subtitle">Pluck the string faster or slower and see how the "note" (and imaginary particle) changes.</p>
+  <div class="try-title" id="tryTitle">🧪 Now try it yourself</div>
+  <p class="try-subtitle" id="trySubtitle">Pluck the string faster or slower and see how the "note" (and imaginary particle) changes.</p>
   <div class="try-card">
     <canvas id="tryScene" width="560" height="260"></canvas>
     <div class="try-controls">
@@ -91,22 +98,119 @@
 </div>
 
 <script>
+const T = {
+  en: {
+    langToggle: 'తెలుగు', backLink: '&larr; Back to lahari.org',
+    pageTitle: '🎻 String Theory — Explained Simply',
+    pageSubtitle: 'What if every tiny particle in the universe is really a tiny, vibrating string — like a guitar string?',
+    playBtn: '▶ Play', pauseBtn: '⏸ Pause', restartBtn: '⟲ Restart',
+    captionInitial: 'Press <b>Play</b> to start!',
+    captionEnd: '🎬 The End! Press <b>Restart</b> to watch again.',
+    steps: [
+      ['🔎 Zoom into an atom','An atom has a nucleus (protons, neutrons) and electrons. But protons and neutrons are made of even smaller bits: <b>quarks</b>.'],
+      ['🎸 What if quarks are strings?','String theory guesses that quarks and electrons aren\'t tiny dots — they\'re impossibly tiny <b>vibrating strings</b> of energy.'],
+      ['🎵 Different vibration = different particle','Just like a guitar string makes different notes depending on how it vibrates, a tiny string makes a different <b>particle</b> depending on how IT vibrates.'],
+      ['🌌 One idea, everything explained?','Scientists like this idea because ONE kind of tiny string, vibrating differently, could explain ALL particles and even gravity — a "theory of everything."'],
+    ],
+    fact: '🤯 <b>Mind-blowing part:</b> String theory says these strings might vibrate in more directions than we can see — maybe <b>10 dimensions</b> in total, with extra ones curled up so tiny we\'d never notice them, like a hidden fold in space itself. Nobody has proven this yet — it\'s still one of science\'s biggest unsolved puzzles!',
+    tryTitle: '🧪 Now try it yourself',
+    trySubtitle: 'Pluck the string faster or slower and see how the "note" (and imaginary particle) changes.',
+    tryResultDefault: 'A slow, gentle wiggle vs. a fast, tight wiggle make different "particles"!',
+    tryResultSlow: 'A gentle, slow wiggle — imagine this becomes a light, simple particle like an electron.',
+    tryResultFast: 'A tight, fast wiggle — imagine this becomes a heavier, different particle like a quark!',
+    slowPluck: '🐢 Slow vibration', fastPluck: '⚡ Fast vibration', tryReset: '↻ Reset',
+    vibrationSpeed: (s)=>'vibration speed: '+s,
+    scenes: [
+      ['🔎 STEP 1: ZOOM INTO AN ATOM','Inside an atom is a nucleus made of <b>protons</b> and <b>neutrons</b>, circled by <b>electrons</b>. Let\'s zoom in further, into a proton.'],
+      ['⚛️ INSIDE A PROTON: QUARKS','A proton itself is made of even tinier particles called <b>quarks</b>. For a long time, scientists thought quarks were just tiny points.'],
+      ['🎻 STRING THEORY\'S BIG IDEA','String theory suggests: what if quarks (and electrons) aren\'t points at all, but unimaginably tiny <b>loops of vibrating string</b>?'],
+      ['🎵 DIFFERENT VIBRATION = DIFFERENT PARTICLE','A guitar string makes different notes depending on how fast it vibrates. A tiny string might make a different <b>particle</b> the same way!'],
+      ['🌌 A "THEORY OF EVERYTHING"?','If true, ONE type of string, just vibrating differently, could explain every particle AND gravity — the dream of a single theory for it all.'],
+    ],
+    canvas: {
+      nucleus: 'NUCLEUS (protons + neutrons)', electrons: 'electrons whizzing around',
+      protonZoom: 'ONE PROTON, ZOOMED WAY IN', threeQuarks: '3 QUARKS make one proton',
+      stringLoop: 'A tiny vibrating loop of "string"',
+      slowWiggle: 'slow wiggle → say, an ELECTRON', fastWiggle: 'fast wiggle → say, a QUARK',
+      electron: 'ELECTRON', quark: 'QUARK', photon: 'PHOTON (light)', gravity: 'GRAVITY?', oneString: 'ONE STRING',
+    },
+  },
+  te: {
+    langToggle: 'English', backLink: '&larr; lahari.org కి తిరిగి',
+    pageTitle: '🎻 స్ట్రింగ్ థియరీ — సులభంగా వివరణ',
+    pageSubtitle: 'విశ్వంలోని ప్రతి చిన్న కణం నిజానికి ఒక చిన్న, కంపించే తీగ అయితే — గిటార్ తీగలా?',
+    playBtn: '▶ ప్లే', pauseBtn: '⏸ పాజ్', restartBtn: '⟲ మళ్ళీ మొదలు',
+    captionInitial: 'ప్రారంభించడానికి <b>ప్లే</b> నొక్కండి!',
+    captionEnd: '🎬 ముగింపు! మళ్ళీ చూడటానికి <b>మళ్ళీ మొదలు</b> నొక్కండి.',
+    steps: [
+      ['🔎 పరమాణువులోకి జూమ్ చేయండి','ఒక పరమాణువుకు కేంద్రకం (ప్రోటాన్లు, న్యూట్రాన్లు) మరియు ఎలక్ట్రాన్లు ఉంటాయి. కానీ ప్రోటాన్లు మరియు న్యూట్రాన్లు అంతకంటే చిన్న ముక్కలతో తయారవుతాయి: <b>క్వార్కులు</b>.'],
+      ['🎸 క్వార్కులు తీగలైతే?','క్వార్కులు మరియు ఎలక్ట్రాన్లు చిన్న బిందువులు కావని, అవి అసాధ్యమైనంత చిన్న శక్తి <b>కంపించే తీగలు</b> అని స్ట్రింగ్ థియరీ ఊహిస్తుంది.'],
+      ['🎵 వేర్వేరు కంపనం = వేర్వేరు కణం','గిటార్ తీగ ఎలా కంపిస్తుందో దానిబట్టి వేర్వేరు స్వరాలు వచ్చినట్లే, ఒక చిన్న తీగ అది ఎలా కంపిస్తుందో దానిబట్టి వేర్వేరు <b>కణాన్ని</b> తయారు చేస్తుంది.'],
+      ['🌌 ఒక ఆలోచన, ప్రతిదీ వివరించబడుతుందా?','శాస్త్రవేత్తలు ఈ ఆలోచనను ఇష్టపడతారు ఎందుకంటే ఒకే రకమైన చిన్న తీగ, వేర్వేరుగా కంపిస్తూ, అన్ని కణాలను మరియు గురుత్వాకర్షణను కూడా వివరించగలదు — ఒక "అన్నింటికీ సిద్ధాంతం."'],
+    ],
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> ఈ తీగలు మనం చూడగలిగిన దిశల కంటే ఎక్కువ దిశలలో కంపించవచ్చని స్ట్రింగ్ థియరీ చెబుతుంది — మొత్తం బహుశా <b>10 డైమెన్షన్లు</b>, అదనపువి అంతరిక్షంలో దాగి ఉన్న మడతలా చాలా చిన్నవిగా చుట్టుకుపోయి ఉంటాయి, మనం వాటిని ఎప్పటికీ గమనించలేము. దీన్ని ఇంకా ఎవరూ నిరూపించలేదు — ఇది ఇప్పటికీ సైన్స్‌లోని అతిపెద్ద పరిష్కారం కాని పజిల్‌లలో ఒకటి!',
+    tryTitle: '🧪 ఇప్పుడు మీరే ప్రయత్నించండి',
+    trySubtitle: 'తీగను వేగంగా లేదా నెమ్మదిగా మీటి "స్వరం" (మరియు ఊహాత్మక కణం) ఎలా మారుతుందో చూడండి.',
+    tryResultDefault: 'నెమ్మదైన, సున్నితమైన వణుకు vs వేగవంతమైన, గట్టి వణుకు వేర్వేరు "కణాలను" తయారు చేస్తాయి!',
+    tryResultSlow: 'సున్నితమైన, నెమ్మదైన వణుకు — ఇది ఎలక్ట్రాన్ లాంటి తేలికైన, సాధారణ కణంగా మారుతుందని ఊహించండి.',
+    tryResultFast: 'గట్టి, వేగవంతమైన వణుకు — ఇది క్వార్క్ లాంటి బరువైన, వేరే కణంగా మారుతుందని ఊహించండి!',
+    slowPluck: '🐢 నెమ్మది కంపనం', fastPluck: '⚡ వేగవంతమైన కంపనం', tryReset: '↻ రీసెట్',
+    vibrationSpeed: (s)=>'కంపన వేగం: '+s,
+    scenes: [
+      ['🔎 దశ 1: పరమాణువులోకి జూమ్','పరమాణువు లోపల <b>ప్రోటాన్లు</b> మరియు <b>న్యూట్రాన్లతో</b> తయారైన కేంద్రకం ఉంటుంది, దాని చుట్టూ <b>ఎలక్ట్రాన్లు</b> తిరుగుతాయి. మరింత జూమ్ చేసి, ఒక ప్రోటాన్‌లోకి వెళదాం.'],
+      ['⚛️ ప్రోటాన్ లోపల: క్వార్కులు','ఒక ప్రోటాన్ తానే అంతకంటే చిన్న కణాలతో తయారవుతుంది, వాటిని <b>క్వార్కులు</b> అంటారు. చాలా కాలం పాటు, శాస్త్రవేత్తలు క్వార్కులు కేవలం చిన్న బిందువులని అనుకున్నారు.'],
+      ['🎻 స్ట్రింగ్ థియరీ యొక్క పెద్ద ఆలోచన','స్ట్రింగ్ థియరీ సూచిస్తుంది: క్వార్కులు (మరియు ఎలక్ట్రాన్లు) బిందువులు కాకుండా, ఊహించలేనంత చిన్న <b>కంపించే తీగ లూప్‌లు</b> అయితే?'],
+      ['🎵 వేర్వేరు కంపనం = వేర్వేరు కణం','గిటార్ తీగ ఎంత వేగంగా కంపిస్తుందో దాన్నిబట్టి వేర్వేరు స్వరాలు వస్తాయి. ఒక చిన్న తీగ కూడా అలాగే వేర్వేరు <b>కణాన్ని</b> తయారు చేయవచ్చు!'],
+      ['🌌 "అన్నింటికీ సిద్ధాంతం"?','నిజమైతే, ఒకే రకమైన తీగ, వేర్వేరుగా కంపిస్తూ, ప్రతి కణాన్ని మరియు గురుత్వాకర్షణను కూడా వివరించగలదు — అన్నింటికీ ఒకే సిద్ధాంతం అనే కల.'],
+    ],
+    canvas: {
+      nucleus: 'కేంద్రకం (ప్రోటాన్లు + న్యూట్రాన్లు)', electrons: 'ఎలక్ట్రాన్లు చుట్టూ తిరుగుతున్నాయి',
+      protonZoom: 'ఒక ప్రోటాన్, బాగా జూమ్ చేయబడింది', threeQuarks: '3 క్వార్కులు ఒక ప్రోటాన్‌ను తయారు చేస్తాయి',
+      stringLoop: '"తీగ" యొక్క ఒక చిన్న కంపించే లూప్',
+      slowWiggle: 'నెమ్మది వణుకు → అంటే, ఒక ఎలక్ట్రాన్', fastWiggle: 'వేగవంతమైన వణుకు → అంటే, ఒక క్వార్క్',
+      electron: 'ఎలక్ట్రాన్', quark: 'క్వార్క్', photon: 'ఫోటాన్ (కాంతి)', gravity: 'గురుత్వాకర్షణ?', oneString: 'ఒకే తీగ',
+    },
+  }
+};
+let LANG='en';
+function tr(){ return T[LANG]; }
+function applyStaticText(){
+  const t=tr();
+  document.documentElement.lang=LANG;
+  document.getElementById('langToggle').textContent=t.langToggle;
+  document.getElementById('backLink').innerHTML=t.backLink;
+  document.getElementById('pageTitle').textContent=t.pageTitle;
+  document.getElementById('pageSubtitle').textContent=t.pageSubtitle;
+  document.getElementById('restartBtn').textContent=t.restartBtn;
+  for(let i=0;i<4;i++){
+    document.getElementById('s'+(i+1)+'t').textContent=t.steps[i][0];
+    document.getElementById('s'+(i+1)+'d').innerHTML=t.steps[i][1];
+  }
+  document.getElementById('factBox').innerHTML=t.fact;
+  document.getElementById('tryTitle').textContent=t.tryTitle;
+  document.getElementById('trySubtitle').textContent=t.trySubtitle;
+  document.getElementById('slowPluck').textContent=t.slowPluck;
+  document.getElementById('fastPluck').textContent=t.fastPluck;
+  document.getElementById('tryReset').textContent=t.tryReset;
+}
+document.getElementById('langToggle').addEventListener('click',()=>{
+  LANG = LANG==='en' ? 'te' : 'en';
+  applyStaticText();
+  if(window.__stringRefresh) window.__stringRefresh();
+  if(window.__tryRefresh) window.__tryRefresh();
+});
+applyStaticText();
+
 (function(){
   const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
   const W=canvas.width, H=canvas.height;
   const captionEl=document.getElementById('caption'), bannerEl=document.getElementById('banner'), progressBar=document.getElementById('progressBar');
   const playBtn=document.getElementById('playBtn'), restartBtn=document.getElementById('restartBtn');
 
-  const SCENES=[
-    {t:0,dur:7,banner:'🔎 STEP 1: ZOOM INTO AN ATOM',caption:'Inside an atom is a nucleus made of <b>protons</b> and <b>neutrons</b>, circled by <b>electrons</b>. Let\'s zoom in further, into a proton.'},
-    {t:7,dur:6,banner:'⚛️ INSIDE A PROTON: QUARKS',caption:'A proton itself is made of even tinier particles called <b>quarks</b>. For a long time, scientists thought quarks were just tiny points.'},
-    {t:13,dur:8,banner:'🎻 STRING THEORY\'S BIG IDEA',caption:'String theory suggests: what if quarks (and electrons) aren\'t points at all, but unimaginably tiny <b>loops of vibrating string</b>?'},
-    {t:21,dur:8,banner:'🎵 DIFFERENT VIBRATION = DIFFERENT PARTICLE',caption:'A guitar string makes different notes depending on how fast it vibrates. A tiny string might make a different <b>particle</b> the same way!'},
-    {t:29,dur:8,banner:'🌌 A "THEORY OF EVERYTHING"?',caption:'If true, ONE type of string, just vibrating differently, could explain every particle AND gravity — the dream of a single theory for it all.'},
-  ];
+  const starts=[0,7,13,21,29];
+  let simTime=0, playing=false, lastTs=null, captionOverride='initial';
   const totalDur=37;
-  let simTime=0, playing=false, lastTs=null;
-  function currentScene(t){ for(let i=SCENES.length-1;i>=0;i--) if(t>=SCENES[i].t) return i; return 0; }
+  function currentScene(t){ for(let i=starts.length-1;i>=0;i--) if(t>=starts[i]) return i; return 0; }
 
   function orbitPoint(cx,cy,rx,ry,angle,rot){
     const ex=Math.cos(angle)*rx, ey=Math.sin(angle)*ry;
@@ -121,16 +225,15 @@
       const [ex,ey]=orbitPoint(W/2,H/2,rx,ry,a,rot);
       ctx.fillStyle='#4fd3ff'; ctx.beginPath(); ctx.arc(ex,ey,6,0,Math.PI*2); ctx.fill();
     }
-    // nucleus cluster
     const parts=[[-8,-6,'#ff8f8f'],[8,-4,'#ffd23f'],[0,8,'#ff8f8f'],[10,6,'#ffd23f'],[-10,6,'#ff8f8f']];
     parts.forEach(([dx,dy,c])=>{ ctx.fillStyle=c; ctx.beginPath(); ctx.arc(W/2+dx,H/2+dy,9,0,Math.PI*2); ctx.fill(); });
-    label(W/2,H/2+70,'NUCLEUS (protons + neutrons)','#ff8f8f');
-    label(W/2,H/2-110,'electrons whizzing around','#4fd3ff');
+    label(W/2,H/2+70,tr().canvas.nucleus,'#ff8f8f');
+    label(W/2,H/2-110,tr().canvas.electrons,'#4fd3ff');
   }
   function drawProtonZoom(local){
     const cx=W/2, cy=H/2;
     ctx.fillStyle='#ff8f8f'; ctx.globalAlpha=0.15; ctx.beginPath(); ctx.arc(cx,cy,140,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1;
-    label(cx,cy-160,'ONE PROTON, ZOOMED WAY IN','#ff8f8f');
+    label(cx,cy-160,tr().canvas.protonZoom,'#ff8f8f');
     const quarks=[[0,-60,'#ffd23f','up'],[-55,50,'#4fd3ff','up'],[55,50,'#6dffb0','down']];
     quarks.forEach(([dx,dy,c,type],i)=>{
       const wob=Math.sin(local*3+i)*6;
@@ -138,7 +241,7 @@
       ctx.fillStyle='#0b1020'; ctx.font='800 12px Segoe UI'; ctx.textAlign='center';
       ctx.fillText(type,cx+dx,cy+dy+wob+4);
     });
-    label(cx,cy+110,'3 QUARKS make one proton','#eef2ff');
+    label(cx,cy+110,tr().canvas.threeQuarks,'#eef2ff');
   }
   function drawStringLoop(local,speedLabel){
     const cx=W/2, cy=H/2, r=70;
@@ -151,11 +254,11 @@
       if(a===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
     }
     ctx.closePath(); ctx.stroke();
-    label(cx,cy-120,'A tiny vibrating loop of "string"','#ffd23f');
+    label(cx,cy-120,tr().canvas.stringLoop,'#ffd23f');
     if(speedLabel) label(cx,cy+120,speedLabel,'#8fd2ff');
   }
   function drawVibrationCompare(local){
-    const configs=[{cx:220,speed:3,label:'slow wiggle → say, an ELECTRON'},{cx:680,speed:9,label:'fast wiggle → say, a QUARK'}];
+    const configs=[{cx:220,speed:3,label:tr().canvas.slowWiggle},{cx:680,speed:9,label:tr().canvas.fastWiggle}];
     configs.forEach(cfg=>{
       ctx.strokeStyle='#4fd3ff'; ctx.lineWidth=3;
       ctx.beginPath();
@@ -168,7 +271,7 @@
     });
   }
   function drawTheoryOfEverything(local){
-    const items=[{label:'ELECTRON',c:'#4fd3ff'},{label:'QUARK',c:'#ffd23f'},{label:'PHOTON (light)',c:'#fff'},{label:'GRAVITY?',c:'#6dffb0'}];
+    const items=[{label:tr().canvas.electron,c:'#4fd3ff'},{label:tr().canvas.quark,c:'#ffd23f'},{label:tr().canvas.photon,c:'#fff'},{label:tr().canvas.gravity,c:'#6dffb0'}];
     items.forEach((it,i)=>{
       const a=i*(Math.PI*2/4)+local*0.4;
       const x=W/2+Math.cos(a)*180, y=H/2+Math.sin(a)*110;
@@ -176,7 +279,7 @@
       ctx.fillStyle=it.c; ctx.beginPath(); ctx.arc(x,y,14,0,Math.PI*2); ctx.fill();
       label(x,y-24,it.label,it.c);
     });
-    label(W/2,H/2,'ONE STRING','#ffd23f');
+    label(W/2,H/2,tr().canvas.oneString,'#ffd23f');
   }
   function label(x,y,text,color){
     ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
@@ -187,8 +290,8 @@
 
   function render(t){
     ctx.clearRect(0,0,W,H); ctx.fillStyle='#04060f'; ctx.fillRect(0,0,W,H);
-    const idx=currentScene(t), scene=SCENES[idx], local=t-scene.t;
-    bannerEl.textContent=scene.banner; captionEl.innerHTML=scene.caption;
+    const idx=currentScene(t), scene=tr().scenes[idx], local=t-starts[idx];
+    bannerEl.textContent=scene[0]; captionEl.innerHTML=scene[1];
     if(idx===0) drawAtom(t);
     else if(idx===1) drawProtonZoom(local);
     else if(idx===2) drawStringLoop(local,null);
@@ -202,15 +305,24 @@
     const dt=Math.min(0.05,(ts-lastTs)/1000); lastTs=ts;
     simTime+=dt;
     if(simTime>=totalDur){ simTime=totalDur; render(simTime); pause();
-      captionEl.innerHTML='🎬 The End! Press <b>Restart</b> to watch again.'; return; }
+      captionOverride='ended'; captionEl.innerHTML=tr().captionEnd; return; }
+    captionOverride=null;
     render(simTime); requestAnimationFrame(step);
   }
-  function play(){ if(playing) return; playing=true; lastTs=null; playBtn.textContent='⏸ Pause'; requestAnimationFrame(step); }
-  function pause(){ playing=false; playBtn.textContent='▶ Play'; }
-  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionEl.innerHTML='Press <b>Play</b> to start!'; }
+  function play(){ if(playing) return; playing=true; lastTs=null; captionOverride=null; playBtn.textContent=tr().pauseBtn; requestAnimationFrame(step); }
+  function pause(){ playing=false; playBtn.textContent=tr().playBtn; }
+  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionOverride='initial'; captionEl.innerHTML=tr().captionInitial; }
   playBtn.addEventListener('click',()=>playing?pause():play());
   restartBtn.addEventListener('click',restart);
+  playBtn.textContent=tr().playBtn;
   render(0);
+
+  window.__stringRefresh=function(){
+    playBtn.textContent = playing ? tr().pauseBtn : tr().playBtn;
+    render(simTime);
+    if(captionOverride==='initial') captionEl.innerHTML=tr().captionInitial;
+    else if(captionOverride==='ended') captionEl.innerHTML=tr().captionEnd;
+  };
 })();
 
 (function(){
@@ -218,6 +330,13 @@
   const w=cv.width,h=cv.height;
   let speed=3, t=0;
   const resultEl=document.getElementById('tryResult');
+  let lastResult='default';
+  function updateResultText(){
+    const tt=tr();
+    if(lastResult==='slow') resultEl.textContent=tt.tryResultSlow;
+    else if(lastResult==='fast') resultEl.textContent=tt.tryResultFast;
+    else resultEl.textContent=tt.tryResultDefault;
+  }
   function draw(){
     c.clearRect(0,0,w,h); c.fillStyle='#04060f'; c.fillRect(0,0,w,h);
     c.strokeStyle='#ffd23f'; c.lineWidth=4;
@@ -228,13 +347,16 @@
     }
     c.stroke();
     c.fillStyle='#8fd2ff'; c.font='700 14px Segoe UI'; c.textAlign='center';
-    c.fillText('vibration speed: '+speed.toFixed(1), w/2, h-20);
+    c.fillText(tr().vibrationSpeed(speed.toFixed(1)), w/2, h-20);
   }
   function loop(){ t+=0.05; draw(); requestAnimationFrame(loop); }
-  document.getElementById('slowPluck').addEventListener('click',()=>{ speed=3; resultEl.textContent='A gentle, slow wiggle — imagine this becomes a light, simple particle like an electron.'; });
-  document.getElementById('fastPluck').addEventListener('click',()=>{ speed=11; resultEl.textContent='A tight, fast wiggle — imagine this becomes a heavier, different particle like a quark!'; });
-  document.getElementById('tryReset').addEventListener('click',()=>{ speed=3; resultEl.textContent='A slow, gentle wiggle vs. a fast, tight wiggle make different "particles"!'; });
+  document.getElementById('slowPluck').addEventListener('click',()=>{ speed=3; lastResult='slow'; updateResultText(); });
+  document.getElementById('fastPluck').addEventListener('click',()=>{ speed=11; lastResult='fast'; updateResultText(); });
+  document.getElementById('tryReset').addEventListener('click',()=>{ speed=3; lastResult='default'; updateResultText(); });
+  updateResultText();
   draw(); requestAnimationFrame(loop);
+
+  window.__tryRefresh=function(){ updateResultText(); draw(); };
 })();
 </script>
 </body>
