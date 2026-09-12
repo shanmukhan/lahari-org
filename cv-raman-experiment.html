@@ -25,52 +25,59 @@
   .today{margin-top:24px;background:var(--panel);border:1px solid #262f5c;border-radius:14px;padding:20px 22px;}
   .today h3{margin:0 0 8px;color:var(--accent);font-size:16px;}
   .today p{margin:0;color:var(--dim);font-size:14px;line-height:1.6;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="category-indian-scientists.html">&larr; Back to Indian Scientists</a>
+  <div class="topbar">
+    <a class="back" href="category-indian-scientists.html" id="backLink">&larr; Back to Indian Scientists</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
 
   <div class="hero">
     <canvas id="portrait" width="240" height="240"></canvas>
-    <p class="portrait-note">🎨 Illustrative portrait — not a photograph</p>
-    <div class="era">1888–1970 · Tiruchirappalli &amp; Bangalore, India</div>
-    <h1>C. V. Raman</h1>
-    <p class="tagline">Discovered that light changes color ever so slightly when it bounces off molecules — a
+    <p class="portrait-note" id="portraitNote">🎨 Illustrative portrait — not a photograph</p>
+    <div class="era" id="eraText">1888–1970 · Tiruchirappalli &amp; Bangalore, India</div>
+    <h1 id="nameTitle">C. V. Raman</h1>
+    <p class="tagline" id="taglineText">Discovered that light changes color ever so slightly when it bounces off molecules — a
       finding that earned India its first Nobel Prize in the sciences.</p>
   </div>
 
   <div class="steps">
     <div class="step-card">
-      <h3>🌊 A question about the sea</h3>
-      <p>On a ship voyage in 1921, Raman wondered why the deep blue Mediterranean Sea was so blue — was it just
+      <h3 id="step1Title">🌊 A question about the sea</h3>
+      <p id="step1Desc">On a ship voyage in 1921, Raman wondered why the deep blue Mediterranean Sea was so blue — was it just
         reflecting the sky, as scientists assumed, or something else? That question led him toward his discovery.</p>
     </div>
     <div class="step-card">
-      <h3>🔬 The Raman Effect</h3>
-      <p>In 1928, he showed that when light passes through a substance, a tiny fraction of it scatters at a
+      <h3 id="step2Title">🔬 The Raman Effect</h3>
+      <p id="step2Desc">In 1928, he showed that when light passes through a substance, a tiny fraction of it scatters at a
         <b>different wavelength</b> — shifted by the exact vibration pattern of the molecules it bounced off.</p>
     </div>
     <div class="step-card">
-      <h3>🏅 Nobel Prize, 1930</h3>
-      <p>He won the Nobel Prize in Physics in 1930 for this discovery — becoming the first Asian and the first
+      <h3 id="step3Title">🏅 Nobel Prize, 1930</h3>
+      <p id="step3Desc">He won the Nobel Prize in Physics in 1930 for this discovery — becoming the first Asian and the first
         person of color to win a Nobel Prize in any science.</p>
     </div>
     <div class="step-card">
-      <h3>🔍 Reading molecules by their light</h3>
-      <p>Because each molecule scatters light in its own unique way, the "Raman spectrum" acts like a fingerprint —
+      <h3 id="step4Title">🔍 Reading molecules by their light</h3>
+      <p id="step4Desc">Because each molecule scatters light in its own unique way, the "Raman spectrum" acts like a fingerprint —
         letting scientists identify exactly what substance they're looking at, without touching it.</p>
     </div>
   </div>
 
   <div class="today">
-    <h3>🧪 A concrete example</h3>
-    <p>Raman spectroscopy is now used to detect counterfeit medicines, identify unknown chemicals at crime scenes,
+    <h3 id="todayTitle">🧪 A concrete example</h3>
+    <p id="todayDesc">Raman spectroscopy is now used to detect counterfeit medicines, identify unknown chemicals at crime scenes,
       check the authenticity of gemstones, and was even used by NASA's Mars rovers to analyze rock samples millions
       of miles away — all built on Raman's original 1928 discovery.</p>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> Raman made his discovery using astonishingly simple equipment — mostly sunlight, a
     prism, and some basic lenses and filters he built himself. No giant laboratory, no expensive machines — just
     careful observation and a good question about why the sea looked blue.
@@ -78,6 +85,67 @@
 </div>
 
 <script>
+const T = {
+  en: {
+    langToggle: 'తెలుగు',
+    backLink: '&larr; Back to Indian Scientists',
+    portraitNote: '🎨 Illustrative portrait — not a photograph',
+    era: '1888–1970 · Tiruchirappalli &amp; Bangalore, India',
+    name: 'C. V. Raman',
+    tagline: 'Discovered that light changes color ever so slightly when it bounces off molecules — a finding that earned India its first Nobel Prize in the sciences.',
+    steps: [
+      ['🌊 A question about the sea','On a ship voyage in 1921, Raman wondered why the deep blue Mediterranean Sea was so blue — was it just reflecting the sky, as scientists assumed, or something else? That question led him toward his discovery.'],
+      ['🔬 The Raman Effect','In 1928, he showed that when light passes through a substance, a tiny fraction of it scatters at a <b>different wavelength</b> — shifted by the exact vibration pattern of the molecules it bounced off.'],
+      ['🏅 Nobel Prize, 1930','He won the Nobel Prize in Physics in 1930 for this discovery — becoming the first Asian and the first person of color to win a Nobel Prize in any science.'],
+      ['🔍 Reading molecules by their light','Because each molecule scatters light in its own unique way, the "Raman spectrum" acts like a fingerprint — letting scientists identify exactly what substance they\'re looking at, without touching it.'],
+    ],
+    todayTitle: '🧪 A concrete example',
+    todayDesc: 'Raman spectroscopy is now used to detect counterfeit medicines, identify unknown chemicals at crime scenes, check the authenticity of gemstones, and was even used by NASA\'s Mars rovers to analyze rock samples millions of miles away — all built on Raman\'s original 1928 discovery.',
+    fact: '🤯 <b>Mind-blowing part:</b> Raman made his discovery using astonishingly simple equipment — mostly sunlight, a prism, and some basic lenses and filters he built himself. No giant laboratory, no expensive machines — just careful observation and a good question about why the sea looked blue.',
+  },
+  te: {
+    langToggle: 'English',
+    backLink: '&larr; భారతీయ శాస్త్రవేత్తలకు తిరిగి',
+    portraitNote: '🎨 ఇది కల్పిత చిత్రం — ఛాయాచిత్రం కాదు',
+    era: '1888–1970 · తిరుచిరాపల్లి & బెంగళూరు, భారతదేశం',
+    name: 'సి. వి. రామన్',
+    tagline: 'కాంతి అణువులపై ప్రతిఫలించినప్పుడు దాని రంగు స్వల్పంగా మారుతుందని కనుగొన్నారు — ఈ కనుగొనుట భారతదేశానికి శాస్త్రాలలో మొదటి నోబెల్ బహుమతిని తెచ్చిపెట్టింది.',
+    steps: [
+      ['🌊 సముద్రం గురించి ఒక ప్రశ్న','1921లో ఒక ఓడ ప్రయాణంలో, రామన్ లోతైన నీలిరంగు మధ్యధరా సముద్రం ఎందుకు అంత నీలంగా ఉందో ఆశ్చర్యపోయారు — అది కేవలం ఆకాశాన్ని ప్రతిఫలిస్తుందా, శాస్త్రవేత్తలు అనుకున్నట్లు, లేదా వేరే కారణమా? ఆ ప్రశ్న ఆయనను తన కనుగొనుట వైపు నడిపించింది.'],
+      ['🔬 రామన్ ఎఫెక్ట్','1928లో, కాంతి ఒక పదార్థం గుండా వెళుతున్నప్పుడు, దానిలో కొంత భాగం <b>వేరే తరంగదైర్ఘ్యంలో</b> చెల్లాచెదురవుతుందని ఆయన చూపించారు — ఇది అది తాకిన అణువుల ఖచ్చితమైన కంపన సరళి ద్వారా మార్చబడుతుంది.'],
+      ['🏅 నోబెల్ బహుమతి, 1930','ఈ కనుగొనుటకు 1930లో ఆయన భౌతికశాస్త్రంలో నోబెల్ బహుమతిని గెలుచుకున్నారు — ఏదైనా శాస్త్రంలో నోబెల్ బహుమతిని గెలుచుకున్న మొదటి ఆసియన్‌గా, మొదటి రంగుగల వ్యక్తిగా నిలిచారు.'],
+      ['🔍 కాంతి ద్వారా అణువులను చదవడం','ప్రతి అణువు తన స్వంత ప్రత్యేక విధానంలో కాంతిని చెల్లాచెదురు చేస్తుంది కాబట్టి, "రామన్ స్పెక్ట్రమ్" వేలిముద్రలా పనిచేస్తుంది — శాస్త్రవేత్తలు తాకకుండానే ఏ పదార్థాన్ని చూస్తున్నారో ఖచ్చితంగా గుర్తించడానికి ఇది సహాయపడుతుంది.'],
+    ],
+    todayTitle: '🧪 ఒక నిజమైన ఉదాహరణ',
+    todayDesc: 'రామన్ స్పెక్ట్రోస్కోపీని ఇప్పుడు నకిలీ మందులను గుర్తించడానికి, నేర స్థలాలలో తెలియని రసాయనాలను గుర్తించడానికి, రత్నాల నిజాయితీని పరిశీలించడానికి ఉపయోగిస్తున్నారు, మరియు కోట్ల మైళ్ల దూరంలో ఉన్న శిలా నమూనాలను విశ్లేషించడానికి NASA యొక్క అంగారక రోవర్లలో కూడా దీన్ని ఉపయోగించారు — ఇవన్నీ రామన్ యొక్క 1928 నాటి మౌలిక కనుగొనుటపై ఆధారపడి ఉన్నాయి.',
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> రామన్ తన కనుగొనుటను ఆశ్చర్యకరంగా సాధారణ పరికరాలతో చేశారు — ఎక్కువగా సూర్యకాంతి, ఒక ప్రిజం, మరియు ఆయనే స్వయంగా తయారు చేసిన కొన్ని సాధారణ కటకాలు మరియు ఫిల్టర్లు. పెద్ద ప్రయోగశాల లేదు, ఖరీదైన యంత్రాలు లేవు — కేవలం జాగ్రత్తైన పరిశీలన మరియు సముద్రం నీలంగా ఎందుకు కనిపిస్తుందనే మంచి ప్రశ్న మాత్రమే.',
+  }
+};
+let LANG='en';
+function tr(){ return T[LANG]; }
+function applyStaticText(){
+  const t=tr();
+  document.documentElement.lang=LANG;
+  document.getElementById('langToggle').textContent=t.langToggle;
+  document.getElementById('backLink').innerHTML=t.backLink;
+  document.getElementById('portraitNote').textContent=t.portraitNote;
+  document.getElementById('eraText').innerHTML=t.era;
+  document.getElementById('nameTitle').textContent=t.name;
+  document.getElementById('taglineText').textContent=t.tagline;
+  for(let i=0;i<4;i++){
+    document.getElementById('step'+(i+1)+'Title').innerHTML=t.steps[i][0];
+    document.getElementById('step'+(i+1)+'Desc').innerHTML=t.steps[i][1];
+  }
+  document.getElementById('todayTitle').textContent=t.todayTitle;
+  document.getElementById('todayDesc').innerHTML=t.todayDesc;
+  document.getElementById('factBox').innerHTML=t.fact;
+}
+document.getElementById('langToggle').addEventListener('click',()=>{
+  LANG = LANG==='en' ? 'te' : 'en';
+  applyStaticText();
+});
+applyStaticText();
+
 (function(){
   const c=document.getElementById('portrait'), ctx=c.getContext('2d');
   const W=c.width,H=c.height;

@@ -25,51 +25,58 @@
   .today{margin-top:24px;background:var(--panel);border:1px solid #262f5c;border-radius:14px;padding:20px 22px;}
   .today h3{margin:0 0 8px;color:var(--accent);font-size:16px;}
   .today p{margin:0;color:var(--dim);font-size:14px;line-height:1.6;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="category-indian-scientists.html">&larr; Back to Indian Scientists</a>
+  <div class="topbar">
+    <a class="back" href="category-indian-scientists.html" id="backLink">&larr; Back to Indian Scientists</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
 
   <div class="hero">
     <canvas id="portrait" width="240" height="240"></canvas>
-    <p class="portrait-note">🎨 Illustrative portrait, styled after his era — not a photograph</p>
-    <div class="era">1887–1920 · Erode, India &amp; Cambridge, England</div>
-    <h1>Srinivasa Ramanujan</h1>
-    <p class="tagline">A largely self-taught mathematician who filled notebooks with original formulas — many of which
+    <p class="portrait-note" id="portraitNote">🎨 Illustrative portrait, styled after his era — not a photograph</p>
+    <div class="era" id="eraText">1887–1920 · Erode, India &amp; Cambridge, England</div>
+    <h1 id="nameTitle">Srinivasa Ramanujan</h1>
+    <p class="tagline" id="taglineText">A largely self-taught mathematician who filled notebooks with original formulas — many of which
       mathematicians and physicists are still finding new uses for, over a century later.</p>
   </div>
 
   <div class="steps">
     <div class="step-card">
-      <h3>📓 Teaching himself from one book</h3>
-      <p>With almost no formal training, Ramanujan taught himself advanced mathematics from a single textbook of
+      <h3 id="step1Title">📓 Teaching himself from one book</h3>
+      <p id="step1Desc">With almost no formal training, Ramanujan taught himself advanced mathematics from a single textbook of
         results, then went far beyond it — rediscovering known theorems and inventing entirely new ones on his own.</p>
     </div>
     <div class="step-card">
-      <h3>✉️ A letter that changed everything</h3>
-      <p>In 1913, he mailed pages of his original formulas to the Cambridge mathematician G. H. Hardy, who
+      <h3 id="step2Title">✉️ A letter that changed everything</h3>
+      <p id="step2Desc">In 1913, he mailed pages of his original formulas to the Cambridge mathematician G. H. Hardy, who
         recognized their brilliance instantly and invited him to England to collaborate.</p>
     </div>
     <div class="step-card">
-      <h3>➗ Thousands of original results</h3>
-      <p>He produced nearly <b>3,900 results</b> — identities, infinite series, and continued fractions — many
+      <h3 id="step3Title">➗ Thousands of original results</h3>
+      <p id="step3Desc">He produced nearly <b>3,900 results</b> — identities, infinite series, and continued fractions — many
         without formal proofs, simply because he seemed to sense they were true.</p>
     </div>
     <div class="step-card">
-      <h3>📒 The "Lost Notebook"</h3>
-      <p>A notebook of his found decades after his death (called the "Lost Notebook") is still being studied by
+      <h3 id="step4Title">📒 The "Lost Notebook"</h3>
+      <p id="step4Desc">A notebook of his found decades after his death (called the "Lost Notebook") is still being studied by
         mathematicians today, revealing formulas connected to modern physics and string theory.</p>
     </div>
   </div>
 
   <div class="today">
-    <h3>🧮 A concrete example</h3>
-    <p>Ramanujan's formulas for calculating pi converge on the correct answer astonishingly fast — modern computer
+    <h3 id="todayTitle">🧮 A concrete example</h3>
+    <p id="todayDesc">Ramanujan's formulas for calculating pi converge on the correct answer astonishingly fast — modern computer
       programs that calculate pi to trillions of digits often use techniques directly built on his 1914 series.</p>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> Ramanujan once described a taxicab numbered <b>1729</b> as "very interesting" —
     it's the smallest number expressible as the sum of two cubes in two different ways
     (1³ + 12³ and 9³ + 10³). Mathematicians now call numbers like it "taxicab numbers" in his honor.
@@ -77,6 +84,67 @@
 </div>
 
 <script>
+const T = {
+  en: {
+    langToggle: 'తెలుగు',
+    backLink: '&larr; Back to Indian Scientists',
+    portraitNote: '🎨 Illustrative portrait, styled after his era — not a photograph',
+    era: '1887–1920 · Erode, India &amp; Cambridge, England',
+    name: 'Srinivasa Ramanujan',
+    tagline: 'A largely self-taught mathematician who filled notebooks with original formulas — many of which mathematicians and physicists are still finding new uses for, over a century later.',
+    steps: [
+      ['📓 Teaching himself from one book','With almost no formal training, Ramanujan taught himself advanced mathematics from a single textbook of results, then went far beyond it — rediscovering known theorems and inventing entirely new ones on his own.'],
+      ['✉️ A letter that changed everything','In 1913, he mailed pages of his original formulas to the Cambridge mathematician G. H. Hardy, who recognized their brilliance instantly and invited him to England to collaborate.'],
+      ['➗ Thousands of original results','He produced nearly <b>3,900 results</b> — identities, infinite series, and continued fractions — many without formal proofs, simply because he seemed to sense they were true.'],
+      ['📒 The "Lost Notebook"','A notebook of his found decades after his death (called the "Lost Notebook") is still being studied by mathematicians today, revealing formulas connected to modern physics and string theory.'],
+    ],
+    todayTitle: '🧮 A concrete example',
+    todayDesc: 'Ramanujan\'s formulas for calculating pi converge on the correct answer astonishingly fast — modern computer programs that calculate pi to trillions of digits often use techniques directly built on his 1914 series.',
+    fact: '🤯 <b>Mind-blowing part:</b> Ramanujan once described a taxicab numbered <b>1729</b> as "very interesting" — it\'s the smallest number expressible as the sum of two cubes in two different ways (1³ + 12³ and 9³ + 10³). Mathematicians now call numbers like it "taxicab numbers" in his honor.',
+  },
+  te: {
+    langToggle: 'English',
+    backLink: '&larr; భారతీయ శాస్త్రవేత్తలకు తిరిగి',
+    portraitNote: '🎨 ఇది కల్పిత చిత్రం, ఆయన కాలానికి తగినట్లుగా — ఛాయాచిత్రం కాదు',
+    era: '1887–1920 · ఈరోడ్, భారతదేశం & కేంబ్రిడ్జ్, ఇంగ్లండ్',
+    name: 'శ్రీనివాస రామానుజన్',
+    tagline: 'ఎక్కువగా స్వయంకృషితో నేర్చుకున్న గణిత శాస్త్రజ్ఞుడు, ఆయన నోట్‌బుక్‌లను స్వీయ సూత్రాలతో నింపారు — వాటిలో చాలా వాటికి గణిత శాస్త్రజ్ఞులు మరియు భౌతిక శాస్త్రజ్ఞులు ఒక శతాబ్దం తర్వాత కూడా కొత్త ఉపయోగాలను కనుగొంటున్నారు.',
+    steps: [
+      ['📓 ఒక పుస్తకం నుండి స్వయంగా నేర్చుకోవడం','దాదాపు ఎలాంటి అధికారిక శిక్షణ లేకుండా, రామానుజన్ ఒకే ఒక ఫలితాల పాఠ్యపుస్తకం నుండి అధునాతన గణితాన్ని స్వయంగా నేర్చుకున్నారు, తర్వాత దానికి మించి చాలా దూరం వెళ్లారు — తెలిసిన సిద్ధాంతాలను తిరిగి కనుగొని, పూర్తిగా కొత్తవాటిని స్వయంగా కనిపెట్టారు.'],
+      ['✉️ అన్నింటినీ మార్చిన ఉత్తరం','1913లో, ఆయన తన స్వీయ సూత్రాల పేజీలను కేంబ్రిడ్జ్ గణిత శాస్త్రజ్ఞుడు జి. హెచ్. హార్డీకి పంపారు, ఆయన వాటి ప్రతిభను తక్షణమే గుర్తించి, కలిసి పనిచేయడానికి ఆయనను ఇంగ్లండ్‌కు ఆహ్వానించారు.'],
+      ['➗ వేలాది స్వీయ ఫలితాలు','ఆయన దాదాపు <b>3,900 ఫలితాలను</b> రూపొందించారు — సమానతలు, అనంత శ్రేణులు, మరియు నిరంతర భిన్నాలు — వాటిలో చాలా వాటికి అధికారిక నిరూపణలు లేవు, ఎందుకంటే అవి నిజమని ఆయనకు అనిపించింది.'],
+      ['📒 "లాస్ట్ నోట్‌బుక్"','ఆయన మరణించిన దశాబ్దాల తర్వాత కనుగొనబడిన ఆయన నోట్‌బుక్ (దీన్ని "లాస్ట్ నోట్‌బుక్" అంటారు) నేటికీ గణిత శాస్త్రజ్ఞులచే అధ్యయనం చేయబడుతోంది, ఇది ఆధునిక భౌతికశాస్త్రం మరియు స్ట్రింగ్ థియరీకి సంబంధించిన సూత్రాలను వెల్లడిస్తుంది.'],
+    ],
+    todayTitle: '🧮 ఒక నిజమైన ఉదాహరణ',
+    todayDesc: 'పైని లెక్కించడానికి రామానుజన్ సూత్రాలు ఆశ్చర్యకరంగా వేగంగా సరైన సమాధానానికి చేరుకుంటాయి — పైని లక్షల కోట్ల అంకెల వరకు లెక్కించే ఆధునిక కంప్యూటర్ ప్రోగ్రామ్‌లు తరచుగా ఆయన 1914 శ్రేణిపై నేరుగా నిర్మించిన పద్ధతులను ఉపయోగిస్తాయి.',
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> రామానుజన్ ఒకసారి 1729 నంబర్ ఉన్న టాక్సీని "చాలా ఆసక్తికరమైనది" అని వర్ణించారు — ఇది రెండు వేర్వేరు విధాలుగా రెండు ఘనాల మొత్తంగా వ్యక్తీకరించగల అతి చిన్న సంఖ్య (1³ + 12³ మరియు 9³ + 10³). గణిత శాస్త్రజ్ఞులు ఇప్పుడు ఇలాంటి సంఖ్యలను ఆయన గౌరవార్థం "టాక్సీక్యాబ్ సంఖ్యలు" అని పిలుస్తారు.',
+  }
+};
+let LANG='en';
+function tr(){ return T[LANG]; }
+function applyStaticText(){
+  const t=tr();
+  document.documentElement.lang=LANG;
+  document.getElementById('langToggle').textContent=t.langToggle;
+  document.getElementById('backLink').innerHTML=t.backLink;
+  document.getElementById('portraitNote').textContent=t.portraitNote;
+  document.getElementById('eraText').innerHTML=t.era;
+  document.getElementById('nameTitle').textContent=t.name;
+  document.getElementById('taglineText').textContent=t.tagline;
+  for(let i=0;i<4;i++){
+    document.getElementById('step'+(i+1)+'Title').innerHTML=t.steps[i][0];
+    document.getElementById('step'+(i+1)+'Desc').innerHTML=t.steps[i][1];
+  }
+  document.getElementById('todayTitle').textContent=t.todayTitle;
+  document.getElementById('todayDesc').innerHTML=t.todayDesc;
+  document.getElementById('factBox').innerHTML=t.fact;
+}
+document.getElementById('langToggle').addEventListener('click',()=>{
+  LANG = LANG==='en' ? 'te' : 'en';
+  applyStaticText();
+});
+applyStaticText();
+
 (function(){
   const c=document.getElementById('portrait'), ctx=c.getContext('2d');
   const W=c.width,H=c.height;

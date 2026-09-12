@@ -25,52 +25,59 @@
   .today{margin-top:24px;background:var(--panel);border:1px solid #262f5c;border-radius:14px;padding:20px 22px;}
   .today h3{margin:0 0 8px;color:var(--accent);font-size:16px;}
   .today p{margin:0;color:var(--dim);font-size:14px;line-height:1.6;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="category-indian-scientists.html">&larr; Back to Indian Scientists</a>
+  <div class="topbar">
+    <a class="back" href="category-indian-scientists.html" id="backLink">&larr; Back to Indian Scientists</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
 
   <div class="hero">
     <canvas id="portrait" width="240" height="240"></canvas>
-    <p class="portrait-note">🎨 Illustrative portrait — not a photograph</p>
-    <div class="era">1894–1974 · Kolkata, India</div>
-    <h1>Satyendra Nath Bose</h1>
-    <p class="tagline">A physicist whose one bold letter to Einstein reshaped how we understand particles —
+    <p class="portrait-note" id="portraitNote">🎨 Illustrative portrait — not a photograph</p>
+    <div class="era" id="eraText">1894–1974 · Kolkata, India</div>
+    <h1 id="nameTitle">Satyendra Nath Bose</h1>
+    <p class="tagline" id="taglineText">A physicist whose one bold letter to Einstein reshaped how we understand particles —
       an entire category of particles, "bosons," now carries his name.</p>
   </div>
 
   <div class="steps">
     <div class="step-card">
-      <h3>✉️ A paper Einstein translated himself</h3>
-      <p>In 1924, Bose sent Einstein a short paper with a new way of counting how light particles (photons) behave.
+      <h3 id="step1Title">✉️ A paper Einstein translated himself</h3>
+      <p id="step1Desc">In 1924, Bose sent Einstein a short paper with a new way of counting how light particles (photons) behave.
         Einstein was so impressed he personally translated it into German and had it published.</p>
     </div>
     <div class="step-card">
-      <h3>🎲 A new kind of counting</h3>
-      <p>Bose realized that certain particles are so perfectly identical that swapping any two of them changes
+      <h3 id="step2Title">🎲 A new kind of counting</h3>
+      <p id="step2Desc">Bose realized that certain particles are so perfectly identical that swapping any two of them changes
         NOTHING — a subtle idea that needed a whole new kind of statistics to describe correctly.</p>
     </div>
     <div class="step-card">
-      <h3>⚛️ Bose-Einstein statistics</h3>
-      <p>Bose and Einstein together built out this idea into what's now called <b>Bose-Einstein statistics</b> —
+      <h3 id="step3Title">⚛️ Bose-Einstein statistics</h3>
+      <p id="step3Desc">Bose and Einstein together built out this idea into what's now called <b>Bose-Einstein statistics</b> —
         the mathematical rules that describe how particles like photons behave in large groups.</p>
     </div>
     <div class="step-card">
-      <h3>🏷️ Particles named after him</h3>
-      <p>Physicists later named this whole category of particles "bosons" in his honor — including photons,
+      <h3 id="step4Title">🏷️ Particles named after him</h3>
+      <p id="step4Desc">Physicists later named this whole category of particles "bosons" in his honor — including photons,
         gluons, and the famous Higgs boson, discovered at the Large Hadron Collider in 2012.</p>
     </div>
   </div>
 
   <div class="today">
-    <h3>🥶 A concrete example</h3>
-    <p>Cool a group of bosonic atoms down to almost absolute zero, and they can merge into a single strange state
+    <h3 id="todayTitle">🥶 A concrete example</h3>
+    <p id="todayDesc">Cool a group of bosonic atoms down to almost absolute zero, and they can merge into a single strange state
       of matter called a <b>Bose-Einstein condensate</b> — first created in a lab in 1995, confirming an idea Bose
       and Einstein had predicted seven decades earlier.</p>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> The famous <b>Higgs boson</b> — the particle that gives other particles their mass,
     discovered in 2012 after a decades-long search — carries "boson" as part of its very name, a permanent tribute
     to a physicist most people have never heard of.
@@ -78,6 +85,67 @@
 </div>
 
 <script>
+const T = {
+  en: {
+    langToggle: 'తెలుగు',
+    backLink: '&larr; Back to Indian Scientists',
+    portraitNote: '🎨 Illustrative portrait — not a photograph',
+    era: '1894–1974 · Kolkata, India',
+    name: 'Satyendra Nath Bose',
+    tagline: 'A physicist whose one bold letter to Einstein reshaped how we understand particles — an entire category of particles, "bosons," now carries his name.',
+    steps: [
+      ['✉️ A paper Einstein translated himself','In 1924, Bose sent Einstein a short paper with a new way of counting how light particles (photons) behave. Einstein was so impressed he personally translated it into German and had it published.'],
+      ['🎲 A new kind of counting','Bose realized that certain particles are so perfectly identical that swapping any two of them changes NOTHING — a subtle idea that needed a whole new kind of statistics to describe correctly.'],
+      ['⚛️ Bose-Einstein statistics','Bose and Einstein together built out this idea into what\'s now called <b>Bose-Einstein statistics</b> — the mathematical rules that describe how particles like photons behave in large groups.'],
+      ['🏷️ Particles named after him','Physicists later named this whole category of particles "bosons" in his honor — including photons, gluons, and the famous Higgs boson, discovered at the Large Hadron Collider in 2012.'],
+    ],
+    todayTitle: '🥶 A concrete example',
+    todayDesc: 'Cool a group of bosonic atoms down to almost absolute zero, and they can merge into a single strange state of matter called a <b>Bose-Einstein condensate</b> — first created in a lab in 1995, confirming an idea Bose and Einstein had predicted seven decades earlier.',
+    fact: '🤯 <b>Mind-blowing part:</b> The famous <b>Higgs boson</b> — the particle that gives other particles their mass, discovered in 2012 after a decades-long search — carries "boson" as part of its very name, a permanent tribute to a physicist most people have never heard of.',
+  },
+  te: {
+    langToggle: 'English',
+    backLink: '&larr; భారతీయ శాస్త్రవేత్తలకు తిరిగి',
+    portraitNote: '🎨 ఇది కల్పిత చిత్రం — ఛాయాచిత్రం కాదు',
+    era: '1894–1974 · కోల్‌కతా, భారతదేశం',
+    name: 'సత్యేంద్ర నాథ్ బోస్',
+    tagline: 'ఐన్‌స్టీన్‌కు రాసిన ఒక సాహసోపేతమైన ఉత్తరం కణాలను మనం అర్థం చేసుకునే విధానాన్నే మార్చిన భౌతిక శాస్త్రజ్ఞుడు — కణాల మొత్తం వర్గం, "బోసాన్లు," ఇప్పుడు ఆయన పేరును కలిగి ఉంది.',
+    steps: [
+      ['✉️ ఐన్‌స్టీన్ స్వయంగా అనువదించిన పత్రం','1924లో, బోస్ ఐన్‌స్టీన్‌కు కాంతి కణాలు (ఫోటాన్లు) ఎలా ప్రవర్తిస్తాయో లెక్కించే కొత్త పద్ధతితో ఒక చిన్న పత్రాన్ని పంపారు. ఐన్‌స్టీన్ దీనితో ఎంతగా ముగ్ధుడయ్యారంటే స్వయంగా దానిని జర్మన్‌లోకి అనువదించి ప్రచురించారు.'],
+      ['🎲 ఒక కొత్త రకమైన లెక్కింపు','కొన్ని కణాలు ఎంత సంపూర్ణంగా సమానంగా ఉంటాయంటే, వాటిలో ఏవైనా రెండింటిని మార్చినా ఏమీ మారదని బోస్ గ్రహించారు — దీన్ని సరిగ్గా వివరించడానికి పూర్తిగా కొత్త రకమైన గణాంకశాస్త్రం అవసరమైన సూక్ష్మ ఆలోచన.'],
+      ['⚛️ బోస్-ఐన్‌స్టీన్ గణాంకాలు','బోస్ మరియు ఐన్‌స్టీన్ కలిసి ఈ ఆలోచనను ఇప్పుడు <b>బోస్-ఐన్‌స్టీన్ గణాంకాలు</b> అని పిలిచే దానిగా అభివృద్ధి చేశారు — ఫోటాన్ల వంటి కణాలు పెద్ద గుంపులలో ఎలా ప్రవర్తిస్తాయో వివరించే గణిత నియమాలు.'],
+      ['🏷️ ఆయన పేరు మీద ఉన్న కణాలు','భౌతిక శాస్త్రజ్ఞులు తర్వాత ఈ మొత్తం కణాల వర్గాన్ని ఆయన గౌరవార్థం "బోసాన్లు" అని పేరు పెట్టారు — ఫోటాన్లు, గ్లూఆన్లు, మరియు 2012లో లార్జ్ హాడ్రాన్ కొలైడర్‌లో కనుగొనబడిన ప్రసిద్ధ హిగ్స్ బోసాన్‌తో సహా.'],
+    ],
+    todayTitle: '🥶 ఒక నిజమైన ఉదాహరణ',
+    todayDesc: 'బోసానిక్ అణువుల గుంపును దాదాపు పరమ శూన్య ఉష్ణోగ్రతకు చల్లబరిస్తే, అవి <b>బోస్-ఐన్‌స్టీన్ కండెన్సేట్</b> అనే ఒక విచిత్రమైన పదార్థ స్థితిగా కలిసిపోగలవు — 1995లో మొదటిసారి ప్రయోగశాలలో సృష్టించబడింది, బోస్ మరియు ఐన్‌స్టీన్ ఏడు దశాబ్దాల ముందు అంచనా వేసిన ఆలోచనను నిర్ధారిస్తూ.',
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> ప్రసిద్ధ <b>హిగ్స్ బోసాన్</b> — ఇతర కణాలకు వాటి ద్రవ్యరాశిని ఇచ్చే కణం, దశాబ్దాల శోధన తర్వాత 2012లో కనుగొనబడింది — దాని పేరులోనే "బోసాన్" అనే పదాన్ని కలిగి ఉంది, చాలామందికి తెలియని ఒక భౌతిక శాస్త్రజ్ఞుడికి శాశ్వత నివాళిగా.',
+  }
+};
+let LANG='en';
+function tr(){ return T[LANG]; }
+function applyStaticText(){
+  const t=tr();
+  document.documentElement.lang=LANG;
+  document.getElementById('langToggle').textContent=t.langToggle;
+  document.getElementById('backLink').innerHTML=t.backLink;
+  document.getElementById('portraitNote').textContent=t.portraitNote;
+  document.getElementById('eraText').textContent=t.era;
+  document.getElementById('nameTitle').textContent=t.name;
+  document.getElementById('taglineText').textContent=t.tagline;
+  for(let i=0;i<4;i++){
+    document.getElementById('step'+(i+1)+'Title').innerHTML=t.steps[i][0];
+    document.getElementById('step'+(i+1)+'Desc').innerHTML=t.steps[i][1];
+  }
+  document.getElementById('todayTitle').textContent=t.todayTitle;
+  document.getElementById('todayDesc').innerHTML=t.todayDesc;
+  document.getElementById('factBox').innerHTML=t.fact;
+}
+document.getElementById('langToggle').addEventListener('click',()=>{
+  LANG = LANG==='en' ? 'te' : 'en';
+  applyStaticText();
+});
+applyStaticText();
+
 (function(){
   const c=document.getElementById('portrait'), ctx=c.getContext('2d');
   const W=c.width,H=c.height;
