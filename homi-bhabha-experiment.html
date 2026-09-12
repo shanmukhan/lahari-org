@@ -25,51 +25,58 @@
   .today{margin-top:24px;background:var(--panel);border:1px solid #262f5c;border-radius:14px;padding:20px 22px;}
   .today h3{margin:0 0 8px;color:var(--accent);font-size:16px;}
   .today p{margin:0;color:var(--dim);font-size:14px;line-height:1.6;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="category-indian-scientists.html">&larr; Back to Indian Scientists</a>
+  <div class="topbar">
+    <a class="back" href="category-indian-scientists.html" id="backLink">&larr; Back to Indian Scientists</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
 
   <div class="hero">
     <canvas id="portrait" width="240" height="240"></canvas>
-    <p class="portrait-note">🎨 Illustrative portrait — not a photograph</p>
-    <div class="era">1909–1966 · Mumbai, India</div>
-    <h1>Homi J. Bhabha</h1>
-    <p class="tagline">A physicist who studied cosmic rays from deep space, then came home to build the
+    <p class="portrait-note" id="portraitNote">🎨 Illustrative portrait — not a photograph</p>
+    <div class="era" id="eraText">1909–1966 · Mumbai, India</div>
+    <h1 id="nameTitle">Homi J. Bhabha</h1>
+    <p class="tagline" id="taglineText">A physicist who studied cosmic rays from deep space, then came home to build the
       institutions that launched India's entire nuclear science program from scratch.</p>
   </div>
 
   <div class="steps">
     <div class="step-card">
-      <h3>🌠 Cosmic ray physics</h3>
-      <p>Before turning to nuclear energy, Bhabha did influential theoretical work on cosmic rays — high-energy
+      <h3 id="step1Title">🌠 Cosmic ray physics</h3>
+      <p id="step1Desc">Before turning to nuclear energy, Bhabha did influential theoretical work on cosmic rays — high-energy
         particles from space — including a process now known as "Bhabha scattering."</p>
     </div>
     <div class="step-card">
-      <h3>🏛️ Founding TIFR</h3>
-      <p>In 1945, he founded the <b>Tata Institute of Fundamental Research (TIFR)</b> in Mumbai, convincing the
+      <h3 id="step2Title">🏛️ Founding TIFR</h3>
+      <p id="step2Desc">In 1945, he founded the <b>Tata Institute of Fundamental Research (TIFR)</b> in Mumbai, convincing the
         Tata family to fund a serious center for advanced physics research in India.</p>
     </div>
     <div class="step-card">
-      <h3>☢️ Building an atomic energy program</h3>
-      <p>He went on to establish what is now the Bhabha Atomic Research Centre (BARC), laying the entire
+      <h3 id="step3Title">☢️ Building an atomic energy program</h3>
+      <p id="step3Desc">He went on to establish what is now the Bhabha Atomic Research Centre (BARC), laying the entire
         foundation — reactors, training, research — for India's nuclear science and energy program.</p>
     </div>
     <div class="step-card">
-      <h3>🎯 A vision for peaceful nuclear power</h3>
-      <p>Bhabha pushed strongly for nuclear technology to be used for peaceful purposes — especially electricity
+      <h3 id="step4Title">🎯 A vision for peaceful nuclear power</h3>
+      <p id="step4Desc">Bhabha pushed strongly for nuclear technology to be used for peaceful purposes — especially electricity
         generation — envisioning it as a path to energy independence for India.</p>
     </div>
   </div>
 
   <div class="today">
-    <h3>💡 A concrete example</h3>
-    <p>Nuclear power plants across India today — providing electricity to millions of homes — trace their roots
+    <h3 id="todayTitle">💡 A concrete example</h3>
+    <p id="todayDesc">Nuclear power plants across India today — providing electricity to millions of homes — trace their roots
       directly back to the institutions and training programs Bhabha built starting in the 1940s and 50s.</p>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> Bhabha wasn't only a scientist — he was also a talented painter and a lover of
     classical music, and he personally helped design the striking modern architecture of the TIFR campus he
     founded, treating science and art as connected pursuits.
@@ -77,6 +84,67 @@
 </div>
 
 <script>
+const T = {
+  en: {
+    langToggle: 'తెలుగు',
+    backLink: '&larr; Back to Indian Scientists',
+    portraitNote: '🎨 Illustrative portrait — not a photograph',
+    era: '1909–1966 · Mumbai, India',
+    name: 'Homi J. Bhabha',
+    tagline: 'A physicist who studied cosmic rays from deep space, then came home to build the institutions that launched India\'s entire nuclear science program from scratch.',
+    steps: [
+      ['🌠 Cosmic ray physics','Before turning to nuclear energy, Bhabha did influential theoretical work on cosmic rays — high-energy particles from space — including a process now known as "Bhabha scattering."'],
+      ['🏛️ Founding TIFR','In 1945, he founded the <b>Tata Institute of Fundamental Research (TIFR)</b> in Mumbai, convincing the Tata family to fund a serious center for advanced physics research in India.'],
+      ['☢️ Building an atomic energy program','He went on to establish what is now the Bhabha Atomic Research Centre (BARC), laying the entire foundation — reactors, training, research — for India\'s nuclear science and energy program.'],
+      ['🎯 A vision for peaceful nuclear power','Bhabha pushed strongly for nuclear technology to be used for peaceful purposes — especially electricity generation — envisioning it as a path to energy independence for India.'],
+    ],
+    todayTitle: '💡 A concrete example',
+    todayDesc: 'Nuclear power plants across India today — providing electricity to millions of homes — trace their roots directly back to the institutions and training programs Bhabha built starting in the 1940s and 50s.',
+    fact: '🤯 <b>Mind-blowing part:</b> Bhabha wasn\'t only a scientist — he was also a talented painter and a lover of classical music, and he personally helped design the striking modern architecture of the TIFR campus he founded, treating science and art as connected pursuits.',
+  },
+  te: {
+    langToggle: 'English',
+    backLink: '&larr; భారతీయ శాస్త్రవేత్తలకు తిరిగి',
+    portraitNote: '🎨 ఇది కల్పిత చిత్రం — ఛాయాచిత్రం కాదు',
+    era: '1909–1966 · ముంబై, భారతదేశం',
+    name: 'హోమీ జె. భాభా',
+    tagline: 'లోతైన అంతరిక్షం నుండి వచ్చే కాస్మిక్ కిరణాలను అధ్యయనం చేసిన భౌతిక శాస్త్రజ్ఞుడు, తర్వాత భారతదేశపు మొత్తం అణు శాస్త్ర కార్యక్రమాన్ని మొదటి నుండి ప్రారంభించిన సంస్థలను నిర్మించడానికి ఇంటికి తిరిగి వచ్చారు.',
+    steps: [
+      ['🌠 కాస్మిక్ కిరణ భౌతికశాస్త్రం','అణుశక్తి వైపు మళ్లే ముందు, భాభా కాస్మిక్ కిరణాలపై — అంతరిక్షం నుండి వచ్చే అధిక-శక్తి కణాలు — ప్రభావవంతమైన సైద్ధాంతిక పనిని చేశారు, దీనిలో ఇప్పుడు "భాభా స్కాటరింగ్" అని పిలువబడే ఒక ప్రక్రియ కూడా ఉంది.'],
+      ['🏛️ TIFR స్థాపన','1945లో, ఆయన ముంబైలో <b>టాటా ఇన్‌స్టిట్యూట్ ఆఫ్ ఫండమెంటల్ రీసెర్చ్ (TIFR)</b>ను స్థాపించారు, భారతదేశంలో అధునాతన భౌతికశాస్త్ర పరిశోధనకు ఒక ముఖ్యమైన కేంద్రానికి నిధులు సమకూర్చేలా టాటా కుటుంబాన్ని ఒప్పించారు.'],
+      ['☢️ అణుశక్తి కార్యక్రమాన్ని నిర్మించడం','ఆయన తర్వాత ఇప్పుడు భాభా అటామిక్ రీసెర్చ్ సెంటర్ (BARC) అని పిలువబడే దానిని స్థాపించారు, భారతదేశపు అణు శాస్త్రం మరియు శక్తి కార్యక్రమానికి — రియాక్టర్లు, శిక్షణ, పరిశోధన — మొత్తం పునాదిని వేశారు.'],
+      ['🎯 శాంతియుత అణుశక్తి కోసం ఒక దార్శనికత','అణు సాంకేతికతను శాంతియుత ప్రయోజనాల కోసం — ముఖ్యంగా విద్యుత్ ఉత్పత్తికి — ఉపయోగించాలని భాభా గట్టిగా ప్రోత్సహించారు, దీన్ని భారతదేశానికి శక్తి స్వాతంత్ర్యానికి ఒక మార్గంగా భావించారు.'],
+    ],
+    todayTitle: '💡 ఒక నిజమైన ఉదాహరణ',
+    todayDesc: 'నేడు భారతదేశం అంతటా ఉన్న అణు విద్యుత్ కేంద్రాలు — లక్షలాది గృహాలకు విద్యుత్తును అందిస్తున్నాయి — 1940లు మరియు 50లలో భాభా నిర్మించిన సంస్థలు మరియు శిక్షణా కార్యక్రమాలకు నేరుగా తమ మూలాలను గుర్తిస్తాయి.',
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> భాభా కేవలం శాస్త్రవేత్త మాత్రమే కాదు — ఆయన ప్రతిభావంతుడైన చిత్రకారుడు మరియు శాస్త్రీయ సంగీత ప్రేమికుడు కూడా, మరియు ఆయన స్థాపించిన TIFR క్యాంపస్ యొక్క ఆకర్షణీయమైన ఆధునిక వాస్తుశిల్పాన్ని రూపొందించడంలో వ్యక్తిగతంగా సహాయం చేశారు, శాస్త్రం మరియు కళను అనుసంధానిత అన్వేషణలుగా పరిగణించారు.',
+  }
+};
+let LANG='en';
+function tr(){ return T[LANG]; }
+function applyStaticText(){
+  const t=tr();
+  document.documentElement.lang=LANG;
+  document.getElementById('langToggle').textContent=t.langToggle;
+  document.getElementById('backLink').innerHTML=t.backLink;
+  document.getElementById('portraitNote').textContent=t.portraitNote;
+  document.getElementById('eraText').textContent=t.era;
+  document.getElementById('nameTitle').textContent=t.name;
+  document.getElementById('taglineText').textContent=t.tagline;
+  for(let i=0;i<4;i++){
+    document.getElementById('step'+(i+1)+'Title').innerHTML=t.steps[i][0];
+    document.getElementById('step'+(i+1)+'Desc').innerHTML=t.steps[i][1];
+  }
+  document.getElementById('todayTitle').textContent=t.todayTitle;
+  document.getElementById('todayDesc').innerHTML=t.todayDesc;
+  document.getElementById('factBox').innerHTML=t.fact;
+}
+document.getElementById('langToggle').addEventListener('click',()=>{
+  LANG = LANG==='en' ? 'te' : 'en';
+  applyStaticText();
+});
+applyStaticText();
+
 (function(){
   const c=document.getElementById('portrait'), ctx=c.getContext('2d');
   const W=c.width,H=c.height;
