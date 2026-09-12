@@ -25,56 +25,63 @@
   .today{margin-top:24px;background:var(--panel);border:1px solid #262f5c;border-radius:14px;padding:20px 22px;}
   .today h3{margin:0 0 8px;color:var(--accent);font-size:16px;}
   .today p{margin:0;color:var(--dim);font-size:14px;line-height:1.6;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="category-indian-scientists.html">&larr; Back to Indian Scientists</a>
+  <div class="topbar">
+    <a class="back" href="category-indian-scientists.html" id="backLink">&larr; Back to Indian Scientists</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
 
   <div class="hero">
     <canvas id="portrait" width="240" height="240"></canvas>
-    <p class="portrait-note">🎨 Illustrative portrait — no photograph exists from this era</p>
-    <div class="era">~600 BCE · Kashi (modern Varanasi), India</div>
-    <h1>Sushruta</h1>
-    <p class="tagline">Often called the "Father of Surgery" — he described over 300 surgical procedures and 120 instruments,
+    <p class="portrait-note" id="portraitNote">🎨 Illustrative portrait — no photograph exists from this era</p>
+    <div class="era" id="eraText">~600 BCE · Kashi (modern Varanasi), India</div>
+    <h1 id="nameTitle">Sushruta</h1>
+    <p class="tagline" id="taglineText">Often called the "Father of Surgery" — he described over 300 surgical procedures and 120 instruments,
       more than a thousand years before Western surgery caught up.</p>
   </div>
 
   <div class="steps">
     <div class="step-card">
-      <h3>📖 Who he was</h3>
-      <p>An ancient physician and teacher, believed to have practiced in Kashi. His teachings were compiled into the
+      <h3 id="step1Title">📖 Who he was</h3>
+      <p id="step1Desc">An ancient physician and teacher, believed to have practiced in Kashi. His teachings were compiled into the
         <b>Sushruta Samhita</b>, one of the foundational texts of Ayurvedic medicine — and one of the earliest known
         surgical textbooks in the world.</p>
     </div>
     <div class="step-card">
-      <h3>🔪 What he pioneered</h3>
-      <p>He described techniques for cataract surgery, cesarean sections, bone-setting, and — most famously —
+      <h3 id="step2Title">🔪 What he pioneered</h3>
+      <p id="step2Desc">He described techniques for cataract surgery, cesarean sections, bone-setting, and — most famously —
         <b>rhinoplasty</b>: reconstructing a nose using a flap of skin from the patient's own cheek or forehead,
         a technique still recognizable in plastic surgery today.</p>
     </div>
     <div class="step-card">
-      <h3>🛠️ How thorough he was</h3>
-      <p>The Sushruta Samhita catalogs 120 surgical instruments and classifies over 300 procedures, along with
+      <h3 id="step3Title">🛠️ How thorough he was</h3>
+      <p id="step3Desc">The Sushruta Samhita catalogs 120 surgical instruments and classifies over 300 procedures, along with
         detailed instructions on wound care, anesthesia using alcohol and herbs, and even suturing techniques using
         ant heads as makeshift stitches for tiny wounds.</p>
     </div>
     <div class="step-card">
-      <h3>🌍 Why it still matters</h3>
-      <p>His forehead-flap rhinoplasty method traveled through translated texts over centuries and directly
+      <h3 id="step4Title">🌍 Why it still matters</h3>
+      <p id="step4Desc">His forehead-flap rhinoplasty method traveled through translated texts over centuries and directly
         influenced the development of modern plastic surgery in 18th-century Europe — a direct line from an ancient
         Indian surgeon to today's reconstructive surgery.</p>
     </div>
   </div>
 
   <div class="today">
-    <h3>🏥 A concrete example</h3>
-    <p>Today, when a surgeon reconstructs a nose after an accident or birth defect using skin and tissue from
+    <h3 id="todayTitle">🏥 A concrete example</h3>
+    <p id="todayDesc">Today, when a surgeon reconstructs a nose after an accident or birth defect using skin and tissue from
       elsewhere on the patient's own body — called an "autograft" — they're using the core idea Sushruta wrote
       down millennia ago: the body's own tissue is often the best material to rebuild itself with.</p>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> Sushruta's forehead-flap rhinoplasty technique is still taught in modern medical
     schools essentially unchanged in principle — it's now called the <b>"Indian method"</b> of nasal reconstruction,
     a name surgeons around the world still use today.
@@ -82,6 +89,67 @@
 </div>
 
 <script>
+const T = {
+  en: {
+    langToggle: 'తెలుగు',
+    backLink: '&larr; Back to Indian Scientists',
+    portraitNote: '🎨 Illustrative portrait — no photograph exists from this era',
+    era: '~600 BCE · Kashi (modern Varanasi), India',
+    name: 'Sushruta',
+    tagline: 'Often called the "Father of Surgery" — he described over 300 surgical procedures and 120 instruments, more than a thousand years before Western surgery caught up.',
+    steps: [
+      ['📖 Who he was','An ancient physician and teacher, believed to have practiced in Kashi. His teachings were compiled into the <b>Sushruta Samhita</b>, one of the foundational texts of Ayurvedic medicine — and one of the earliest known surgical textbooks in the world.'],
+      ['🔪 What he pioneered','He described techniques for cataract surgery, cesarean sections, bone-setting, and — most famously — <b>rhinoplasty</b>: reconstructing a nose using a flap of skin from the patient\'s own cheek or forehead, a technique still recognizable in plastic surgery today.'],
+      ['🛠️ How thorough he was','The Sushruta Samhita catalogs 120 surgical instruments and classifies over 300 procedures, along with detailed instructions on wound care, anesthesia using alcohol and herbs, and even suturing techniques using ant heads as makeshift stitches for tiny wounds.'],
+      ['🌍 Why it still matters','His forehead-flap rhinoplasty method traveled through translated texts over centuries and directly influenced the development of modern plastic surgery in 18th-century Europe — a direct line from an ancient Indian surgeon to today\'s reconstructive surgery.'],
+    ],
+    todayTitle: '🏥 A concrete example',
+    todayDesc: 'Today, when a surgeon reconstructs a nose after an accident or birth defect using skin and tissue from elsewhere on the patient\'s own body — called an "autograft" — they\'re using the core idea Sushruta wrote down millennia ago: the body\'s own tissue is often the best material to rebuild itself with.',
+    fact: '🤯 <b>Mind-blowing part:</b> Sushruta\'s forehead-flap rhinoplasty technique is still taught in modern medical schools essentially unchanged in principle — it\'s now called the <b>"Indian method"</b> of nasal reconstruction, a name surgeons around the world still use today.',
+  },
+  te: {
+    langToggle: 'English',
+    backLink: '&larr; భారతీయ శాస్త్రవేత్తలకు తిరిగి',
+    portraitNote: '🎨 ఇది కల్పిత చిత్రం — ఈ కాలం నుండి ఛాయాచిత్రం లేదు',
+    era: '~600 BCE · కాశి (నేటి వారణాసి), భారతదేశం',
+    name: 'సుశ్రుతుడు',
+    tagline: '"శస్త్రచికిత్స పితామహుడు" అని పిలువబడే ఈయన 300కి పైగా శస్త్రచికిత్సా విధానాలను, 120 పరికరాలను వివరించారు — పాశ్చాత్య శస్త్రచికిత్స అభివృద్ధి చెందడానికి వెయ్యి సంవత్సరాలకు ముందే!',
+    steps: [
+      ['📖 ఆయన ఎవరు','కాశిలో వైద్యం చేసినట్లు భావించే ఒక ప్రాచీన వైద్యుడు మరియు గురువు. ఆయన బోధనలు <b>సుశ్రుత సంహిత</b>గా సంకలనం చేయబడ్డాయి — ఇది ఆయుర్వేద వైద్యానికి పునాది గ్రంథాలలో ఒకటి, మరియు ప్రపంచంలోని తొలి శస్త్రచికిత్సా గ్రంథాలలో ఒకటి.'],
+      ['🔪 ఆయన ప్రారంభించినవి','ఆయన శుక్లమోతం శస్త్రచికిత్స, సిజేరియన్ ప్రసవాలు, ఎముకలు అమర్చడం, మరియు అన్నిటికన్నా ప్రసిద్ధమైన — <b>రైనోప్లాస్టీ</b>: రోగి స్వంత చెంప లేదా నుదురు నుండి చర్మపు భాగాన్ని ఉపయోగించి ముక్కును పునర్నిర్మించే పద్ధతిని వివరించారు — ఇది నేటి ప్లాస్టిక్ సర్జరీలో కూడా గుర్తించదగినదే.'],
+      ['🛠️ ఆయన ఎంత సూక్ష్మంగా పనిచేశారు','సుశ్రుత సంహితలో 120 శస్త్రచికిత్సా పరికరాలు జాబితా చేయబడి, 300కి పైగా విధానాలు వర్గీకరించబడ్డాయి — గాయాల సంరక్షణ, మద్యం మరియు మూలికలతో మత్తు కలిగించడం, చిన్న గాయాలకు చీమల తలలను కుట్లుగా ఉపయోగించే పద్ధతుల వరకు వివరంగా సూచనలు ఉన్నాయి.'],
+      ['🌍 ఇది ఇప్పటికీ ఎందుకు ముఖ్యమైనది','ఆయన నుదురు-చర్మ రైనోప్లాస్టీ పద్ధతి శతాబ్దాలుగా అనువదించబడిన గ్రంథాల ద్వారా ప్రయాణించి, 18వ శతాబ్దపు యూరప్‌లో ఆధునిక ప్లాస్టిక్ సర్జరీ అభివృద్ధిని నేరుగా ప్రభావితం చేసింది — ఒక ప్రాచీన భారతీయ శస్త్రవైద్యుడి నుండి నేటి పునర్నిర్మాణ శస్త్రచికిత్స వరకు ఒక ప్రత్యక్ష సంబంధం.'],
+    ],
+    todayTitle: '🏥 ఒక నిజమైన ఉదాహరణ',
+    todayDesc: 'నేడు, ఒక ప్రమాదం లేదా పుట్టుకతో వచ్చిన లోపం తర్వాత శస్త్రవైద్యుడు రోగి శరీరంలోని మరో భాగం నుండి చర్మం మరియు కణజాలాన్ని ఉపయోగించి ముక్కును పునర్నిర్మించినప్పుడు — దీన్ని "ఆటోగ్రాఫ్ట్" అంటారు — వారు వేల సంవత్సరాల క్రితం సుశ్రుతుడు రాసిన మౌలిక ఆలోచననే ఉపయోగిస్తున్నారు: శరీరం తనను తాను పునర్నిర్మించుకోవడానికి తన స్వంత కణజాలమే తరచుగా ఉత్తమమైనది.',
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> సుశ్రుతుడి నుదురు-చర్మ రైనోప్లాస్టీ పద్ధతి నేటి వైద్య కళాశాలల్లో సూత్రప్రాయంగా మారకుండా ఇప్పటికీ బోధించబడుతుంది — దీన్ని ఇప్పుడు ముక్కు పునర్నిర్మాణానికి <b>"భారతీయ పద్ధతి"</b> అని పిలుస్తారు, ఈ పేరును ప్రపంచవ్యాప్తంగా శస్త్రవైద్యులు ఇప్పటికీ ఉపయోగిస్తున్నారు.',
+  }
+};
+let LANG='en';
+function tr(){ return T[LANG]; }
+function applyStaticText(){
+  const t=tr();
+  document.documentElement.lang=LANG;
+  document.getElementById('langToggle').textContent=t.langToggle;
+  document.getElementById('backLink').innerHTML=t.backLink;
+  document.getElementById('portraitNote').textContent=t.portraitNote;
+  document.getElementById('eraText').textContent=t.era;
+  document.getElementById('nameTitle').textContent=t.name;
+  document.getElementById('taglineText').textContent=t.tagline;
+  for(let i=0;i<4;i++){
+    document.getElementById('step'+(i+1)+'Title').innerHTML=t.steps[i][0];
+    document.getElementById('step'+(i+1)+'Desc').innerHTML=t.steps[i][1];
+  }
+  document.getElementById('todayTitle').textContent=t.todayTitle;
+  document.getElementById('todayDesc').innerHTML=t.todayDesc;
+  document.getElementById('factBox').innerHTML=t.fact;
+}
+document.getElementById('langToggle').addEventListener('click',()=>{
+  LANG = LANG==='en' ? 'te' : 'en';
+  applyStaticText();
+});
+applyStaticText();
+
 (function(){
   const c=document.getElementById('portrait'), ctx=c.getContext('2d');
   const W=c.width,H=c.height;

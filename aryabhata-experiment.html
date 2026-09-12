@@ -25,51 +25,58 @@
   .today{margin-top:24px;background:var(--panel);border:1px solid #262f5c;border-radius:14px;padding:20px 22px;}
   .today h3{margin:0 0 8px;color:var(--accent);font-size:16px;}
   .today p{margin:0;color:var(--dim);font-size:14px;line-height:1.6;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="category-indian-scientists.html">&larr; Back to Indian Scientists</a>
+  <div class="topbar">
+    <a class="back" href="category-indian-scientists.html" id="backLink">&larr; Back to Indian Scientists</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
 
   <div class="hero">
     <canvas id="portrait" width="240" height="240"></canvas>
-    <p class="portrait-note">🎨 Illustrative portrait — no photograph exists from this era</p>
-    <div class="era">476–550 CE · Kusumapura (near modern Patna), India</div>
-    <h1>Aryabhata</h1>
-    <p class="tagline">A mathematician-astronomer who figured out Earth spins on its axis, calculated pi with
+    <p class="portrait-note" id="portraitNote">🎨 Illustrative portrait — no photograph exists from this era</p>
+    <div class="era" id="eraText">476–550 CE · Kusumapura (near modern Patna), India</div>
+    <h1 id="nameTitle">Aryabhata</h1>
+    <p class="tagline" id="taglineText">A mathematician-astronomer who figured out Earth spins on its axis, calculated pi with
       startling precision, and explained eclipses correctly — over a thousand years before telescopes existed.</p>
   </div>
 
   <div class="steps">
     <div class="step-card">
-      <h3>📘 His book, the Aryabhatiya</h3>
-      <p>At just 23 years old, he wrote the <b>Aryabhatiya</b> — a compact text covering mathematics and astronomy,
+      <h3 id="step1Title">📘 His book, the Aryabhatiya</h3>
+      <p id="step1Desc">At just 23 years old, he wrote the <b>Aryabhatiya</b> — a compact text covering mathematics and astronomy,
         written so densely in verse that scholars are still unpacking all of its methods today.</p>
     </div>
     <div class="step-card">
-      <h3>🌍 Earth actually spins</h3>
-      <p>While most of the ancient world believed the sky rotated around a still Earth, Aryabhata proposed that
+      <h3 id="step2Title">🌍 Earth actually spins</h3>
+      <p id="step2Desc">While most of the ancient world believed the sky rotated around a still Earth, Aryabhata proposed that
         Earth itself rotates on its axis — correctly explaining why the stars appear to move across the night sky.</p>
     </div>
     <div class="step-card">
-      <h3>🥧 A remarkably precise pi</h3>
-      <p>He calculated the value of pi as approximately <b>3.1416</b> — accurate to four decimal places — and even
+      <h3 id="step3Title">🥧 A remarkably precise pi</h3>
+      <p id="step3Desc">He calculated the value of pi as approximately <b>3.1416</b> — accurate to four decimal places — and even
         noted that it was an approximation, not an exact value, showing real mathematical insight.</p>
     </div>
     <div class="step-card">
-      <h3>🌘 Explaining eclipses correctly</h3>
-      <p>Instead of blaming eclipses on mythical creatures swallowing the Sun or Moon, he correctly explained them
+      <h3 id="step4Title">🌘 Explaining eclipses correctly</h3>
+      <p id="step4Desc">Instead of blaming eclipses on mythical creatures swallowing the Sun or Moon, he correctly explained them
         as the shadows of Earth and the Moon falling on each other — real astronomy, not folklore.</p>
     </div>
   </div>
 
   <div class="today">
-    <h3>🛰️ A concrete example</h3>
-    <p>India's first satellite, launched in 1975, was named <b>"Aryabhata"</b> in his honor — a fitting tribute,
+    <h3 id="todayTitle">🛰️ A concrete example</h3>
+    <p id="todayDesc">India's first satellite, launched in 1975, was named <b>"Aryabhata"</b> in his honor — a fitting tribute,
       since satellite orbits are calculated using the same kind of precise mathematics and astronomy he pioneered.</p>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> Aryabhata also worked with place-value notation and the concept behind zero as a
     placeholder — ideas that, passed through Indian and then Arabic mathematics, eventually became the number
     system the entire world uses today.
@@ -77,6 +84,67 @@
 </div>
 
 <script>
+const T = {
+  en: {
+    langToggle: 'తెలుగు',
+    backLink: '&larr; Back to Indian Scientists',
+    portraitNote: '🎨 Illustrative portrait — no photograph exists from this era',
+    era: '476–550 CE · Kusumapura (near modern Patna), India',
+    name: 'Aryabhata',
+    tagline: 'A mathematician-astronomer who figured out Earth spins on its axis, calculated pi with startling precision, and explained eclipses correctly — over a thousand years before telescopes existed.',
+    steps: [
+      ['📘 His book, the Aryabhatiya','At just 23 years old, he wrote the <b>Aryabhatiya</b> — a compact text covering mathematics and astronomy, written so densely in verse that scholars are still unpacking all of its methods today.'],
+      ['🌍 Earth actually spins','While most of the ancient world believed the sky rotated around a still Earth, Aryabhata proposed that Earth itself rotates on its axis — correctly explaining why the stars appear to move across the night sky.'],
+      ['🥧 A remarkably precise pi','He calculated the value of pi as approximately <b>3.1416</b> — accurate to four decimal places — and even noted that it was an approximation, not an exact value, showing real mathematical insight.'],
+      ['🌘 Explaining eclipses correctly','Instead of blaming eclipses on mythical creatures swallowing the Sun or Moon, he correctly explained them as the shadows of Earth and the Moon falling on each other — real astronomy, not folklore.'],
+    ],
+    todayTitle: '🛰️ A concrete example',
+    todayDesc: 'India\'s first satellite, launched in 1975, was named <b>"Aryabhata"</b> in his honor — a fitting tribute, since satellite orbits are calculated using the same kind of precise mathematics and astronomy he pioneered.',
+    fact: '🤯 <b>Mind-blowing part:</b> Aryabhata also worked with place-value notation and the concept behind zero as a placeholder — ideas that, passed through Indian and then Arabic mathematics, eventually became the number system the entire world uses today.',
+  },
+  te: {
+    langToggle: 'English',
+    backLink: '&larr; భారతీయ శాస్త్రవేత్తలకు తిరిగి',
+    portraitNote: '🎨 ఇది కల్పిత చిత్రం — ఈ కాలం నుండి ఛాయాచిత్రం లేదు',
+    era: '476–550 CE · కుసుమపుర (నేటి పాట్నా సమీపంలో), భారతదేశం',
+    name: 'ఆర్యభట్ట',
+    tagline: 'భూమి తన అక్షంపై తిరుగుతుందని కనుగొన్న, పైని అద్భుతమైన ఖచ్చితత్వంతో లెక్కించిన, గ్రహణాలను సరిగ్గా వివరించిన గణిత శాస్త్రజ్ఞుడు-ఖగోళ శాస్త్రజ్ఞుడు — టెలిస్కోపులు కనిపెట్టడానికి వెయ్యి సంవత్సరాలకు ముందే!',
+    steps: [
+      ['📘 ఆయన గ్రంథం, ఆర్యభటీయం','కేవలం 23 సంవత్సరాల వయసులో, ఆయన <b>ఆర్యభటీయం</b> రాశారు — గణితం మరియు ఖగోళశాస్త్రాన్ని కవర్ చేసే ఒక సంక్షిప్త గ్రంథం, ఇది శ్లోకాలలో ఎంత సాంద్రంగా రాయబడిందంటే, పండితులు నేటికీ దాని పద్ధతులన్నింటినీ అర్థం చేసుకుంటున్నారు.'],
+      ['🌍 భూమి నిజంగా తిరుగుతుంది','ప్రాచీన ప్రపంచంలో చాలామంది ఆకాశం నిశ్చలమైన భూమి చుట్టూ తిరుగుతుందని నమ్మేవారు, కానీ ఆర్యభట్ట భూమి తానే తన అక్షంపై తిరుగుతుందని ప్రతిపాదించారు — రాత్రి ఆకాశంలో నక్షత్రాలు కదులుతున్నట్లు ఎందుకు కనిపిస్తాయో సరిగ్గా వివరించారు.'],
+      ['🥧 అద్భుతంగా ఖచ్చితమైన పై','ఆయన పై విలువను దాదాపు <b>3.1416</b>గా లెక్కించారు — నాలుగు దశాంశ స్థానాల వరకు ఖచ్చితంగా — మరియు ఇది ఒక సామీప్య విలువ మాత్రమేనని, ఖచ్చితమైన విలువ కాదని కూడా పేర్కొన్నారు, ఇది నిజమైన గణిత అంతర్దృష్టిని చూపిస్తుంది.'],
+      ['🌘 గ్రహణాలను సరిగ్గా వివరించడం','గ్రహణాలను సూర్యుడిని లేదా చంద్రుడిని మింగే పౌరాణిక జీవుల వల్ల అని నిందించే బదులు, ఆయన వాటిని భూమి మరియు చంద్రుడి నీడలు ఒకదానిపై ఒకటి పడటం వల్ల అని సరిగ్గా వివరించారు — ఇది జానపద కథ కాదు, నిజమైన ఖగోళశాస్త్రం.'],
+    ],
+    todayTitle: '🛰️ ఒక నిజమైన ఉదాహరణ',
+    todayDesc: '1975లో ప్రయోగించిన భారతదేశపు మొదటి ఉపగ్రహానికి ఆయన గౌరవార్థం <b>"ఆర్యభట్ట"</b> అని పేరు పెట్టారు — ఇది సముచితమైన నివాళి, ఎందుకంటే ఉపగ్రహ కక్ష్యలు ఆయన మార్గదర్శకత్వం వహించిన అదే రకమైన ఖచ్చితమైన గణితం మరియు ఖగోళశాస్త్రాన్ని ఉపయోగించి లెక్కించబడతాయి.',
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> ఆర్యభట్ట స్థాన-విలువ సంజ్ఞామానంతో మరియు సున్నాను స్థానధారిగా ఉపయోగించే భావనతో కూడా పనిచేశారు — ఈ ఆలోచనలు భారతీయ మరియు తర్వాత అరబిక్ గణితం ద్వారా ప్రయాణించి, చివరికి ప్రపంచం మొత్తం ఈరోజు ఉపయోగించే సంఖ్యా వ్యవస్థగా మారాయి.',
+  }
+};
+let LANG='en';
+function tr(){ return T[LANG]; }
+function applyStaticText(){
+  const t=tr();
+  document.documentElement.lang=LANG;
+  document.getElementById('langToggle').textContent=t.langToggle;
+  document.getElementById('backLink').innerHTML=t.backLink;
+  document.getElementById('portraitNote').textContent=t.portraitNote;
+  document.getElementById('eraText').textContent=t.era;
+  document.getElementById('nameTitle').textContent=t.name;
+  document.getElementById('taglineText').textContent=t.tagline;
+  for(let i=0;i<4;i++){
+    document.getElementById('step'+(i+1)+'Title').innerHTML=t.steps[i][0];
+    document.getElementById('step'+(i+1)+'Desc').innerHTML=t.steps[i][1];
+  }
+  document.getElementById('todayTitle').textContent=t.todayTitle;
+  document.getElementById('todayDesc').innerHTML=t.todayDesc;
+  document.getElementById('factBox').innerHTML=t.fact;
+}
+document.getElementById('langToggle').addEventListener('click',()=>{
+  LANG = LANG==='en' ? 'te' : 'en';
+  applyStaticText();
+});
+applyStaticText();
+
 (function(){
   const c=document.getElementById('portrait'), ctx=c.getContext('2d');
   const W=c.width,H=c.height;
