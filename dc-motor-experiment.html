@@ -160,6 +160,15 @@
   .try-card .try-controls{ display:flex; gap:10px; margin-top:12px; justify-content:center; flex-wrap:wrap; align-items:center; }
   .try-card button{ padding: 8px 16px; font-size: 14px; }
   .try-result{ margin-top:8px; text-align:center; color: var(--dim); font-size: 13px; min-height: 18px; }
+
+  .gallery-title{ text-align:center; font-size: clamp(20px,3.4vw,26px); font-weight:800; margin: 34px 0 4px; }
+  .gallery-subtitle{ text-align:center; color: var(--dim); margin: 0 0 16px; max-width:640px; margin-left:auto; margin-right:auto; }
+  .gallery{ display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+  .gallery-card{ background: var(--panel); border: 1px solid #262f5c; border-radius: 14px; overflow:hidden; }
+  .gallery-card img{ display:block; width:100%; height:170px; object-fit:cover; background:#04060f; }
+  .gallery-card .cap{ padding: 12px 14px; font-size: 13px; color: var(--text); line-height:1.4; }
+  .gallery-credit{ margin-top: 14px; text-align:center; color: var(--dim); font-size: 11px; line-height:1.6; }
+  .gallery-credit a{ color: var(--accent2); }
 </style>
 </head>
 <body>
@@ -225,6 +234,32 @@
     <div class="try-result" id="tryResult"></div>
   </div>
 
+  <div class="gallery-title" id="galTitle">🔍 See a Real DC Motor</div>
+  <p class="gallery-subtitle" id="galSubtitle">The animation above shows the idea — here's what the actual parts look like when you take one apart.</p>
+  <div class="gallery">
+    <div class="gallery-card">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/7/79/Micro_DC_Motor.jpg" alt="A small coreless DC motor" loading="lazy">
+      <div class="cap" id="gal1">A real tiny DC motor, just like the ones inside toys and small fans.</div>
+    </div>
+    <div class="gallery-card">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/0/0d/Brushed_dc_motor_assembly.jpg" alt="Brushed DC motor, assembled and taken apart" loading="lazy">
+      <div class="cap" id="gal2">Assembled and taken apart: the spinning rotor, the brushes, and the magnet stator.</div>
+    </div>
+    <div class="gallery-card">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a7/Commutator_and_brushes_DC_motor.jpg" alt="Close-up of a commutator and brushes" loading="lazy">
+      <div class="cap" id="gal3">Close-up of the commutator and brushes — the switching trick from Step 4, up close.</div>
+    </div>
+    <div class="gallery-card">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/DC_machine_cut_open.jpg" alt="A DC machine cut open showing stator and rotor" loading="lazy">
+      <div class="cap" id="gal4">A larger DC machine cut open, revealing the stator, rotor, and the air gap between them.</div>
+    </div>
+  </div>
+  <p class="gallery-credit" id="galCredit">
+    Photos: Micro DC Motor by Armenak Margarian (CC BY-SA 4.0) · Brushed DC motor assembly by Ilia Krivoruk (CC BY-SA 3.0) ·
+    Commutator and brushes, and DC machine cut open, by Christian Kral (CC BY 4.0) — via
+    <a href="https://commons.wikimedia.org/wiki/Category:DC_motors" target="_blank" rel="noopener">Wikimedia Commons</a>.
+  </p>
+
 </div>
 
 <script>
@@ -283,6 +318,13 @@ const T = {
       trySpinning: 'Spinning smoothly!',
       tryWobbling: 'Wobbling, not spinning!',
     },
+    galTitle: '🔍 See a Real DC Motor',
+    galSubtitle: 'The animation above shows the idea — here\'s what the actual parts look like when you take one apart.',
+    gal1: 'A real tiny DC motor, just like the ones inside toys and small fans.',
+    gal2: 'Assembled and taken apart: the spinning rotor, the brushes, and the magnet stator.',
+    gal3: 'Close-up of the commutator and brushes — the switching trick from Step 4, up close.',
+    gal4: 'A larger DC machine cut open, revealing the stator, rotor, and the air gap between them.',
+    galCredit: 'Photos: Micro DC Motor by Armenak Margarian (CC BY-SA 4.0) · Brushed DC motor assembly by Ilia Krivoruk (CC BY-SA 3.0) · Commutator and brushes, and DC machine cut open, by Christian Kral (CC BY 4.0) — via <a href="https://commons.wikimedia.org/wiki/Category:DC_motors" target="_blank" rel="noopener">Wikimedia Commons</a>.',
   },
   te: {
     langToggle: 'English',
@@ -337,6 +379,13 @@ const T = {
       trySpinning: 'సాఫీగా తిరుగుతోంది!',
       tryWobbling: 'ఊగుతోంది, తిరగడం లేదు!',
     },
+    galTitle: '🔍 నిజమైన DC మోటార్‌ను చూడండి',
+    galSubtitle: 'పైన ఉన్న యానిమేషన్ ఆలోచనను చూపిస్తుంది — ఒకదాన్ని విడదీసినప్పుడు అసలైన భాగాలు ఎలా కనిపిస్తాయో ఇక్కడ చూడండి.',
+    gal1: 'బొమ్మలు మరియు చిన్న ఫ్యాన్‌లలో ఉండే వాటిలాంటి నిజమైన చిన్న DC మోటార్.',
+    gal2: 'అసెంబుల్ చేయబడి మరియు విడదీయబడింది: తిరిగే రోటర్, బ్రష్‌లు, మరియు అయస్కాంత స్టేటర్.',
+    gal3: 'కమ్యుటేటర్ మరియు బ్రష్‌ల దగ్గరి వీక్షణ — దశ 4లోని తారుమారు ఉపాయం దగ్గరగా.',
+    gal4: 'కత్తిరించిన ఒక పెద్ద DC యంత్రం, స్టేటర్, రోటర్, మరియు వాటి మధ్య గాలి అంతరాన్ని చూపిస్తుంది.',
+    galCredit: 'ఫోటోలు: Micro DC Motor by Armenak Margarian (CC BY-SA 4.0) · Brushed DC motor assembly by Ilia Krivoruk (CC BY-SA 3.0) · Commutator and brushes, and DC machine cut open, by Christian Kral (CC BY 4.0) — <a href="https://commons.wikimedia.org/wiki/Category:DC_motors" target="_blank" rel="noopener">Wikimedia Commons</a> ద్వారా.',
   }
 };
 let LANG = 'en';
@@ -358,6 +407,13 @@ function applyStaticText(){
   document.getElementById('tryTitle').textContent = t.tryTitle;
   document.getElementById('trySubtitle').textContent = t.trySubtitle;
   document.getElementById('tryReset').textContent = t.tryReset;
+  document.getElementById('galTitle').textContent = t.galTitle;
+  document.getElementById('galSubtitle').textContent = t.galSubtitle;
+  document.getElementById('gal1').textContent = t.gal1;
+  document.getElementById('gal2').textContent = t.gal2;
+  document.getElementById('gal3').textContent = t.gal3;
+  document.getElementById('gal4').textContent = t.gal4;
+  document.getElementById('galCredit').innerHTML = t.galCredit;
 }
 
 document.getElementById('langToggle').addEventListener('click', () => {
