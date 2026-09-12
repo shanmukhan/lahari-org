@@ -9,7 +9,11 @@
   *{box-sizing:border-box;}
   body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
   .wrap{max-width:960px;margin:0 auto;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
   a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
   header{text-align:center;margin-bottom:20px;}
   h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
   header p{color:var(--dim);font-size:16px;margin:0;}
@@ -36,10 +40,13 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="category-space.html">&larr; Back to Space & Universe</a>
+  <div class="topbar">
+    <a class="back" href="category-space.html" id="backLink">&larr; Back to Space & Universe</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
   <header>
-    <h1>🌊 What Causes Tides</h1>
-    <p>The Moon's gravity gently tugs on Earth's oceans — and that tug is why beaches flood and drain every single day.</p>
+    <h1 id="pageTitle">🌊 What Causes Tides</h1>
+    <p id="pageSubtitle">The Moon's gravity gently tugs on Earth's oceans — and that tug is why beaches flood and drain every single day.</p>
   </header>
 
   <div class="player">
@@ -54,38 +61,116 @@
   </div>
 
   <div class="steps">
-    <div class="step-card"><div class="num">1</div><h3>🌕 The Moon pulls on Earth</h3>
-      <p>Just like Earth pulls on the Moon, the Moon's gravity also pulls on Earth — including its oceans.</p></div>
-    <div class="step-card"><div class="num">2</div><h3>🌊 Water bulges toward it</h3>
-      <p>Ocean water on the side facing the Moon gets pulled up into a bulge — that's high tide there.</p></div>
-    <div class="step-card"><div class="num">3</div><h3>🌊 And bulges on the far side too!</h3>
-      <p>Surprisingly, water on the OPPOSITE side also bulges — because the solid Earth gets pulled toward the Moon slightly more than the far water does, leaving it behind.</p></div>
-    <div class="step-card"><div class="num">4</div><h3>🔄 Earth spins through both bulges</h3>
-      <p>As Earth rotates every 24 hours, each coastline passes through both bulges — giving most places two high tides and two low tides a day.</p></div>
+    <div class="step-card"><div class="num">1</div><h3 id="s1t">🌕 The Moon pulls on Earth</h3>
+      <p id="s1d">Just like Earth pulls on the Moon, the Moon's gravity also pulls on Earth — including its oceans.</p></div>
+    <div class="step-card"><div class="num">2</div><h3 id="s2t">🌊 Water bulges toward it</h3>
+      <p id="s2d">Ocean water on the side facing the Moon gets pulled up into a bulge — that's high tide there.</p></div>
+    <div class="step-card"><div class="num">3</div><h3 id="s3t">🌊 And bulges on the far side too!</h3>
+      <p id="s3d">Surprisingly, water on the OPPOSITE side also bulges — because the solid Earth gets pulled toward the Moon slightly more than the far water does, leaving it behind.</p></div>
+    <div class="step-card"><div class="num">4</div><h3 id="s4t">🔄 Earth spins through both bulges</h3>
+      <p id="s4d">As Earth rotates every 24 hours, each coastline passes through both bulges — giving most places two high tides and two low tides a day.</p></div>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> The Sun pulls on our oceans too — with less force than the Moon, but when Sun, Moon, and Earth
     line up (full or new moon), their pulls team up for extra-strong <b>"spring tides."</b> When they're at right angles, tides are weaker — <b>"neap tides."</b>
   </div>
 </div>
 
 <script>
+const T = {
+  en: {
+    langToggle: 'తెలుగు', backLink: '&larr; Back to Space & Universe',
+    pageTitle: '🌊 What Causes Tides',
+    pageSubtitle: 'The Moon\'s gravity gently tugs on Earth\'s oceans — and that tug is why beaches flood and drain every single day.',
+    playBtn: '▶ Play', pauseBtn: '⏸ Pause', restartBtn: '⟲ Restart',
+    captionInitial: 'Press <b>Play</b> to start!',
+    captionEnd: '🎬 The End! Press <b>Restart</b> to watch again.',
+    steps: [
+      ['🌕 The Moon pulls on Earth','Just like Earth pulls on the Moon, the Moon\'s gravity also pulls on Earth — including its oceans.'],
+      ['🌊 Water bulges toward it','Ocean water on the side facing the Moon gets pulled up into a bulge — that\'s high tide there.'],
+      ['🌊 And bulges on the far side too!','Surprisingly, water on the OPPOSITE side also bulges — because the solid Earth gets pulled toward the Moon slightly more than the far water does, leaving it behind.'],
+      ['🔄 Earth spins through both bulges','As Earth rotates every 24 hours, each coastline passes through both bulges — giving most places two high tides and two low tides a day.'],
+    ],
+    fact: '🤯 <b>Mind-blowing part:</b> The Sun pulls on our oceans too — with less force than the Moon, but when Sun, Moon, and Earth line up (full or new moon), their pulls team up for extra-strong <b>"spring tides."</b> When they\'re at right angles, tides are weaker — <b>"neap tides."</b>',
+    scenes: [
+      ['🌕 STEP 1: THE MOON PULLS ON EARTH','The Moon\'s gravity reaches all the way to Earth — pulling not just on the solid ground, but on the oceans too.'],
+      ['🌊 STEP 2: WATER BULGES TOWARD IT','Ocean water on the side facing the Moon gets tugged upward into a bulge. Anyone there experiences <b>high tide</b>.'],
+      ['🌊 STEP 3: A BULGE ON THE FAR SIDE TOO','Surprisingly, the far side bulges too! The solid Earth gets pulled toward the Moon slightly more than that far water, leaving it behind.'],
+      ['🔄 STEP 4: SPINNING THROUGH BOTH BULGES','As Earth spins once every 24 hours, each coast rotates through both bulges — giving most beaches two high tides and two low tides a day!'],
+    ],
+    canvas: {
+      moon: 'MOON',
+      notYetPulled: 'Earth, with its oceans, not yet pulled',
+      bulgeToward: 'water bulges toward the Moon — HIGH TIDE here',
+      bulgeFar: '...and bulges on the far side too!',
+      spinning: 'your city rotates through high and low tide, twice a day',
+      highTide: 'HIGH TIDE', lowTide: 'LOW TIDE',
+    },
+  },
+  te: {
+    langToggle: 'English', backLink: '&larr; అంతరిక్షం & విశ్వానికి తిరిగి',
+    pageTitle: '🌊 అలలు (టైడ్స్) ఎందుకు వస్తాయి',
+    pageSubtitle: 'చంద్రుడి గురుత్వాకర్షణ భూమి సముద్రాలను మెల్లగా లాగుతుంది — ఆ లాగుట వల్లే ప్రతిరోజూ బీచ్‌లు నీటితో నిండటం మరియు తగ్గటం జరుగుతుంది.',
+    playBtn: '▶ ప్లే', pauseBtn: '⏸ పాజ్', restartBtn: '⟲ మళ్ళీ మొదలు',
+    captionInitial: 'ప్రారంభించడానికి <b>ప్లే</b> నొక్కండి!',
+    captionEnd: '🎬 ముగింపు! మళ్ళీ చూడటానికి <b>మళ్ళీ మొదలు</b> నొక్కండి.',
+    steps: [
+      ['🌕 చంద్రుడు భూమిని లాగుతాడు','భూమి చంద్రుడిని లాగినట్లే, చంద్రుడి గురుత్వాకర్షణ కూడా భూమిని లాగుతుంది — దాని సముద్రాలతో సహా.'],
+      ['🌊 నీరు దాని వైపు ఉబ్బుతుంది','చంద్రుడికి ఎదురుగా ఉన్న వైపు సముద్ర నీరు పైకి లాగబడి ఉబ్బుతుంది — అక్కడ అది అధిక ఆటుపోటు (హై టైడ్).'],
+      ['🌊 దూరపు వైపు కూడా ఉబ్బుతుంది!','ఆశ్చర్యకరంగా, వ్యతిరేక వైపు నీరు కూడా ఉబ్బుతుంది — ఎందుకంటే గట్టి భూమి దూరపు నీటి కంటే చంద్రుడి వైపు కొంచెం ఎక్కువగా లాగబడుతుంది, దాన్ని వెనుక వదిలేస్తుంది.'],
+      ['🔄 భూమి రెండు ఉబ్బెత్తుల గుండా తిరుగుతుంది','భూమి ప్రతి 24 గంటలకు తిరుగుతున్నప్పుడు, ప్రతి తీరం రెండు ఉబ్బెత్తుల గుండా వెళుతుంది — చాలా ప్రాంతాలకు రోజుకు రెండు అధిక ఆటుపోట్లు మరియు రెండు అల్ప ఆటుపోట్లు వస్తాయి.'],
+    ],
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> సూర్యుడు కూడా మన సముద్రాలను లాగుతాడు — చంద్రుడి కంటే తక్కువ శక్తితో, కానీ సూర్యుడు, చంద్రుడు, భూమి వరుసలోకి వచ్చినప్పుడు (పౌర్ణమి లేదా అమావాస్య), వాటి లాగుడు కలిసి అదనంగా బలమైన <b>"స్ప్రింగ్ టైడ్స్"</b> ఇస్తాయి. అవి లంబకోణంలో ఉన్నప్పుడు, ఆటుపోట్లు బలహీనంగా ఉంటాయి — <b>"నీప్ టైడ్స్."</b>',
+    scenes: [
+      ['🌕 దశ 1: చంద్రుడు భూమిని లాగుతాడు','చంద్రుడి గురుత్వాకర్షణ భూమి వరకు చేరుకుంటుంది — గట్టి నేలను మాత్రమే కాదు, సముద్రాలను కూడా లాగుతుంది.'],
+      ['🌊 దశ 2: నీరు దాని వైపు ఉబ్బుతుంది','చంద్రుడికి ఎదురుగా ఉన్న సముద్ర నీరు పైకి లాగబడి ఉబ్బుతుంది. అక్కడ ఉన్నవారు <b>అధిక ఆటుపోటు</b>ను అనుభవిస్తారు.'],
+      ['🌊 దశ 3: దూరపు వైపు కూడా ఉబ్బు','ఆశ్చర్యకరంగా, దూరపు వైపు కూడా ఉబ్బుతుంది! గట్టి భూమి ఆ దూరపు నీటి కంటే చంద్రుడి వైపు కొంచెం ఎక్కువగా లాగబడుతుంది, దాన్ని వెనుక వదిలేస్తుంది.'],
+      ['🔄 దశ 4: రెండు ఉబ్బెత్తుల గుండా తిరుగుట','భూమి ప్రతి 24 గంటలకు ఒకసారి తిరుగుతున్నప్పుడు, ప్రతి తీరం రెండు ఉబ్బెత్తుల గుండా తిరుగుతుంది — చాలా బీచ్‌లకు రోజుకు రెండు అధిక ఆటుపోట్లు మరియు రెండు అల్ప ఆటుపోట్లు వస్తాయి!'],
+    ],
+    canvas: {
+      moon: 'చంద్రుడు',
+      notYetPulled: 'భూమి, దాని సముద్రాలతో, ఇంకా లాగబడలేదు',
+      bulgeToward: 'నీరు చంద్రుడి వైపు ఉబ్బుతుంది — ఇక్కడ అధిక ఆటుపోటు',
+      bulgeFar: '...దూరపు వైపు కూడా ఉబ్బుతుంది!',
+      spinning: 'మీ నగరం రోజుకు రెండుసార్లు అధిక మరియు అల్ప ఆటుపోటుల గుండా తిరుగుతుంది',
+      highTide: 'అధిక ఆటుపోటు', lowTide: 'అల్ప ఆటుపోటు',
+    },
+  }
+};
+let LANG='en';
+function tr(){ return T[LANG]; }
+function applyStaticText(){
+  const t=tr();
+  document.documentElement.lang=LANG;
+  document.getElementById('langToggle').textContent=t.langToggle;
+  document.getElementById('backLink').innerHTML=t.backLink;
+  document.getElementById('pageTitle').textContent=t.pageTitle;
+  document.getElementById('pageSubtitle').textContent=t.pageSubtitle;
+  document.getElementById('restartBtn').textContent=t.restartBtn;
+  for(let i=0;i<4;i++){
+    document.getElementById('s'+(i+1)+'t').textContent=t.steps[i][0];
+    document.getElementById('s'+(i+1)+'d').textContent=t.steps[i][1];
+  }
+  document.getElementById('factBox').innerHTML=t.fact;
+}
+document.getElementById('langToggle').addEventListener('click',()=>{
+  LANG = LANG==='en' ? 'te' : 'en';
+  applyStaticText();
+  if(window.__tidesRefresh) window.__tidesRefresh();
+});
+applyStaticText();
+
 (function(){
   const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
   const W=canvas.width, H=canvas.height;
   const captionEl=document.getElementById('caption'), bannerEl=document.getElementById('banner'), progressBar=document.getElementById('progressBar');
   const playBtn=document.getElementById('playBtn'), restartBtn=document.getElementById('restartBtn');
 
-  const SCENES=[
-    {t:0,dur:6,banner:'🌕 STEP 1: THE MOON PULLS ON EARTH',caption:'The Moon\'s gravity reaches all the way to Earth — pulling not just on the solid ground, but on the oceans too.'},
-    {t:6,dur:7,banner:'🌊 STEP 2: WATER BULGES TOWARD IT',caption:'Ocean water on the side facing the Moon gets tugged upward into a bulge. Anyone there experiences <b>high tide</b>.'},
-    {t:13,dur:8,banner:'🌊 STEP 3: A BULGE ON THE FAR SIDE TOO',caption:'Surprisingly, the far side bulges too! The solid Earth gets pulled toward the Moon slightly more than that far water, leaving it behind.'},
-    {t:21,dur:9,banner:'🔄 STEP 4: SPINNING THROUGH BOTH BULGES',caption:'As Earth spins once every 24 hours, each coast rotates through both bulges — giving most beaches two high tides and two low tides a day!'},
-  ];
+  const starts=[0,6,13,21];
+  let simTime=0, playing=false, lastTs=null, captionOverride='initial';
   const totalDur=30;
-  let simTime=0, playing=false, lastTs=null;
-  function currentScene(t){ for(let i=SCENES.length-1;i>=0;i--) if(t>=SCENES[i].t) return i; return 0; }
+  function currentScene(t){ for(let i=starts.length-1;i>=0;i--) if(t>=starts[i]) return i; return 0; }
   function label(x,y,text,color){
     ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
     const tw=ctx.measureText(text).width;
@@ -94,7 +179,7 @@
   }
   function drawMoon(local){
     ctx.fillStyle='#c9c9c9'; ctx.beginPath(); ctx.arc(120,H/2,40,0,Math.PI*2); ctx.fill();
-    label(120,H/2+60,'MOON','#c9c9c9');
+    label(120,H/2+60,tr().canvas.moon,'#c9c9c9');
     ctx.strokeStyle='rgba(255,255,255,.15)'; ctx.lineWidth=2;
     for(let dy=-40;dy<=40;dy+=25){
       ctx.beginPath(); ctx.moveTo(170,H/2+dy); ctx.lineTo(340,H/2+dy*0.4); ctx.stroke();
@@ -108,7 +193,6 @@
       const facing=Math.cos(a);
       const bulge = facing>0 ? bulgeFront*facing : bulgeBack*(-facing);
       const rr=r+bulge;
-      // x-axis aligned toward the Moon (left = facing the Moon)
       const px=cx-Math.cos(a)*rr, py=cy+Math.sin(a)*rr;
       if(a===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
     }
@@ -123,19 +207,19 @@
   function drawScene0(local){
     drawMoon(local);
     earthBase(0,0);
-    label(550,H-40,'Earth, with its oceans, not yet pulled','#8fd2ff');
+    label(550,H-40,tr().canvas.notYetPulled,'#8fd2ff');
   }
   function drawScene1(local){
     drawMoon(local);
     const b=Math.min(1,local/4)*35;
     earthBase(b,0);
-    label(550,H-40,'water bulges toward the Moon — HIGH TIDE here','#6dffb0');
+    label(550,H-40,tr().canvas.bulgeToward,'#6dffb0');
   }
   function drawScene2(local){
     drawMoon(local);
     const bBack=Math.min(1,local/5)*30;
     earthBase(35,bBack);
-    label(550,H-40,'...and bulges on the far side too!','#6dffb0');
+    label(550,H-40,tr().canvas.bulgeFar,'#6dffb0');
   }
   function drawScene3(local){
     drawMoon(local);
@@ -145,16 +229,16 @@
     ctx.fillStyle='#ffd23f'; ctx.beginPath(); ctx.arc(px,py,8,0,Math.PI*2); ctx.fill();
     ctx.strokeStyle='#0b1020'; ctx.lineWidth=2; ctx.stroke();
     const facing=Math.cos(spin);
-    const tideState = Math.abs(facing)>0.7 ? 'HIGH TIDE' : 'LOW TIDE';
+    const tideState = Math.abs(facing)>0.7 ? tr().canvas.highTide : tr().canvas.lowTide;
     label(px,py-24,tideState,facing>0.7||facing<-0.7?'#6dffb0':'#ff9d9d');
-    label(550,H-40,'your city rotates through high and low tide, twice a day','#eef2ff');
+    label(550,H-40,tr().canvas.spinning,'#eef2ff');
   }
 
   function render(t){
     ctx.clearRect(0,0,W,H); ctx.fillStyle='#04060f'; ctx.fillRect(0,0,W,H);
     for(let i=0;i<50;i++){ ctx.fillStyle='rgba(255,255,255,'+(0.08+0.3*((i*37)%10)/10)+')'; ctx.fillRect((i*53)%W,(i*97)%H,2,2); }
-    const idx=currentScene(t), scene=SCENES[idx], local=t-scene.t;
-    bannerEl.textContent=scene.banner; captionEl.innerHTML=scene.caption;
+    const idx=currentScene(t), scene=tr().scenes[idx], local=t-starts[idx];
+    bannerEl.textContent=scene[0]; captionEl.innerHTML=scene[1];
     if(idx===0) drawScene0(local);
     else if(idx===1) drawScene1(local);
     else if(idx===2) drawScene2(local);
@@ -167,15 +251,24 @@
     const dt=Math.min(0.05,(ts-lastTs)/1000); lastTs=ts;
     simTime+=dt;
     if(simTime>=totalDur){ simTime=totalDur; render(simTime); pause();
-      captionEl.innerHTML='🎬 The End! Press <b>Restart</b> to watch again.'; return; }
+      captionOverride='ended'; captionEl.innerHTML=tr().captionEnd; return; }
+    captionOverride=null;
     render(simTime); requestAnimationFrame(step);
   }
-  function play(){ if(playing) return; playing=true; lastTs=null; playBtn.textContent='⏸ Pause'; requestAnimationFrame(step); }
-  function pause(){ playing=false; playBtn.textContent='▶ Play'; }
-  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionEl.innerHTML='Press <b>Play</b> to start!'; }
+  function play(){ if(playing) return; playing=true; lastTs=null; captionOverride=null; playBtn.textContent=tr().pauseBtn; requestAnimationFrame(step); }
+  function pause(){ playing=false; playBtn.textContent=tr().playBtn; }
+  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionOverride='initial'; captionEl.innerHTML=tr().captionInitial; }
   playBtn.addEventListener('click',()=>playing?pause():play());
   restartBtn.addEventListener('click',restart);
+  playBtn.textContent=tr().playBtn;
   render(0);
+
+  window.__tidesRefresh=function(){
+    playBtn.textContent = playing ? tr().pauseBtn : tr().playBtn;
+    render(simTime);
+    if(captionOverride==='initial') captionEl.innerHTML=tr().captionInitial;
+    else if(captionOverride==='ended') captionEl.innerHTML=tr().captionEnd;
+  };
 })();
 </script>
 </body>
