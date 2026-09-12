@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Airplanes Fly</title>
+<style>
+  :root{--bg:#0b1020;--panel:#121830;--accent:#ffd23f;--accent2:#4fd3ff;--text:#eef2ff;--dim:#9aa4cc;}
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
+  .wrap{max-width:960px;margin:0 auto;}
+  a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  header{text-align:center;margin-bottom:20px;}
+  h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  header p{color:var(--dim);font-size:16px;margin:0;}
+  .player{background:#000;border-radius:16px;padding:10px;box-shadow:0 10px 40px rgba(0,0,0,.5),0 0 0 1px #222 inset;}
+  .progress-track{height:8px;background:#1c2340;border-radius:6px;overflow:hidden;margin-bottom:8px;}
+  .progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--accent2),var(--accent));transition:width .05s linear;}
+  canvas{display:block;width:100%;height:auto;background:#04060f;border-radius:10px;}
+  .banner-wrap{text-align:center;}
+  .banner{display:inline-block;margin:8px auto 0;padding:8px 22px;border-radius:999px;font-weight:800;color:#06180f;background:var(--accent2);}
+  .caption{margin-top:6px;background:#000c;border:1px solid #2a3568;border-radius:10px;padding:14px 18px;min-height:56px;font-size:clamp(16px,2.6vw,20px);line-height:1.4;text-align:center;}
+  .caption b{color:var(--accent);}
+  .controls{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:12px;flex-wrap:wrap;}
+  button{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;padding:10px 20px;font-size:15px;cursor:pointer;transition:transform .1s,background .2s;}
+  button:hover{background:#1c2450;transform:translateY(-1px);}
+  button.primary{background:linear-gradient(90deg,var(--accent2),#2f9fe0);color:#03101f;font-weight:700;border:none;}
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:26px;}
+  .step-card{background:var(--panel);border:1px solid #262f5c;border-radius:14px;padding:16px;}
+  .step-card .num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#16151a;font-weight:800;margin-bottom:8px;}
+  .step-card h3{margin:4px 0 6px;font-size:16px;}
+  .step-card p{margin:0;color:var(--dim);font-size:13px;line-height:1.45;}
+  .fact{margin-top:26px;background:linear-gradient(135deg,#1a2140,#0e1330);border:1px solid #2a3568;border-radius:14px;padding:18px 20px;text-align:center;font-size:16px;}
+  .fact b{color:var(--accent2);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="category-tech.html">&larr; Back to Everyday Tech</a>
+  <header>
+    <h1>✈️ How Airplanes Fly</h1>
+    <p>A 300-ton plane, held up by nothing but moving air. Here's the shape that makes it possible.</p>
+  </header>
+
+  <div class="player">
+    <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+    <canvas id="scene" width="900" height="460"></canvas>
+    <div class="banner-wrap"><span class="banner" id="banner">STEP 1</span></div>
+    <div class="caption" id="caption">Press <b>Play</b> to start!</div>
+  </div>
+  <div class="controls">
+    <button class="primary" id="playBtn">▶ Play</button>
+    <button id="restartBtn">⟲ Restart</button>
+  </div>
+
+  <div class="steps">
+    <div class="step-card"><div class="num">1</div><h3>🪽 A curved wing shape</h3>
+      <p>An airplane wing is curved on top and flatter on the bottom — that special shape is called an <b>airfoil</b>.</p></div>
+    <div class="step-card"><div class="num">2</div><h3>💨 Air splits around it</h3>
+      <p>As the plane moves forward, air splits — some flows over the curved top, some flows under the flatter bottom.</p></div>
+    <div class="step-card"><div class="num">3</div><h3>⬇️ Top air pushes down less</h3>
+      <p>Air moving over the curved top travels a longer path and ends up at lower pressure than the air below — pushing down less.</p></div>
+    <div class="step-card"><div class="num">4</div><h3>⬆️ Higher pressure below lifts it up</h3>
+      <p>Higher pressure underneath pushes up harder than the lower pressure above pushes down — that pressure difference is <b>lift</b>!</p></div>
+  </div>
+
+  <div class="fact">
+    🤯 <b>Mind-blowing part:</b> Wings also work upside-down (like in an airshow stunt) if the wing is angled correctly — lift comes
+    mainly from the wing's <b>angle</b> pushing air downward, not just its curved shape. Airplanes are more clever than a simple curve!
+  </div>
+</div>
+
+<script>
+(function(){
+  const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  const captionEl=document.getElementById('caption'), bannerEl=document.getElementById('banner'), progressBar=document.getElementById('progressBar');
+  const playBtn=document.getElementById('playBtn'), restartBtn=document.getElementById('restartBtn');
+
+  const SCENES=[
+    {t:0,dur:6,banner:'🪽 STEP 1: THE WING\'S SPECIAL SHAPE',caption:'An airplane wing (an <b>airfoil</b>) is curved on top and flatter on the bottom — not a flat plank!'},
+    {t:6,dur:7,banner:'💨 STEP 2: AIR SPLITS AROUND IT',caption:'As the wing moves forward, oncoming air splits — part flows over the curved top, part flows under the flatter bottom.'},
+    {t:13,dur:8,banner:'⬇️ STEP 3: TOP AIR IS LOWER PRESSURE',caption:'Air flowing over the curved top has to cover a longer path, ending up faster and at <b>lower pressure</b> than the air below.'},
+    {t:21,dur:8,banner:'⬆️ STEP 4: PRESSURE DIFFERENCE = LIFT',caption:'Higher pressure below pushes up harder than the lower pressure above pushes down — that difference is <b>lift</b>, holding the plane up!'},
+  ];
+  const totalDur=29;
+  let simTime=0, playing=false, lastTs=null;
+  function currentScene(t){ for(let i=SCENES.length-1;i>=0;i--) if(t>=SCENES[i].t) return i; return 0; }
+  function label(x,y,text,color){
+    ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
+    const tw=ctx.measureText(text).width;
+    ctx.fillStyle='rgba(4,6,15,0.75)'; ctx.fillRect(x-tw/2-8,y-16,tw+16,22);
+    ctx.fillStyle=color||'#9fc1de'; ctx.fillText(text,x,y);
+  }
+  function drawWing(cx,cy,scale){
+    scale=scale||1;
+    ctx.save(); ctx.translate(cx,cy); ctx.scale(scale,scale);
+    ctx.fillStyle='#c7c9d9';
+    ctx.beginPath();
+    ctx.moveTo(-160,10);
+    ctx.quadraticCurveTo(-60,-50,140,-10);
+    ctx.quadraticCurveTo(60,10,-160,10);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle='#0b1020'; ctx.lineWidth=2; ctx.stroke();
+    ctx.restore();
+  }
+  function drawScene0(local){
+    drawWing(W/2,H/2,1.6);
+    label(W/2,H/2-140,'curved top','#8fd2ff');
+    label(W/2,H/2+80,'flatter bottom','#ff9d9d');
+  }
+  function drawScene1(local){
+    drawWing(W/2,H/2,1.3);
+    for(let row=0;row<3;row++){
+      const y0=H/2-90+row*15;
+      const prog=(local*100+row*20)%(W+200)-100;
+      ctx.fillStyle='rgba(79,211,255,.6)';
+      ctx.beginPath(); ctx.arc(60+prog%(W+100),y0,3,0,Math.PI*2); ctx.fill();
+    }
+    for(let row=0;row<3;row++){
+      const y0=H/2+70+row*15;
+      const prog=(local*100+row*20)%(W+200)-100;
+      ctx.fillStyle='rgba(255,157,157,.6)';
+      ctx.beginPath(); ctx.arc(60+prog%(W+100),y0,3,0,Math.PI*2); ctx.fill();
+    }
+    label(W/2,50,'air splits over and under the wing','#eef2ff');
+  }
+  function drawStreamlines(local,showPressure){
+    drawWing(W/2,H/2,1.3);
+    // top streamline (curved, longer path)
+    ctx.strokeStyle='rgba(79,211,255,.5)'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(60,H/2-70); ctx.quadraticCurveTo(W/2,H/2-140,W-60,H/2-70); ctx.stroke();
+    // bottom streamline (straighter, shorter)
+    ctx.strokeStyle='rgba(255,157,157,.5)';
+    ctx.beginPath(); ctx.moveTo(60,H/2+80); ctx.lineTo(W-60,H/2+80); ctx.stroke();
+    const speed=(local*140)%(W-120);
+    ctx.fillStyle='#4fd3ff';
+    const tx=60+speed;
+    const ty=H/2-70-Math.sin((speed/(W-120))*Math.PI)*70;
+    ctx.beginPath(); ctx.arc(tx,ty,5,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#ff9d9d';
+    ctx.beginPath(); ctx.arc(60+speed,H/2+80,5,0,Math.PI*2); ctx.fill();
+    if(showPressure){
+      label(W/2,H/2-160,'faster + lower pressure here','#8fd2ff');
+      label(W/2,H/2+110,'slower + higher pressure here','#ff9d9d');
+    } else {
+      label(W/2,50,'top path is longer — that air moves faster','#8fd2ff');
+    }
+  }
+  function drawLift(local){
+    drawStreamlines(local,true);
+    const arrowY=H/2+20;
+    ctx.strokeStyle='#6dffb0'; ctx.lineWidth=5;
+    ctx.beginPath(); ctx.moveTo(W/2,arrowY+60); ctx.lineTo(W/2,arrowY-40); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(W/2,arrowY-40); ctx.lineTo(W/2-10,arrowY-25); ctx.moveTo(W/2,arrowY-40); ctx.lineTo(W/2+10,arrowY-25); ctx.stroke();
+    label(W/2,arrowY+80,'LIFT pushes the wing upward!','#6dffb0');
+  }
+
+  function render(t){
+    ctx.clearRect(0,0,W,H); ctx.fillStyle='#04060f'; ctx.fillRect(0,0,W,H);
+    const idx=currentScene(t), scene=SCENES[idx], local=t-scene.t;
+    bannerEl.textContent=scene.banner; captionEl.innerHTML=scene.caption;
+    if(idx===0) drawScene0(local);
+    else if(idx===1) drawScene1(local);
+    else if(idx===2) drawStreamlines(local,false);
+    else drawLift(local);
+    progressBar.style.width=Math.min(100,(t/totalDur)*100)+'%';
+  }
+  function step(ts){
+    if(!playing) return;
+    if(lastTs===null) lastTs=ts;
+    const dt=Math.min(0.05,(ts-lastTs)/1000); lastTs=ts;
+    simTime+=dt;
+    if(simTime>=totalDur){ simTime=totalDur; render(simTime); pause();
+      captionEl.innerHTML='🎬 The End! Press <b>Restart</b> to watch again.'; return; }
+    render(simTime); requestAnimationFrame(step);
+  }
+  function play(){ if(playing) return; playing=true; lastTs=null; playBtn.textContent='⏸ Pause'; requestAnimationFrame(step); }
+  function pause(){ playing=false; playBtn.textContent='▶ Play'; }
+  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionEl.innerHTML='Press <b>Play</b> to start!'; }
+  playBtn.addEventListener('click',()=>playing?pause():play());
+  restartBtn.addEventListener('click',restart);
+  render(0);
+})();
+</script>
+</body>
+</html>

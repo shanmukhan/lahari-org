@@ -48,13 +48,22 @@
   h1 { font-family: "Space Grotesk", Inter, sans-serif; font-size: clamp(1.5rem, 3.6vw, 2.1rem);
     margin: 0 0 6px; letter-spacing: -.03em; }
   header.hero p { color: var(--muted); max-width: 620px; margin: 0 auto; font-size: .95rem; }
-  .empty { max-width: 480px; margin: 40px auto 60px; text-align: center; padding: 34px 26px;
-    border-radius: 20px; background: var(--surface); border: 1px dashed var(--line-strong); }
-  .empty .icon { font-size: 2.4rem; margin-bottom: 10px; }
-  .empty h2 { margin: 0 0 8px; font-size: 1.15rem; }
-  .empty p { margin: 0; color: var(--muted); font-size: .92rem; line-height: 1.55; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; padding: 16px 0 60px; }
+  .card {
+    display: block; padding: 22px; border-radius: 20px; background: var(--surface);
+    border: 1px solid var(--line); transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+  }
+  .card:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: 0 16px 34px -14px rgba(52,211,153,.35); }
+  .card .icon { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 12px;
+    background: rgba(255,255,255,.06); font-size: 1.5rem; margin-bottom: 14px; }
+  .card h3 { margin: 0 0 6px; font-size: 1.08rem; color: var(--text); }
+  .card p { margin: 0; color: var(--muted); font-size: .88rem; line-height: 1.5; }
+  .tag { display: inline-block; margin-top: 12px; font-size: .74rem; color: var(--accent);
+    font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
   footer { padding: 30px 0 50px; border-top: 1px solid var(--line); color: var(--muted); font-size: .88rem; text-align: center; }
+  @media (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 700px) { .nav-links a:not(.nav-cta) { display: none; } }
+  @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -78,11 +87,7 @@
 </header>
 
 <div class="container">
-  <div class="empty">
-    <div class="icon">🌱</div>
-    <h2>More experiments coming soon</h2>
-    <p>Photosynthesis, DNA, and how vaccines work are on the way — check back soon, or explore the other categories in the meantime.</p>
-  </div>
+  <div class="grid" id="grid"></div>
 </div>
 
 <footer>
@@ -91,6 +96,21 @@
 
 <script>
 document.getElementById('year').textContent = new Date().getFullYear();
+
+const TOPICS = [
+  {href:'photosynthesis-experiment.html', icon:'🌱', title:'How Photosynthesis Works', desc:'Plants build their own food out of sunlight, air, and water.'},
+  {href:'vaccine-experiment.html', icon:'💉', title:'How Vaccines Work', desc:'A safe preview of a germ, so your immune system is ready for the real thing.'},
+  {href:'dna-experiment.html', icon:'🧬', title:'What Is DNA?', desc:'The twisted ladder of instructions packed inside nearly every cell in your body.'},
+];
+
+const grid = document.getElementById('grid');
+TOPICS.forEach(t => {
+  const a = document.createElement('a');
+  a.className = 'card';
+  a.href = t.href;
+  a.innerHTML = `<div class="icon">${t.icon}</div><h3>${t.title}</h3><p>${t.desc}</p><span class="tag">Open experiment →</span>`;
+  grid.appendChild(a);
+});
 </script>
 </body>
 </html>
