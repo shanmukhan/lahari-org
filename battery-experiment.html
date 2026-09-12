@@ -104,10 +104,12 @@
   const totalDur=28;
   let simTime=0, playing=false, lastTs=null;
   function currentScene(t){ for(let i=SCENES.length-1;i>=0;i--) if(t>=SCENES[i].t) return i; return 0; }
-  function label(x,y,text,color){
-    ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
+  function label(x,y,text,color,align){
+    align = align||'center';
+    ctx.font='700 13px Segoe UI'; ctx.textAlign=align;
     const tw=ctx.measureText(text).width;
-    ctx.fillStyle='rgba(4,6,15,0.75)'; ctx.fillRect(x-tw/2-8,y-16,tw+16,22);
+    const boxX = align==='left' ? x-8 : align==='right' ? x-tw-8 : x-tw/2-8;
+    ctx.fillStyle='rgba(4,6,15,0.75)'; ctx.fillRect(boxX,y-16,tw+16,22);
     ctx.fillStyle=color||'#9fc1de'; ctx.fillText(text,x,y);
   }
   function drawBattery(negLabel,posLabel){
@@ -119,8 +121,8 @@
     ctx.fillStyle='#fff'; ctx.font='800 26px Segoe UI'; ctx.textAlign='center';
     ctx.fillText('−',bx+bw*0.25,by+bh/2+9);
     ctx.fillText('+',bx+bw*0.75,by+bh/2+9);
-    label(bx+bw*0.25,by-14,negLabel||'gives up electrons','#8fd2ff');
-    label(bx+bw*0.75,by-14,posLabel||'wants electrons','#ff9d9d');
+    label(bx-4,by-14,negLabel||'gives up electrons','#8fd2ff','right');
+    label(bx+bw+4,by-14,posLabel||'wants electrons','#ff9d9d','left');
   }
   function drawElectronsPiling(local){
     drawBattery();
