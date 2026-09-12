@@ -9,7 +9,11 @@
   *{box-sizing:border-box;}
   body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
   .wrap{max-width:960px;margin:0 auto;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
   a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
   header{text-align:center;margin-bottom:20px;}
   h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
   header p{color:var(--dim);font-size:16px;margin:0;}
@@ -43,10 +47,13 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="index.html">&larr; Back to lahari.org</a>
+  <div class="topbar">
+    <a class="back" href="index.html" id="backLink">&larr; Back to lahari.org</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
   <header>
-    <h1>⏳ Time Slows Down When You Move Fast</h1>
-    <p>If you flew near the speed of light and came back, you'd be younger than your twin who stayed home. Let's see why.</p>
+    <h1 id="pageTitle">⏳ Time Slows Down When You Move Fast</h1>
+    <p id="pageSubtitle">If you flew near the speed of light and came back, you'd be younger than your twin who stayed home. Let's see why.</p>
   </header>
 
   <div class="player">
@@ -61,23 +68,23 @@
   </div>
 
   <div class="steps">
-    <div class="step-card"><div class="num">1</div><h3>🔦 A light clock</h3>
-      <p>Imagine a "clock" that ticks every time a beam of light bounces between two mirrors. Simple and perfectly accurate.</p></div>
-    <div class="step-card"><div class="num">2</div><h3>🚀 Put it on a spaceship</h3>
-      <p>If the ship flies past you, the light beam now has to travel diagonally — a LONGER path — to someone watching from outside.</p></div>
-    <div class="step-card"><div class="num">3</div><h3>⏱️ Longer path, same speed</h3>
-      <p>Since light's speed never changes, a longer path means the outside observer sees each "tick" take longer — the ship's clock looks slow!</p></div>
-    <div class="step-card"><div class="num">4</div><h3>👯 The twin paradox</h3>
-      <p>A twin who travels near light-speed and returns will have aged less than the twin who stayed on Earth — this is a real, measured effect!</p></div>
+    <div class="step-card"><div class="num">1</div><h3 id="s1t">🔦 A light clock</h3>
+      <p id="s1d">Imagine a "clock" that ticks every time a beam of light bounces between two mirrors. Simple and perfectly accurate.</p></div>
+    <div class="step-card"><div class="num">2</div><h3 id="s2t">🚀 Put it on a spaceship</h3>
+      <p id="s2d">If the ship flies past you, the light beam now has to travel diagonally — a LONGER path — to someone watching from outside.</p></div>
+    <div class="step-card"><div class="num">3</div><h3 id="s3t">⏱️ Longer path, same speed</h3>
+      <p id="s3d">Since light's speed never changes, a longer path means the outside observer sees each "tick" take longer — the ship's clock looks slow!</p></div>
+    <div class="step-card"><div class="num">4</div><h3 id="s4t">👯 The twin paradox</h3>
+      <p id="s4d">A twin who travels near light-speed and returns will have aged less than the twin who stayed on Earth — this is a real, measured effect!</p></div>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> This isn't just theory — it's tested every day. Fast-moving particles called muons, created high in our
     atmosphere, survive long enough to reach the ground BECAUSE their internal "clock" runs slow at near-light-speed. Without time dilation, they'd decay first!
   </div>
 
-  <div class="try-title">🧪 Now try it yourself</div>
-  <p class="try-subtitle">Drag the speed slider toward the speed of light and watch how much the traveler's clock slows down.</p>
+  <div class="try-title" id="tryTitle">🧪 Now try it yourself</div>
+  <p class="try-subtitle" id="trySubtitle">Drag the speed slider toward the speed of light and watch how much the traveler's clock slows down.</p>
   <div class="try-card">
     <canvas id="tryScene" width="600" height="300"></canvas>
     <div class="try-controls">
@@ -89,21 +96,117 @@
 </div>
 
 <script>
+const T = {
+  en: {
+    langToggle: 'తెలుగు', backLink: '&larr; Back to lahari.org',
+    pageTitle: '⏳ Time Slows Down When You Move Fast',
+    pageSubtitle: 'If you flew near the speed of light and came back, you\'d be younger than your twin who stayed home. Let\'s see why.',
+    playBtn: '▶ Play', pauseBtn: '⏸ Pause', restartBtn: '⟲ Restart',
+    captionInitial: 'Press <b>Play</b> to start!',
+    captionEnd: '🎬 The End! Press <b>Restart</b> to watch again.',
+    steps: [
+      ['🔦 A light clock','Imagine a "clock" that ticks every time a beam of light bounces between two mirrors. Simple and perfectly accurate.'],
+      ['🚀 Put it on a spaceship','If the ship flies past you, the light beam now has to travel diagonally — a LONGER path — to someone watching from outside.'],
+      ['⏱️ Longer path, same speed','Since light\'s speed never changes, a longer path means the outside observer sees each "tick" take longer — the ship\'s clock looks slow!'],
+      ['👯 The twin paradox','A twin who travels near light-speed and returns will have aged less than the twin who stayed on Earth — this is a real, measured effect!'],
+    ],
+    fact: '🤯 <b>Mind-blowing part:</b> This isn\'t just theory — it\'s tested every day. Fast-moving particles called muons, created high in our atmosphere, survive long enough to reach the ground BECAUSE their internal "clock" runs slow at near-light-speed. Without time dilation, they\'d decay first!',
+    tryTitle: '🧪 Now try it yourself',
+    trySubtitle: 'Drag the speed slider toward the speed of light and watch how much the traveler\'s clock slows down.',
+    tryReset: '↻ Reset',
+    tryResultZero: 'At near-zero speed, both clocks tick at basically the same rate.',
+    tryResultGeneric: (g)=>'For every '+g+' seconds that pass for the stationary clock, only 1 second passes on the fast-moving one!',
+    scenes: [
+      ['🔦 STEP 1: A LIGHT CLOCK','Picture a clock made of light bouncing between two mirrors, straight up and down. Each bounce = one "tick."'],
+      ['🚀 STEP 2: NOW PUT IT ON A SPACESHIP','The ship flies past you sideways. From YOUR view outside, the light doesn\'t just go up-down anymore — it has to zig-zag diagonally to keep up with the moving ship.'],
+      ['⏱️ STEP 3: A LONGER PATH, SAME SPEED LIMIT','Light\'s speed can never change. So if its path is longer, each "tick" must take MORE time — meaning the moving clock appears to run <b>slower</b> to you.'],
+      ['👯 STEP 4: THE TWIN PARADOX','If one twin flies out near light-speed and back while the other stays home, the traveling twin\'s clocks — and body — age <b>less</b>. They return younger!'],
+    ],
+    canvas: {
+      mirror: 'mirror', ship: 'ship',
+      zigzag: 'longer zig-zag path = slower ticking clock',
+      twinHome: 'twin who stayed home', twinTravel: 'traveling twin (near light-speed)',
+      homeClock: (y)=>'home clock: '+y+' yrs passed',
+      shipClock: (y)=>'ship clock: '+y+' yrs passed',
+      stationaryClock: 'stationary clock',
+      movingClockAt: (p)=>'clock at '+p+'% light-speed',
+      dilationFactor: (g)=>'time dilation factor: ×'+g,
+    },
+  },
+  te: {
+    langToggle: 'English', backLink: '&larr; lahari.org కి తిరిగి',
+    pageTitle: '⏳ మీరు వేగంగా కదిలినప్పుడు కాలం నెమ్మదిస్తుంది',
+    pageSubtitle: 'మీరు కాంతి వేగానికి దగ్గరగా ఎగిరి తిరిగి వస్తే, ఇంట్లో ఉండిపోయిన మీ కవలి కంటే మీరు చిన్నవారిగా ఉంటారు. దీనికి కారణం చూద్దాం.',
+    playBtn: '▶ ప్లే', pauseBtn: '⏸ పాజ్', restartBtn: '⟲ మళ్ళీ మొదలు',
+    captionInitial: 'ప్రారంభించడానికి <b>ప్లే</b> నొక్కండి!',
+    captionEnd: '🎬 ముగింపు! మళ్ళీ చూడటానికి <b>మళ్ళీ మొదలు</b> నొక్కండి.',
+    steps: [
+      ['🔦 ఒక కాంతి గడియారం','రెండు అద్దాల మధ్య కాంతి కిరణం ప్రతిసారి తాకినప్పుడు టిక్ చేసే "గడియారం"ని ఊహించండి. సరళమైనది మరియు ఖచ్చితమైనది.'],
+      ['🚀 దాన్ని అంతరిక్ష నౌకపై పెట్టండి','నౌక మీ పక్కనుండి ఎగిరితే, ఇప్పుడు కాంతి కిరణం బయట చూసేవారికి వికర్ణంగా — పొడవైన మార్గంలో — ప్రయాణించాలి.'],
+      ['⏱️ పొడవైన మార్గం, అదే వేగం','కాంతి వేగం ఎప్పుడూ మారదు కాబట్టి, పొడవైన మార్గం అంటే బయటి పరిశీలకుడికి ప్రతి "టిక్" ఎక్కువ సమయం తీసుకుంటుంది — నౌక గడియారం నెమ్మదిగా నడుస్తున్నట్టు కనిపిస్తుంది!'],
+      ['👯 కవలల వైరుధ్యం','కాంతి వేగానికి దగ్గరగా ప్రయాణించి తిరిగి వచ్చిన కవలి, భూమిపై ఉండిపోయిన కవలి కంటే తక్కువ వయసు పెరిగినట్టు ఉంటారు — ఇది నిజంగా కొలవబడిన ప్రభావం!'],
+    ],
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> ఇది కేవలం సిద్ధాంతం మాత్రమే కాదు — ఇది ప్రతిరోజూ పరీక్షించబడుతుంది. మన వాతావరణంలో ఎత్తులో సృష్టించబడే మ్యూయాన్‌లు అనే వేగవంతమైన కణాలు, కాంతి వేగానికి దగ్గరగా వాటి అంతర్గత "గడియారం" నెమ్మదిగా నడవడం వల్ల నేలను చేరుకునేంత కాలం మనుగడ సాగిస్తాయి. కాల విస్తరణ లేకపోతే, అవి ముందే క్షీణించేవి!',
+    tryTitle: '🧪 ఇప్పుడు మీరే ప్రయత్నించండి',
+    trySubtitle: 'వేగం స్లయిడర్‌ను కాంతి వేగం వైపుకు లాగి ప్రయాణికుడి గడియారం ఎంత నెమ్మదిస్తుందో చూడండి.',
+    tryReset: '↻ రీసెట్',
+    tryResultZero: 'దాదాపు సున్నా వేగంలో, రెండు గడియారాలు దాదాపు ఒకే వేగంతో టిక్ చేస్తాయి.',
+    tryResultGeneric: (g)=>'స్థిరమైన గడియారానికి ప్రతి '+g+' సెకన్లు గడిచినప్పుడు, వేగంగా కదిలే గడియారానికి కేవలం 1 సెకను మాత్రమే గడుస్తుంది!',
+    scenes: [
+      ['🔦 దశ 1: ఒక కాంతి గడియారం','రెండు అద్దాల మధ్య నిటారుగా పైకి-కిందికి తాకే కాంతితో చేసిన గడియారాన్ని ఊహించండి. ప్రతి తాకిడి = ఒక "టిక్."'],
+      ['🚀 దశ 2: ఇప్పుడు దాన్ని అంతరిక్ష నౌకపై పెట్టండి','నౌక మీ పక్కనుండి పక్కకు ఎగురుతుంది. బయట ఉన్న మీ దృష్టిలో, కాంతి ఇక కేవలం పైకి-కిందికి వెళ్ళదు — కదులుతున్న నౌకతో పాటు వెళ్ళడానికి వికర్ణంగా జిగ్‌జాగ్ చేయాలి.'],
+      ['⏱️ దశ 3: పొడవైన మార్గం, అదే వేగ పరిమితి','కాంతి వేగం ఎప్పుడూ మారదు. కాబట్టి దాని మార్గం పొడవైనదైతే, ప్రతి "టిక్" ఎక్కువ సమయం తీసుకోవాలి — అంటే కదులుతున్న గడియారం మీకు <b>నెమ్మదిగా</b> నడుస్తున్నట్టు కనిపిస్తుంది.'],
+      ['👯 దశ 4: కవలల వైరుధ్యం','ఒక కవలి కాంతి వేగానికి దగ్గరగా ఎగిరి తిరిగి వస్తే, మరొకరు ఇంట్లో ఉండిపోతే, ప్రయాణించిన కవలి గడియారాలు — మరియు శరీరం — <b>తక్కువ</b> వయసు పెరుగుతాయి. వారు చిన్నవారిగా తిరిగి వస్తారు!'],
+    ],
+    canvas: {
+      mirror: 'అద్దం', ship: 'నౌక',
+      zigzag: 'పొడవైన జిగ్‌జాగ్ మార్గం = నెమ్మదిగా టిక్ చేసే గడియారం',
+      twinHome: 'ఇంట్లో ఉండిపోయిన కవలి', twinTravel: 'ప్రయాణించిన కవలి (కాంతి వేగానికి దగ్గరగా)',
+      homeClock: (y)=>'ఇంటి గడియారం: '+y+' సంవత్సరాలు గడిచాయి',
+      shipClock: (y)=>'నౌక గడియారం: '+y+' సంవత్సరాలు గడిచాయి',
+      stationaryClock: 'స్థిరమైన గడియారం',
+      movingClockAt: (p)=>p+'% కాంతి-వేగంలో గడియారం',
+      dilationFactor: (g)=>'కాల విస్తరణ కారకం: ×'+g,
+    },
+  }
+};
+let LANG='en';
+function tr(){ return T[LANG]; }
+function applyStaticText(){
+  const t=tr();
+  document.documentElement.lang=LANG;
+  document.getElementById('langToggle').textContent=t.langToggle;
+  document.getElementById('backLink').innerHTML=t.backLink;
+  document.getElementById('pageTitle').textContent=t.pageTitle;
+  document.getElementById('pageSubtitle').textContent=t.pageSubtitle;
+  document.getElementById('restartBtn').textContent=t.restartBtn;
+  for(let i=0;i<4;i++){
+    document.getElementById('s'+(i+1)+'t').textContent=t.steps[i][0];
+    document.getElementById('s'+(i+1)+'d').innerHTML=t.steps[i][1];
+  }
+  document.getElementById('factBox').innerHTML=t.fact;
+  document.getElementById('tryTitle').textContent=t.tryTitle;
+  document.getElementById('trySubtitle').textContent=t.trySubtitle;
+  document.getElementById('tryReset').textContent=t.tryReset;
+}
+document.getElementById('langToggle').addEventListener('click',()=>{
+  LANG = LANG==='en' ? 'te' : 'en';
+  applyStaticText();
+  if(window.__tdRefresh) window.__tdRefresh();
+  if(window.__tryRefresh) window.__tryRefresh();
+});
+applyStaticText();
+
 (function(){
   const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
   const W=canvas.width, H=canvas.height;
   const captionEl=document.getElementById('caption'), bannerEl=document.getElementById('banner'), progressBar=document.getElementById('progressBar');
   const playBtn=document.getElementById('playBtn'), restartBtn=document.getElementById('restartBtn');
 
-  const SCENES=[
-    {t:0,dur:7,banner:'🔦 STEP 1: A LIGHT CLOCK',caption:'Picture a clock made of light bouncing between two mirrors, straight up and down. Each bounce = one "tick."'},
-    {t:7,dur:8,banner:'🚀 STEP 2: NOW PUT IT ON A SPACESHIP',caption:'The ship flies past you sideways. From YOUR view outside, the light doesn\'t just go up-down anymore — it has to zig-zag diagonally to keep up with the moving ship.'},
-    {t:15,dur:8,banner:'⏱️ STEP 3: A LONGER PATH, SAME SPEED LIMIT',caption:'Light\'s speed can never change. So if its path is longer, each "tick" must take MORE time — meaning the moving clock appears to run <b>slower</b> to you.'},
-    {t:23,dur:8,banner:'👯 STEP 4: THE TWIN PARADOX',caption:'If one twin flies out near light-speed and back while the other stays home, the traveling twin\'s clocks — and body — age <b>less</b>. They return younger!'},
-  ];
+  const starts=[0,7,15,23];
   const totalDur=31;
-  let simTime=0, playing=false, lastTs=null;
-  function currentScene(t){ for(let i=SCENES.length-1;i>=0;i--) if(t>=SCENES[i].t) return i; return 0; }
+  let simTime=0, playing=false, lastTs=null, captionOverride='initial';
+  function currentScene(t){ for(let i=starts.length-1;i>=0;i--) if(t>=starts[i]) return i; return 0; }
   function label(x,y,text,color){
     ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
     const tw=ctx.measureText(text).width;
@@ -121,8 +224,8 @@
     ctx.fillStyle='#ffd23f'; ctx.beginPath(); ctx.arc(cx,py,8,0,Math.PI*2); ctx.fill();
     ctx.strokeStyle='rgba(255,210,63,.3)'; ctx.lineWidth=2;
     ctx.beginPath(); ctx.moveTo(cx,top); ctx.lineTo(cx,bot); ctx.stroke();
-    label(cx,top-30,'mirror','#4fd3ff');
-    label(cx,bot+30,'mirror','#4fd3ff');
+    label(cx,top-30,tr().canvas.mirror,'#4fd3ff');
+    label(cx,bot+30,tr().canvas.mirror,'#4fd3ff');
   }
   function drawShipView(local,speedFrac){
     const top=140, bot=320;
@@ -130,8 +233,7 @@
     ctx.strokeStyle='#c7c9d9'; ctx.lineWidth=2;
     ctx.strokeRect(shipX-40,top-20,80,bot-top+40);
     ctx.fillStyle='#eef2ff'; ctx.font='700 12px Segoe UI'; ctx.textAlign='center';
-    ctx.fillText('ship',shipX,top-30);
-    // diagonal path traced
+    ctx.fillText(tr().canvas.ship,shipX,top-30);
     ctx.strokeStyle='rgba(255,210,63,.35)'; ctx.lineWidth=2;
     ctx.beginPath();
     for(let i=0;i<60;i++){
@@ -148,30 +250,29 @@
   }
   function drawTwins(local){
     ctx.fillStyle='#6dffb0'; ctx.beginPath(); ctx.arc(160,H/2,26,0,Math.PI*2); ctx.fill();
-    label(160,H/2+50,'twin who stayed home','#6dffb0');
+    label(160,H/2+50,tr().canvas.twinHome,'#6dffb0');
     const cyc=local%8;
     let shipX;
     if(cyc<4) shipX=220+cyc/4*560;
     else shipX=220+(1-(cyc-4)/4)*560;
     ctx.fillStyle='#c7c9d9';
     ctx.beginPath(); ctx.moveTo(shipX-30,H/2+14); ctx.lineTo(shipX+30,H/2); ctx.lineTo(shipX-30,H/2-14); ctx.closePath(); ctx.fill();
-    label(shipX,H/2-40,'traveling twin (near light-speed)','#ffd23f');
-    // clocks
+    label(shipX,H/2-40,tr().canvas.twinTravel,'#ffd23f');
     ctx.fillStyle='#eef2ff'; ctx.font='700 14px Segoe UI'; ctx.textAlign='center';
     const homeYears=(local*1.2).toFixed(1);
     const shipYears=(local*1.2*0.4).toFixed(1);
-    ctx.fillText('home clock: '+homeYears+' yrs passed', 160, H-40);
-    ctx.fillText('ship clock: '+shipYears+' yrs passed', shipX, H-70>H-70?H-70:H-70);
+    ctx.fillText(tr().canvas.homeClock(homeYears), 160, H-40);
+    ctx.fillText(tr().canvas.shipClock(shipYears), shipX, H-70);
   }
 
   function render(t){
     ctx.clearRect(0,0,W,H); ctx.fillStyle='#04060f'; ctx.fillRect(0,0,W,H);
     for(let i=0;i<50;i++){ ctx.fillStyle='rgba(255,255,255,'+(0.08+0.3*((i*37)%10)/10)+')'; ctx.fillRect((i*53)%W,(i*97)%H,2,2); }
-    const idx=currentScene(t), scene=SCENES[idx], local=t-scene.t;
-    bannerEl.textContent=scene.banner; captionEl.innerHTML=scene.caption;
+    const idx=currentScene(t), scene=tr().scenes[idx], local=t-starts[idx];
+    bannerEl.textContent=scene[0]; captionEl.innerHTML=scene[1];
     if(idx===0) drawLightClockStatic(local);
     else if(idx===1) drawShipView(local,0.7);
-    else if(idx===2){ drawShipView(local,1); label(W/2,60,'longer zig-zag path = slower ticking clock','#eef2ff'); }
+    else if(idx===2){ drawShipView(local,1); label(W/2,60,tr().canvas.zigzag,'#eef2ff'); }
     else drawTwins(local);
     progressBar.style.width=Math.min(100,(t/totalDur)*100)+'%';
   }
@@ -181,15 +282,24 @@
     const dt=Math.min(0.05,(ts-lastTs)/1000); lastTs=ts;
     simTime+=dt;
     if(simTime>=totalDur){ simTime=totalDur; render(simTime); pause();
-      captionEl.innerHTML='🎬 The End! Press <b>Restart</b> to watch again.'; return; }
+      captionOverride='ended'; captionEl.innerHTML=tr().captionEnd; return; }
+    captionOverride=null;
     render(simTime); requestAnimationFrame(step);
   }
-  function play(){ if(playing) return; playing=true; lastTs=null; playBtn.textContent='⏸ Pause'; requestAnimationFrame(step); }
-  function pause(){ playing=false; playBtn.textContent='▶ Play'; }
-  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionEl.innerHTML='Press <b>Play</b> to start!'; }
+  function play(){ if(playing) return; playing=true; lastTs=null; captionOverride=null; playBtn.textContent=tr().pauseBtn; requestAnimationFrame(step); }
+  function pause(){ playing=false; playBtn.textContent=tr().playBtn; }
+  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionOverride='initial'; captionEl.innerHTML=tr().captionInitial; }
   playBtn.addEventListener('click',()=>playing?pause():play());
   restartBtn.addEventListener('click',restart);
+  playBtn.textContent=tr().playBtn;
   render(0);
+
+  window.__tdRefresh=function(){
+    playBtn.textContent = playing ? tr().pauseBtn : tr().playBtn;
+    render(simTime);
+    if(captionOverride==='initial') captionEl.innerHTML=tr().captionInitial;
+    else if(captionOverride==='ended') captionEl.innerHTML=tr().captionEnd;
+  };
 })();
 
 (function(){
@@ -202,7 +312,6 @@
     c.clearRect(0,0,w,h); c.fillStyle='#04060f'; c.fillRect(0,0,w,h);
     const v=(+slider.value)/100;
     const gamma=1/Math.sqrt(Math.max(0.0001,1-v*v));
-    // two clocks: stationary and moving
     const cx1=150, cx2=420, cy=140;
     [cx1,cx2].forEach((cx,i)=>{
       c.strokeStyle='#4fd3ff'; c.lineWidth=3;
@@ -212,18 +321,20 @@
       c.beginPath(); c.moveTo(cx,cy); c.lineTo(cx+Math.cos(ang)*40,cy+Math.sin(ang)*40); c.stroke();
     });
     c.fillStyle='#eef2ff'; c.font='700 13px Segoe UI'; c.textAlign='center';
-    c.fillText('stationary clock', cx1, cy+80);
-    c.fillText('clock at '+(v*100).toFixed(0)+'% light-speed', cx2, cy+80);
+    c.fillText(tr().canvas.stationaryClock, cx1, cy+80);
+    c.fillText(tr().canvas.movingClockAt((v*100).toFixed(0)), cx2, cy+80);
     c.fillStyle='#ffd23f'; c.font='800 18px Segoe UI';
-    c.fillText('time dilation factor: ×'+gamma.toFixed(2), w/2, 250);
+    c.fillText(tr().canvas.dilationFactor(gamma.toFixed(2)), w/2, 250);
     resultEl.textContent = v<0.05
-      ? 'At near-zero speed, both clocks tick at basically the same rate.'
-      : 'For every '+gamma.toFixed(2)+' seconds that pass for the stationary clock, only 1 second passes on the fast-moving one!';
+      ? tr().tryResultZero
+      : tr().tryResultGeneric(gamma.toFixed(2));
   }
   function loop(){ t+=0.03; draw(); requestAnimationFrame(loop); }
   slider.addEventListener('input',draw);
   document.getElementById('tryReset').addEventListener('click',()=>{ slider.value=0; draw(); });
   draw(); requestAnimationFrame(loop);
+
+  window.__tryRefresh=function(){ draw(); };
 })();
 </script>
 </body>
