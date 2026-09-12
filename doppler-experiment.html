@@ -9,7 +9,11 @@
   *{box-sizing:border-box;}
   body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
   .wrap{max-width:960px;margin:0 auto;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
   a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
   header{text-align:center;margin-bottom:20px;}
   h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
   header p{color:var(--dim);font-size:16px;margin:0;}
@@ -32,10 +36,13 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="category-physics.html">&larr; Back to Physics in Action</a>
+  <div class="topbar">
+    <a class="back" href="category-physics.html" id="backLink">&larr; Back to Physics in Action</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
   <header>
-    <h1>🚨 The Doppler Effect</h1>
-    <p>Why does an ambulance siren sound higher as it approaches, then suddenly drop lower as it passes?</p>
+    <h1 id="pageTitle">🚨 The Doppler Effect</h1>
+    <p id="pageSubtitle">Why does an ambulance siren sound higher as it approaches, then suddenly drop lower as it passes?</p>
   </header>
 
   <div class="player">
@@ -48,29 +55,100 @@
   </div>
 
   <div class="steps">
-    <div class="step-card"><div class="num">1</div><h3>〰️ Sound waves spread as rings</h3>
-      <p>A moving siren sends out sound waves in circles — like ripples from a stone dropped in a pond.</p></div>
-    <div class="step-card"><div class="num">2</div><h3>➡️ Moving forward squeezes the waves</h3>
-      <p>Since the ambulance moves forward between each wave, the waves ahead of it get squeezed closer together.</p></div>
-    <div class="step-card"><div class="num">3</div><h3>🎵 Squeezed waves = higher pitch</h3>
-      <p>Closer-together waves reach your ear more often per second — and more waves per second sounds like a HIGHER pitch.</p></div>
-    <div class="step-card"><div class="num">4</div><h3>📉 Behind it, waves stretch out</h3>
-      <p>Behind the ambulance, waves get stretched farther apart — fewer per second reaches your ear, sounding LOWER — that's the drop you hear as it passes!</p></div>
+    <div class="step-card"><div class="num">1</div><h3 id="s1t">〰️ Sound waves spread as rings</h3>
+      <p id="s1d">A moving siren sends out sound waves in circles — like ripples from a stone dropped in a pond.</p></div>
+    <div class="step-card"><div class="num">2</div><h3 id="s2t">➡️ Moving forward squeezes the waves</h3>
+      <p id="s2d">Since the ambulance moves forward between each wave, the waves ahead of it get squeezed closer together.</p></div>
+    <div class="step-card"><div class="num">3</div><h3 id="s3t">🎵 Squeezed waves = higher pitch</h3>
+      <p id="s3d">Closer-together waves reach your ear more often per second — and more waves per second sounds like a HIGHER pitch.</p></div>
+    <div class="step-card"><div class="num">4</div><h3 id="s4t">📉 Behind it, waves stretch out</h3>
+      <p id="s4d">Behind the ambulance, waves get stretched farther apart — fewer per second reaches your ear, sounding LOWER — that's the drop you hear as it passes!</p></div>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> This same effect works with LIGHT, not just sound! Stars and galaxies moving away from us stretch
     their light toward red ("redshift"), and this is one of the key pieces of evidence that the whole universe is expanding.
   </div>
 </div>
 
 <script>
+const T = {
+  en: {
+    langToggle: 'తెలుగు',
+    backLink: '&larr; Back to Physics in Action',
+    pageTitle: '🚨 The Doppler Effect',
+    pageSubtitle: 'Why does an ambulance siren sound higher as it approaches, then suddenly drop lower as it passes?',
+    playBtn: '▶ Play', pauseBtn: '⏸ Pause', restartBtn: '⟲ Restart',
+    captionInitial: 'Press <b>Play</b> to hear (see) it happen!',
+    captionEnd: '🎬 The End! Press <b>Restart</b> to watch again.',
+    captionApproach: 'The ambulance approaches — waves ahead bunch together (higher pitch)',
+    captionPass: 'The ambulance passes — waves behind stretch out (lower pitch)',
+    steps: [
+      ['〰️ Sound waves spread as rings','A moving siren sends out sound waves in circles — like ripples from a stone dropped in a pond.'],
+      ['➡️ Moving forward squeezes the waves','Since the ambulance moves forward between each wave, the waves ahead of it get squeezed closer together.'],
+      ['🎵 Squeezed waves = higher pitch','Closer-together waves reach your ear more often per second — and more waves per second sounds like a HIGHER pitch.'],
+      ['📉 Behind it, waves stretch out','Behind the ambulance, waves get stretched farther apart — fewer per second reaches your ear, sounding LOWER — that\'s the drop you hear as it passes!'],
+    ],
+    fact: '🤯 <b>Mind-blowing part:</b> This same effect works with LIGHT, not just sound! Stars and galaxies moving away from us stretch their light toward red ("redshift"), and this is one of the key pieces of evidence that the whole universe is expanding.',
+    canvas: {
+      hearsHigher: 'hears HIGHER pitch',
+      hearsLower: 'hears LOWER pitch',
+      bunchStretch: 'waves bunch up ahead, spread out behind',
+    },
+  },
+  te: {
+    langToggle: 'English',
+    backLink: '&larr; ఫిజిక్స్ ఇన్ యాక్షన్ కి తిరిగి',
+    pageTitle: '🚨 డాప్లర్ ఎఫెక్ట్',
+    pageSubtitle: 'అంబులెన్స్ సైరన్ దగ్గరకు వస్తున్నప్పుడు ఎందుకు ఎక్కువ పిచ్‌లో వినిపిస్తుంది, దాటిపోయాక ఎందుకు అకస్మాత్తుగా తక్కువ పిచ్‌కి పడిపోతుంది?',
+    playBtn: '▶ ప్లే', pauseBtn: '⏸ పాజ్', restartBtn: '⟲ మళ్ళీ మొదలు',
+    captionInitial: 'ఇది జరగడం చూడటానికి <b>ప్లే</b> నొక్కండి!',
+    captionEnd: '🎬 ముగింపు! మళ్ళీ చూడటానికి <b>మళ్ళీ మొదలు</b> నొక్కండి.',
+    captionApproach: 'అంబులెన్స్ దగ్గరకు వస్తోంది — ముందున్న తరంగాలు దగ్గరగా గుమిగూడతాయి (ఎక్కువ పిచ్)',
+    captionPass: 'అంబులెన్స్ దాటిపోతోంది — వెనుక తరంగాలు దూరదూరంగా వ్యాపిస్తాయి (తక్కువ పిచ్)',
+    steps: [
+      ['〰️ ధ్వని తరంగాలు వలయాలుగా వ్యాపిస్తాయి','కదులుతున్న సైరన్ ధ్వని తరంగాలను వలయాలుగా పంపుతుంది — చెరువులో రాయి వేసినప్పుడు ఏర్పడే అలల్లాగా.'],
+      ['➡️ ముందుకు కదలడం తరంగాలను దగ్గరకు లాగుతుంది','ప్రతి తరంగం మధ్య అంబులెన్స్ ముందుకు కదులుతుంది కాబట్టి, దాని ముందున్న తరంగాలు మరింత దగ్గరగా నొక్కుకుపోతాయి.'],
+      ['🎵 దగ్గరైన తరంగాలు = ఎక్కువ పిచ్','దగ్గరదగ్గరగా ఉన్న తరంగాలు మీ చెవికి సెకనుకు ఎక్కువసార్లు చేరతాయి — సెకనుకు ఎక్కువ తరంగాలు అంటే ఎక్కువ పిచ్ అని అర్థం.'],
+      ['📉 దాని వెనుక, తరంగాలు దూరదూరంగా వ్యాపిస్తాయి','అంబులెన్స్ వెనుక, తరంగాలు మరింత దూరదూరంగా వ్యాపిస్తాయి — సెకనుకు తక్కువ తరంగాలు మీ చెవికి చేరతాయి, పిచ్ తక్కువగా వినిపిస్తుంది — అదే దాటిపోయేటప్పుడు మీరు వినే పిచ్ తగ్గుదల!'],
+    ],
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> ఇదే ఎఫెక్ట్ ధ్వనితోనే కాదు, కాంతితో కూడా పనిచేస్తుంది! మన నుండి దూరంగా కదులుతున్న నక్షత్రాలు, గెలాక్సీలు తమ కాంతిని ఎరుపు వైపు సాగదీస్తాయి ("రెడ్‌షిఫ్ట్"), మరియు ఇది మొత్తం విశ్వం విస్తరిస్తోందనడానికి కీలక ఆధారాలలో ఒకటి.',
+    canvas: {
+      hearsHigher: 'ఎక్కువ పిచ్ వింటాడు',
+      hearsLower: 'తక్కువ పిచ్ వింటాడు',
+      bunchStretch: 'తరంగాలు ముందు గుమిగూడతాయి, వెనుక వ్యాపిస్తాయి',
+    },
+  }
+};
+let LANG = 'en';
+function tr(){ return T[LANG]; }
+function applyStaticText(){
+  const t = tr();
+  document.documentElement.lang = LANG;
+  document.getElementById('langToggle').textContent = t.langToggle;
+  document.getElementById('backLink').innerHTML = t.backLink;
+  document.getElementById('pageTitle').textContent = t.pageTitle;
+  document.getElementById('pageSubtitle').textContent = t.pageSubtitle;
+  document.getElementById('restartBtn').textContent = t.restartBtn;
+  for(let i=0;i<4;i++){
+    document.getElementById('s'+(i+1)+'t').textContent = t.steps[i][0];
+    document.getElementById('s'+(i+1)+'d').textContent = t.steps[i][1];
+  }
+  document.getElementById('factBox').innerHTML = t.fact;
+}
+document.getElementById('langToggle').addEventListener('click', () => {
+  LANG = LANG === 'en' ? 'te' : 'en';
+  applyStaticText();
+  if (window.__dopplerRefresh) window.__dopplerRefresh();
+});
+applyStaticText();
+
 (function(){
   const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
   const W=canvas.width, H=canvas.height;
   const captionEl=document.getElementById('caption');
   const playBtn=document.getElementById('playBtn'), restartBtn=document.getElementById('restartBtn');
-  let simTime=0, playing=false, lastTs=null;
+  let simTime=0, playing=false, lastTs=null, captionOverride='initial';
   const totalDur=8;
   const waves=[];
   let lastEmit=-1;
@@ -100,9 +178,9 @@
     ctx.font='40px Segoe UI'; ctx.textAlign='center'; ctx.fillText('🚑',carX,carY+15);
     ctx.font='30px Segoe UI'; ctx.fillText('🧍',120,carY+H/3);
     ctx.font='30px Segoe UI'; ctx.fillText('🧍',W-120,carY+H/3);
-    label(120,carY+H/3+40,'hears HIGHER pitch','#6dffb0');
-    label(W-120,carY+H/3+40,'hears LOWER pitch','#ff9d9d');
-    label(W/2,40,'waves bunch up ahead, spread out behind','#eef2ff');
+    label(120,carY+H/3+40,tr().canvas.hearsHigher,'#6dffb0');
+    label(W-120,carY+H/3+40,tr().canvas.hearsLower,'#ff9d9d');
+    label(W/2,40,tr().canvas.bunchStretch,'#eef2ff');
   }
   function step(ts){
     if(!playing) return;
@@ -111,21 +189,29 @@
     simTime+=dt;
     if(simTime>=totalDur){
       simTime=totalDur; render(simTime); pause();
-      captionEl.innerHTML='🎬 The End! Press <b>Restart</b> to watch again.';
+      captionOverride='ended'; captionEl.innerHTML=tr().captionEnd;
       return;
     }
+    captionOverride = simTime<totalDur/2 ? 'approach' : 'pass';
     render(simTime);
-    captionEl.innerHTML = simTime<totalDur/2
-      ? 'The ambulance approaches — waves ahead bunch together (higher pitch)'
-      : 'The ambulance passes — waves behind stretch out (lower pitch)';
+    captionEl.innerHTML = simTime<totalDur/2 ? tr().captionApproach : tr().captionPass;
     requestAnimationFrame(step);
   }
-  function play(){ if(playing) return; playing=true; lastTs=null; playBtn.textContent='⏸ Pause'; requestAnimationFrame(step); }
-  function pause(){ playing=false; playBtn.textContent='▶ Play'; }
-  function restart(){ simTime=0; waves.length=0; lastEmit=-1; render(0); pause(); captionEl.innerHTML='Press <b>Play</b> to hear (see) it happen!'; }
+  function play(){ if(playing) return; playing=true; lastTs=null; playBtn.textContent=tr().pauseBtn; requestAnimationFrame(step); }
+  function pause(){ playing=false; playBtn.textContent=tr().playBtn; }
+  function restart(){ simTime=0; waves.length=0; lastEmit=-1; render(0); pause(); captionOverride='initial'; captionEl.innerHTML=tr().captionInitial; }
   playBtn.addEventListener('click',()=>playing?pause():play());
   restartBtn.addEventListener('click',restart);
   render(0);
+
+  window.__dopplerRefresh = function(){
+    playBtn.textContent = playing ? tr().pauseBtn : tr().playBtn;
+    render(simTime);
+    if(captionOverride==='initial') captionEl.innerHTML=tr().captionInitial;
+    else if(captionOverride==='ended') captionEl.innerHTML=tr().captionEnd;
+    else if(captionOverride==='approach') captionEl.innerHTML=tr().captionApproach;
+    else if(captionOverride==='pass') captionEl.innerHTML=tr().captionPass;
+  };
 })();
 </script>
 </body>

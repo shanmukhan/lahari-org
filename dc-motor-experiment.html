@@ -24,10 +24,15 @@
     padding: 20px 16px 60px;
   }
   .wrap{ max-width: 960px; margin: 0 auto; }
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+  a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
   header{ text-align:center; margin-bottom: 20px; }
   h1{
     font-size: clamp(24px, 5vw, 38px);
-    margin: 0 0 6px;
+    margin: 10px 0 6px;
     background: linear-gradient(90deg, var(--accent), var(--accent2));
     -webkit-background-clip: text;
     background-clip: text;
@@ -160,9 +165,13 @@
 <body>
 <div class="wrap">
 
+  <div class="topbar">
+    <a class="back" href="category-tech.html" id="backLink">&larr; Back to Everyday Tech</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
   <header>
-    <h1>⚙️ How a DC Motor Works</h1>
-    <p>From magnets, to electricity making magnetism, to a coil that spins forever — step by step.</p>
+    <h1 id="pageTitle">⚙️ How a DC Motor Works</h1>
+    <p id="pageSubtitle">From magnets, to electricity making magnetism, to a coil that spins forever — step by step.</p>
   </header>
 
   <div class="player">
@@ -181,32 +190,32 @@
   <div class="steps">
     <div class="step-card">
       <div class="num">1</div>
-      <h3>🧲 Magnets have poles</h3>
-      <p>Every magnet has a NORTH and a SOUTH end. Opposite poles attract, same poles repel.</p>
+      <h3 id="s1t">🧲 Magnets have poles</h3>
+      <p id="s1d">Every magnet has a NORTH and a SOUTH end. Opposite poles attract, same poles repel.</p>
     </div>
     <div class="step-card">
       <div class="num">2</div>
-      <h3>⚡ Electricity → magnetism</h3>
-      <p>Current flowing through a wire makes its own magnetic field. Coil the wire and the field gets strong — an electromagnet!</p>
+      <h3 id="s2t">⚡ Electricity → magnetism</h3>
+      <p id="s2d">Current flowing through a wire makes its own magnetic field. Coil the wire and the field gets strong — an electromagnet!</p>
     </div>
     <div class="step-card">
       <div class="num">3</div>
-      <h3>👉 A push is born</h3>
-      <p>Put that coil between a magnet's N and S poles, and each side of the coil gets pushed — it starts to turn.</p>
+      <h3 id="s3t">👉 A push is born</h3>
+      <p id="s3d">Put that coil between a magnet's N and S poles, and each side of the coil gets pushed — it starts to turn.</p>
     </div>
     <div class="step-card">
       <div class="num">4</div>
-      <h3>🔁 The commutator trick</h3>
-      <p>A commutator flips the current every half-turn, so the push always spins the coil the SAME way — forever.</p>
+      <h3 id="s4t">🔁 The commutator trick</h3>
+      <p id="s4d">A commutator flips the current every half-turn, so the push always spins the coil the SAME way — forever.</p>
     </div>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> without the commutator, the coil would just wobble back and forth and stop. That tiny flipping trick is the difference between a wobble and a motor spinning thousands of times a minute!
   </div>
 
-  <div class="try-title">🧪 Now try it yourself</div>
-  <p class="try-subtitle">Flip the commutator switch on and off and watch what happens to the coil.</p>
+  <div class="try-title" id="tryTitle">🧪 Now try it yourself</div>
+  <p class="try-subtitle" id="trySubtitle">Flip the commutator switch on and off and watch what happens to the coil.</p>
   <div class="try-card">
     <canvas id="tryScene" width="480" height="320"></canvas>
     <div class="try-controls">
@@ -219,6 +228,146 @@
 </div>
 
 <script>
+// ---------- shared translation layer ----------
+const T = {
+  en: {
+    langToggle: 'తెలుగు',
+    backLink: '&larr; Back to Everyday Tech',
+    pageTitle: '⚙️ How a DC Motor Works',
+    pageSubtitle: 'From magnets, to electricity making magnetism, to a coil that spins forever — step by step.',
+    playBtn: '▶ Play', pauseBtn: '⏸ Pause', restartBtn: '⟲ Restart',
+    slowBtn: '🐢 Slow Motion', normalBtn: '🐇 Normal Speed',
+    captionInitial: 'Press <b>Play</b> to start the show!',
+    captionEnd: '🎬 The End! Press <b>Restart</b> to watch again.',
+    steps: [
+      ['🧲 Magnets have poles','Every magnet has a NORTH and a SOUTH end. Opposite poles attract, same poles repel.'],
+      ['⚡ Electricity → magnetism','Current flowing through a wire makes its own magnetic field. Coil the wire and the field gets strong — an electromagnet!'],
+      ['👉 A push is born','Put that coil between a magnet\'s N and S poles, and each side of the coil gets pushed — it starts to turn.'],
+      ['🔁 The commutator trick','A commutator flips the current every half-turn, so the push always spins the coil the SAME way — forever.'],
+    ],
+    fact: '🤯 <b>Mind-blowing part:</b> without the commutator, the coil would just wobble back and forth and stop. That tiny flipping trick is the difference between a wobble and a motor spinning thousands of times a minute!',
+    tryTitle: '🧪 Now try it yourself',
+    trySubtitle: 'Flip the commutator switch on and off and watch what happens to the coil.',
+    tryToggleOn: '🔁 Commutator: ON', tryToggleOff: '🔁 Commutator: OFF', tryReset: '↻ Reset',
+    tryFullSpins: (n)=>`Full spins so far: ${n}`,
+    tryNoCommutator: 'No commutator: it just rocks back and forth.',
+    tryResultDefault: '',
+    scenes: [
+      ['🧲 STEP 1: MAGNETS','Every magnet has two ends, called <b>POLES</b>: a NORTH pole (N) and a SOUTH pole (S).'],
+      ['🧲 STEP 1: MAGNETS','Opposite poles <b>ATTRACT</b> — they pull together. Same poles <b>REPEL</b> — they push apart.'],
+      ['🧲 STEP 1: MAGNETS','Magnets also have an invisible force field around them, flowing from N to S.'],
+      ['⚡ STEP 2: ELECTRICITY','Here\'s a plain wire with NO electricity flowing. Nothing magnetic is happening yet.'],
+      ['⚡ STEP 2: ELECTRICITY','⚡ Now current flows through it! Electricity creates its <b>own magnetic field</b>, circling around the wire!'],
+      ['⚡ STEP 2: ELECTRICITY','Coil the wire into loops and all those little fields <b>ADD UP</b> — now it\'s an <b>ELECTROMAGNET</b>, with its own N and S ends!'],
+      ['🔧 STEP 3: BUILD THE MOTOR','Now place that coil between a strong permanent magnet\'s N and S poles...'],
+      ['🔧 STEP 3: BUILD THE MOTOR','Electricity + magnetism = a <b>PUSH</b>! One side of the coil gets shoved up, the other down — it starts to spin!'],
+      ['❌ WITHOUT THE TRICK','❌ But keep watching: as it turns, the push starts to <b>fight itself</b> — the coil just wobbles back and forth instead of spinning around!'],
+      ['✅ THE COMMUTATOR TRICK','✅ A <b>COMMUTATOR</b> (that split ring) flips the current every half-turn — so the push always spins it the SAME way!'],
+      ['⚙️ A COMPLETE DC MOTOR','Battery + coil + magnet + commutator, all together — a DC motor that spins and spins!'],
+    ],
+    canvas: {
+      northPole: 'NORTH POLE', southPole: 'SOUTH POLE',
+      attract: 'ATTRACT', repel: 'REPEL',
+      fieldLabel: 'invisible force field, N → S',
+      wireLabel: 'A WIRE',
+      currentFlowing: '⚡ current flowing → magnetic field appears!',
+      noCurrent: 'no current = no magnetic field',
+      electromagnetLabel: 'ELECTROMAGNET (coiled wire)',
+      coilLabel: 'COIL (electromagnet)',
+      permanentMagnetLabel: 'PERMANENT MAGNET (fixed)',
+      pushFades: 'PUSH FADES / REVERSES!',
+      commutatorCloseup: 'COMMUTATOR (close-up)',
+      wiresFixed: 'wires stay fixed — no flip',
+      batteryLabel: '+  BATTERY  −',
+      fullMotorLabel: 'A COMPLETE DC MOTOR',
+      trySpinning: 'Spinning smoothly!',
+      tryWobbling: 'Wobbling, not spinning!',
+    },
+  },
+  te: {
+    langToggle: 'English',
+    backLink: '&larr; Everyday Tech కి తిరిగి',
+    pageTitle: '⚙️ DC మోటార్ ఎలా పనిచేస్తుంది',
+    pageSubtitle: 'అయస్కాంతాల నుండి, విద్యుత్ అయస్కాంతత్వాన్ని సృష్టించడం వరకు, ఎప్పటికీ తిరిగే కాయిల్ వరకు — దశలవారీగా.',
+    playBtn: '▶ ప్లే', pauseBtn: '⏸ పాజ్', restartBtn: '⟲ మళ్ళీ మొదలు',
+    slowBtn: '🐢 స్లో మోషన్', normalBtn: '🐇 సాధారణ వేగం',
+    captionInitial: 'ప్రదర్శన ప్రారంభించడానికి <b>ప్లే</b> నొక్కండి!',
+    captionEnd: '🎬 ముగింపు! మళ్ళీ చూడటానికి <b>మళ్ళీ మొదలు</b> నొక్కండి.',
+    steps: [
+      ['🧲 అయస్కాంతాలకు ధ్రువాలు ఉంటాయి','ప్రతి అయస్కాంతానికి ఒక ఉత్తర ధ్రువం మరియు ఒక దక్షిణ ధ్రువం ఉంటాయి. వ్యతిరేక ధ్రువాలు ఆకర్షిస్తాయి, ఒకేలాంటి ధ్రువాలు వికర్షిస్తాయి.'],
+      ['⚡ విద్యుత్ → అయస్కాంతత్వం','తీగలో ప్రవహించే విద్యుత్ ప్రవాహం దాని స్వంత అయస్కాంత క్షేత్రాన్ని సృష్టిస్తుంది. తీగను చుట్టగా చేస్తే ఆ క్షేత్రం బలంగా మారుతుంది — ఇదే విద్యుదయస్కాంతం!'],
+      ['👉 ఒక తోపుడు పుడుతుంది','ఆ కాయిల్‌ని అయస్కాంతం యొక్క N మరియు S ధ్రువాల మధ్య ఉంచితే, కాయిల్ యొక్క ప్రతి వైపు తోయబడుతుంది — అది తిరగడం మొదలుపెడుతుంది.'],
+      ['🔁 కమ్యుటేటర్ ఉపాయం','కమ్యుటేటర్ ప్రతి అర్ధ-తిరుగుడుకు విద్యుత్ ప్రవాహాన్ని తారుమారు చేస్తుంది, కాబట్టి తోపుడు ఎప్పుడూ కాయిల్‌ని ఒకే దిశలో తిప్పుతుంది — శాశ్వతంగా.'],
+    ],
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> కమ్యుటేటర్ లేకుండా, కాయిల్ కేవలం అటూఇటూ ఊగి ఆగిపోతుంది. ఆ చిన్న తారుమారు ఉపాయమే ఊగడానికి, నిమిషానికి వేల సార్లు తిరిగే మోటార్‌కు మధ్య తేడా!',
+    tryTitle: '🧪 ఇప్పుడు మీరే ప్రయత్నించండి',
+    trySubtitle: 'కమ్యుటేటర్ స్విచ్‌ని ఆన్, ఆఫ్ చేసి కాయిల్‌కి ఏమి జరుగుతుందో చూడండి.',
+    tryToggleOn: '🔁 కమ్యుటేటర్: ఆన్', tryToggleOff: '🔁 కమ్యుటేటర్: ఆఫ్', tryReset: '↻ రీసెట్',
+    tryFullSpins: (n)=>`ఇప్పటివరకు పూర్తి తిరుగుళ్ళు: ${n}`,
+    tryNoCommutator: 'కమ్యుటేటర్ లేదు: అది కేవలం అటూఇటూ ఊగుతుంది.',
+    tryResultDefault: '',
+    scenes: [
+      ['🧲 దశ 1: అయస్కాంతాలు','ప్రతి అయస్కాంతానికి రెండు చివరలు ఉంటాయి, వాటిని <b>ధ్రువాలు</b> అంటారు: ఉత్తర ధ్రువం (N) మరియు దక్షిణ ధ్రువం (S).'],
+      ['🧲 దశ 1: అయస్కాంతాలు','వ్యతిరేక ధ్రువాలు <b>ఆకర్షిస్తాయి</b> — అవి కలిసి లాగుతాయి. ఒకేలాంటి ధ్రువాలు <b>వికర్షిస్తాయి</b> — అవి దూరంగా తోసుకుంటాయి.'],
+      ['🧲 దశ 1: అయస్కాంతాలు','అయస్కాంతాల చుట్టూ ఒక అదృశ్య శక్తి క్షేత్రం కూడా ఉంటుంది, ఇది N నుండి S వైపు ప్రవహిస్తుంది.'],
+      ['⚡ దశ 2: విద్యుత్','ఇదిగో విద్యుత్ ప్రవాహం లేని ఒక సాధారణ తీగ. ఇంకా అయస్కాంత చర్య ఏమీ జరగడం లేదు.'],
+      ['⚡ దశ 2: విద్యుత్','⚡ ఇప్పుడు దాని గుండా విద్యుత్ ప్రవహిస్తోంది! విద్యుత్ తీగ చుట్టూ తిరిగే <b>దాని స్వంత అయస్కాంత క్షేత్రాన్ని</b> సృష్టిస్తుంది!'],
+      ['⚡ దశ 2: విద్యుత్','తీగను చుట్టలుగా చుడితే ఆ చిన్న క్షేత్రాలన్నీ <b>కలిసిపోతాయి</b> — ఇప్పుడు అది దాని స్వంత N మరియు S చివరలతో ఒక <b>విద్యుదయస్కాంతం</b>!'],
+      ['🔧 దశ 3: మోటార్ నిర్మించండి','ఇప్పుడు ఆ కాయిల్‌ని ఒక బలమైన శాశ్వత అయస్కాంతం యొక్క N మరియు S ధ్రువాల మధ్య ఉంచండి...'],
+      ['🔧 దశ 3: మోటార్ నిర్మించండి','విద్యుత్ + అయస్కాంతత్వం = ఒక <b>తోపుడు</b>! కాయిల్ ఒక వైపు పైకి, మరో వైపు కిందికి తోయబడుతుంది — అది తిరగడం మొదలుపెడుతుంది!'],
+      ['❌ ఉపాయం లేకుండా','❌ కానీ చూస్తూ ఉండండి: అది తిరిగే కొద్దీ, తోపుడు <b>తనకు తానే ఎదురు తిరుగుతుంది</b> — కాయిల్ తిరగడానికి బదులు అటూఇటూ ఊగుతుంది!'],
+      ['✅ కమ్యుటేటర్ ఉపాయం','✅ ఒక <b>కమ్యుటేటర్</b> (ఆ చీలిన రింగు) ప్రతి అర్ధ-తిరుగుడుకు విద్యుత్ ప్రవాహాన్ని తారుమారు చేస్తుంది — కాబట్టి తోపుడు ఎప్పుడూ ఒకే దిశలో తిప్పుతుంది!'],
+      ['⚙️ పూర్తి DC మోటార్','బ్యాటరీ + కాయిల్ + అయస్కాంతం + కమ్యుటేటర్, అన్నీ కలిసి — తిరిగీ తిరిగే ఒక DC మోటార్!'],
+    ],
+    canvas: {
+      northPole: 'ఉత్తర ధ్రువం', southPole: 'దక్షిణ ధ్రువం',
+      attract: 'ఆకర్షణ', repel: 'వికర్షణ',
+      fieldLabel: 'అదృశ్య శక్తి క్షేత్రం, N → S',
+      wireLabel: 'ఒక తీగ',
+      currentFlowing: '⚡ విద్యుత్ ప్రవహిస్తోంది → అయస్కాంత క్షేత్రం కనిపిస్తుంది!',
+      noCurrent: 'విద్యుత్ లేదు = అయస్కాంత క్షేత్రం లేదు',
+      electromagnetLabel: 'విద్యుదయస్కాంతం (చుట్టిన తీగ)',
+      coilLabel: 'కాయిల్ (విద్యుదయస్కాంతం)',
+      permanentMagnetLabel: 'శాశ్వత అయస్కాంతం (స్థిరంగా)',
+      pushFades: 'తోపుడు తగ్గిపోతుంది / తిరగబడుతుంది!',
+      commutatorCloseup: 'కమ్యుటేటర్ (దగ్గరి వీక్షణ)',
+      wiresFixed: 'తీగలు స్థిరంగా ఉంటాయి — తారుమారు లేదు',
+      batteryLabel: '+  బ్యాటరీ  −',
+      fullMotorLabel: 'పూర్తి DC మోటార్',
+      trySpinning: 'సాఫీగా తిరుగుతోంది!',
+      tryWobbling: 'ఊగుతోంది, తిరగడం లేదు!',
+    },
+  }
+};
+let LANG = 'en';
+function tr(){ return T[LANG]; }
+
+function applyStaticText(){
+  const t = tr();
+  document.documentElement.lang = LANG;
+  document.getElementById('langToggle').textContent = t.langToggle;
+  document.getElementById('backLink').innerHTML = t.backLink;
+  document.getElementById('pageTitle').textContent = t.pageTitle;
+  document.getElementById('pageSubtitle').textContent = t.pageSubtitle;
+  document.getElementById('restartBtn').textContent = t.restartBtn;
+  for(let i=0;i<4;i++){
+    document.getElementById('s'+(i+1)+'t').textContent = t.steps[i][0];
+    document.getElementById('s'+(i+1)+'d').textContent = t.steps[i][1];
+  }
+  document.getElementById('factBox').innerHTML = t.fact;
+  document.getElementById('tryTitle').textContent = t.tryTitle;
+  document.getElementById('trySubtitle').textContent = t.trySubtitle;
+  document.getElementById('tryReset').textContent = t.tryReset;
+}
+
+document.getElementById('langToggle').addEventListener('click', () => {
+  LANG = LANG === 'en' ? 'te' : 'en';
+  applyStaticText();
+  if (window.__motorRefresh) window.__motorRefresh();
+  if (window.__tryRefresh) window.__tryRefresh();
+});
+applyStaticText();
+
 (function(){
   const canvas = document.getElementById('scene');
   const ctx = canvas.getContext('2d');
@@ -237,32 +386,22 @@
   const SPoleX0 = motorCX + gapHalf, SPoleX1 = motorCX + gapHalf + poleW;
   const poleY0 = motorCY - poleH/2, poleY1 = motorCY + poleH/2;
 
-  // ---------- timeline ----------
+  // ---------- timeline (language-independent structure; text comes from tr().scenes) ----------
   const SCENES = [
-    { t:0,   dur:5,  mode:'magnetIntro', banner:'🧲 STEP 1: MAGNETS', bannerClass:'learn',
-      caption: 'Every magnet has two ends, called <b>POLES</b>: a NORTH pole (N) and a SOUTH pole (S).' },
-    { t:5,   dur:6,  mode:'magnetForces', banner:'🧲 STEP 1: MAGNETS', bannerClass:'learn',
-      caption: 'Opposite poles <b>ATTRACT</b> — they pull together. Same poles <b>REPEL</b> — they push apart.' },
-    { t:11,  dur:4,  mode:'fieldLines', banner:'🧲 STEP 1: MAGNETS', bannerClass:'learn',
-      caption: 'Magnets also have an invisible force field around them, flowing from N to S.' },
-    { t:15,  dur:4,  mode:'wireOff', banner:'⚡ STEP 2: ELECTRICITY', bannerClass:'learn',
-      caption: 'Here\'s a plain wire with NO electricity flowing. Nothing magnetic is happening yet.' },
-    { t:19,  dur:6,  mode:'wireOn', banner:'⚡ STEP 2: ELECTRICITY', bannerClass:'learn',
-      caption: '⚡ Now current flows through it! Electricity creates its <b>own magnetic field</b>, circling around the wire!' },
-    { t:25,  dur:7,  mode:'coil', banner:'⚡ STEP 2: ELECTRICITY', bannerClass:'learn',
-      caption: 'Coil the wire into loops and all those little fields <b>ADD UP</b> — now it\'s an <b>ELECTROMAGNET</b>, with its own N and S ends!' },
-    { t:32,  dur:5,  mode:'combine', banner:'🔧 STEP 3: BUILD THE MOTOR', bannerClass:'build',
-      caption: 'Now place that coil between a strong permanent magnet\'s N and S poles...' },
-    { t:37,  dur:5,  mode:'force', banner:'🔧 STEP 3: BUILD THE MOTOR', bannerClass:'build',
-      caption: 'Electricity + magnetism = a <b>PUSH</b>! One side of the coil gets shoved up, the other down — it starts to spin!' },
-    { t:42,  dur:6,  mode:'noCommutator', banner:'❌ WITHOUT THE TRICK', bannerClass:'bad',
-      caption: '❌ But keep watching: as it turns, the push starts to <b>fight itself</b> — the coil just wobbles back and forth instead of spinning around!' },
-    { t:48,  dur:7,  mode:'commutator', banner:'✅ THE COMMUTATOR TRICK', bannerClass:'good',
-      caption: '✅ A <b>COMMUTATOR</b> (that split ring) flips the current every half-turn — so the push always spins it the SAME way!' },
-    { t:55,  dur:7,  mode:'fullSpin', banner:'⚙️ A COMPLETE DC MOTOR', bannerClass:'good',
-      caption: 'Battery + coil + magnet + commutator, all together — a DC motor that spins and spins!' },
+    { t:0,   dur:5,  mode:'magnetIntro', bannerClass:'learn' },
+    { t:5,   dur:6,  mode:'magnetForces', bannerClass:'learn' },
+    { t:11,  dur:4,  mode:'fieldLines', bannerClass:'learn' },
+    { t:15,  dur:4,  mode:'wireOff', bannerClass:'learn' },
+    { t:19,  dur:6,  mode:'wireOn', bannerClass:'learn' },
+    { t:25,  dur:7,  mode:'coil', bannerClass:'learn' },
+    { t:32,  dur:5,  mode:'combine', bannerClass:'build' },
+    { t:37,  dur:5,  mode:'force', bannerClass:'build' },
+    { t:42,  dur:6,  mode:'noCommutator', bannerClass:'bad' },
+    { t:48,  dur:7,  mode:'commutator', bannerClass:'good' },
+    { t:55,  dur:7,  mode:'fullSpin', bannerClass:'good' },
   ];
   const totalDur = 62;
+  let captionOverride = 'initial';
 
   document.querySelectorAll('.act-marker').forEach(m=>m.remove());
   [32,42,48].forEach(markT=>{
@@ -347,37 +486,32 @@
   function drawMagnetIntro(t){
     drawFieldLinesAroundMagnet(W/2, H/2, 260, 60);
     drawBarMagnet(W/2, H/2, 260, 60);
-    label(W/2-130, H/2-60, 'NORTH POLE', '#ff9d9d');
-    label(W/2+130, H/2-60, 'SOUTH POLE', '#9dc4ff');
+    label(W/2-130, H/2-60, tr().canvas.northPole, '#ff9d9d');
+    label(W/2+130, H/2-60, tr().canvas.southPole, '#9dc4ff');
   }
 
   // ============ mode: magnetForces ============
   function drawMagnetForces(t, sceneStart){
     const local = t - sceneStart;
     const cyc = local % 6;
-    let gap, showArrows, text;
+    let gap, text;
     if(cyc < 3){
-      // attract: N...S approaching
       const prog = Math.min(1, cyc/2.2);
       gap = 170 - prog*100;
-      text = 'ATTRACT';
+      text = tr().canvas.attract;
     } else {
       const prog = Math.min(1, (cyc-3)/2.2);
       gap = 70 + prog*100;
-      text = 'REPEL';
+      text = tr().canvas.repel;
     }
     const leftCx = W/2 - gap/2 - 65;
     const rightCx = W/2 + gap/2 + 65;
     drawBarMagnet(leftCx, H/2, 130, 50);
     if(cyc < 3){
-      // left magnet's facing side is S (its right half); keep right magnet
-      // normal too, so its facing (left) side is N — opposite poles meet, attract
       drawBarMagnet(rightCx, H/2, 130, 50);
       drawArrow(rightCx-90, H/2-40, leftCx+90, H/2-40, '#6dffb0');
       drawArrow(leftCx+90, H/2+40, rightCx-90, H/2+40, '#6dffb0');
     } else {
-      // reverse the right magnet so its facing (left) side is also S —
-      // same poles meet, repel
       drawBarMagnetReversed(rightCx, H/2, 130, 50);
       drawArrow(W/2-20, H/2-40, W/2-70, H/2-40, '#ff8f8f');
       drawArrow(W/2+20, H/2-40, W/2+70, H/2-40, '#ff8f8f');
@@ -402,7 +536,7 @@
   function drawFieldLinesScene(t){
     drawFieldLinesAroundMagnet(W/2, H/2, 260, 60);
     drawBarMagnet(W/2, H/2, 260, 60);
-    label(W/2, H/2-120, 'invisible force field, N → S', '#8fd2ff');
+    label(W/2, H/2-120, tr().canvas.fieldLabel, '#8fd2ff');
   }
 
   // ============ mode: wireOff / wireOn ============
@@ -412,7 +546,7 @@
     ctx.strokeStyle = '#c7c9d9'; ctx.lineWidth = 8; ctx.lineCap='round';
     ctx.beginPath(); ctx.moveTo(cx, cy-140); ctx.lineTo(cx, cy+140); ctx.stroke();
     ctx.restore();
-    label(cx, cy-160, 'A WIRE', '#c7c9d9');
+    label(cx, cy-160, tr().canvas.wireLabel, '#c7c9d9');
 
     if(on){
       ctx.save();
@@ -432,9 +566,9 @@
         ctx.beginPath(); ctx.ellipse(cx, cy, r*0.42, r, 0, 0, Math.PI*2); ctx.stroke();
       }
       ctx.restore();
-      label(cx, cy+170, '⚡ current flowing → magnetic field appears!', '#8fd2ff');
+      label(cx, cy+170, tr().canvas.currentFlowing, '#8fd2ff');
     } else {
-      label(cx, cy+170, 'no current = no magnetic field', '#9aa4cc');
+      label(cx, cy+170, tr().canvas.noCurrent, '#9aa4cc');
     }
   }
 
@@ -451,13 +585,12 @@
     }
     ctx.restore();
 
-    // field arrows through the coil, exiting at N/S ends
     for(let dy=-40; dy<=40; dy+=40){
       drawArrow(w0-70, cy+dy, w0+(loops-1)*spacing+70, cy+dy, 'rgba(79,211,255,0.7)');
     }
     label(w0-90, cy-100, 'N', '#ff9d9d');
     label(w0+(loops-1)*spacing+90, cy-100, 'S', '#9dc4ff');
-    label(cx, cy+120, 'ELECTROMAGNET (coiled wire)', '#ffd23f');
+    label(cx, cy+120, tr().canvas.electromagnetLabel, '#ffd23f');
   }
 
   // ============ shared motor scene pieces ============
@@ -471,7 +604,6 @@
     ctx.strokeRect(SPoleX0, poleY0, poleW, poleH);
     bigLabel(NPoleX0+poleW/2, motorCY+7, 'N', '#fff');
     bigLabel(SPoleX0+poleW/2, motorCY+7, 'S', '#fff');
-    // field arrows across the gap
     for(let dy=-60; dy<=60; dy+=40){
       drawArrow(NPoleX1+14, motorCY+dy, SPoleX0-14, motorCY+dy, 'rgba(255,255,255,0.18)');
     }
@@ -504,11 +636,9 @@
 
     let type1, type2;
     if(opts.commutated){
-      // whichever wire is currently in the upper half is relabeled "dot" (current out)
       type1 = y1 < motorCY ? 'dot' : 'cross';
       type2 = y1 < motorCY ? 'cross' : 'dot';
     } else {
-      // identity fixed to the physical wire regardless of position
       type1 = 'dot'; type2 = 'cross';
     }
     drawWireDot(x1,y1,type1,true);
@@ -535,7 +665,7 @@
     ctx.save();
     ctx.strokeStyle = '#33406e'; ctx.lineWidth = 2;
     ctx.strokeRect(cx-70, cy-58, 140, 116);
-    label(cx, cy-64, 'COMMUTATOR (close-up)', '#9fc1de');
+    label(cx, cy-64, tr().canvas.commutatorCloseup, '#9fc1de');
 
     if(active){
       const a = angleDeg*Math.PI/180;
@@ -547,7 +677,6 @@
       ctx.fillStyle = '#4fd3ff'; ctx.fill();
       ctx.strokeStyle = '#0b1020'; ctx.lineWidth = 2; ctx.stroke();
       ctx.restore();
-      // fixed brushes at left(180) and right(0)
       const flipZone = Math.abs(((angleDeg%180)+180)%180) ;
       const flipping = flipZone < 8 || flipZone > 172;
       ['left','right'].forEach(side=>{
@@ -556,10 +685,9 @@
         ctx.fillRect(bx-6, cy-9, 12, 18);
       });
     } else {
-      // no commutator: wires connect straight through, no ring
       ctx.strokeStyle = '#7a7f9e'; ctx.lineWidth = 3;
       ctx.beginPath(); ctx.moveTo(cx-r,cy); ctx.lineTo(cx+r,cy); ctx.stroke();
-      label(cx, cy+42, 'wires stay fixed — no flip', '#7a7f9e');
+      label(cx, cy+42, tr().canvas.wiresFixed, '#7a7f9e');
     }
     ctx.restore();
   }
@@ -574,7 +702,7 @@
     ctx.strokeRect(motorCX-50, motorCY+coilR+70, 100, 34);
     ctx.fillStyle = '#ffd23f';
     ctx.font='800 16px Segoe UI, Arial'; ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText('+  BATTERY  −', motorCX, motorCY+coilR+87);
+    ctx.fillText(tr().canvas.batteryLabel, motorCX, motorCY+coilR+87);
     ctx.restore();
   }
 
@@ -589,15 +717,15 @@
     ctx.fillRect(motorCX-14, motorCY-14, 28, 28);
     ctx.strokeStyle='#0b1020'; ctx.lineWidth=2; ctx.strokeRect(motorCX-14, motorCY-14, 28, 28);
     ctx.restore();
-    label(motorCX, motorCY-50, 'COIL (electromagnet)', '#ffd23f');
-    label(motorCX, 90, 'PERMANENT MAGNET (fixed)', '#8fd2ff');
+    label(motorCX, motorCY-50, tr().canvas.coilLabel, '#ffd23f');
+    label(motorCX, 90, tr().canvas.permanentMagnetLabel, '#8fd2ff');
   }
 
   // ============ mode: force ============
   function drawForceScene(t, sceneStart){
     const local = t - sceneStart;
     drawPoles();
-    const angle = local*8; // slow start
+    const angle = local*8;
     drawCoilAt(angle, {showForce:true, forceMag: Math.min(1,local/2), commutated:false});
     drawBatteryAndBrushes();
   }
@@ -609,12 +737,12 @@
     const baseAngle = 16;
     const swing = 68*Math.sin(local*0.9);
     const angle = baseAngle + swing;
-    const forceMag = Math.cos(local*0.9); // shrinks to 0 then reverses sign
+    const forceMag = Math.cos(local*0.9);
     const info = drawCoilAt(angle, {showForce:true, forceMag, commutated:false});
     drawBatteryAndBrushes();
     drawCommutatorInset(770, 110, angle, false);
     if(Math.abs(forceMag) < 0.12){
-      bigLabel(motorCX, 60, 'PUSH FADES / REVERSES!', '#ff8f8f');
+      bigLabel(motorCX, 60, tr().canvas.pushFades, '#ff8f8f');
     }
   }
 
@@ -636,7 +764,7 @@
     drawCoilAt(angle, {showForce:false, commutated:true});
     drawBatteryAndBrushes();
     drawCommutatorInset(770, 110, angle, true);
-    label(motorCX, 50, 'A COMPLETE DC MOTOR', '#6dffb0');
+    label(motorCX, 50, tr().canvas.fullMotorLabel, '#6dffb0');
   }
 
   // ============ main render ============
@@ -649,9 +777,12 @@
 
     const idx = currentSceneIndex(t);
     const scene = SCENES[idx];
-    bannerEl.textContent = scene.banner;
+    const sceneText = tr().scenes[idx];
+    bannerEl.textContent = sceneText[0];
     bannerEl.className = 'banner ' + scene.bannerClass;
-    captionEl.innerHTML = scene.caption;
+    if(captionOverride === null){
+      captionEl.innerHTML = sceneText[1];
+    }
 
     switch(scene.mode){
       case 'magnetIntro': drawMagnetIntro(t); break;
@@ -679,20 +810,25 @@
     simTime += dt;
     if(simTime >= totalDur){
       simTime = totalDur;
+      captionOverride = null;
       render(simTime);
       pause();
-      captionEl.innerHTML = '🎬 The End! Press <b>Restart</b> to watch again.';
+      captionOverride = 'ended';
+      captionEl.innerHTML = tr().captionEnd;
       return;
     }
+    captionOverride = null;
     render(simTime);
     requestAnimationFrame(step);
   }
-  function play(){ if(playing) return; playing=true; lastTs=null; playBtn.textContent='⏸ Pause'; requestAnimationFrame(step); }
-  function pause(){ playing=false; playBtn.textContent='▶ Play'; }
+  function play(){ if(playing) return; playing=true; lastTs=null; captionOverride=null; playBtn.textContent=tr().pauseBtn; requestAnimationFrame(step); }
+  function pause(){ playing=false; playBtn.textContent=tr().playBtn; }
   function restart(){
     simTime = 0;
+    captionOverride = null;
     render(0);
-    captionEl.innerHTML = 'Press <b>Play</b> to start the show!';
+    captionOverride = 'initial';
+    captionEl.innerHTML = tr().captionInitial;
     progressBar.style.width = '0%';
     pause();
   }
@@ -701,10 +837,20 @@
   restartBtn.addEventListener('click', restart);
   slowBtn.addEventListener('click', () => {
     speedMult = speedMult===1 ? 0.35 : 1;
-    slowBtn.textContent = speedMult===1 ? '🐢 Slow Motion' : '🐇 Normal Speed';
+    slowBtn.textContent = speedMult===1 ? tr().slowBtn : tr().normalBtn;
   });
 
+  playBtn.textContent = tr().playBtn;
+  slowBtn.textContent = tr().slowBtn;
   render(0);
+
+  window.__motorRefresh = function(){
+    playBtn.textContent = playing ? tr().pauseBtn : tr().playBtn;
+    slowBtn.textContent = speedMult===1 ? tr().slowBtn : tr().normalBtn;
+    captionOverride==null ? render(simTime) : render(simTime);
+    if(captionOverride==='initial') captionEl.innerHTML = tr().captionInitial;
+    else if(captionOverride==='ended') captionEl.innerHTML = tr().captionEnd;
+  };
 })();
 
 // ---------- Try It Yourself: commutator on/off toggle ----------
@@ -715,9 +861,17 @@
   const cx = w/2, cy = h/2, r = 70;
   const gapHalf = 110, poleW = 60, poleH = 130;
 
-  let angle = 10, on = true, t = 0, spins = 0, lastAngleMod = 0;
+  let angle = 10, on = true, t = 0, spins = 0;
   const toggleBtn = document.getElementById('tryToggle');
   const resultEl = document.getElementById('tryResult');
+  let lastResult = {type:'none'};
+
+  function updateResultText(){
+    const tt = tr();
+    if(lastResult.type==='spins') resultEl.textContent = tt.tryFullSpins(lastResult.n);
+    else if(lastResult.type==='wobble') resultEl.textContent = tt.tryNoCommutator;
+    else resultEl.textContent = tt.tryResultDefault;
+  }
 
   function drawArrow(x1,y1,x2,y2,color){
     c.save();
@@ -772,7 +926,7 @@
 
     c.font='700 13px Segoe UI, Arial'; c.textAlign='center';
     c.fillStyle = on ? '#6dffb0' : '#ff8f8f';
-    c.fillText(on ? 'Spinning smoothly!' : 'Wobbling, not spinning!', cx, h-16);
+    c.fillText(on ? tr().canvas.trySpinning : tr().canvas.tryWobbling, cx, h-16);
   }
 
   function update(dt){
@@ -780,11 +934,12 @@
     if(on){
       angle += dt*130;
       spins = Math.floor(angle/360);
-      resultEl.textContent = `Full spins so far: ${spins}`;
+      lastResult = {type:'spins', n:spins};
+      updateResultText();
     } else {
-      // physically-fixed wire identity => oscillation around start
       angle = 10 + 55*Math.sin(t*1.1);
-      resultEl.textContent = 'No commutator: it just rocks back and forth.';
+      lastResult = {type:'wobble'};
+      updateResultText();
     }
   }
 
@@ -798,14 +953,24 @@
 
   toggleBtn.addEventListener('click', () => {
     on = !on;
-    toggleBtn.textContent = on ? '🔁 Commutator: ON' : '🔁 Commutator: OFF';
+    toggleBtn.textContent = on ? tr().tryToggleOn : tr().tryToggleOff;
     t = 0;
   });
   document.getElementById('tryReset').addEventListener('click', () => {
     angle = 10; spins = 0; t = 0; on = true;
-    toggleBtn.textContent = '🔁 Commutator: ON';
-    resultEl.textContent = '';
+    toggleBtn.textContent = tr().tryToggleOn;
+    lastResult = {type:'none'};
+    updateResultText();
   });
+
+  toggleBtn.textContent = tr().tryToggleOn;
+  updateResultText();
+
+  window.__tryRefresh = function(){
+    toggleBtn.textContent = on ? tr().tryToggleOn : tr().tryToggleOff;
+    updateResultText();
+    draw();
+  };
 })();
 </script>
 </body>

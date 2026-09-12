@@ -24,7 +24,11 @@
     padding: 20px 16px 60px;
   }
   .wrap{ max-width: 960px; margin: 0 auto; }
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
   a.back{ color: var(--accent2); text-decoration: none; font-weight: 700; }
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
   header{ text-align:center; margin-bottom: 20px; }
   h1{
     font-size: clamp(24px, 5vw, 38px);
@@ -175,11 +179,14 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="category-physics.html">&larr; Back to Physics in Action</a>
+  <div class="topbar">
+    <a class="back" href="category-physics.html" id="backLink">&larr; Back to Physics in Action</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
 
   <header>
-    <h1>The Double-Slit Experiment</h1>
-    <p>Light plays a trick on us — watch the "wrong guess" first, then see what really happens!</p>
+    <h1 id="pageTitle">The Double-Slit Experiment</h1>
+    <p id="pageSubtitle">Light plays a trick on us — watch the "wrong guess" first, then see what really happens!</p>
   </header>
 
   <div class="player">
@@ -202,35 +209,35 @@
   <div class="steps">
     <div class="step-card">
       <div class="num">1</div>
-      <h3>🔵 The Guess: Particles</h3>
-      <p>If light is made of tiny balls (like marbles), firing them through two slits should make <b>two separate piles</b>, with an empty gap in between.</p>
+      <h3 id="s1t">🔵 The Guess: Particles</h3>
+      <p id="s1d">If light is made of tiny balls (like marbles), firing them through two slits should make <b>two separate piles</b>, with an empty gap in between.</p>
     </div>
     <div class="step-card">
       <div class="num">2</div>
-      <h3>🔴 The Reality Check</h3>
-      <p>Real light does NOT do that. It makes <b>stripes</b> — and surprisingly, there's a <b>bright</b> band exactly where the empty gap should have been!</p>
+      <h3 id="s2t">🔴 The Reality Check</h3>
+      <p id="s2d">Real light does NOT do that. It makes <b>stripes</b> — and surprisingly, there's a <b>bright</b> band exactly where the empty gap should have been!</p>
     </div>
     <div class="step-card">
       <div class="num">3</div>
-      <h3>🟢 Try Waves Instead</h3>
-      <p>If light spreads out like ripples on water, each slit makes its own ripples. Where two crests meet, light adds up (bright). Crest meets dip? They cancel (dark).</p>
+      <h3 id="s3t">🟢 Try Waves Instead</h3>
+      <p id="s3d">If light spreads out like ripples on water, each slit makes its own ripples. Where two crests meet, light adds up (bright). Crest meets dip? They cancel (dark).</p>
     </div>
     <div class="step-card">
       <div class="num">4</div>
-      <h3>✅ It Matches!</h3>
-      <p>The wave picture produces <b>exactly</b> the striped pattern we really see — including the bright center. That's why we say light behaves like a wave.</p>
+      <h3 id="s4t">✅ It Matches!</h3>
+      <p id="s4d">The wave picture produces <b>exactly</b> the striped pattern we really see — including the bright center. That's why we say light behaves like a wave.</p>
     </div>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> even if you send light ONE tiny speck (a photon) at a time, after enough of them land, they still build up the exact same stripy pattern — as if each one traveled through <b>both</b> slits at once!
   </div>
 
-  <div class="try-title">🧪 Now try it yourself</div>
-  <p class="try-subtitle">Fire your own particles at the two slits, side by side — the guess vs. reality, live.</p>
+  <div class="try-title" id="tryTitle">🧪 Now try it yourself</div>
+  <p class="try-subtitle" id="trySubtitle">Fire your own particles at the two slits, side by side — the guess vs. reality, live.</p>
   <div class="try-grid">
     <div class="try-card">
-      <h3>❓ Particle guess: two marble piles?</h3>
+      <h3 id="tryParticleTitle">❓ Particle guess: two marble piles?</h3>
       <canvas id="tryParticle" width="420" height="260"></canvas>
       <div class="try-controls">
         <button id="tryParticleFire" class="primary">🔫 Fire marbles</button>
@@ -239,7 +246,7 @@
       <div class="try-result" id="tryParticleResult"></div>
     </div>
     <div class="try-card">
-      <h3>✅ Wave reality: striped pattern</h3>
+      <h3 id="tryWaveTitle">✅ Wave reality: striped pattern</h3>
       <canvas id="tryWave" width="420" height="260"></canvas>
       <div class="try-controls">
         <button id="tryWaveFire" class="primary">💡 Send photons</button>
@@ -252,6 +259,146 @@
 </div>
 
 <script>
+// ---------- shared translation layer ----------
+const T = {
+  en: {
+    langToggle: 'తెలుగు',
+    backLink: '&larr; Back to Physics in Action',
+    pageTitle: 'The Double-Slit Experiment',
+    pageSubtitle: 'Light plays a trick on us — watch the "wrong guess" first, then see what really happens!',
+    playBtn: '▶ Play', pauseBtn: '⏸ Pause', restartBtn: '⟲ Restart',
+    slowBtn: '🐢 Slow Motion', normalBtn: '🐇 Normal Speed',
+    captionInitial: 'Press <b>Play</b> to start the show!',
+    captionEnd: '🎬 The End! Press <b>Restart</b> to watch again.',
+    steps: [
+      ['🔵 The Guess: Particles','If light is made of tiny balls (like marbles), firing them through two slits should make <b>two separate piles</b>, with an empty gap in between.'],
+      ['🔴 The Reality Check','Real light does NOT do that. It makes <b>stripes</b> — and surprisingly, there\'s a <b>bright</b> band exactly where the empty gap should have been!'],
+      ['🟢 Try Waves Instead','If light spreads out like ripples on water, each slit makes its own ripples. Where two crests meet, light adds up (bright). Crest meets dip? They cancel (dark).'],
+      ['✅ It Matches!','The wave picture produces <b>exactly</b> the striped pattern we really see — including the bright center. That\'s why we say light behaves like a wave.'],
+    ],
+    fact: '🤯 <b>Mind-blowing part:</b> even if you send light ONE tiny speck (a photon) at a time, after enough of them land, they still build up the exact same stripy pattern — as if each one traveled through <b>both</b> slits at once!',
+    tryTitle: '🧪 Now try it yourself',
+    trySubtitle: 'Fire your own particles at the two slits, side by side — the guess vs. reality, live.',
+    tryParticleTitle: '❓ Particle guess: two marble piles?',
+    tryWaveTitle: '✅ Wave reality: striped pattern',
+    tryParticleFire: '🔫 Fire marbles', tryParticleStop: '⏸ Stop',
+    tryWaveFire: '💡 Send photons', tryWaveStop: '⏸ Stop',
+    tryReset: '↻ Reset',
+    tryParticleResult: (n)=>n+' marbles landed — see the two piles?',
+    tryWaveResult: (n)=>n+' photons landed — see the stripes forming?',
+    scenes: [
+      { banner:'❓ JUST A GUESS — keep watching!', bannerClass:'guess',
+        caption: '🔵 Let\'s pretend light is made of tiny particles, like marbles. Fire them through <b>ONE</b> slit...' },
+      { banner:'❓ JUST A GUESS — keep watching!', bannerClass:'guess',
+        caption: 'They pile up right behind the slit — exactly what we\'d expect from little balls!' },
+      { banner:'❓ JUST A GUESS — keep watching!', bannerClass:'guess',
+        caption: 'Now let\'s open a <b>SECOND</b> slit and fire marbles through both...' },
+      { banner:'❓ JUST A GUESS — keep watching!', bannerClass:'guess',
+        caption: 'Our guess: TWO separate piles, with an <b>empty gap</b> in the middle.' },
+      { banner:'❌ GUESS WAS WRONG!', bannerClass:'reality',
+        caption: '⚡ But real light does NOT do this! It makes <b>stripes</b> — with a <b>bright</b> band exactly where the gap should be!' },
+      { banner:'🌊 NOW TESTING: LIGHT = A WAVE', bannerClass:'wave',
+        caption: '🌊 Let\'s try again, thinking of light as a WAVE — spreading out like ripples on water.' },
+      { banner:'🌊 NOW TESTING: LIGHT = A WAVE', bannerClass:'wave',
+        caption: 'Each slit makes its own ripples. Two crests meet → light adds up, <b>BRIGHT</b>. A crest meets a dip → they cancel, <b>DARK</b>.' },
+      { banner:'✅ MATCHES REALITY', bannerClass:'wave',
+        caption: '📸 This wave pattern matches <b>exactly</b> what real light does! That\'s why light behaves like a wave here.' },
+      { banner:'✅ MATCHES REALITY', bannerClass:'wave',
+        caption: '🤯 And amazingly, even single tiny specks of light (photons) build this same pattern, one at a time!' },
+    ],
+    canvas: {
+      source: 'SOURCE', barrier: 'BARRIER', screen: 'SCREEN',
+      expectedEmpty: 'expected: EMPTY',
+      actuallyBright: 'actually BRIGHT here!',
+      bright: 'BRIGHT',
+    },
+  },
+  te: {
+    langToggle: 'English',
+    backLink: '&larr; ఫిజిక్స్ ఇన్ యాక్షన్ కి తిరిగి',
+    pageTitle: 'డబుల్-స్లిట్ ప్రయోగం',
+    pageSubtitle: 'కాంతి మనకు ఒక ఉపాయం చూపిస్తుంది — ముందు "తప్పు ఊహ"ను చూడండి, తర్వాత నిజంగా ఏమి జరుగుతుందో చూడండి!',
+    playBtn: '▶ ప్లే', pauseBtn: '⏸ పాజ్', restartBtn: '⟲ మళ్ళీ మొదలు',
+    slowBtn: '🐢 స్లో మోషన్', normalBtn: '🐇 సాధారణ వేగం',
+    captionInitial: 'ప్రదర్శన మొదలుపెట్టడానికి <b>ప్లే</b> నొక్కండి!',
+    captionEnd: '🎬 ముగింపు! మళ్ళీ చూడటానికి <b>మళ్ళీ మొదలు</b> నొక్కండి.',
+    steps: [
+      ['🔵 ఊహ: కణాలు','కాంతి చిన్న బంతుల్లా (గోళీల్లా) తయారైతే, వాటిని రెండు స్లిట్ల గుండా పంపితే మధ్యలో ఖాళీ ఖాళీగా ఉంచి <b>రెండు వేర్వేరు కుప్పలు</b> ఏర్పడాలి.'],
+      ['🔴 నిజం చూద్దాం','నిజమైన కాంతి అలా చేయదు. అది <b>చారలు</b> ఏర్పరుస్తుంది — ఆశ్చర్యంగా, ఖాళీగా ఉండాల్సిన చోటే ఒక <b>ప్రకాశవంతమైన</b> చార కనిపిస్తుంది!'],
+      ['🟢 తరంగాలుగా ప్రయత్నిద్దాం','కాంతి నీటి అలల్లా వ్యాపిస్తే, ప్రతి స్లిట్ దాని సొంత అలలను సృష్టిస్తుంది. రెండు శిఖరాలు కలిస్తే, కాంతి కలిసి పెరుగుతుంది (ప్రకాశం). శిఖరం లోయను కలిస్తే? అవి రద్దవుతాయి (చీకటి).'],
+      ['✅ ఇది సరిపోతుంది!','తరంగ చిత్రం మనం నిజంగా చూసే చారల నమూనాను <b>సరిగ్గా</b> ఉత్పత్తి చేస్తుంది — మధ్యలో ప్రకాశవంతమైన చారతో సహా. అందుకే కాంతి తరంగంలా ప్రవర్తిస్తుందని మనం చెబుతాం.'],
+    ],
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> మీరు కాంతిని ఒక్కో చిన్న రేణువుగా (ఫోటాన్‌గా) పంపినా, తగినన్ని రేణువులు పడ్డాక, అవి ఇంకా అదే చారల నమూనాను ఏర్పరుస్తాయి — ప్రతి ఒక్కటి <b>రెండు</b> స్లిట్ల గుండా ఒకేసారి ప్రయాణించినట్లు!',
+    tryTitle: '🧪 ఇప్పుడు మీరే ప్రయత్నించండి',
+    trySubtitle: 'రెండు స్లిట్ల వైపు మీ సొంత కణాలను పంపండి, పక్కపక్కనే — ఊహ vs వాస్తవం, ప్రత్యక్షంగా.',
+    tryParticleTitle: '❓ కణాల ఊహ: రెండు గోళీల కుప్పలా?',
+    tryWaveTitle: '✅ తరంగ వాస్తవం: చారల నమూనా',
+    tryParticleFire: '🔫 గోళీలు వేయండి', tryParticleStop: '⏸ ఆపు',
+    tryWaveFire: '💡 ఫోటాన్లు పంపండి', tryWaveStop: '⏸ ఆపు',
+    tryReset: '↻ రీసెట్',
+    tryParticleResult: (n)=>n+' గోళీలు పడ్డాయి — రెండు కుప్పలు కనిపిస్తున్నాయా?',
+    tryWaveResult: (n)=>n+' ఫోటాన్లు పడ్డాయి — చారలు ఏర్పడటం కనిపిస్తోందా?',
+    scenes: [
+      { banner:'❓ ఇది కేవలం ఊహ మాత్రమే — చూస్తూ ఉండండి!', bannerClass:'guess',
+        caption: '🔵 కాంతి గోళీల్లాంటి చిన్న కణాలతో తయారైందని అనుకుందాం. వాటిని <b>ఒక్క</b> స్లిట్ గుండా పంపండి...' },
+      { banner:'❓ ఇది కేవలం ఊహ మాత్రమే — చూస్తూ ఉండండి!', bannerClass:'guess',
+        caption: 'అవి స్లిట్ వెనుకే కుప్పగా పేరుకుపోతాయి — చిన్న బంతుల నుండి మనం ఆశించేదే ఇది!' },
+      { banner:'❓ ఇది కేవలం ఊహ మాత్రమే — చూస్తూ ఉండండి!', bannerClass:'guess',
+        caption: 'ఇప్పుడు <b>రెండవ</b> స్లిట్ తెరిచి రెండింటి గుండా గోళీలు వేద్దాం...' },
+      { banner:'❓ ఇది కేవలం ఊహ మాత్రమే — చూస్తూ ఉండండి!', bannerClass:'guess',
+        caption: 'మన ఊహ: మధ్యలో <b>ఖాళీ స్థలం</b>తో రెండు వేర్వేరు కుప్పలు.' },
+      { banner:'❌ ఊహ తప్పు!', bannerClass:'reality',
+        caption: '⚡ కానీ నిజమైన కాంతి ఇలా చేయదు! అది <b>చారలు</b> ఏర్పరుస్తుంది — ఖాళీగా ఉండాల్సిన చోటే ఒక <b>ప్రకాశవంతమైన</b> చారతో సహా!' },
+      { banner:'🌊 ఇప్పుడు పరీక్షిస్తున్నాం: కాంతి = ఒక తరంగం', bannerClass:'wave',
+        caption: '🌊 మళ్ళీ ప్రయత్నిద్దాం, కాంతిని నీటిపై అలల్లా వ్యాపించే ఒక తరంగంగా అనుకుందాం.' },
+      { banner:'🌊 ఇప్పుడు పరీక్షిస్తున్నాం: కాంతి = ఒక తరంగం', bannerClass:'wave',
+        caption: 'ప్రతి స్లిట్ దాని సొంత అలలను సృష్టిస్తుంది. రెండు శిఖరాలు కలిస్తే → కాంతి కలిసి పెరుగుతుంది, <b>ప్రకాశం</b>. శిఖరం లోయను కలిస్తే → అవి రద్దవుతాయి, <b>చీకటి</b>.' },
+      { banner:'✅ వాస్తవానికి సరిపోతుంది', bannerClass:'wave',
+        caption: '📸 ఈ తరంగ నమూనా నిజమైన కాంతి చేసేదానికి <b>సరిగ్గా</b> సరిపోతుంది! అందుకే ఇక్కడ కాంతి తరంగంలా ప్రవర్తిస్తుంది.' },
+      { banner:'✅ వాస్తవానికి సరిపోతుంది', bannerClass:'wave',
+        caption: '🤯 ఆశ్చర్యకరంగా, కాంతి యొక్క ఒక్కొక్క చిన్న రేణువులు (ఫోటాన్లు) కూడా ఒక్కొక్కటిగా ఇదే నమూనాను ఏర్పరుస్తాయి!' },
+    ],
+    canvas: {
+      source: 'మూలం', barrier: 'అడ్డుగోడ', screen: 'తెర',
+      expectedEmpty: 'ఊహించింది: ఖాళీ',
+      actuallyBright: 'నిజానికి ఇక్కడ ప్రకాశవంతం!',
+      bright: 'ప్రకాశం',
+    },
+  }
+};
+let LANG = 'en';
+function tr(){ return T[LANG]; }
+
+function applyStaticText(){
+  const t = tr();
+  document.documentElement.lang = LANG;
+  document.getElementById('langToggle').textContent = t.langToggle;
+  document.getElementById('backLink').innerHTML = t.backLink;
+  document.getElementById('pageTitle').textContent = t.pageTitle;
+  document.getElementById('pageSubtitle').textContent = t.pageSubtitle;
+  document.getElementById('restartBtn').textContent = t.restartBtn;
+  document.getElementById('slowBtn').textContent = (typeof speedMultGlobal !== 'undefined' && speedMultGlobal !== 1) ? t.normalBtn : t.slowBtn;
+  for(let i=0;i<4;i++){
+    document.getElementById('s'+(i+1)+'t').textContent = t.steps[i][0];
+    document.getElementById('s'+(i+1)+'d').innerHTML = t.steps[i][1];
+  }
+  document.getElementById('factBox').innerHTML = t.fact;
+  document.getElementById('tryTitle').textContent = t.tryTitle;
+  document.getElementById('trySubtitle').textContent = t.trySubtitle;
+  document.getElementById('tryParticleTitle').textContent = t.tryParticleTitle;
+  document.getElementById('tryWaveTitle').textContent = t.tryWaveTitle;
+  document.getElementById('tryParticleReset').textContent = t.tryReset;
+  document.getElementById('tryWaveReset').textContent = t.tryReset;
+}
+
+document.getElementById('langToggle').addEventListener('click', () => {
+  LANG = LANG === 'en' ? 'te' : 'en';
+  applyStaticText();
+  if (window.__dsRefresh) window.__dsRefresh();
+  if (window.__tryRefresh) window.__tryRefresh();
+});
+applyStaticText();
+
 (function(){
   const canvas = document.getElementById('scene');
   const ctx = canvas.getContext('2d');
@@ -275,25 +422,16 @@
 
   // ---------- timeline ----------
   // mode groups: particleSingle, particleDouble, reveal, waveSingle, waveDouble, waveBuild
-  const SCENES = [
-    { t:0,  dur:5, mode:'particleSingle', banner:'❓ JUST A GUESS — keep watching!', bannerClass:'guess',
-      caption: '🔵 Let\'s pretend light is made of tiny particles, like marbles. Fire them through <b>ONE</b> slit...' },
-    { t:5,  dur:4, mode:'particleSingle', banner:'❓ JUST A GUESS — keep watching!', bannerClass:'guess',
-      caption: 'They pile up right behind the slit — exactly what we\'d expect from little balls!' },
-    { t:9,  dur:5, mode:'particleDouble', banner:'❓ JUST A GUESS — keep watching!', bannerClass:'guess',
-      caption: 'Now let\'s open a <b>SECOND</b> slit and fire marbles through both...' },
-    { t:14, dur:5, mode:'particleDouble', banner:'❓ JUST A GUESS — keep watching!', bannerClass:'guess',
-      caption: 'Our guess: TWO separate piles, with an <b>empty gap</b> in the middle.' },
-    { t:19, dur:6, mode:'reveal', banner:'❌ GUESS WAS WRONG!', bannerClass:'reality',
-      caption: '⚡ But real light does NOT do this! It makes <b>stripes</b> — with a <b>bright</b> band exactly where the gap should be!' },
-    { t:25, dur:4, mode:'waveSingle', banner:'🌊 NOW TESTING: LIGHT = A WAVE', bannerClass:'wave',
-      caption: '🌊 Let\'s try again, thinking of light as a WAVE — spreading out like ripples on water.' },
-    { t:29, dur:5, mode:'waveDouble', banner:'🌊 NOW TESTING: LIGHT = A WAVE', bannerClass:'wave',
-      caption: 'Each slit makes its own ripples. Two crests meet → light adds up, <b>BRIGHT</b>. A crest meets a dip → they cancel, <b>DARK</b>.' },
-    { t:34, dur:6, mode:'waveBuild', banner:'✅ MATCHES REALITY', bannerClass:'wave',
-      caption: '📸 This wave pattern matches <b>exactly</b> what real light does! That\'s why light behaves like a wave here.' },
-    { t:40, dur:4, mode:'waveBuild', banner:'✅ MATCHES REALITY', bannerClass:'wave',
-      caption: '🤯 And amazingly, even single tiny specks of light (photons) build this same pattern, one at a time!' },
+  const TIMES = [
+    { t:0,  dur:5, mode:'particleSingle' },
+    { t:5,  dur:4, mode:'particleSingle' },
+    { t:9,  dur:5, mode:'particleDouble' },
+    { t:14, dur:5, mode:'particleDouble' },
+    { t:19, dur:6, mode:'reveal' },
+    { t:25, dur:4, mode:'waveSingle' },
+    { t:29, dur:5, mode:'waveDouble' },
+    { t:34, dur:6, mode:'waveBuild' },
+    { t:40, dur:4, mode:'waveBuild' },
   ];
   const totalDur = 44;
 
@@ -305,7 +443,9 @@
   let playing = false;
   let lastTs = null;
   let speedMult = 1;
+  window.speedMultGlobal = 1;
   let prevSceneIdx = -1;
+  let captionOverride = 'initial';
 
   // particle state
   let flying = [];       // marbles in flight
@@ -328,7 +468,7 @@
   }
 
   function currentSceneIndex(t){
-    for(let i=SCENES.length-1;i>=0;i--) if(t>=SCENES[i].t) return i;
+    for(let i=TIMES.length-1;i>=0;i--) if(t>=TIMES[i].t) return i;
     return 0;
   }
 
@@ -342,7 +482,8 @@
   function drawLabels(){
     ctx.font = '700 13px Segoe UI, Arial';
     ctx.textAlign = 'center';
-    [[sourceX,'SOURCE'],[barrierX,'BARRIER'],[screenX,'SCREEN']].forEach(([x,text])=>{
+    const c = tr().canvas;
+    [[sourceX,c.source],[barrierX,c.barrier],[screenX,c.screen]].forEach(([x,text])=>{
       const tw = ctx.measureText(text).width;
       ctx.fillStyle = 'rgba(4,6,15,0.75)';
       ctx.fillRect(x - tw/2 - 8, 14, tw+16, 22);
@@ -478,6 +619,7 @@
     ctx.save();
     ctx.font = '700 11px Segoe UI, Arial';
     ctx.textAlign = 'left';
+    const bright = tr().canvas.bright;
     for(let k=-2;k<=2;k++){
       const by = H/2 + k * (Math.PI/0.045);
       if(by < 20 || by > H-10) continue;
@@ -488,7 +630,7 @@
       ctx.beginPath(); ctx.moveTo(screenX-160, by); ctx.lineTo(screenX-2, by); ctx.stroke();
       ctx.setLineDash([]);
       ctx.fillStyle = `rgba(255,255,255,${0.9*alphaMul})`;
-      ctx.fillText('BRIGHT', screenX-72, by-5);
+      ctx.fillText(bright, screenX-72, by-5);
     }
     ctx.restore();
   }
@@ -520,7 +662,7 @@
     ctx.fillStyle = `rgba(255,103,103,${alpha})`;
     ctx.font = 'bold 14px Segoe UI, Arial';
     ctx.textAlign = 'right';
-    ctx.fillText('expected: EMPTY', screenX-8, top-8);
+    ctx.fillText(tr().canvas.expectedEmpty, screenX-8, top-8);
     ctx.restore();
   }
   function drawFrameBadge(t, mode, sceneStartT){
@@ -567,7 +709,7 @@
     ctx.closePath(); ctx.fill();
     ctx.font = 'bold 14px Segoe UI, Arial';
     ctx.textAlign = 'right';
-    ctx.fillText('actually BRIGHT here!', screenX-192, H/2-50);
+    ctx.fillText(tr().canvas.actuallyBright, screenX-192, H/2-50);
     ctx.restore();
   }
 
@@ -578,22 +720,24 @@
     drawGrid();
 
     const idx = currentSceneIndex(t);
-    const scene = SCENES[idx];
+    const scene = TIMES[idx];
+    const sceneText = tr().scenes[idx];
 
     if(idx !== prevSceneIdx){
       // transitions: reset state when entering a new mode group
-      const enteringDouble = scene.mode === 'particleDouble' && SCENES[prevSceneIdx] && SCENES[prevSceneIdx].mode !== 'particleDouble';
-      const enteringSingle = scene.mode === 'particleSingle' && (prevSceneIdx === -1 || (SCENES[prevSceneIdx] && SCENES[prevSceneIdx].mode !== 'particleSingle'));
+      const enteringDouble = scene.mode === 'particleDouble' && TIMES[prevSceneIdx] && TIMES[prevSceneIdx].mode !== 'particleDouble';
+      const enteringSingle = scene.mode === 'particleSingle' && (prevSceneIdx === -1 || (TIMES[prevSceneIdx] && TIMES[prevSceneIdx].mode !== 'particleSingle'));
       if(enteringDouble || enteringSingle) resetParticles();
-      if(scene.mode === 'waveBuild' && SCENES[prevSceneIdx] && SCENES[prevSceneIdx].mode !== 'waveBuild'){
+      if(scene.mode === 'waveBuild' && TIMES[prevSceneIdx] && TIMES[prevSceneIdx].mode !== 'waveBuild'){
         landedDots = []; dotTimer = 0;
       }
       prevSceneIdx = idx;
     }
 
-    bannerEl.textContent = scene.banner;
-    bannerEl.className = 'banner ' + scene.bannerClass;
-    captionEl.innerHTML = scene.caption;
+    bannerEl.textContent = sceneText.banner;
+    bannerEl.className = 'banner ' + sceneText.bannerClass;
+    captionEl.innerHTML = sceneText.caption;
+    captionOverride = null;
 
     const dt = 1/60 * speedMult;
 
@@ -684,19 +828,21 @@
       simTime = totalDur;
       render(simTime);
       pause();
-      captionEl.innerHTML = '🎬 The End! Press <b>Restart</b> to watch again.';
+      captionOverride = 'ended';
+      captionEl.innerHTML = tr().captionEnd;
       return;
     }
     render(simTime);
     requestAnimationFrame(step);
   }
-  function play(){ if(playing) return; playing=true; lastTs=null; playBtn.textContent='⏸ Pause'; requestAnimationFrame(step); }
-  function pause(){ playing=false; playBtn.textContent='▶ Play'; }
+  function play(){ if(playing) return; playing=true; lastTs=null; playBtn.textContent=tr().pauseBtn; requestAnimationFrame(step); }
+  function pause(){ playing=false; playBtn.textContent=tr().playBtn; }
   function restart(){
     simTime = 0; prevSceneIdx = -1;
     resetParticles(); landedDots = []; dotTimer = 0;
     render(0);
-    captionEl.innerHTML = 'Press <b>Play</b> to start the show!';
+    captionOverride = 'initial';
+    captionEl.innerHTML = tr().captionInitial;
     progressBar.style.width = '0%';
     pause();
   }
@@ -705,14 +851,26 @@
   restartBtn.addEventListener('click', restart);
   slowBtn.addEventListener('click', () => {
     speedMult = speedMult===1 ? 0.35 : 1;
-    slowBtn.textContent = speedMult===1 ? '🐢 Slow Motion' : '🐇 Normal Speed';
+    window.speedMultGlobal = speedMult;
+    slowBtn.textContent = speedMult===1 ? tr().slowBtn : tr().normalBtn;
   });
 
   render(0);
+  captionOverride = 'initial';
+  captionEl.innerHTML = tr().captionInitial;
+
+  window.__dsRefresh = function(){
+    playBtn.textContent = playing ? tr().pauseBtn : tr().playBtn;
+    slowBtn.textContent = speedMult===1 ? tr().slowBtn : tr().normalBtn;
+    render(simTime);
+    if(captionOverride==='initial') captionEl.innerHTML = tr().captionInitial;
+    else if(captionOverride==='ended') captionEl.innerHTML = tr().captionEnd;
+  };
 })();
 
 // ---------- Try It Yourself: two hands-on mini experiments ----------
 (function(){
+  const fireLabels = { particle: 'tryParticleFire', wave: 'tryWaveFire' };
   function setupMini(canvasId, fireBtnId, resetBtnId, resultId, kind){
     const cv = document.getElementById(canvasId);
     const c = cv.getContext('2d');
@@ -762,6 +920,14 @@
           flying.splice(i,1);
         }
       }
+    }
+
+    function updateResultText(){
+      const total = hist.reduce((a,b)=>a+b,0);
+      const t = tr();
+      document.getElementById(resultId).textContent = total > 0
+        ? (kind==='particle' ? t.tryParticleResult(total) : t.tryWaveResult(total))
+        : '';
     }
 
     function draw(){
@@ -822,10 +988,7 @@
       for(const p of flying){ c.beginPath(); c.arc(p.x,p.y,2.8,0,Math.PI*2); c.fill(); }
       c.restore();
 
-      const total = hist.reduce((a,b)=>a+b,0);
-      document.getElementById(resultId).textContent = total > 0
-        ? (kind==='particle' ? `${total} marbles landed — see the two piles?` : `${total} photons landed — see the stripes forming?`)
-        : '';
+      updateResultText();
     }
 
     let last = performance.now();
@@ -836,12 +999,31 @@
     }
     requestAnimationFrame(loop);
 
-    document.getElementById(fireBtnId).addEventListener('click', () => { firing = !firing; document.getElementById(fireBtnId).textContent = firing ? '⏸ Stop' : (kind==='particle' ? '🔫 Fire marbles' : '💡 Send photons'); });
-    document.getElementById(resetBtnId).addEventListener('click', () => { firing=false; flying=[]; hist.fill(0); document.getElementById(fireBtnId).textContent = kind==='particle' ? '🔫 Fire marbles' : '💡 Send photons'; });
+    function fireLabel(){
+      const t = tr();
+      return kind==='particle' ? t.tryParticleFire : t.tryWaveFire;
+    }
+    function stopLabel(){
+      const t = tr();
+      return kind==='particle' ? t.tryParticleStop : t.tryWaveStop;
+    }
+
+    document.getElementById(fireBtnId).addEventListener('click', () => { firing = !firing; document.getElementById(fireBtnId).textContent = firing ? stopLabel() : fireLabel(); });
+    document.getElementById(resetBtnId).addEventListener('click', () => { firing=false; flying=[]; hist.fill(0); document.getElementById(fireBtnId).textContent = fireLabel(); updateResultText(); });
+
+    setupMini['__refresh_'+kind] = function(){
+      document.getElementById(fireBtnId).textContent = firing ? stopLabel() : fireLabel();
+      updateResultText();
+    };
   }
 
   setupMini('tryParticle','tryParticleFire','tryParticleReset','tryParticleResult','particle');
   setupMini('tryWave','tryWaveFire','tryWaveReset','tryWaveResult','wave');
+
+  window.__tryRefresh = function(){
+    if(setupMini['__refresh_particle']) setupMini['__refresh_particle']();
+    if(setupMini['__refresh_wave']) setupMini['__refresh_wave']();
+  };
 })();
 </script>
 </body>

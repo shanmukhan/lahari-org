@@ -9,7 +9,11 @@
   *{box-sizing:border-box;}
   body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
   .wrap{max-width:960px;margin:0 auto;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
   a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
   header{text-align:center;margin-bottom:20px;}
   h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
   header p{color:var(--dim);font-size:16px;margin:0;}
@@ -43,10 +47,13 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="category-physics.html">&larr; Back to Physics in Action</a>
+  <div class="topbar">
+    <a class="back" href="category-physics.html" id="backLink">&larr; Back to Physics in Action</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
   <header>
-    <h1>🚀 How Rockets Work</h1>
-    <p>No wings, no wheels to push against — so how does a rocket move at all? Newton had the answer.</p>
+    <h1 id="pageTitle">🚀 How Rockets Work</h1>
+    <p id="pageSubtitle">No wings, no wheels to push against — so how does a rocket move at all? Newton had the answer.</p>
   </header>
 
   <div class="player">
@@ -61,23 +68,23 @@
   </div>
 
   <div class="steps">
-    <div class="step-card"><div class="num">1</div><h3>🔥 Burn fuel, make gas</h3>
-      <p>A rocket engine burns fuel, creating a huge amount of hot, fast-moving gas.</p></div>
-    <div class="step-card"><div class="num">2</div><h3>⬇️ Push the gas out</h3>
-      <p>That gas is squeezed out of the nozzle at the bottom, blasting downward at incredible speed.</p></div>
-    <div class="step-card"><div class="num">3</div><h3>⬆️ The rocket gets pushed back</h3>
-      <p>Newton's third law: every push has an equal push back. Pushing gas down pushes the rocket up!</p></div>
-    <div class="step-card"><div class="num">4</div><h3>🛰️ Staging drops dead weight</h3>
-      <p>As fuel tanks empty, rockets often drop that section entirely — less weight to carry means the rest can go faster.</p></div>
+    <div class="step-card"><div class="num">1</div><h3 id="s1t">🔥 Burn fuel, make gas</h3>
+      <p id="s1d">A rocket engine burns fuel, creating a huge amount of hot, fast-moving gas.</p></div>
+    <div class="step-card"><div class="num">2</div><h3 id="s2t">⬇️ Push the gas out</h3>
+      <p id="s2d">That gas is squeezed out of the nozzle at the bottom, blasting downward at incredible speed.</p></div>
+    <div class="step-card"><div class="num">3</div><h3 id="s3t">⬆️ The rocket gets pushed back</h3>
+      <p id="s3d">Newton's third law: every push has an equal push back. Pushing gas down pushes the rocket up!</p></div>
+    <div class="step-card"><div class="num">4</div><h3 id="s4t">🛰️ Staging drops dead weight</h3>
+      <p id="s4d">As fuel tanks empty, rockets often drop that section entirely — less weight to carry means the rest can go faster.</p></div>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> Rockets don't need air to push against — that's actually a myth! They work even better in the
     vacuum of space, since there's no air resistance slowing them down. That's exactly why rockets (not planes) get us to orbit.
   </div>
 
-  <div class="try-title">🧪 Now try it yourself</div>
-  <p class="try-subtitle">Blow up a balloon and let go — the same action-reaction push that launches a rocket!</p>
+  <div class="try-title" id="tryTitle">🧪 Now try it yourself</div>
+  <p class="try-subtitle" id="trySubtitle">Blow up a balloon and let go — the same action-reaction push that launches a rocket!</p>
   <div class="try-card">
     <canvas id="tryScene" width="560" height="280"></canvas>
     <div class="try-controls">
@@ -89,21 +96,116 @@
 </div>
 
 <script>
+const T = {
+  en: {
+    langToggle: 'తెలుగు', backLink: '&larr; Back to Physics in Action',
+    pageTitle: '🚀 How Rockets Work',
+    pageSubtitle: 'No wings, no wheels to push against — so how does a rocket move at all? Newton had the answer.',
+    playBtn: '▶ Play', pauseBtn: '⏸ Pause', restartBtn: '⟲ Restart',
+    captionInitial: 'Press <b>Play</b> to start!',
+    captionEnd: '🎬 The End! Press <b>Restart</b> to watch again.',
+    steps: [
+      ['🔥 Burn fuel, make gas','A rocket engine burns fuel, creating a huge amount of hot, fast-moving gas.'],
+      ['⬇️ Push the gas out','That gas is squeezed out of the nozzle at the bottom, blasting downward at incredible speed.'],
+      ['⬆️ The rocket gets pushed back','Newton\'s third law: every push has an equal push back. Pushing gas down pushes the rocket up!'],
+      ['🛰️ Staging drops dead weight','As fuel tanks empty, rockets often drop that section entirely — less weight to carry means the rest can go faster.'],
+    ],
+    fact: '🤯 <b>Mind-blowing part:</b> Rockets don\'t need air to push against — that\'s actually a myth! They work even better in the vacuum of space, since there\'s no air resistance slowing them down. That\'s exactly why rockets (not planes) get us to orbit.',
+    tryTitle: '🧪 Now try it yourself',
+    trySubtitle: 'Blow up a balloon and let go — the same action-reaction push that launches a rocket!',
+    launchBtn: '🎈 Let Go!', tryReset: '↻ Reset',
+    tryResultDefault: 'Air rushes out one way, the balloon zooms the other way!',
+    tryResultLaunch: 'Air rushes out the back (left) — the balloon shoots forward (right)! Same idea as a rocket engine.',
+    scenes: [
+      ['🔥 STEP 1: BURN FUEL, MAKE GAS','Inside the engine, fuel burns fiercely, creating a huge volume of super-hot, fast-moving gas.'],
+      ['⬇️ STEP 2: BLAST THE GAS DOWNWARD','That hot gas is forced out through the nozzle at the bottom, shooting downward at thousands of km/h.'],
+      ['⬆️ STEP 3: NEWTON PUSHES BACK','Newton\'s third law: <b>every action has an equal and opposite reaction</b>. Pushing gas down means the gas pushes the rocket UP!'],
+      ['🛰️ STEP 4: DROPPING DEAD WEIGHT','Once a fuel stage is empty, it\'s dropped — called <b>staging</b>. Less weight to push means the remaining rocket accelerates faster.'],
+    ],
+    canvas: {
+      fuelBurning: 'fuel burning inside the engine',
+      gasBlast: 'hot gas blasts downward through the nozzle',
+      actionGas: 'action: gas pushed DOWN',
+      reactionRocket: 'reaction: rocket pushed UP',
+      stageDrops: 'empty stage drops away',
+      burnsOut: 'first stage burns out...',
+      lighterFaster: 'lighter rocket accelerates faster!',
+    },
+  },
+  te: {
+    langToggle: 'English', backLink: '&larr; ఫిజిక్స్ ఇన్ యాక్షన్ కి తిరిగి',
+    pageTitle: '🚀 రాకెట్లు ఎలా పనిచేస్తాయి',
+    pageSubtitle: 'నెట్టడానికి రెక్కలు లేవు, చక్రాలు లేవు — మరి రాకెట్ ఎలా కదులుతుంది? న్యూటన్‌కు సమాధానం తెలుసు.',
+    playBtn: '▶ ప్లే', pauseBtn: '⏸ పాజ్', restartBtn: '⟲ మళ్ళీ మొదలు',
+    captionInitial: 'ప్రారంభించడానికి <b>ప్లే</b> నొక్కండి!',
+    captionEnd: '🎬 ముగింపు! మళ్ళీ చూడటానికి <b>మళ్ళీ మొదలు</b> నొక్కండి.',
+    steps: [
+      ['🔥 ఇంధనాన్ని మండించి, వాయువును తయారుచేయడం','రాకెట్ ఇంజిన్ ఇంధనాన్ని మండిస్తుంది, ఇది భారీ మొత్తంలో వేడి, వేగంగా కదిలే వాయువును తయారుచేస్తుంది.'],
+      ['⬇️ వాయువును బయటకు నెట్టడం','ఆ వాయువు కింద ఉన్న నాజిల్ ద్వారా బయటకు నెట్టబడుతుంది, అద్భుతమైన వేగంతో కిందికి దూసుకుపోతుంది.'],
+      ['⬆️ రాకెట్ వెనక్కి నెట్టబడుతుంది','న్యూటన్ మూడో నియమం: ప్రతి నెట్టుడుకు సమానమైన ఎదురు నెట్టుడు ఉంటుంది. వాయువును కిందికి నెట్టడం రాకెట్‌ను పైకి నెట్టుతుంది!'],
+      ['🛰️ దశలు వేరుపడటం అనవసర బరువును తగ్గిస్తుంది','ఇంధన ట్యాంకులు ఖాళీ అయినప్పుడు, రాకెట్లు తరచుగా ఆ భాగాన్ని పూర్తిగా వదిలేస్తాయి — తక్కువ బరువు మోయడం వల్ల మిగిలిన భాగం వేగంగా వెళ్ళగలదు.'],
+    ],
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> రాకెట్లు నెట్టడానికి గాలి అవసరం లేదు — అది నిజానికి ఒక అపోహ మాత్రమే! అంతరిక్షంలోని శూన్యంలో అవి ఇంకా బాగా పనిచేస్తాయి, ఎందుకంటే అక్కడ వాటిని నెమ్మదింపజేసే గాలి నిరోధం ఉండదు. అందుకే మనల్ని కక్ష్యలోకి తీసుకెళ్లేది విమానాలు కాదు, రాకెట్లే.',
+    tryTitle: '🧪 ఇప్పుడు మీరే ప్రయత్నించండి',
+    trySubtitle: 'ఒక బెలూన్‌ను ఊదిపోసి వదిలేయండి — రాకెట్‌ను ప్రయోగించే అదే యాక్షన్-రియాక్షన్ నెట్టుడు!',
+    launchBtn: '🎈 వదిలేయండి!', tryReset: '↻ రీసెట్',
+    tryResultDefault: 'గాలి ఒక వైపు నుండి దూసుకుపోతుంది, బెలూన్ మరో వైపుకు దూసుకుపోతుంది!',
+    tryResultLaunch: 'గాలి వెనుక (ఎడమ) నుండి దూసుకుపోతుంది — బెలూన్ ముందుకు (కుడి వైపు) దూసుకుపోతుంది! రాకెట్ ఇంజిన్ లాంటిదే ఆలోచన.',
+    scenes: [
+      ['🔥 దశ 1: ఇంధనాన్ని మండించి వాయువును తయారుచేయడం','ఇంజిన్ లోపల, ఇంధనం తీవ్రంగా మండుతుంది, ఇది భారీ పరిమాణంలో అతివేడి, వేగంగా కదిలే వాయువును తయారుచేస్తుంది.'],
+      ['⬇️ దశ 2: వాయువును కిందికి దూసుకుపోయేలా చేయడం','ఆ వేడి వాయువు కింద ఉన్న నాజిల్ ద్వారా బలవంతంగా బయటకు నెట్టబడి, వేల కిమీ/గం వేగంతో కిందికి దూసుకుపోతుంది.'],
+      ['⬆️ దశ 3: న్యూటన్ వెనక్కి నెట్టుతాడు','న్యూటన్ మూడో నియమం: <b>ప్రతి చర్యకు సమానమైన, వ్యతిరేక దిశలో ప్రతిచర్య ఉంటుంది</b>. వాయువును కిందికి నెట్టడం అంటే ఆ వాయువు రాకెట్‌ను పైకి నెట్టడమే!'],
+      ['🛰️ దశ 4: అనవసర బరువును వదిలేయడం','ఒక ఇంధన దశ ఖాళీ అయిన తర్వాత, దాన్ని వదిలేస్తారు — దీన్నే <b>స్టేజింగ్</b> అంటారు. తక్కువ బరువు నెట్టాలంటే, మిగిలిన రాకెట్ వేగంగా వేగవంతం అవుతుంది.'],
+    ],
+    canvas: {
+      fuelBurning: 'ఇంజిన్ లోపల ఇంధనం మండుతోంది',
+      gasBlast: 'వేడి వాయువు నాజిల్ ద్వారా కిందికి దూసుకుపోతుంది',
+      actionGas: 'చర్య: వాయువు కిందికి నెట్టబడింది',
+      reactionRocket: 'ప్రతిచర్య: రాకెట్ పైకి నెట్టబడింది',
+      stageDrops: 'ఖాళీ దశ వేరుపడి పడిపోతుంది',
+      burnsOut: 'మొదటి దశ మండి అయిపోతోంది...',
+      lighterFaster: 'తేలికైన రాకెట్ వేగంగా వేగవంతం అవుతుంది!',
+    },
+  }
+};
+let LANG='en';
+function tr(){ return T[LANG]; }
+function applyStaticText(){
+  const t=tr();
+  document.documentElement.lang=LANG;
+  document.getElementById('langToggle').textContent=t.langToggle;
+  document.getElementById('backLink').innerHTML=t.backLink;
+  document.getElementById('pageTitle').textContent=t.pageTitle;
+  document.getElementById('pageSubtitle').textContent=t.pageSubtitle;
+  document.getElementById('restartBtn').textContent=t.restartBtn;
+  for(let i=0;i<4;i++){
+    document.getElementById('s'+(i+1)+'t').textContent=t.steps[i][0];
+    document.getElementById('s'+(i+1)+'d').innerHTML=t.steps[i][1];
+  }
+  document.getElementById('factBox').innerHTML=t.fact;
+  document.getElementById('tryTitle').textContent=t.tryTitle;
+  document.getElementById('trySubtitle').textContent=t.trySubtitle;
+  document.getElementById('launchBtn').textContent=t.launchBtn;
+  document.getElementById('tryReset').textContent=t.tryReset;
+}
+document.getElementById('langToggle').addEventListener('click',()=>{
+  LANG = LANG==='en' ? 'te' : 'en';
+  applyStaticText();
+  if(window.__rocketRefresh) window.__rocketRefresh();
+  if(window.__tryRefresh) window.__tryRefresh();
+});
+applyStaticText();
+
 (function(){
   const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
   const W=canvas.width, H=canvas.height;
   const captionEl=document.getElementById('caption'), bannerEl=document.getElementById('banner'), progressBar=document.getElementById('progressBar');
   const playBtn=document.getElementById('playBtn'), restartBtn=document.getElementById('restartBtn');
 
-  const SCENES=[
-    {t:0,dur:6,banner:'🔥 STEP 1: BURN FUEL, MAKE GAS',caption:'Inside the engine, fuel burns fiercely, creating a huge volume of super-hot, fast-moving gas.'},
-    {t:6,dur:6,banner:'⬇️ STEP 2: BLAST THE GAS DOWNWARD',caption:'That hot gas is forced out through the nozzle at the bottom, shooting downward at thousands of km/h.'},
-    {t:12,dur:8,banner:'⬆️ STEP 3: NEWTON PUSHES BACK',caption:'Newton\'s third law: <b>every action has an equal and opposite reaction</b>. Pushing gas down means the gas pushes the rocket UP!'},
-    {t:20,dur:8,banner:'🛰️ STEP 4: DROPPING DEAD WEIGHT',caption:'Once a fuel stage is empty, it\'s dropped — called <b>staging</b>. Less weight to push means the remaining rocket accelerates faster.'},
-  ];
+  const starts=[0,6,12,20];
   const totalDur=28;
-  let simTime=0, playing=false, lastTs=null;
-  function currentScene(t){ for(let i=SCENES.length-1;i>=0;i--) if(t>=SCENES[i].t) return i; return 0; }
+  let simTime=0, playing=false, lastTs=null, captionOverride='initial';
+  function currentScene(t){ for(let i=starts.length-1;i>=0;i--) if(t>=starts[i]) return i; return 0; }
   function label(x,y,text,color){
     ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
     const tw=ctx.measureText(text).width;
@@ -137,13 +239,13 @@
       ctx.fillStyle='rgba(255,160,60,'+(0.4+0.3*Math.sin(local*4+i))+')';
       ctx.beginPath(); ctx.arc(x,y,6,0,Math.PI*2); ctx.fill();
     }
-    label(W/2,80,'fuel burning inside the engine','#ffb43f');
+    label(W/2,80,tr().canvas.fuelBurning,'#ffb43f');
   }
   function drawGasBlast(local){
     drawRocket(W/2,260,1.4,2);
     const flameSize=40+Math.sin(local*6)*10;
     drawFlame(W/2,260+55*1.4,1.4,flameSize);
-    label(W/2,80,'hot gas blasts downward through the nozzle','#ffb43f');
+    label(W/2,80,tr().canvas.gasBlast,'#ffb43f');
   }
   function drawNewton(local){
     const y=260-Math.min(1,local/6)*120;
@@ -153,12 +255,12 @@
     ctx.strokeStyle='#ffb43f'; ctx.lineWidth=4;
     ctx.beginPath(); ctx.moveTo(W/2-60,y+140); ctx.lineTo(W/2-60,y+220); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(W/2-60,y+220); ctx.lineTo(W/2-70,y+200); ctx.moveTo(W/2-60,y+220); ctx.lineTo(W/2-50,y+200); ctx.stroke();
-    label(W/2-60,y+240,'action: gas pushed DOWN','#ffb43f');
+    label(W/2-60,y+240,tr().canvas.actionGas,'#ffb43f');
     // up arrow (rocket)
     ctx.strokeStyle='#6dffb0'; ctx.lineWidth=4;
     ctx.beginPath(); ctx.moveTo(W/2+60,y+60); ctx.lineTo(W/2+60,y-20); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(W/2+60,y-20); ctx.lineTo(W/2+50,y); ctx.moveTo(W/2+60,y-20); ctx.lineTo(W/2+70,y); ctx.stroke();
-    label(W/2+60,y-40,'reaction: rocket pushed UP','#6dffb0');
+    label(W/2+60,y-40,tr().canvas.reactionRocket,'#6dffb0');
   }
   function drawStaging(local){
     const y=260-Math.min(1,local/8)*180;
@@ -170,16 +272,16 @@
       ctx.save(); ctx.globalAlpha=1-fallProg*0.6;
       ctx.fillStyle='#9aa4cc'; ctx.fillRect(W/2-24,y+120+fallProg*160,48,40);
       ctx.restore();
-      label(W/2,y+180+fallProg*160,'empty stage drops away','#9aa4cc');
+      label(W/2,y+180+fallProg*160,tr().canvas.stageDrops,'#9aa4cc');
     }
-    label(W/2,60,dropped?'lighter rocket accelerates faster!':'first stage burns out...','#eef2ff');
+    label(W/2,60,dropped?tr().canvas.lighterFaster:tr().canvas.burnsOut,'#eef2ff');
   }
 
   function render(t){
     ctx.clearRect(0,0,W,H); ctx.fillStyle='#04060f'; ctx.fillRect(0,0,W,H);
     for(let i=0;i<50;i++){ ctx.fillStyle='rgba(255,255,255,'+(0.08+0.3*((i*37)%10)/10)+')'; ctx.fillRect((i*53)%W,(i*97)%H,2,2); }
-    const idx=currentScene(t), scene=SCENES[idx], local=t-scene.t;
-    bannerEl.textContent=scene.banner; captionEl.innerHTML=scene.caption;
+    const idx=currentScene(t), scene=tr().scenes[idx], local=t-starts[idx];
+    bannerEl.textContent=scene[0]; captionEl.innerHTML=scene[1];
     if(idx===0) drawBurnFuel(local);
     else if(idx===1) drawGasBlast(local);
     else if(idx===2) drawNewton(local);
@@ -192,15 +294,24 @@
     const dt=Math.min(0.05,(ts-lastTs)/1000); lastTs=ts;
     simTime+=dt;
     if(simTime>=totalDur){ simTime=totalDur; render(simTime); pause();
-      captionEl.innerHTML='🎬 The End! Press <b>Restart</b> to watch again.'; return; }
+      captionOverride='ended'; captionEl.innerHTML=tr().captionEnd; return; }
+    captionOverride=null;
     render(simTime); requestAnimationFrame(step);
   }
-  function play(){ if(playing) return; playing=true; lastTs=null; playBtn.textContent='⏸ Pause'; requestAnimationFrame(step); }
-  function pause(){ playing=false; playBtn.textContent='▶ Play'; }
-  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionEl.innerHTML='Press <b>Play</b> to start!'; }
+  function play(){ if(playing) return; playing=true; lastTs=null; captionOverride=null; playBtn.textContent=tr().pauseBtn; requestAnimationFrame(step); }
+  function pause(){ playing=false; playBtn.textContent=tr().playBtn; }
+  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionOverride='initial'; captionEl.innerHTML=tr().captionInitial; }
   playBtn.addEventListener('click',()=>playing?pause():play());
   restartBtn.addEventListener('click',restart);
+  playBtn.textContent=tr().playBtn;
   render(0);
+
+  window.__rocketRefresh=function(){
+    playBtn.textContent = playing ? tr().pauseBtn : tr().playBtn;
+    render(simTime);
+    if(captionOverride==='initial') captionEl.innerHTML=tr().captionInitial;
+    else if(captionOverride==='ended') captionEl.innerHTML=tr().captionEnd;
+  };
 })();
 
 (function(){
@@ -208,6 +319,10 @@
   const w=cv.width,h=cv.height;
   let launched=false, t=0, bx=w/2, by=h/2, vx=0;
   const resultEl=document.getElementById('tryResult');
+  let lastResult='default';
+  function updateResultText(){
+    resultEl.textContent = lastResult==='launch' ? tr().tryResultLaunch : tr().tryResultDefault;
+  }
   function drawBalloon(x,y,size,squish){
     c.fillStyle='#ff6767';
     c.save(); c.translate(x,y); c.scale(squish,1/Math.max(0.3,squish));
@@ -242,14 +357,19 @@
   }
   document.getElementById('launchBtn').addEventListener('click',()=>{
     launched=true; t=0; vx=0;
-    resultEl.textContent='Air rushes out the back (left) — the balloon shoots forward (right)! Same idea as a rocket engine.';
+    lastResult='launch';
+    updateResultText();
   });
   document.getElementById('tryReset').addEventListener('click',()=>{
     launched=false; bx=w/2; by=h/2; vx=0; t=0;
-    resultEl.textContent='Air rushes out one way, the balloon zooms the other way!';
+    lastResult='default';
+    updateResultText();
     draw();
   });
+  updateResultText();
   draw(); requestAnimationFrame(loop);
+
+  window.__tryRefresh=function(){ updateResultText(); };
 })();
 </script>
 </body>

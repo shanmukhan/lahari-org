@@ -9,7 +9,11 @@
   *{box-sizing:border-box;}
   body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
   .wrap{max-width:960px;margin:0 auto;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
   a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
   header{text-align:center;margin-bottom:20px;}
   h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
   header p{color:var(--dim);font-size:16px;margin:0;}
@@ -43,10 +47,13 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="category-physics.html">&larr; Back to Physics in Action</a>
+  <div class="topbar">
+    <a class="back" href="category-physics.html" id="backLink">&larr; Back to Physics in Action</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
   <header>
-    <h1>🔊 How Sound Travels</h1>
-    <p>Sound isn't a "thing" that flies through the air — it's a wave of squeezing and stretching, passed from molecule to molecule.</p>
+    <h1 id="pageTitle">🔊 How Sound Travels</h1>
+    <p id="pageSubtitle">Sound isn't a "thing" that flies through the air — it's a wave of squeezing and stretching, passed from molecule to molecule.</p>
   </header>
 
   <div class="player">
@@ -61,23 +68,23 @@
   </div>
 
   <div class="steps">
-    <div class="step-card"><div class="num">1</div><h3>🥁 Something vibrates</h3>
-      <p>Sound starts with vibration — a drum skin, your vocal cords, a guitar string, all shaking back and forth fast.</p></div>
-    <div class="step-card"><div class="num">2</div><h3>💨 It squeezes the air</h3>
-      <p>Each vibration squeezes nearby air molecules together, then lets them spread apart again, over and over.</p></div>
-    <div class="step-card"><div class="num">3</div><h3>〰️ A wave of squeezes travels</h3>
-      <p>Those squeezed spots bump into the next molecules, which bump the next — a wave of pressure ripples outward.</p></div>
-    <div class="step-card"><div class="num">4</div><h3>👂 Your ear catches it</h3>
-      <p>When that wave reaches your ear, it vibrates your eardrum the same way — and your brain turns it into "sound."</p></div>
+    <div class="step-card"><div class="num">1</div><h3 id="s1t">🥁 Something vibrates</h3>
+      <p id="s1d">Sound starts with vibration — a drum skin, your vocal cords, a guitar string, all shaking back and forth fast.</p></div>
+    <div class="step-card"><div class="num">2</div><h3 id="s2t">💨 It squeezes the air</h3>
+      <p id="s2d">Each vibration squeezes nearby air molecules together, then lets them spread apart again, over and over.</p></div>
+    <div class="step-card"><div class="num">3</div><h3 id="s3t">〰️ A wave of squeezes travels</h3>
+      <p id="s3d">Those squeezed spots bump into the next molecules, which bump the next — a wave of pressure ripples outward.</p></div>
+    <div class="step-card"><div class="num">4</div><h3 id="s4t">👂 Your ear catches it</h3>
+      <p id="s4d">When that wave reaches your ear, it vibrates your eardrum the same way — and your brain turns it into "sound."</p></div>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> Sound needs <b>something to travel through</b> — air, water, even solid metal. In the empty vacuum of
     space, there are no molecules to bump into each other, so sound literally cannot travel at all. Space really is silent!
   </div>
 
-  <div class="try-title">🧪 Now try it yourself</div>
-  <p class="try-subtitle">Pick a material and see how differently sound waves ripple through it.</p>
+  <div class="try-title" id="tryTitle">🧪 Now try it yourself</div>
+  <p class="try-subtitle" id="trySubtitle">Pick a material and see how differently sound waves ripple through it.</p>
   <div class="try-card">
     <canvas id="tryScene" width="600" height="260"></canvas>
     <div class="try-controls">
@@ -91,21 +98,122 @@
 </div>
 
 <script>
+const T = {
+  en: {
+    langToggle: 'తెలుగు', backLink: '&larr; Back to Physics in Action',
+    pageTitle: '🔊 How Sound Travels',
+    pageSubtitle: 'Sound isn\'t a "thing" that flies through the air — it\'s a wave of squeezing and stretching, passed from molecule to molecule.',
+    playBtn: '▶ Play', pauseBtn: '⏸ Pause', restartBtn: '⟲ Restart',
+    captionInitial: 'Press <b>Play</b> to start!',
+    captionEnd: '🎬 The End! Press <b>Restart</b> to watch again.',
+    steps: [
+      ['🥁 Something vibrates','Sound starts with vibration — a drum skin, your vocal cords, a guitar string, all shaking back and forth fast.'],
+      ['💨 It squeezes the air','Each vibration squeezes nearby air molecules together, then lets them spread apart again, over and over.'],
+      ['〰️ A wave of squeezes travels','Those squeezed spots bump into the next molecules, which bump the next — a wave of pressure ripples outward.'],
+      ['👂 Your ear catches it','When that wave reaches your ear, it vibrates your eardrum the same way — and your brain turns it into "sound."'],
+    ],
+    fact: '🤯 <b>Mind-blowing part:</b> Sound needs <b>something to travel through</b> — air, water, even solid metal. In the empty vacuum of space, there are no molecules to bump into each other, so sound literally cannot travel at all. Space really is silent!',
+    tryTitle: '🧪 Now try it yourself',
+    trySubtitle: 'Pick a material and see how differently sound waves ripple through it.',
+    airBtn: '💨 Air', waterBtn: '💧 Water', metalBtn: '🔩 Metal', vacuumBtn: '🌌 Vacuum',
+    scenes: [
+      ['🥁 STEP 1: SOMETHING VIBRATES','A drum skin shakes back and forth, fast. That vibration is where every sound begins.'],
+      ['💨 STEP 2: AIR GETS SQUEEZED','Each time the drum skin moves outward, it squeezes the air molecules right next to it closer together.'],
+      ['〰️ STEP 3: THE WAVE RIPPLES OUT','Those squeezed molecules bump into their neighbors, which bump the next — a wave of squeeze-and-stretch ripples outward.'],
+      ['👂 STEP 4: YOUR EAR CATCHES IT','When the wave reaches your ear, it wiggles your eardrum the same way — and your brain hears a "boom"!'],
+    ],
+    canvas: {
+      vibrate: 'the drum skin vibrates back and forth',
+      squeeze: 'nearby air molecules get squeezed, then spread apart',
+      wave: 'a wave of squeezed molecules ripples outward',
+      earVibrate: 'your eardrum vibrates the same way!',
+      vacuumEmpty: '...nothing to carry the sound...',
+    },
+    material: {
+      air:'In air, sound travels at about 343 meters per second.',
+      water:'In water, sound travels about 4x faster than air — molecules are packed closer, so bumps pass along quicker!',
+      metal:'In solid metal, sound travels over 15x faster than air — tightly packed atoms pass the vibration almost instantly.',
+      vacuum:'In a vacuum, there are no molecules at all — sound has nothing to travel through. Total silence.',
+    },
+  },
+  te: {
+    langToggle: 'English', backLink: '&larr; ఫిజిక్స్ ఇన్ యాక్షన్ కి తిరిగి',
+    pageTitle: '🔊 శబ్దం ఎలా ప్రయాణిస్తుంది',
+    pageSubtitle: 'శబ్దం గాలిలో ఎగిరే "వస్తువు" కాదు — ఇది అణువు నుండి అణువుకు పంపబడే నొక్కడం మరియు సాగదీయడం అనే తరంగం.',
+    playBtn: '▶ ప్లే', pauseBtn: '⏸ పాజ్', restartBtn: '⟲ మళ్ళీ మొదలు',
+    captionInitial: 'ప్రారంభించడానికి <b>ప్లే</b> నొక్కండి!',
+    captionEnd: '🎬 ముగింపు! మళ్ళీ చూడటానికి <b>మళ్ళీ మొదలు</b> నొక్కండి.',
+    steps: [
+      ['🥁 ఏదో కంపిస్తుంది','శబ్దం కంపనతో మొదలవుతుంది — డప్పు చర్మం, మీ స్వర తంత్రులు, గిటార్ తీగ, అన్నీ వేగంగా ముందుకు వెనుకకు కదులుతాయి.'],
+      ['💨 అది గాలిని నొక్కుతుంది','ప్రతి కంపనం దగ్గరలోని గాలి అణువులను దగ్గరగా నొక్కుతుంది, తర్వాత వాటిని మళ్ళీ వ్యాపించనిస్తుంది, పదే పదే.'],
+      ['〰️ నొక్కుళ్ల తరంగం ప్రయాణిస్తుంది','ఆ నొక్కబడిన ప్రదేశాలు తర్వాతి అణువులను తాకుతాయి, అవి తర్వాతివాటిని తాకుతాయి — ఒత్తిడి తరంగం బయటికి వ్యాపిస్తుంది.'],
+      ['👂 మీ చెవి దాన్ని పట్టుకుంటుంది','ఆ తరంగం మీ చెవికి చేరినప్పుడు, అది మీ చెవిపోగును అదే విధంగా కంపింపజేస్తుంది — మీ మెదడు దాన్ని "శబ్దం"గా మారుస్తుంది.'],
+    ],
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> శబ్దానికి <b>ప్రయాణించడానికి ఏదో ఒకటి</b> అవసరం — గాలి, నీరు, ఘన లోహం కూడా. అంతరిక్షంలోని ఖాళీ శూన్యంలో, ఒకదానితో ఒకటి తాకడానికి అణువులు లేవు, కాబట్టి శబ్దం అస్సలు ప్రయాణించదు. అంతరిక్షం నిజంగా నిశ్శబ్దంగా ఉంటుంది!',
+    tryTitle: '🧪 ఇప్పుడు మీరే ప్రయత్నించండి',
+    trySubtitle: 'ఒక పదార్థాన్ని ఎంచుకోండి మరియు శబ్ద తరంగాలు దాని గుండా ఎంత భిన్నంగా వ్యాపిస్తాయో చూడండి.',
+    airBtn: '💨 గాలి', waterBtn: '💧 నీరు', metalBtn: '🔩 లోహం', vacuumBtn: '🌌 శూన్యం',
+    scenes: [
+      ['🥁 దశ 1: ఏదో కంపిస్తుంది','డప్పు చర్మం వేగంగా ముందుకు వెనుకకు కదులుతుంది. ప్రతి శబ్దం అక్కడే మొదలవుతుంది.'],
+      ['💨 దశ 2: గాలి నొక్కబడుతుంది','డప్పు చర్మం బయటికి కదిలిన ప్రతిసారి, అది దాని పక్కనే ఉన్న గాలి అణువులను దగ్గరగా నొక్కుతుంది.'],
+      ['〰️ దశ 3: తరంగం బయటికి వ్యాపిస్తుంది','ఆ నొక్కబడిన అణువులు తమ పొరుగువారిని తాకుతాయి, అవి తర్వాతివాటిని తాకుతాయి — నొక్కడం-సాగడం తరంగం బయటికి వ్యాపిస్తుంది.'],
+      ['👂 దశ 4: మీ చెవి దాన్ని పట్టుకుంటుంది','తరంగం మీ చెవికి చేరినప్పుడు, అది మీ చెవిపోగును అదే విధంగా కదిలిస్తుంది — మీ మెదడు ఒక "బూమ్" వింటుంది!'],
+    ],
+    canvas: {
+      vibrate: 'డప్పు చర్మం ముందుకు వెనుకకు కంపిస్తుంది',
+      squeeze: 'దగ్గరలోని గాలి అణువులు నొక్కబడతాయి, తర్వాత వ్యాపిస్తాయి',
+      wave: 'నొక్కబడిన అణువుల తరంగం బయటికి వ్యాపిస్తుంది',
+      earVibrate: 'మీ చెవిపోగు అదే విధంగా కంపిస్తుంది!',
+      vacuumEmpty: '...శబ్దాన్ని మోసుకెళ్ళడానికి ఏమీ లేదు...',
+    },
+    material: {
+      air:'గాలిలో, శబ్దం సెకనుకు దాదాపు 343 మీటర్ల వేగంతో ప్రయాణిస్తుంది.',
+      water:'నీటిలో, శబ్దం గాలి కంటే 4 రెట్లు వేగంగా ప్రయాణిస్తుంది — అణువులు దగ్గరగా ప్యాక్ చేయబడి ఉంటాయి, కాబట్టి తాకిడులు వేగంగా వెళ్తాయి!',
+      metal:'ఘన లోహంలో, శబ్దం గాలి కంటే 15 రెట్లు వేగంగా ప్రయాణిస్తుంది — గట్టిగా ప్యాక్ చేయబడిన పరమాణువులు కంపనాన్ని దాదాపు తక్షణమే పంపుతాయి.',
+      vacuum:'శూన్యంలో, అస్సలు అణువులు ఉండవు — శబ్దం ప్రయాణించడానికి ఏమీ లేదు. పూర్తి నిశ్శబ్దం.',
+    },
+  }
+};
+let LANG='en';
+function tr(){ return T[LANG]; }
+function applyStaticText(){
+  const t=tr();
+  document.documentElement.lang=LANG;
+  document.getElementById('langToggle').textContent=t.langToggle;
+  document.getElementById('backLink').innerHTML=t.backLink;
+  document.getElementById('pageTitle').textContent=t.pageTitle;
+  document.getElementById('pageSubtitle').textContent=t.pageSubtitle;
+  document.getElementById('restartBtn').textContent=t.restartBtn;
+  for(let i=0;i<4;i++){
+    document.getElementById('s'+(i+1)+'t').textContent=t.steps[i][0];
+    document.getElementById('s'+(i+1)+'d').innerHTML=t.steps[i][1];
+  }
+  document.getElementById('factBox').innerHTML=t.fact;
+  document.getElementById('tryTitle').textContent=t.tryTitle;
+  document.getElementById('trySubtitle').textContent=t.trySubtitle;
+  document.getElementById('airBtn').textContent=t.airBtn;
+  document.getElementById('waterBtn').textContent=t.waterBtn;
+  document.getElementById('metalBtn').textContent=t.metalBtn;
+  document.getElementById('vacuumBtn').textContent=t.vacuumBtn;
+}
+document.getElementById('langToggle').addEventListener('click',()=>{
+  LANG = LANG==='en' ? 'te' : 'en';
+  applyStaticText();
+  if(window.__soundRefresh) window.__soundRefresh();
+  if(window.__tryRefresh) window.__tryRefresh();
+});
+applyStaticText();
+
 (function(){
   const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
   const W=canvas.width, H=canvas.height;
   const captionEl=document.getElementById('caption'), bannerEl=document.getElementById('banner'), progressBar=document.getElementById('progressBar');
   const playBtn=document.getElementById('playBtn'), restartBtn=document.getElementById('restartBtn');
 
-  const SCENES=[
-    {t:0,dur:6,banner:'🥁 STEP 1: SOMETHING VIBRATES',caption:'A drum skin shakes back and forth, fast. That vibration is where every sound begins.'},
-    {t:6,dur:7,banner:'💨 STEP 2: AIR GETS SQUEEZED',caption:'Each time the drum skin moves outward, it squeezes the air molecules right next to it closer together.'},
-    {t:13,dur:8,banner:'〰️ STEP 3: THE WAVE RIPPLES OUT',caption:'Those squeezed molecules bump into their neighbors, which bump the next — a wave of squeeze-and-stretch ripples outward.'},
-    {t:21,dur:7,banner:'👂 STEP 4: YOUR EAR CATCHES IT',caption:'When the wave reaches your ear, it wiggles your eardrum the same way — and your brain hears a "boom"!'},
-  ];
+  const starts=[0,6,13,21];
   const totalDur=28;
-  let simTime=0, playing=false, lastTs=null;
-  function currentScene(t){ for(let i=SCENES.length-1;i>=0;i--) if(t>=SCENES[i].t) return i; return 0; }
+  let simTime=0, playing=false, lastTs=null, captionOverride='initial';
+  function currentScene(t){ for(let i=starts.length-1;i>=0;i--) if(t>=starts[i]) return i; return 0; }
   function label(x,y,text,color){
     ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
     const tw=ctx.measureText(text).width;
@@ -122,7 +230,7 @@
   function drawVibrate(local){
     const shake=Math.sin(local*10)*8;
     drawDrum(shake);
-    label(110,H/2+100,'the drum skin vibrates back and forth','#ffd23f');
+    label(110,H/2+100,tr().canvas.vibrate,'#ffd23f');
   }
   function drawSqueeze(local){
     const shake=Math.sin(local*10)*8;
@@ -133,7 +241,7 @@
       ctx.fillStyle='rgba(79,211,255,.5)';
       ctx.beginPath(); ctx.arc(baseX+squeeze,H/2,4,0,Math.PI*2); ctx.fill();
     }
-    label(W/2,80,'nearby air molecules get squeezed, then spread apart','#8fd2ff');
+    label(W/2,80,tr().canvas.squeeze,'#8fd2ff');
   }
   function drawWave(local){
     const shake=Math.sin(local*10)*8;
@@ -148,7 +256,7 @@
         ctx.beginPath(); ctx.arc(baseX+squeeze,H/2+row*40,4,0,Math.PI*2); ctx.fill();
       }
     }
-    label(W/2,80,'a wave of squeezed molecules ripples outward','#8fd2ff');
+    label(W/2,80,tr().canvas.wave,'#8fd2ff');
   }
   function drawEar(local){
     const shake=Math.sin(local*10)*8;
@@ -166,13 +274,13 @@
     ctx.font='60px Segoe UI'; ctx.textAlign='center'; ctx.fillStyle='#eef2ff';
     const earShake=Math.sin(local*10)*3;
     ctx.fillText('👂',W-90+earShake,H/2+20);
-    label(W-90,H/2+80,'your eardrum vibrates the same way!','#ffd23f');
+    label(W-90,H/2+80,tr().canvas.earVibrate,'#ffd23f');
   }
 
   function render(t){
     ctx.clearRect(0,0,W,H); ctx.fillStyle='#04060f'; ctx.fillRect(0,0,W,H);
-    const idx=currentScene(t), scene=SCENES[idx], local=t-scene.t;
-    bannerEl.textContent=scene.banner; captionEl.innerHTML=scene.caption;
+    const idx=currentScene(t), scene=tr().scenes[idx], local=t-starts[idx];
+    bannerEl.textContent=scene[0]; captionEl.innerHTML=scene[1];
     if(idx===0) drawVibrate(local);
     else if(idx===1) drawSqueeze(local);
     else if(idx===2) drawWave(local);
@@ -185,15 +293,24 @@
     const dt=Math.min(0.05,(ts-lastTs)/1000); lastTs=ts;
     simTime+=dt;
     if(simTime>=totalDur){ simTime=totalDur; render(simTime); pause();
-      captionEl.innerHTML='🎬 The End! Press <b>Restart</b> to watch again.'; return; }
+      captionOverride='ended'; captionEl.innerHTML=tr().captionEnd; return; }
+    captionOverride=null;
     render(simTime); requestAnimationFrame(step);
   }
-  function play(){ if(playing) return; playing=true; lastTs=null; playBtn.textContent='⏸ Pause'; requestAnimationFrame(step); }
-  function pause(){ playing=false; playBtn.textContent='▶ Play'; }
-  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionEl.innerHTML='Press <b>Play</b> to start!'; }
+  function play(){ if(playing) return; playing=true; lastTs=null; captionOverride=null; playBtn.textContent=tr().pauseBtn; requestAnimationFrame(step); }
+  function pause(){ playing=false; playBtn.textContent=tr().playBtn; }
+  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionOverride='initial'; captionEl.innerHTML=tr().captionInitial; }
   playBtn.addEventListener('click',()=>playing?pause():play());
   restartBtn.addEventListener('click',restart);
+  playBtn.textContent=tr().playBtn;
   render(0);
+
+  window.__soundRefresh=function(){
+    playBtn.textContent = playing ? tr().pauseBtn : tr().playBtn;
+    render(simTime);
+    if(captionOverride==='initial') captionEl.innerHTML=tr().captionInitial;
+    else if(captionOverride==='ended') captionEl.innerHTML=tr().captionEnd;
+  };
 })();
 
 (function(){
@@ -202,17 +319,18 @@
   let material='air', t=0;
   const resultEl=document.getElementById('tryResult');
   const SPEC={
-    air:{speed:5,density:60,color:'rgba(79,211,255,.5)',text:'In air, sound travels at about 343 meters per second.'},
-    water:{speed:9,density:110,color:'rgba(79,211,255,.7)',text:'In water, sound travels about 4x faster than air — molecules are packed closer, so bumps pass along quicker!'},
-    metal:{speed:16,density:170,color:'rgba(255,210,63,.7)',text:'In solid metal, sound travels over 15x faster than air — tightly packed atoms pass the vibration almost instantly.'},
-    vacuum:{speed:0,density:0,color:'transparent',text:'In a vacuum, there are no molecules at all — sound has nothing to travel through. Total silence.'}
+    air:{speed:5,density:60,color:'rgba(79,211,255,.5)'},
+    water:{speed:9,density:110,color:'rgba(79,211,255,.7)'},
+    metal:{speed:16,density:170,color:'rgba(255,210,63,.7)'},
+    vacuum:{speed:0,density:0,color:'transparent'}
   };
+  function updateResultText(){ resultEl.textContent = tr().material[material]; }
   function draw(){
     c.clearRect(0,0,w,h); c.fillStyle='#04060f'; c.fillRect(0,0,w,h);
     const spec=SPEC[material];
     c.font='40px Segoe UI'; c.textAlign='center'; c.fillText('🥁',50,h/2+15);
     if(material==='vacuum'){
-      c.fillStyle='#9aa4cc'; c.font='700 14px Segoe UI'; c.fillText('...nothing to carry the sound...',w/2,h/2);
+      c.fillStyle='#9aa4cc'; c.font='700 14px Segoe UI'; c.fillText(tr().canvas.vacuumEmpty,w/2,h/2);
       return;
     }
     for(let row=-2;row<=2;row++){
@@ -231,13 +349,16 @@
     material=m;
     document.querySelectorAll('.try-controls button').forEach(b=>b.classList.remove('on'));
     btn.classList.add('on');
-    resultEl.textContent=SPEC[m].text;
+    updateResultText();
   }
   document.getElementById('airBtn').addEventListener('click',e=>setMaterial('air',e.target));
   document.getElementById('waterBtn').addEventListener('click',e=>setMaterial('water',e.target));
   document.getElementById('metalBtn').addEventListener('click',e=>setMaterial('metal',e.target));
   document.getElementById('vacuumBtn').addEventListener('click',e=>setMaterial('vacuum',e.target));
+  updateResultText();
   draw(); requestAnimationFrame(loop);
+
+  window.__tryRefresh=function(){ updateResultText(); draw(); };
 })();
 </script>
 </body>

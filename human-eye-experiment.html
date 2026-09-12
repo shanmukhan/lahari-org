@@ -9,7 +9,11 @@
   *{box-sizing:border-box;}
   body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
   .wrap{max-width:960px;margin:0 auto;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
   a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
   header{text-align:center;margin-bottom:20px;}
   h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
   header p{color:var(--dim);font-size:16px;margin:0;}
@@ -36,10 +40,13 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="category-life.html">&larr; Back to Life Science</a>
+  <div class="topbar">
+    <a class="back" href="category-life.html" id="backLink">&larr; Back to Life Science</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
   <header>
-    <h1>👁️ How Your Eye Works</h1>
-    <p>Your eye is basically a camera your body grew — with a lens, a light-sensing screen, and a cable straight to your brain.</p>
+    <h1 id="pageTitle">👁️ How Your Eye Works</h1>
+    <p id="pageSubtitle">Your eye is basically a camera your body grew — with a lens, a light-sensing screen, and a cable straight to your brain.</p>
   </header>
 
   <div class="player">
@@ -54,17 +61,17 @@
   </div>
 
   <div class="steps">
-    <div class="step-card"><div class="num">1</div><h3>⚫ Light enters through the pupil</h3>
-      <p>Light enters through the pupil, the dark opening in the center — the colored iris around it widens or shrinks the pupil to control how much light gets in.</p></div>
-    <div class="step-card"><div class="num">2</div><h3>🔍 The lens focuses it</h3>
-      <p>Just behind the pupil, a flexible lens bends the incoming light, focusing it onto the back of the eye.</p></div>
-    <div class="step-card"><div class="num">3</div><h3>📺 The retina senses it — upside down!</h3>
-      <p>The image lands on the retina, packed with light-sensing cells — but because of how lenses work, the image lands UPSIDE DOWN.</p></div>
-    <div class="step-card"><div class="num">4</div><h3>🧠 The brain flips it right-side up</h3>
-      <p>The retina sends signals down the optic nerve to your brain, which automatically flips the image the right way up — so you never notice!</p></div>
+    <div class="step-card"><div class="num">1</div><h3 id="s1t">⚫ Light enters through the pupil</h3>
+      <p id="s1d">Light enters through the pupil, the dark opening in the center — the colored iris around it widens or shrinks the pupil to control how much light gets in.</p></div>
+    <div class="step-card"><div class="num">2</div><h3 id="s2t">🔍 The lens focuses it</h3>
+      <p id="s2d">Just behind the pupil, a flexible lens bends the incoming light, focusing it onto the back of the eye.</p></div>
+    <div class="step-card"><div class="num">3</div><h3 id="s3t">📺 The retina senses it — upside down!</h3>
+      <p id="s3d">The image lands on the retina, packed with light-sensing cells — but because of how lenses work, the image lands UPSIDE DOWN.</p></div>
+    <div class="step-card"><div class="num">4</div><h3 id="s4t">🧠 The brain flips it right-side up</h3>
+      <p id="s4d">The retina sends signals down the optic nerve to your brain, which automatically flips the image the right way up — so you never notice!</p></div>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> Everyone's eyes see the world upside down on their retina — your brain has been silently flipping
     it right-side up your whole life. Scientists have even had volunteers wear glasses that flip everything upside down, and after
     about a week wearing them constantly, their brains adapted and started seeing normally again!
@@ -72,21 +79,100 @@
 </div>
 
 <script>
+// ---------- shared translation layer ----------
+const T = {
+  en: {
+    langToggle: 'తెలుగు',
+    backLink: '&larr; Back to Life Science',
+    pageTitle: '👁️ How Your Eye Works',
+    pageSubtitle: 'Your eye is basically a camera your body grew — with a lens, a light-sensing screen, and a cable straight to your brain.',
+    playBtn: '▶ Play', pauseBtn: '⏸ Pause', restartBtn: '⟲ Restart',
+    captionInitial: 'Press <b>Play</b> to start!',
+    captionEnd: '🎬 The End! Press <b>Restart</b> to watch again.',
+    steps: [
+      ['⚫ Light enters through the pupil','Light enters through the pupil, the dark opening in the center — the colored iris around it widens or shrinks the pupil to control how much light gets in.'],
+      ['🔍 The lens focuses it','Just behind the pupil, a flexible lens bends the incoming light, focusing it onto the back of the eye.'],
+      ['📺 The retina senses it — upside down!','The image lands on the retina, packed with light-sensing cells — but because of how lenses work, the image lands UPSIDE DOWN.'],
+      ['🧠 The brain flips it right-side up','The retina sends signals down the optic nerve to your brain, which automatically flips the image the right way up — so you never notice!'],
+    ],
+    fact: '🤯 <b>Mind-blowing part:</b> Everyone\'s eyes see the world upside down on their retina — your brain has been silently flipping it right-side up your whole life. Scientists have even had volunteers wear glasses that flip everything upside down, and after about a week wearing them constantly, their brains adapted and started seeing normally again!',
+    scenes: [
+      ['⚫ STEP 1: LIGHT ENTERS THE PUPIL','Light enters through the <b>pupil</b> — the iris around it widens or shrinks the opening to control brightness.'],
+      ['🔍 STEP 2: THE LENS FOCUSES IT','A flexible <b>lens</b> just behind the pupil bends incoming light, focusing it onto the back of the eye.'],
+      ['📺 STEP 3: THE RETINA — UPSIDE DOWN!','The focused image lands on the <b>retina</b>, packed with light-sensing cells — but the image lands upside down!'],
+      ['🧠 STEP 4: THE BRAIN FLIPS IT','Signals travel down the <b>optic nerve</b> to your brain, which automatically flips the image right-side up — instantly, and constantly.'],
+    ],
+    canvasPupilLabel: 'pupil (light enters here)',
+    canvasLensLabel: 'lens (bends the light)',
+    canvasRetinaLabel: 'retina (light-sensing screen)',
+    canvasUpsideDown: 'image lands upside down!',
+    canvasBrainLabel: 'brain',
+    canvasFlipped: 'flipped right-side up!',
+  },
+  te: {
+    langToggle: 'English',
+    backLink: '&larr; జీవ శాస్త్రానికి తిరిగి',
+    pageTitle: '👁️ మీ కన్ను ఎలా పనిచేస్తుంది',
+    pageSubtitle: 'మీ కన్ను అనేది మీ శరీరం పెంచుకున్న ఒక కెమెరా లాంటిదే — దానికి ఒక లెన్స్, వెలుతురును గుర్తించే తెర, మరియు నేరుగా మెదడుకు వెళ్ళే ఒక తీగ ఉంటాయి.',
+    playBtn: '▶ ప్లే', pauseBtn: '⏸ పాజ్', restartBtn: '⟲ మళ్ళీ మొదలు',
+    captionInitial: 'ప్రారంభించడానికి <b>ప్లే</b> నొక్కండి!',
+    captionEnd: '🎬 ముగింపు! మళ్ళీ చూడటానికి <b>మళ్ళీ మొదలు</b> నొక్కండి.',
+    steps: [
+      ['⚫ కంటిపాప ద్వారా వెలుతురు లోపలికి వస్తుంది','కంటి మధ్యలో ఉన్న చీకటి రంధ్రం అయిన కంటిపాప ద్వారా వెలుతురు లోపలికి వస్తుంది — దాని చుట్టూ ఉన్న రంగు గల కనుపాప (ఐరిస్) ఎంత వెలుతురు లోపలికి రావాలో నియంత్రించడానికి కంటిపాపను వెడల్పు చేస్తుంది లేదా కుదిస్తుంది.'],
+      ['🔍 లెన్స్ దాన్ని కేంద్రీకరిస్తుంది','కంటిపాపకు వెనుకే ఉండే మెత్తని లెన్స్ లోపలికి వచ్చే వెలుతురును వంచి, దాన్ని కంటి వెనుక భాగంపై కేంద్రీకరిస్తుంది.'],
+      ['📺 రెటీనా దాన్ని గుర్తిస్తుంది — తలకిందులుగా!','ఈ చిత్రం వెలుతురును గుర్తించే కణాలతో నిండిన రెటీనాపై పడుతుంది — కానీ లెన్స్‌ల పనితీరు వల్ల, ఈ చిత్రం తలకిందులుగా పడుతుంది.'],
+      ['🧠 మెదడు దాన్ని సరైన వైపుకు తిప్పుతుంది','రెటీనా ఆప్టిక్ నరం ద్వారా మీ మెదడుకు సంకేతాలను పంపుతుంది, అది స్వయంచాలకంగా చిత్రాన్ని సరైన వైపుకు తిప్పేస్తుంది — కాబట్టి మీకు అది ఎప్పుడూ తెలియదు!'],
+    ],
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> ప్రతి ఒక్కరి కళ్ళూ ప్రపంచాన్ని వారి రెటీనాపై తలకిందులుగానే చూస్తాయి — మీ మెదడు మీ జీవితమంతా నిశ్శబ్దంగా దాన్ని సరైన వైపుకు తిప్పుతూనే ఉంది. శాస్త్రవేత్తలు ప్రతిదాన్ని తలకిందులుగా చూపే అద్దాలను స్వచ్ఛంద పరీక్షకులకు పెట్టించారు, వాటిని దాదాపు ఒక వారం పాటు నిరంతరం పెట్టుకున్న తర్వాత, వారి మెదళ్ళు అలవాటు పడి మళ్ళీ మామూలుగా చూడటం మొదలుపెట్టాయి!',
+    scenes: [
+      ['⚫ దశ 1: కంటిపాప ద్వారా వెలుతురు లోపలికి వస్తుంది','<b>కంటిపాప</b> ద్వారా వెలుతురు లోపలికి వస్తుంది — దాని చుట్టూ ఉన్న కనుపాప (ఐరిస్) ఎంత వెలుతురు రావాలో నియంత్రించడానికి రంధ్రాన్ని వెడల్పు చేస్తుంది లేదా కుదిస్తుంది.'],
+      ['🔍 దశ 2: లెన్స్ దాన్ని కేంద్రీకరిస్తుంది','కంటిపాపకు వెనుకే ఉండే మెత్తని <b>లెన్స్</b> లోపలికి వచ్చే వెలుతురును వంచి, దాన్ని కంటి వెనుక భాగంపై కేంద్రీకరిస్తుంది.'],
+      ['📺 దశ 3: రెటీనా — తలకిందులుగా!','కేంద్రీకరించబడిన చిత్రం వెలుతురును గుర్తించే కణాలతో నిండిన <b>రెటీనా</b>పై పడుతుంది — కానీ ఈ చిత్రం తలకిందులుగా పడుతుంది!'],
+      ['🧠 దశ 4: మెదడు దాన్ని తిప్పుతుంది','సంకేతాలు <b>ఆప్టిక్ నరం</b> ద్వారా మీ మెదడుకు ప్రయాణిస్తాయి, అది స్వయంచాలకంగా చిత్రాన్ని సరైన వైపుకు తిప్పేస్తుంది — తక్షణమే, మరియు నిరంతరం.'],
+    ],
+    canvasPupilLabel: 'కంటిపాప (వెలుతురు ఇక్కడ ప్రవేశిస్తుంది)',
+    canvasLensLabel: 'లెన్స్ (వెలుతురును వంచుతుంది)',
+    canvasRetinaLabel: 'రెటీనా (వెలుతురును గుర్తించే తెర)',
+    canvasUpsideDown: 'చిత్రం తలకిందులుగా పడుతుంది!',
+    canvasBrainLabel: 'మెదడు',
+    canvasFlipped: 'సరైన వైపుకు తిప్పబడింది!',
+  }
+};
+let LANG = 'en';
+function tr(){ return T[LANG]; }
+
+function applyStaticText(){
+  const t = tr();
+  document.documentElement.lang = LANG;
+  document.getElementById('langToggle').textContent = t.langToggle;
+  document.getElementById('backLink').innerHTML = t.backLink;
+  document.getElementById('pageTitle').textContent = t.pageTitle;
+  document.getElementById('pageSubtitle').textContent = t.pageSubtitle;
+  document.getElementById('restartBtn').textContent = t.restartBtn;
+  for(let i=0;i<4;i++){
+    document.getElementById('s'+(i+1)+'t').textContent = t.steps[i][0];
+    document.getElementById('s'+(i+1)+'d').textContent = t.steps[i][1];
+  }
+  document.getElementById('factBox').innerHTML = t.fact;
+}
+
+document.getElementById('langToggle').addEventListener('click', () => {
+  LANG = LANG === 'en' ? 'te' : 'en';
+  applyStaticText();
+  if (window.__eyeRefresh) window.__eyeRefresh();
+});
+applyStaticText();
+
 (function(){
   const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
   const W=canvas.width, H=canvas.height;
   const captionEl=document.getElementById('caption'), bannerEl=document.getElementById('banner'), progressBar=document.getElementById('progressBar');
   const playBtn=document.getElementById('playBtn'), restartBtn=document.getElementById('restartBtn');
 
-  const SCENES=[
-    {t:0,dur:6,banner:'⚫ STEP 1: LIGHT ENTERS THE PUPIL',caption:'Light enters through the <b>pupil</b> — the iris around it widens or shrinks the opening to control brightness.'},
-    {t:6,dur:7,banner:'🔍 STEP 2: THE LENS FOCUSES IT',caption:'A flexible <b>lens</b> just behind the pupil bends incoming light, focusing it onto the back of the eye.'},
-    {t:13,dur:7,banner:'📺 STEP 3: THE RETINA — UPSIDE DOWN!',caption:'The focused image lands on the <b>retina</b>, packed with light-sensing cells — but the image lands upside down!'},
-    {t:20,dur:8,banner:'🧠 STEP 4: THE BRAIN FLIPS IT',caption:'Signals travel down the <b>optic nerve</b> to your brain, which automatically flips the image right-side up — instantly, and constantly.'},
-  ];
+  const SCENE_TIMES=[{t:0,dur:6},{t:6,dur:7},{t:13,dur:7},{t:20,dur:8}];
   const totalDur=28;
-  let simTime=0, playing=false, lastTs=null;
-  function currentScene(t){ for(let i=SCENES.length-1;i>=0;i--) if(t>=SCENES[i].t) return i; return 0; }
+  let simTime=0, playing=false, lastTs=null, captionOverride='initial';
+  function currentScene(t){ for(let i=SCENE_TIMES.length-1;i>=0;i--) if(t>=SCENE_TIMES[i].t) return i; return 0; }
   function label(x,y,text,color){
     ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
     const tw=ctx.measureText(text).width;
@@ -112,7 +198,7 @@
   }
   function drawScene0(local){
     const {cx,cy,rx}=drawEyeCrossSection();
-    label(cx-rx+10,cy-100,'pupil (light enters here)','#8fd2ff');
+    label(cx-rx+10,cy-100,tr().canvasPupilLabel,'#8fd2ff');
     const beamProg=(local%2)/2;
     if(beamProg<0.8){
       ctx.fillStyle='#ffd23f'; ctx.beginPath(); ctx.arc(cx-rx-40+beamProg*70,cy,6,0,Math.PI*2); ctx.fill();
@@ -120,7 +206,7 @@
   }
   function drawScene1(local){
     const {cx,cy,rx}=drawEyeCrossSection();
-    label(cx-rx+50,cy-100,'lens (bends the light)','#eef2ff');
+    label(cx-rx+50,cy-100,tr().canvasLensLabel,'#eef2ff');
     for(let dy=-30;dy<=30;dy+=20){
       ctx.strokeStyle='#ffd23f'; ctx.lineWidth=2;
       ctx.beginPath(); ctx.moveTo(cx-rx-40,cy+dy); ctx.lineTo(cx-rx+50,cy+dy*0.5); ctx.lineTo(cx+rx-20,cy-dy*0.7); ctx.stroke();
@@ -128,31 +214,31 @@
   }
   function drawScene2(local){
     const {cx,cy,rx}=drawEyeCrossSection();
-    label(cx,cy+140,'retina (light-sensing screen)','#ff9d5a');
+    label(cx,cy+140,tr().canvasRetinaLabel,'#ff9d5a');
     ctx.save();
     ctx.translate(cx+rx-40,cy);
     ctx.scale(1,-1);
     ctx.font='30px Segoe UI'; ctx.textAlign='center';
     ctx.fillText('🌳',0,0);
     ctx.restore();
-    label(cx+rx-40,cy-50,'image lands upside down!','#ff9d5a');
+    label(cx+rx-40,cy-50,tr().canvasUpsideDown,'#ff9d5a');
   }
   function drawScene3(local){
     const {cx,cy,rx}=drawEyeCrossSection();
     const brainX=cx+rx+140, brainY=cy;
     ctx.font='50px Segoe UI'; ctx.textAlign='center'; ctx.fillText('🧠',brainX,brainY+15);
-    label(brainX,brainY-50,'brain','#6dffb0');
+    label(brainX,brainY-50,tr().canvasBrainLabel,'#6dffb0');
     if(local>3){
       ctx.font='30px Segoe UI';
       ctx.fillText('🌳',brainX,brainY+90);
-      label(brainX,brainY+120,'flipped right-side up!','#6dffb0');
+      label(brainX,brainY+120,tr().canvasFlipped,'#6dffb0');
     }
   }
 
   function render(t){
     ctx.clearRect(0,0,W,H); ctx.fillStyle='#04060f'; ctx.fillRect(0,0,W,H);
-    const idx=currentScene(t), scene=SCENES[idx], local=t-scene.t;
-    bannerEl.textContent=scene.banner; captionEl.innerHTML=scene.caption;
+    const idx=currentScene(t), scene=tr().scenes[idx], local=t-SCENE_TIMES[idx].t;
+    bannerEl.textContent=scene[0]; captionEl.innerHTML=scene[1];
     if(idx===0) drawScene0(local);
     else if(idx===1) drawScene1(local);
     else if(idx===2) drawScene2(local);
@@ -165,16 +251,26 @@
     const dt=Math.min(0.05,(ts-lastTs)/1000); lastTs=ts;
     simTime+=dt;
     if(simTime>=totalDur){ simTime=totalDur; render(simTime); pause();
-      captionEl.innerHTML='🎬 The End! Press <b>Restart</b> to watch again.'; return; }
+      captionOverride='ended'; captionEl.innerHTML=tr().captionEnd; return; }
+    captionOverride=null;
     render(simTime); requestAnimationFrame(step);
   }
-  function play(){ if(playing) return; playing=true; lastTs=null; playBtn.textContent='⏸ Pause'; requestAnimationFrame(step); }
-  function pause(){ playing=false; playBtn.textContent='▶ Play'; }
-  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionEl.innerHTML='Press <b>Play</b> to start!'; }
+  function play(){ if(playing) return; playing=true; lastTs=null; captionOverride=null; playBtn.textContent=tr().pauseBtn; requestAnimationFrame(step); }
+  function pause(){ playing=false; playBtn.textContent=tr().playBtn; }
+  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionOverride='initial'; captionEl.innerHTML=tr().captionInitial; }
   playBtn.addEventListener('click',()=>playing?pause():play());
   restartBtn.addEventListener('click',restart);
+  playBtn.textContent=tr().playBtn;
   render(0);
+
+  window.__eyeRefresh = function(){
+    playBtn.textContent = playing ? tr().pauseBtn : tr().playBtn;
+    render(simTime);
+    if(captionOverride==='initial') captionEl.innerHTML=tr().captionInitial;
+    else if(captionOverride==='ended') captionEl.innerHTML=tr().captionEnd;
+  };
 })();
 </script>
 </body>
 </html>
+</content>

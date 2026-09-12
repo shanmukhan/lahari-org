@@ -9,7 +9,11 @@
   *{box-sizing:border-box;}
   body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
   .wrap{max-width:960px;margin:0 auto;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
   a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
   header{text-align:center;margin-bottom:20px;}
   h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
   header p{color:var(--dim);font-size:16px;margin:0;}
@@ -36,10 +40,13 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="category-atoms.html">&larr; Back to Atoms & Matter</a>
+  <div class="topbar">
+    <a class="back" href="category-atoms.html" id="backLink">&larr; Back to Atoms & Matter</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
   <header>
-    <h1>📊 Periodic Trends</h1>
-    <p>The periodic table isn't just a list — its layout hides patterns you can read at a glance.</p>
+    <h1 id="pageTitle">📊 Periodic Trends</h1>
+    <p id="pageSubtitle">The periodic table isn't just a list — its layout hides patterns you can read at a glance.</p>
   </header>
 
   <div class="player">
@@ -54,17 +61,17 @@
   </div>
 
   <div class="steps">
-    <div class="step-card"><div class="num">1</div><h3>⚛️ Atomic size shrinks left-to-right</h3>
-      <p>Moving left to right across a row, atoms get SMALLER — each extra proton pulls the electron cloud in tighter.</p></div>
-    <div class="step-card"><div class="num">2</div><h3>📏 Atomic size grows top-to-bottom</h3>
-      <p>Moving down a column, atoms get BIGGER — each row adds a whole new electron shell further out.</p></div>
-    <div class="step-card"><div class="num">3</div><h3>🧲 Electronegativity grows left-to-right</h3>
-      <p>Elements on the right (like oxygen, fluorine) pull electrons toward themselves strongly — that pulling power is called electronegativity.</p></div>
-    <div class="step-card"><div class="num">4</div><h3>↘️ The strongest pullers are top-right</h3>
-      <p>Combine both trends: the smallest, most electron-hungry atoms cluster in the top-right corner — fluorine is the single most electronegative element.</p></div>
+    <div class="step-card"><div class="num">1</div><h3 id="s1t">⚛️ Atomic size shrinks left-to-right</h3>
+      <p id="s1d">Moving left to right across a row, atoms get SMALLER — each extra proton pulls the electron cloud in tighter.</p></div>
+    <div class="step-card"><div class="num">2</div><h3 id="s2t">📏 Atomic size grows top-to-bottom</h3>
+      <p id="s2d">Moving down a column, atoms get BIGGER — each row adds a whole new electron shell further out.</p></div>
+    <div class="step-card"><div class="num">3</div><h3 id="s3t">🧲 Electronegativity grows left-to-right</h3>
+      <p id="s3d">Elements on the right (like oxygen, fluorine) pull electrons toward themselves strongly — that pulling power is called electronegativity.</p></div>
+    <div class="step-card"><div class="num">4</div><h3 id="s4t">↘️ The strongest pullers are top-right</h3>
+      <p id="s4d">Combine both trends: the smallest, most electron-hungry atoms cluster in the top-right corner — fluorine is the single most electronegative element.</p></div>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> These trends aren't random — they come straight from physics. More protons pull electrons in tighter
     (shrinking atoms), while more electron shells push the "edge" farther out (growing atoms). Once you see the pattern, you can
     predict properties of an element you've never even studied, just from its position on the table!
@@ -72,21 +79,97 @@
 </div>
 
 <script>
+const T = {
+  en: {
+    langToggle: 'తెలుగు', backLink: '&larr; Back to Atoms & Matter',
+    pageTitle: '📊 Periodic Trends',
+    pageSubtitle: 'The periodic table isn\'t just a list — its layout hides patterns you can read at a glance.',
+    playBtn: '▶ Play', pauseBtn: '⏸ Pause', restartBtn: '⟲ Restart',
+    captionInitial: 'Press <b>Play</b> to start!',
+    captionEnd: '🎬 The End! Press <b>Restart</b> to watch again.',
+    steps: [
+      ['⚛️ Atomic size shrinks left-to-right','Moving left to right across a row, atoms get SMALLER — each extra proton pulls the electron cloud in tighter.'],
+      ['📏 Atomic size grows top-to-bottom','Moving down a column, atoms get BIGGER — each row adds a whole new electron shell further out.'],
+      ['🧲 Electronegativity grows left-to-right','Elements on the right (like oxygen, fluorine) pull electrons toward themselves strongly — that pulling power is called electronegativity.'],
+      ['↘️ The strongest pullers are top-right','Combine both trends: the smallest, most electron-hungry atoms cluster in the top-right corner — fluorine is the single most electronegative element.'],
+    ],
+    fact: '🤯 <b>Mind-blowing part:</b> These trends aren\'t random — they come straight from physics. More protons pull electrons in tighter (shrinking atoms), while more electron shells push the "edge" farther out (growing atoms). Once you see the pattern, you can predict properties of an element you\'ve never even studied, just from its position on the table!',
+    scenes: [
+      ['⚛️ STEP 1: SIZE SHRINKS LEFT TO RIGHT','Across a row, each element has one more proton pulling the same electron shell in tighter — atoms get SMALLER.'],
+      ['📏 STEP 2: SIZE GROWS TOP TO BOTTOM','Down a column, each row adds a whole new electron shell farther from the nucleus — atoms get BIGGER.'],
+      ['🧲 STEP 3: ELECTRONEGATIVITY RISES RIGHTWARD','Elements toward the right (like O, F) pull electrons toward themselves strongly — this pulling power is called <b>electronegativity</b>.'],
+      ['↘️ STEP 4: STRONGEST PULLERS: TOP-RIGHT','Small size + strong pull combine — the most electron-hungry elements cluster in the <b>top-right corner</b> of the table.'],
+    ],
+    canvas: {
+      smallerRight: 'atoms get SMALLER moving right',
+      biggerDown: 'atoms get BIGGER moving down',
+      pullRight: 'electron-pulling power increases rightward',
+      fluorine: 'F (fluorine): most electronegative!',
+      topRight: 'top-right = smallest + strongest pull',
+    },
+  },
+  te: {
+    langToggle: 'English', backLink: '&larr; అణువులు & పదార్థం కి తిరిగి',
+    pageTitle: '📊 ఆవర్తన ధోరణులు',
+    pageSubtitle: 'ఆవర్తన పట్టిక కేవలం ఒక జాబితా మాత్రమే కాదు — దాని నిర్మాణంలో ఒక్క చూపులో చదవగలిగే నమూనాలు దాగి ఉన్నాయి.',
+    playBtn: '▶ ప్లే', pauseBtn: '⏸ పాజ్', restartBtn: '⟲ మళ్ళీ మొదలు',
+    captionInitial: 'ప్రారంభించడానికి <b>ప్లే</b> నొక్కండి!',
+    captionEnd: '🎬 ముగింపు! మళ్ళీ చూడటానికి <b>మళ్ళీ మొదలు</b> నొక్కండి.',
+    steps: [
+      ['⚛️ అణు పరిమాణం ఎడమ నుండి కుడికి తగ్గుతుంది','ఒక వరుసలో ఎడమ నుండి కుడికి వెళ్తున్నప్పుడు, అణువులు చిన్నవిగా మారతాయి — ప్రతి అదనపు ప్రోటాన్ ఎలక్ట్రాన్ మేఘాన్ని మరింత గట్టిగా లోపలికి లాగుతుంది.'],
+      ['📏 అణు పరిమాణం పైనుండి కిందికి పెరుగుతుంది','ఒక నిలువు వరుసలో కిందికి వెళ్తున్నప్పుడు, అణువులు పెద్దవిగా మారతాయి — ప్రతి వరుస మరింత దూరంగా కొత్త ఎలక్ట్రాన్ షెల్‌ను జోడిస్తుంది.'],
+      ['🧲 ఎలక్ట్రోనెగటివిటీ ఎడమ నుండి కుడికి పెరుగుతుంది','కుడి వైపున ఉన్న మూలకాలు (ఆక్సిజన్, ఫ్లోరిన్ వంటివి) ఎలక్ట్రాన్లను తమ వైపుకు బలంగా లాగుతాయి — ఆ లాగే శక్తిని ఎలక్ట్రోనెగటివిటీ అంటారు.'],
+      ['↘️ అత్యంత బలమైన లాగుదారులు పై-కుడి వైపున ఉంటారు','రెండు ధోరణులను కలపండి: అతి చిన్నవి, ఎలక్ట్రాన్ల కోసం అత్యంత ఆకలిగొన్న అణువులు పై-కుడి మూలలో గుమిగూడతాయి — ఫ్లోరిన్ అత్యంత ఎలక్ట్రోనెగటివ్ మూలకం.'],
+    ],
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> ఈ ధోరణులు యాదృచ్ఛికం కావు — అవి నేరుగా భౌతిక శాస్త్రం నుండి వస్తాయి. ఎక్కువ ప్రోటాన్లు ఎలక్ట్రాన్లను మరింత గట్టిగా లోపలికి లాగుతాయి (అణువులు కుంచించుకుపోతాయి), ఎక్కువ ఎలక్ట్రాన్ షెల్‌లు "అంచు"ను మరింత దూరంగా నెట్టేస్తాయి (అణువులు పెరుగుతాయి). ఈ నమూనాను ఒకసారి చూశాక, మీరు ఎప్పుడూ చదవని మూలకం యొక్క లక్షణాలను కూడా, కేవలం పట్టికలో దాని స్థానం నుండి అంచనా వేయవచ్చు!',
+    scenes: [
+      ['⚛️ దశ 1: ఎడమ నుండి కుడికి పరిమాణం తగ్గుతుంది','ఒక వరుసలో, ప్రతి మూలకానికి అదే ఎలక్ట్రాన్ షెల్‌ను మరింత గట్టిగా లాగే ఒక అదనపు ప్రోటాన్ ఉంటుంది — అణువులు చిన్నవిగా మారతాయి.'],
+      ['📏 దశ 2: పైనుండి కిందికి పరిమాణం పెరుగుతుంది','ఒక నిలువు వరుసలో కిందికి, ప్రతి వరుస కేంద్రకం నుండి మరింత దూరంగా కొత్త ఎలక్ట్రాన్ షెల్‌ను జోడిస్తుంది — అణువులు పెద్దవిగా మారతాయి.'],
+      ['🧲 దశ 3: ఎలక్ట్రోనెగటివిటీ కుడివైపుకు పెరుగుతుంది','కుడి వైపున ఉన్న మూలకాలు (O, F వంటివి) ఎలక్ట్రాన్లను తమ వైపుకు బలంగా లాగుతాయి — ఈ లాగే శక్తిని <b>ఎలక్ట్రోనెగటివిటీ</b> అంటారు.'],
+      ['↘️ దశ 4: అత్యంత బలమైన లాగుదారులు: పై-కుడి','చిన్న పరిమాణం + బలమైన లాగుదల కలుస్తాయి — అత్యంత ఎలక్ట్రాన్-ఆకలిగొన్న మూలకాలు పట్టిక యొక్క <b>పై-కుడి మూల</b>లో గుమిగూడతాయి.'],
+    ],
+    canvas: {
+      smallerRight: 'కుడివైపుకు వెళ్తున్న కొద్దీ అణువులు చిన్నవిగా మారతాయి',
+      biggerDown: 'కిందికి వెళ్తున్న కొద్దీ అణువులు పెద్దవిగా మారతాయి',
+      pullRight: 'ఎలక్ట్రాన్ లాగే శక్తి కుడివైపుకు పెరుగుతుంది',
+      fluorine: 'F (ఫ్లోరిన్): అత్యంత ఎలక్ట్రోనెగటివ్!',
+      topRight: 'పై-కుడి = అతి చిన్నది + అతి బలమైన లాగుదల',
+    },
+  }
+};
+let LANG='en';
+function tr(){ return T[LANG]; }
+function applyStaticText(){
+  const t=tr();
+  document.documentElement.lang=LANG;
+  document.getElementById('langToggle').textContent=t.langToggle;
+  document.getElementById('backLink').innerHTML=t.backLink;
+  document.getElementById('pageTitle').textContent=t.pageTitle;
+  document.getElementById('pageSubtitle').textContent=t.pageSubtitle;
+  document.getElementById('restartBtn').textContent=t.restartBtn;
+  for(let i=0;i<4;i++){
+    document.getElementById('s'+(i+1)+'t').textContent=t.steps[i][0];
+    document.getElementById('s'+(i+1)+'d').innerHTML=t.steps[i][1];
+  }
+  document.getElementById('factBox').innerHTML=t.fact;
+}
+document.getElementById('langToggle').addEventListener('click',()=>{
+  LANG = LANG==='en' ? 'te' : 'en';
+  applyStaticText();
+  if(window.__ptRefresh) window.__ptRefresh();
+});
+applyStaticText();
+
 (function(){
   const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
   const W=canvas.width, H=canvas.height;
   const captionEl=document.getElementById('caption'), bannerEl=document.getElementById('banner'), progressBar=document.getElementById('progressBar');
   const playBtn=document.getElementById('playBtn'), restartBtn=document.getElementById('restartBtn');
 
-  const SCENES=[
-    {t:0,dur:7,banner:'⚛️ STEP 1: SIZE SHRINKS LEFT TO RIGHT',caption:'Across a row, each element has one more proton pulling the same electron shell in tighter — atoms get SMALLER.'},
-    {t:7,dur:7,banner:'📏 STEP 2: SIZE GROWS TOP TO BOTTOM',caption:'Down a column, each row adds a whole new electron shell farther from the nucleus — atoms get BIGGER.'},
-    {t:14,dur:7,banner:'🧲 STEP 3: ELECTRONEGATIVITY RISES RIGHTWARD',caption:'Elements toward the right (like O, F) pull electrons toward themselves strongly — this pulling power is called <b>electronegativity</b>.'},
-    {t:21,dur:8,banner:'↘️ STEP 4: STRONGEST PULLERS: TOP-RIGHT',caption:'Small size + strong pull combine — the most electron-hungry elements cluster in the <b>top-right corner</b> of the table.'},
-  ];
+  const starts=[0,7,14,21];
   const totalDur=29;
-  let simTime=0, playing=false, lastTs=null;
-  function currentScene(t){ for(let i=SCENES.length-1;i>=0;i--) if(t>=SCENES[i].t) return i; return 0; }
+  let simTime=0, playing=false, lastTs=null, captionOverride='initial';
+  function currentScene(t){ for(let i=starts.length-1;i>=0;i--) if(t>=starts[i]) return i; return 0; }
   function label(x,y,text,color){
     ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
     const tw=ctx.measureText(text).width;
@@ -111,7 +194,7 @@
     ctx.strokeStyle='#ffd23f'; ctx.lineWidth=3;
     ctx.beginPath(); ctx.moveTo(gx0+20,gy0+1*cellH+cellH/2); ctx.lineTo(gx0+cols*cellW-20,gy0+1*cellH+cellH/2); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(gx0+cols*cellW-40,gy0+1*cellH+cellH/2-10); ctx.lineTo(gx0+cols*cellW-20,gy0+1*cellH+cellH/2); ctx.lineTo(gx0+cols*cellW-40,gy0+1*cellH+cellH/2+10); ctx.stroke();
-    label(W/2,60,'atoms get SMALLER moving right','#4fd3ff');
+    label(W/2,60,tr().canvas.smallerRight,'#4fd3ff');
   }
   function drawScene1(local){
     drawGridBase();
@@ -123,7 +206,7 @@
     ctx.strokeStyle='#ffd23f'; ctx.lineWidth=3;
     ctx.beginPath(); ctx.moveTo(gx0+1*cellW+cellW/2,gy0+15); ctx.lineTo(gx0+1*cellW+cellW/2,gy0+rows*cellH-15); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(gx0+1*cellW+cellW/2-10,gy0+rows*cellH-35); ctx.lineTo(gx0+1*cellW+cellW/2,gy0+rows*cellH-15); ctx.lineTo(gx0+1*cellW+cellW/2+10,gy0+rows*cellH-35); ctx.stroke();
-    label(W/2,60,'atoms get BIGGER moving down','#6dffb0');
+    label(W/2,60,tr().canvas.biggerDown,'#6dffb0');
   }
   function drawScene2(local){
     drawGridBase();
@@ -138,7 +221,7 @@
         ctx.beginPath(); ctx.arc(cx,cy,24+8+pulse,0,Math.PI*2); ctx.stroke();
       }
     }
-    label(W/2,60,'electron-pulling power increases rightward','#ff9d5a');
+    label(W/2,60,tr().canvas.pullRight,'#ff9d5a');
   }
   function drawScene3(local){
     drawGridBase();
@@ -153,14 +236,14 @@
     const [fx,fy]=cellCenter(cols-1,0);
     ctx.strokeStyle='#ffd23f'; ctx.lineWidth=3;
     ctx.beginPath(); ctx.arc(fx,fy,32,0,Math.PI*2); ctx.stroke();
-    label(fx,fy-50,'F (fluorine): most electronegative!','#ffd23f');
-    label(W/2,H-30,'top-right = smallest + strongest pull','#eef2ff');
+    label(fx,fy-50,tr().canvas.fluorine,'#ffd23f');
+    label(W/2,H-30,tr().canvas.topRight,'#eef2ff');
   }
 
   function render(t){
     ctx.clearRect(0,0,W,H); ctx.fillStyle='#04060f'; ctx.fillRect(0,0,W,H);
-    const idx=currentScene(t), scene=SCENES[idx], local=t-scene.t;
-    bannerEl.textContent=scene.banner; captionEl.innerHTML=scene.caption;
+    const idx=currentScene(t), scene=tr().scenes[idx], local=t-starts[idx];
+    bannerEl.textContent=scene[0]; captionEl.innerHTML=scene[1];
     if(idx===0) drawScene0(local);
     else if(idx===1) drawScene1(local);
     else if(idx===2) drawScene2(local);
@@ -173,15 +256,24 @@
     const dt=Math.min(0.05,(ts-lastTs)/1000); lastTs=ts;
     simTime+=dt;
     if(simTime>=totalDur){ simTime=totalDur; render(simTime); pause();
-      captionEl.innerHTML='🎬 The End! Press <b>Restart</b> to watch again.'; return; }
+      captionOverride='ended'; captionEl.innerHTML=tr().captionEnd; return; }
+    captionOverride=null;
     render(simTime); requestAnimationFrame(step);
   }
-  function play(){ if(playing) return; playing=true; lastTs=null; playBtn.textContent='⏸ Pause'; requestAnimationFrame(step); }
-  function pause(){ playing=false; playBtn.textContent='▶ Play'; }
-  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionEl.innerHTML='Press <b>Play</b> to start!'; }
+  function play(){ if(playing) return; playing=true; lastTs=null; captionOverride=null; playBtn.textContent=tr().pauseBtn; requestAnimationFrame(step); }
+  function pause(){ playing=false; playBtn.textContent=tr().playBtn; }
+  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionOverride='initial'; captionEl.innerHTML=tr().captionInitial; }
   playBtn.addEventListener('click',()=>playing?pause():play());
   restartBtn.addEventListener('click',restart);
+  playBtn.textContent=tr().playBtn;
   render(0);
+
+  window.__ptRefresh=function(){
+    playBtn.textContent = playing ? tr().pauseBtn : tr().playBtn;
+    render(simTime);
+    if(captionOverride==='initial') captionEl.innerHTML=tr().captionInitial;
+    else if(captionOverride==='ended') captionEl.innerHTML=tr().captionEnd;
+  };
 })();
 </script>
 </body>

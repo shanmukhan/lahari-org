@@ -127,6 +127,23 @@
     }
     .nav-cta:hover { border-color: var(--accent); transform: translateY(-1px); }
 
+    .lang-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--line-strong);
+      background: transparent;
+      color: var(--text);
+      font-size: .82rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: border-color .2s ease, background .2s ease;
+    }
+    .lang-toggle:hover { border-color: var(--accent); background: rgba(52,211,153,.08); }
+
     .button {
       display: inline-flex;
       align-items: center;
@@ -386,8 +403,9 @@
     <div class="container nav-inner">
       <a class="brand" href="index.html"><span class="brand-mark"></span>Shanmukhan</a>
       <div class="nav-links">
-        <a href="index.html">&larr; Home</a>
-        <a class="nav-cta" href="https://shanmukhan.com/" target="_blank" rel="noopener">See my products →</a>
+        <a href="index.html" id="navHome">&larr; Home</a>
+        <a class="nav-cta" href="https://shanmukhan.com/" target="_blank" rel="noopener" id="navCta">See my products →</a>
+        <button class="lang-toggle" id="langToggle">తెలుగు</button>
       </div>
     </div>
   </nav>
@@ -397,9 +415,9 @@
     <section id="play">
       <div class="container">
         <div class="section-heading reveal">
-          <span class="kicker">Play</span>
-          <h2>Two small games, just because.</h2>
-          <p>Runs entirely in your browser — no server call, no tracking.</p>
+          <span class="kicker" id="playKicker">Play</span>
+          <h2 id="playH2">Two small games, just because.</h2>
+          <p id="playP">Runs entirely in your browser — no server call, no tracking.</p>
         </div>
 
         <div class="play-grid">
@@ -407,8 +425,8 @@
             <div class="game-head">
               <div class="game-icon">🔐</div>
               <div>
-                <h3>Root Access</h3>
-                <p class="game-sub">Crack today's 4-peg code in 8 tries. One code a day, same for every visitor.</p>
+                <h3 id="gameCodeTitle">Root Access</h3>
+                <p class="game-sub" id="gameCodeSub">Crack today's 4-peg code in 8 tries. One code a day, same for every visitor.</p>
               </div>
             </div>
 
@@ -419,13 +437,13 @@
             <div class="mm-controls">
               <button class="mm-btn mm-submit" id="mm-submit" disabled>Guess</button>
               <button class="mm-btn mm-clear" id="mm-clear" type="button">Clear</button>
-              <button class="mm-btn mm-share" id="mm-share" type="button" hidden>Copy result</button>
+              <button class="mm-btn mm-share" id="mm-share" type="button" hidden data-en="Copy result" data-te="ఫలితం కాపీ చేయి">Copy result</button>
             </div>
 
             <p class="mm-status" id="mm-status">Pick 4 colors, then hit Guess.</p>
             <details class="mm-details">
-              <summary>How to play</summary>
-              <p class="mm-rules">
+              <summary id="howToPlay">How to play</summary>
+              <p class="mm-rules" id="mmRules">
                 Pick any 4 colors (repeats allowed) and hit Guess. ⬛ = right
                 color, right spot. ⬜ = right color, wrong spot. 8 guesses
                 before today's code is revealed.
@@ -437,21 +455,21 @@
             <div class="game-head">
               <div class="game-icon">⚡</div>
               <div>
-                <h3>Keep It Up</h3>
-                <p class="game-sub">Jump the little Pi over every outage. One tap, endless run, beat your own best.</p>
+                <h3 id="gameRunnerTitle">Keep It Up</h3>
+                <p class="game-sub" id="gameRunnerSub">Jump the little Pi over every outage. One tap, endless run, beat your own best.</p>
               </div>
             </div>
 
             <div class="runner-wrap">
               <canvas id="runner-canvas" height="160"></canvas>
               <div class="runner-overlay" id="runner-overlay">
-                <button class="button" id="runner-start" type="button">Tap or press Space to start</button>
+                <button class="button" id="runner-start" type="button" data-en="Tap or press Space to start" data-te="ప్రారంభించడానికి తాకండి లేదా Space నొక్కండి">Tap or press Space to start</button>
               </div>
             </div>
 
             <div class="runner-stats">
-              <span>Score <b id="runner-score">0</b></span>
-              <span>Best <b id="runner-best">0</b></span>
+              <span id="runnerScoreLabel">Score <b id="runner-score">0</b></span>
+              <span id="runnerBestLabel">Best <b id="runner-best">0</b></span>
             </div>
           </div>
         </div>
@@ -459,19 +477,19 @@
         <div class="stat-strip reveal">
           <div class="stat">
             <b>6</b>
-            <span>Live products</span>
+            <span id="statLiveProducts">Live products</span>
           </div>
           <div class="stat">
             <b>1</b>
-            <span>Solo builder</span>
+            <span id="statSoloBuilder">Solo builder</span>
           </div>
           <div class="stat">
             <b>100%</b>
-            <span>Self-hosted</span>
+            <span id="statSelfHosted">Self-hosted</span>
           </div>
           <div class="stat is-live">
             <b class="is-loading" id="stat-visits">—</b>
-            <span>People who've stopped by</span>
+            <span id="statVisitors">People who've stopped by</span>
           </div>
         </div>
       </div>
@@ -481,8 +499,8 @@
 
   <footer>
     <div class="container footer-inner">
-      <div>© <span id="year"></span> <b>Shanmukhan</b></div>
-      <div>Hosted at home on a Raspberry Pi · <a href="https://shanmukhan.com/" target="_blank" rel="noopener">shanmukhan.com</a></div>
+      <div>© <span id="year"></span> <b id="footerBrand">Shanmukhan</b></div>
+      <div id="footerHost">Hosted at home on a Raspberry Pi · <a href="https://shanmukhan.com/" target="_blank" rel="noopener">shanmukhan.com</a></div>
     </div>
   </footer>
 

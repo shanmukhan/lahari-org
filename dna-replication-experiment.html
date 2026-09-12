@@ -9,7 +9,11 @@
   *{box-sizing:border-box;}
   body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
   .wrap{max-width:960px;margin:0 auto;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
   a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
   header{text-align:center;margin-bottom:20px;}
   h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
   header p{color:var(--dim);font-size:16px;margin:0;}
@@ -36,10 +40,13 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="category-life.html">&larr; Back to Life Science</a>
+  <div class="topbar">
+    <a class="back" href="category-life.html" id="backLink">&larr; Back to Life Science</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
   <header>
-    <h1>🧬 How DNA Copies Itself</h1>
-    <p>Before any cell divides, it must first photocopy its ENTIRE instruction manual, letter for letter, without a single typo.</p>
+    <h1 id="pageTitle">🧬 How DNA Copies Itself</h1>
+    <p id="pageSubtitle">Before any cell divides, it must first photocopy its ENTIRE instruction manual, letter for letter, without a single typo.</p>
   </header>
 
   <div class="player">
@@ -54,17 +61,17 @@
   </div>
 
   <div class="steps">
-    <div class="step-card"><div class="num">1</div><h3>🤐 The zipper unzips</h3>
-      <p>A special enzyme grabs the DNA ladder and unzips it right down the middle, splitting the two strands apart.</p></div>
-    <div class="step-card"><div class="num">2</div><h3>🧩 Each strand is a template</h3>
-      <p>Each separated strand now acts as a template — a pattern to build a brand new matching strand against.</p></div>
-    <div class="step-card"><div class="num">3</div><h3>🔤 Matching letters snap into place</h3>
-      <p>Free-floating letters drift in and snap onto their exact partner: A always pairs with T, C always pairs with G.</p></div>
-    <div class="step-card"><div class="num">4</div><h3>✌️ Two identical copies result</h3>
-      <p>Once finished, there are TWO complete double helices, each an exact copy of the original — one for each new cell.</p></div>
+    <div class="step-card"><div class="num">1</div><h3 id="s1t">🤐 The zipper unzips</h3>
+      <p id="s1d">A special enzyme grabs the DNA ladder and unzips it right down the middle, splitting the two strands apart.</p></div>
+    <div class="step-card"><div class="num">2</div><h3 id="s2t">🧩 Each strand is a template</h3>
+      <p id="s2d">Each separated strand now acts as a template — a pattern to build a brand new matching strand against.</p></div>
+    <div class="step-card"><div class="num">3</div><h3 id="s3t">🔤 Matching letters snap into place</h3>
+      <p id="s3d">Free-floating letters drift in and snap onto their exact partner: A always pairs with T, C always pairs with G.</p></div>
+    <div class="step-card"><div class="num">4</div><h3 id="s4t">✌️ Two identical copies result</h3>
+      <p id="s4d">Once finished, there are TWO complete double helices, each an exact copy of the original — one for each new cell.</p></div>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> Your cells copy DNA at a staggering pace — around <b>50 letters per second</b> per copying machine,
     with dozens of machines working different sections at once. And it's incredibly accurate: fewer than 1 mistake per billion
     letters copied, thanks to a built-in proofreading system that checks its own work as it goes!
@@ -72,21 +79,102 @@
 </div>
 
 <script>
+// ---------- shared translation layer ----------
+const T = {
+  en: {
+    langToggle: 'తెలుగు',
+    backLink: '&larr; Back to Life Science',
+    pageTitle: '🧬 How DNA Copies Itself',
+    pageSubtitle: 'Before any cell divides, it must first photocopy its ENTIRE instruction manual, letter for letter, without a single typo.',
+    playBtn: '▶ Play', pauseBtn: '⏸ Pause', restartBtn: '⟲ Restart',
+    captionInitial: 'Press <b>Play</b> to start!',
+    captionEnd: '🎬 The End! Press <b>Restart</b> to watch again.',
+    steps: [
+      ['🤐 The zipper unzips','A special enzyme grabs the DNA ladder and unzips it right down the middle, splitting the two strands apart.'],
+      ['🧩 Each strand is a template','Each separated strand now acts as a template — a pattern to build a brand new matching strand against.'],
+      ['🔤 Matching letters snap into place','Free-floating letters drift in and snap onto their exact partner: A always pairs with T, C always pairs with G.'],
+      ['✌️ Two identical copies result','Once finished, there are TWO complete double helices, each an exact copy of the original — one for each new cell.'],
+    ],
+    fact: '🤯 <b>Mind-blowing part:</b> Your cells copy DNA at a staggering pace — around <b>50 letters per second</b> per copying machine, with dozens of machines working different sections at once. And it\'s incredibly accurate: fewer than 1 mistake per billion letters copied, thanks to a built-in proofreading system that checks its own work as it goes!',
+    scenes: [
+      ['🤐 STEP 1: THE ZIPPER UNZIPS','A special enzyme grabs the DNA ladder and unzips it down the middle, splitting the two strands apart.'],
+      ['🧩 STEP 2: EACH STRAND IS A TEMPLATE','Each lone strand now serves as a <b>template</b> — a pattern the cell will build a brand new matching strand against.'],
+      ['🔤 STEP 3: LETTERS SNAP INTO PLACE','Free-floating letters drift in and snap onto their exact partner — A always with T, C always with G.'],
+      ['✌️ STEP 4: TWO IDENTICAL COPIES','The result: TWO complete double helices, each an exact copy of the original DNA — ready for two new cells!'],
+    ],
+    canvasUnzip: 'enzyme unzipping the helix from the top',
+    canvasLeftTemplate: 'left strand: template',
+    canvasRightTemplate: 'right strand: template',
+    canvasNewLetters: 'new matching letters snap onto each template',
+    canvasCopy1: 'copy 1',
+    canvasCopy2: 'copy 2',
+    canvasTwoIdentical: 'two identical DNA molecules!',
+  },
+  te: {
+    langToggle: 'English',
+    backLink: '&larr; జీవశాస్త్రానికి తిరిగి',
+    pageTitle: '🧬 డిఎన్ఏ తనను తాను ఎలా కాపీ చేసుకుంటుంది',
+    pageSubtitle: 'ఏ కణమైనా విభజన చెందే ముందు, తన మొత్తం సూచనల పుస్తకాన్ని అక్షరం అక్షరం తప్పు లేకుండా ఫోటోకాపీ చేసుకోవాలి.',
+    playBtn: '▶ ప్లే', pauseBtn: '⏸ పాజ్', restartBtn: '⟲ మళ్ళీ మొదలు',
+    captionInitial: 'ప్రారంభించడానికి <b>ప్లే</b> నొక్కండి!',
+    captionEnd: '🎬 ముగింపు! మళ్ళీ చూడటానికి <b>మళ్ళీ మొదలు</b> నొక్కండి.',
+    steps: [
+      ['🤐 జిప్పర్ విప్పుకుంటుంది','ఒక ప్రత్యేక ఎంజైమ్ డిఎన్ఏ నిచ్చెనను పట్టుకుని సరిగ్గా మధ్యలో నుండి విప్పుతుంది, రెండు తంతువులను వేరు చేస్తుంది.'],
+      ['🧩 ప్రతి తంతువు ఒక మూస అవుతుంది','వేరు చేయబడిన ప్రతి తంతువు ఇప్పుడు ఒక మూస(template)గా పనిచేస్తుంది — దాని ఆధారంగా కొత్త అనుసంధాన తంతువు నిర్మించబడుతుంది.'],
+      ['🔤 సరిపోలే అక్షరాలు అతుక్కుంటాయి','స్వేచ్ఛగా తేలియాడే అక్షరాలు వచ్చి తమ ఖచ్చితమైన జతతో అతుక్కుంటాయి: A ఎప్పుడూ T తోనూ, C ఎప్పుడూ G తోనూ జతకడుతుంది.'],
+      ['✌️ రెండు సమాన కాపీలు తయారవుతాయి','పూర్తయ్యాక, రెండు పూర్తి డబుల్ హెలిక్స్‌లు ఉంటాయి, ప్రతి ఒక్కటి మూలానికి సరిగ్గా సరిపోలే కాపీ — ఒక్కొక్కటి కొత్త కణానికి.'],
+    ],
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> మీ కణాలు డిఎన్ఏను అద్భుతమైన వేగంతో కాపీ చేస్తాయి — ప్రతి కాపీయింగ్ యంత్రానికి సెకనుకు దాదాపు <b>50 అక్షరాలు</b>, డజన్ల కొద్దీ యంత్రాలు వేర్వేరు భాగాలలో ఏకకాలంలో పనిచేస్తూ ఉంటాయి. మరియు ఇది అత్యంత కచ్చితమైనది కూడా: కాపీ చేసిన ప్రతి బిలియన్ అక్షరాలకు 1 తప్పు కంటే తక్కువే — దీనికి కారణం తన పనిని తానే తనిఖీ చేసుకునే అంతర్నిర్మిత ప్రూఫ్‌రీడింగ్ వ్యవస్థ!',
+    scenes: [
+      ['🤐 దశ 1: జిప్పర్ విప్పుకుంటుంది','ఒక ప్రత్యేక ఎంజైమ్ డిఎన్ఏ నిచ్చెనను పట్టుకుని మధ్యలో నుండి విప్పుతుంది, రెండు తంతువులను వేరు చేస్తుంది.'],
+      ['🧩 దశ 2: ప్రతి తంతువు ఒక మూస','ఒంటరిగా మిగిలిన ప్రతి తంతువు ఇప్పుడు ఒక <b>మూస(template)</b>గా పనిచేస్తుంది — దీని ఆధారంగా కణం కొత్త అనుసంధాన తంతువును నిర్మిస్తుంది.'],
+      ['🔤 దశ 3: అక్షరాలు తమ స్థానంలో అతుక్కుంటాయి','స్వేచ్ఛగా తేలియాడే అక్షరాలు వచ్చి తమ ఖచ్చితమైన జతతో అతుక్కుంటాయి — A ఎప్పుడూ T తోనూ, C ఎప్పుడూ G తోనూ.'],
+      ['✌️ దశ 4: రెండు సమాన కాపీలు','ఫలితం: రెండు పూర్తి డబుల్ హెలిక్స్‌లు, ప్రతి ఒక్కటి అసలు డిఎన్ఏకు సరిగ్గా సరిపోలే కాపీ — రెండు కొత్త కణాలకు సిద్ధం!'],
+    ],
+    canvasUnzip: 'ఎంజైమ్ పైనుండి హెలిక్స్‌ను విప్పుతోంది',
+    canvasLeftTemplate: 'ఎడమ తంతువు: మూస',
+    canvasRightTemplate: 'కుడి తంతువు: మూస',
+    canvasNewLetters: 'కొత్త సరిపోలే అక్షరాలు ప్రతి మూసపై అతుక్కుంటాయి',
+    canvasCopy1: 'కాపీ 1',
+    canvasCopy2: 'కాపీ 2',
+    canvasTwoIdentical: 'రెండు సమాన డిఎన్ఏ అణువులు!',
+  }
+};
+let LANG = 'en';
+function tr(){ return T[LANG]; }
+
+function applyStaticText(){
+  const t = tr();
+  document.documentElement.lang = LANG;
+  document.getElementById('langToggle').textContent = t.langToggle;
+  document.getElementById('backLink').innerHTML = t.backLink;
+  document.getElementById('pageTitle').textContent = t.pageTitle;
+  document.getElementById('pageSubtitle').textContent = t.pageSubtitle;
+  document.getElementById('restartBtn').textContent = t.restartBtn;
+  for(let i=0;i<4;i++){
+    document.getElementById('s'+(i+1)+'t').textContent = t.steps[i][0];
+    document.getElementById('s'+(i+1)+'d').textContent = t.steps[i][1];
+  }
+  document.getElementById('factBox').innerHTML = t.fact;
+}
+
+document.getElementById('langToggle').addEventListener('click', () => {
+  LANG = LANG === 'en' ? 'te' : 'en';
+  applyStaticText();
+  if (window.__dnaRefresh) window.__dnaRefresh();
+});
+applyStaticText();
+
 (function(){
   const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
   const W=canvas.width, H=canvas.height;
   const captionEl=document.getElementById('caption'), bannerEl=document.getElementById('banner'), progressBar=document.getElementById('progressBar');
   const playBtn=document.getElementById('playBtn'), restartBtn=document.getElementById('restartBtn');
 
-  const SCENES=[
-    {t:0,dur:6,banner:'🤐 STEP 1: THE ZIPPER UNZIPS',caption:'A special enzyme grabs the DNA ladder and unzips it down the middle, splitting the two strands apart.'},
-    {t:6,dur:6,banner:'🧩 STEP 2: EACH STRAND IS A TEMPLATE',caption:'Each lone strand now serves as a <b>template</b> — a pattern the cell will build a brand new matching strand against.'},
-    {t:12,dur:8,banner:'🔤 STEP 3: LETTERS SNAP INTO PLACE',caption:'Free-floating letters drift in and snap onto their exact partner — A always with T, C always with G.'},
-    {t:20,dur:8,banner:'✌️ STEP 4: TWO IDENTICAL COPIES',caption:'The result: TWO complete double helices, each an exact copy of the original DNA — ready for two new cells!'},
-  ];
+  const STARTS=[0,6,12,20];
   const totalDur=28;
-  let simTime=0, playing=false, lastTs=null;
-  function currentScene(t){ for(let i=SCENES.length-1;i>=0;i--) if(t>=SCENES[i].t) return i; return 0; }
+  let simTime=0, playing=false, lastTs=null, captionOverride='initial';
+  function currentScene(t){ for(let i=STARTS.length-1;i>=0;i--) if(t>=STARTS[i]) return i; return 0; }
   function label(x,y,text,color){
     ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
     const tw=ctx.measureText(text).width;
@@ -118,7 +206,7 @@
       const isUnzipped = (i/(n-1))<unzipProg;
       drawRung(cx,y,i,isUnzipped?1:0);
     }
-    label(W/2,40,'enzyme unzipping the helix from the top','#eef2ff');
+    label(W/2,40,tr().canvasUnzip,'#eef2ff');
   }
   function drawScene1(local){
     const cx=W/2, top=60, bot=H-60, n=10;
@@ -126,8 +214,8 @@
       const y=top+(bot-top)*(i/(n-1));
       drawRung(cx,y,i,1);
     }
-    label(W/2-40,40,'left strand: template','#8fd2ff');
-    label(W/2+40,40,'right strand: template','#ff9d9d');
+    label(W/2-40,40,tr().canvasLeftTemplate,'#8fd2ff');
+    label(W/2+40,40,tr().canvasRightTemplate,'#ff9d9d');
   }
   function drawScene2(local){
     const cx=W/2, top=60, bot=H-60, n=10;
@@ -143,7 +231,7 @@
         ctx.globalAlpha=1;
       }
     }
-    label(W/2,40,'new matching letters snap onto each template','#ffd23f');
+    label(W/2,40,tr().canvasNewLetters,'#ffd23f');
   }
   function drawScene3(local){
     const gap=Math.min(1,local/5)*140;
@@ -160,15 +248,15 @@
       drawRung(W/2,y,i,1);
     }
     ctx.restore();
-    label(W/2-gap,40,'copy 1','#6dffb0');
-    label(W/2+gap,40,'copy 2','#6dffb0');
-    label(W/2,H-20,'two identical DNA molecules!','#6dffb0');
+    label(W/2-gap,40,tr().canvasCopy1,'#6dffb0');
+    label(W/2+gap,40,tr().canvasCopy2,'#6dffb0');
+    label(W/2,H-20,tr().canvasTwoIdentical,'#6dffb0');
   }
 
   function render(t){
     ctx.clearRect(0,0,W,H); ctx.fillStyle='#04060f'; ctx.fillRect(0,0,W,H);
-    const idx=currentScene(t), scene=SCENES[idx], local=t-scene.t;
-    bannerEl.textContent=scene.banner; captionEl.innerHTML=scene.caption;
+    const idx=currentScene(t), scene=tr().scenes[idx], local=t-STARTS[idx];
+    bannerEl.textContent=scene[0]; captionEl.innerHTML=scene[1];
     if(idx===0) drawScene0(local);
     else if(idx===1) drawScene1(local);
     else if(idx===2) drawScene2(local);
@@ -181,15 +269,24 @@
     const dt=Math.min(0.05,(ts-lastTs)/1000); lastTs=ts;
     simTime+=dt;
     if(simTime>=totalDur){ simTime=totalDur; render(simTime); pause();
-      captionEl.innerHTML='🎬 The End! Press <b>Restart</b> to watch again.'; return; }
+      captionOverride='ended'; captionEl.innerHTML=tr().captionEnd; return; }
+    captionOverride=null;
     render(simTime); requestAnimationFrame(step);
   }
-  function play(){ if(playing) return; playing=true; lastTs=null; playBtn.textContent='⏸ Pause'; requestAnimationFrame(step); }
-  function pause(){ playing=false; playBtn.textContent='▶ Play'; }
-  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionEl.innerHTML='Press <b>Play</b> to start!'; }
+  function play(){ if(playing) return; playing=true; lastTs=null; captionOverride=null; playBtn.textContent=tr().pauseBtn; requestAnimationFrame(step); }
+  function pause(){ playing=false; playBtn.textContent=tr().playBtn; }
+  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionOverride='initial'; captionEl.innerHTML=tr().captionInitial; }
   playBtn.addEventListener('click',()=>playing?pause():play());
   restartBtn.addEventListener('click',restart);
+  playBtn.textContent=tr().playBtn;
   render(0);
+
+  window.__dnaRefresh = function(){
+    playBtn.textContent = playing ? tr().pauseBtn : tr().playBtn;
+    render(simTime);
+    if(captionOverride==='initial') captionEl.innerHTML=tr().captionInitial;
+    else if(captionOverride==='ended') captionEl.innerHTML=tr().captionEnd;
+  };
 })();
 </script>
 </body>

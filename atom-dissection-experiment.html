@@ -9,7 +9,11 @@
   *{box-sizing:border-box;}
   body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
   .wrap{max-width:960px;margin:0 auto;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
   a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
   header{text-align:center;margin-bottom:20px;}
   h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
   header p{color:var(--dim);font-size:16px;margin:0;}
@@ -34,57 +38,162 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="index.html">&larr; Back to lahari.org</a>
+  <div class="topbar">
+    <a class="back" href="index.html" id="backLink">&larr; Back to lahari.org</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
   <header>
-    <h1>🔬 Dissecting an Atom</h1>
-    <p>Click each part of the atom below to pull it apart, layer by layer, and see what's really inside.</p>
+    <h1 id="pageTitle">🔬 Dissecting an Atom</h1>
+    <p id="pageSubtitle">Click each part of the atom below to pull it apart, layer by layer, and see what's really inside.</p>
   </header>
 
   <div class="player">
     <canvas id="scene" width="900" height="460"></canvas>
     <div class="caption" id="caption">Click on a part of the atom (or a card below) to explore it!</div>
   </div>
-  <p class="hint">🖱️ Click the electrons, the nucleus, or a proton/neutron to zoom in</p>
+  <p class="hint" id="hintText">🖱️ Click the electrons, the nucleus, or a proton/neutron to zoom in</p>
   <div class="controls">
     <button class="primary" id="resetBtn">↻ Whole Atom View</button>
   </div>
 
   <div class="steps">
-    <div class="step-card" data-part="whole"><div class="num">•</div><h3>⚛️ The whole atom</h3>
-      <p>Mostly empty space! If the nucleus were the size of a marble, the electrons would orbit almost a kilometer away.</p></div>
-    <div class="step-card" data-part="electron"><div class="num">1</div><h3>⚡ Electrons</h3>
-      <p>Tiny, negatively-charged particles that zoom around the nucleus in a fuzzy cloud — they're what makes chemistry happen.</p></div>
-    <div class="step-card" data-part="nucleus"><div class="num">2</div><h3>🎯 The nucleus</h3>
-      <p>The dense center, made of protons and neutrons packed tightly together, held by the strong nuclear force.</p></div>
-    <div class="step-card" data-part="proton"><div class="num">3</div><h3>🔴 Protons</h3>
-      <p>Positively-charged particles. The number of protons decides which element it is (1 = hydrogen, 6 = carbon...).</p></div>
-    <div class="step-card" data-part="neutron"><div class="num">4</div><h3>⚪ Neutrons</h3>
-      <p>No electric charge. They add mass and help hold the nucleus together without pushing protons apart.</p></div>
-    <div class="step-card" data-part="quark"><div class="num">5</div><h3>🔸 Quarks (inside protons)</h3>
-      <p>Zoom in even further: protons and neutrons are each built from 3 tinier particles called quarks!</p></div>
+    <div class="step-card" data-part="whole"><div class="num">•</div><h3 id="t-whole">⚛️ The whole atom</h3>
+      <p id="d-whole">Mostly empty space! If the nucleus were the size of a marble, the electrons would orbit almost a kilometer away.</p></div>
+    <div class="step-card" data-part="electron"><div class="num">1</div><h3 id="t-electron">⚡ Electrons</h3>
+      <p id="d-electron">Tiny, negatively-charged particles that zoom around the nucleus in a fuzzy cloud — they're what makes chemistry happen.</p></div>
+    <div class="step-card" data-part="nucleus"><div class="num">2</div><h3 id="t-nucleus">🎯 The nucleus</h3>
+      <p id="d-nucleus">The dense center, made of protons and neutrons packed tightly together, held by the strong nuclear force.</p></div>
+    <div class="step-card" data-part="proton"><div class="num">3</div><h3 id="t-proton">🔴 Protons</h3>
+      <p id="d-proton">Positively-charged particles. The number of protons decides which element it is (1 = hydrogen, 6 = carbon...).</p></div>
+    <div class="step-card" data-part="neutron"><div class="num">4</div><h3 id="t-neutron">⚪ Neutrons</h3>
+      <p id="d-neutron">No electric charge. They add mass and help hold the nucleus together without pushing protons apart.</p></div>
+    <div class="step-card" data-part="quark"><div class="num">5</div><h3 id="t-quark">🔸 Quarks (inside protons)</h3>
+      <p id="d-quark">Zoom in even further: protons and neutrons are each built from 3 tinier particles called quarks!</p></div>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> An atom is almost entirely empty space. If you removed all the empty space from every atom in every human on Earth,
     all 8 billion of us would fit into a space smaller than a sugar cube!
   </div>
 </div>
 
 <script>
+// ---------- shared translation layer ----------
+const T = {
+  en: {
+    langToggle: 'తెలుగు',
+    backLink: '&larr; Back to lahari.org',
+    pageTitle: '🔬 Dissecting an Atom',
+    pageSubtitle: "Click each part of the atom below to pull it apart, layer by layer, and see what's really inside.",
+    hint: '🖱️ Click the electrons, the nucleus, or a proton/neutron to zoom in',
+    resetBtn: '↻ Whole Atom View',
+    steps: {
+      whole: ['⚛️ The whole atom', "Mostly empty space! If the nucleus were the size of a marble, the electrons would orbit almost a kilometer away."],
+      electron: ['⚡ Electrons', "Tiny, negatively-charged particles that zoom around the nucleus in a fuzzy cloud — they're what makes chemistry happen."],
+      nucleus: ['🎯 The nucleus', 'The dense center, made of protons and neutrons packed tightly together, held by the strong nuclear force.'],
+      proton: ['🔴 Protons', 'Positively-charged particles. The number of protons decides which element it is (1 = hydrogen, 6 = carbon...).'],
+      neutron: ['⚪ Neutrons', 'No electric charge. They add mass and help hold the nucleus together without pushing protons apart.'],
+      quark: ['🔸 Quarks (inside protons)', 'Zoom in even further: protons and neutrons are each built from 3 tinier particles called quarks!'],
+    },
+    fact: "🤯 <b>Mind-blowing part:</b> An atom is almost entirely empty space. If you removed all the empty space from every atom in every human on Earth, all 8 billion of us would fit into a space smaller than a sugar cube!",
+    captions: {
+      whole: 'This is a <b>carbon atom</b>: 6 protons, 6 neutrons, and 6 electrons — mostly empty space between a tiny nucleus and its electron cloud.',
+      electron: '<b>Electrons</b> are tiny and carry a negative charge. They don\'t orbit like planets exactly — they exist in a fuzzy "probability cloud" around the nucleus.',
+      nucleus: 'The <b>nucleus</b> holds almost all the atom\'s mass in a space 10,000 times smaller than the whole atom — packed with protons and neutrons.',
+      proton: 'A <b>proton</b> carries a positive charge. Its count defines the element: 1 proton = hydrogen, 2 = helium, 6 = carbon, and so on.',
+      neutron: 'A <b>neutron</b> has no charge at all. It adds mass and helps "glue" the nucleus together against the protons\' repulsion.',
+      quark: 'Zoom in past the proton itself: it\'s made of <b>3 quarks</b> (two "up" and one "down") bound by the strong force — this is about as deep as physics has looked!'
+    },
+    canvas: {
+      wholeLabel1: '6 protons + 6 neutrons + 6 electrons = CARBON',
+      wholeLabel2: 'electrons (click to zoom)',
+      electronLabel: 'ELECTRON',
+      electronDesc: 'negative charge · almost no mass · zips around the nucleus',
+      nucleusLabel: 'NUCLEUS',
+      nucleusDesc: 'protons (red) + neutrons (grey) packed tight',
+      protonLabel: 'PROTON',
+      protonDesc: 'positive charge · defines the element',
+      neutronLabel: 'NEUTRON',
+      neutronDesc: 'no charge · adds mass · helps hold nucleus together',
+      quarkUp: 'up',
+      quarkDown: 'down',
+      quarkCharge: (charge)=>'charge '+charge,
+      quarkTitle: '3 QUARKS inside one proton',
+    },
+  },
+  te: {
+    langToggle: 'English',
+    backLink: '&larr; lahari.org కి తిరిగి',
+    pageTitle: '🔬 పరమాణువును విడగొట్టడం',
+    pageSubtitle: 'క్రింద ఉన్న పరమాణువులోని ప్రతి భాగాన్ని క్లిక్ చేసి, పొరలు పొరలుగా విడదీసి, నిజంగా లోపల ఏముందో చూడండి.',
+    hint: '🖱️ ఎలక్ట్రాన్లు, న్యూక్లియస్, లేదా ప్రోటాన్/న్యూట్రాన్‌ను జూమ్ చేయడానికి క్లిక్ చేయండి',
+    resetBtn: '↻ పూర్తి పరమాణువు వీక్షణ',
+    steps: {
+      whole: ['⚛️ పూర్తి పరమాణువు', 'ఇది ఎక్కువగా ఖాళీ ప్రదేశమే! న్యూక్లియస్ ఒక గోళీ పరిమాణంలో ఉంటే, ఎలక్ట్రాన్లు దాదాపు ఒక కిలోమీటరు దూరంలో పరిభ్రమిస్తాయి.'],
+      electron: ['⚡ ఎలక్ట్రాన్లు', 'న్యూక్లియస్ చుట్టూ మసకగా ఉన్న మేఘంలా తిరిగే చిన్న, ఋణావేశం గల కణాలు — ఇవే రసాయన చర్యలను సాధ్యం చేస్తాయి.'],
+      nucleus: ['🎯 న్యూక్లియస్', 'దగ్గరగా కూర్చుకుని ఉన్న ప్రోటాన్లు, న్యూట్రాన్లతో నిండిన సాంద్రమైన కేంద్రం — బలమైన కేంద్రక బలం దీన్ని కలిపి ఉంచుతుంది.'],
+      proton: ['🔴 ప్రోటాన్లు', 'ధనావేశం గల కణాలు. ప్రోటాన్ల సంఖ్యే ఆ మూలకం ఏదో నిర్ణయిస్తుంది (1 = హైడ్రోజన్, 6 = కార్బన్...).'],
+      neutron: ['⚪ న్యూట్రాన్లు', 'విద్యుదావేశం ఉండదు. ఇవి ద్రవ్యరాశిని పెంచుతాయి మరియు ప్రోటాన్లు దూరంగా జరగకుండా న్యూక్లియస్‌ను కలిపి ఉంచడంలో సహాయపడతాయి.'],
+      quark: ['🔸 క్వార్క్‌లు (ప్రోటాన్ల లోపల)', 'మరింత దగ్గరగా చూస్తే: ప్రోటాన్లు, న్యూట్రాన్లు ప్రతి ఒక్కటి క్వార్క్‌లు అనే 3 చిన్న కణాలతో తయారవుతాయి!'],
+    },
+    fact: '🤯 <b>ఆశ్చర్యపరిచే విషయం:</b> పరమాణువు దాదాపు పూర్తిగా ఖాళీ ప్రదేశమే. భూమిపై ఉన్న ప్రతి మనిషిలోని ప్రతి పరమాణువు నుండి ఖాళీ ప్రదేశాన్నంతా తీసేస్తే, మనమంతా 800 కోట్ల మంది ఒక చక్కెర ముక్క కంటే చిన్న స్థలంలో ఇమిడిపోతాము!',
+    captions: {
+      whole: 'ఇది ఒక <b>కార్బన్ పరమాణువు</b>: 6 ప్రోటాన్లు, 6 న్యూట్రాన్లు, 6 ఎలక్ట్రాన్లు — చిన్న న్యూక్లియస్‌కు, దాని ఎలక్ట్రాన్ మేఘానికి మధ్య ఎక్కువగా ఖాళీ ప్రదేశం ఉంటుంది.',
+      electron: '<b>ఎలక్ట్రాన్లు</b> చిన్నవి, ఋణావేశం కలిగి ఉంటాయి. ఇవి గ్రహాల్లా సరిగ్గా పరిభ్రమించవు — న్యూక్లియస్ చుట్టూ మసకైన "సంభావ్యత మేఘం"లో ఉంటాయి.',
+      nucleus: '<b>న్యూక్లియస్</b> పరమాణువు మొత్తం ద్రవ్యరాశిలో దాదాపు అంతా, పూర్తి పరమాణువు కంటే 10,000 రెట్లు చిన్న స్థలంలో ఇముడుతుంది — ప్రోటాన్లు, న్యూట్రాన్లతో నిండి ఉంటుంది.',
+      proton: '<b>ప్రోటాన్</b> ధనావేశం కలిగి ఉంటుంది. దాని సంఖ్యే మూలకాన్ని నిర్ణయిస్తుంది: 1 ప్రోటాన్ = హైడ్రోజన్, 2 = హీలియం, 6 = కార్బన్, ఇలా కొనసాగుతుంది.',
+      neutron: '<b>న్యూట్రాన్</b>కు ఎలాంటి ఆవేశం ఉండదు. ఇది ద్రవ్యరాశిని పెంచి, ప్రోటాన్ల వికర్షణకు వ్యతిరేకంగా న్యూక్లియస్‌ను "అంటించి" ఉంచడంలో సహాయపడుతుంది.',
+      quark: 'ప్రోటాన్ లోపలికి మరింత జూమ్ చేస్తే: ఇది బలమైన బలంతో కలిసి ఉన్న <b>3 క్వార్క్‌లతో</b> (రెండు "అప్" మరియు ఒక "డౌన్") తయారైంది — భౌతిక శాస్త్రం ఇప్పటివరకు చూసిన లోతు ఇదే!'
+    },
+    canvas: {
+      wholeLabel1: '6 ప్రోటాన్లు + 6 న్యూట్రాన్లు + 6 ఎలక్ట్రాన్లు = కార్బన్',
+      wholeLabel2: 'ఎలక్ట్రాన్లు (జూమ్ చేయడానికి క్లిక్ చేయండి)',
+      electronLabel: 'ఎలక్ట్రాన్',
+      electronDesc: 'ఋణావేశం · దాదాపు ద్రవ్యరాశి ఉండదు · న్యూక్లియస్ చుట్టూ వేగంగా తిరుగుతుంది',
+      nucleusLabel: 'న్యూక్లియస్',
+      nucleusDesc: 'ప్రోటాన్లు (ఎరుపు) + న్యూట్రాన్లు (బూడిద) దగ్గరగా కూర్చుని ఉంటాయి',
+      protonLabel: 'ప్రోటాన్',
+      protonDesc: 'ధనావేశం · మూలకాన్ని నిర్ణయిస్తుంది',
+      neutronLabel: 'న్యూట్రాన్',
+      neutronDesc: 'ఆవేశం ఉండదు · ద్రవ్యరాశిని పెంచుతుంది · న్యూక్లియస్‌ను కలిపి ఉంచడంలో సహాయపడుతుంది',
+      quarkUp: 'అప్',
+      quarkDown: 'డౌన్',
+      quarkCharge: (charge)=>'ఆవేశం '+charge,
+      quarkTitle: 'ఒక ప్రోటాన్ లోపల 3 క్వార్క్‌లు',
+    },
+  }
+};
+let LANG = 'en';
+function tr(){ return T[LANG]; }
+
+function applyStaticText(){
+  const t = tr();
+  document.documentElement.lang = LANG;
+  document.getElementById('langToggle').textContent = t.langToggle;
+  document.getElementById('backLink').innerHTML = t.backLink;
+  document.getElementById('pageTitle').textContent = t.pageTitle;
+  document.getElementById('pageSubtitle').textContent = t.pageSubtitle;
+  document.getElementById('hintText').textContent = t.hint;
+  document.getElementById('resetBtn').textContent = t.resetBtn;
+  Object.keys(t.steps).forEach(key=>{
+    document.getElementById('t-'+key).textContent = t.steps[key][0];
+    document.getElementById('d-'+key).textContent = t.steps[key][1];
+  });
+  document.getElementById('factBox').innerHTML = t.fact;
+}
+
+document.getElementById('langToggle').addEventListener('click', () => {
+  LANG = LANG === 'en' ? 'te' : 'en';
+  applyStaticText();
+  if (window.__atomRefresh) window.__atomRefresh();
+});
+applyStaticText();
+
 (function(){
   const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
   const W=canvas.width, H=canvas.height;
   const captionEl=document.getElementById('caption');
   let part='whole', t=0;
-
-  const CAPTIONS={
-    whole:'This is a <b>carbon atom</b>: 6 protons, 6 neutrons, and 6 electrons — mostly empty space between a tiny nucleus and its electron cloud.',
-    electron:'<b>Electrons</b> are tiny and carry a negative charge. They don\'t orbit like planets exactly — they exist in a fuzzy "probability cloud" around the nucleus.',
-    nucleus:'The <b>nucleus</b> holds almost all the atom\'s mass in a space 10,000 times smaller than the whole atom — packed with protons and neutrons.',
-    proton:'A <b>proton</b> carries a positive charge. Its count defines the element: 1 proton = hydrogen, 2 = helium, 6 = carbon, and so on.',
-    neutron:'A <b>neutron</b> has no charge at all. It adds mass and helps "glue" the nucleus together against the protons\' repulsion.',
-    quark:'Zoom in past the proton itself: it\'s made of <b>3 quarks</b> (two "up" and one "down") bound by the strong force — this is about as deep as physics has looked!'
-  };
 
   function label(x,y,text,color){
     ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
@@ -113,15 +222,15 @@
       nucParts.push([cx+Math.cos(a)*r,cy+Math.sin(a)*r, i%2===0?'#ff8f8f':'#c7c9d9']);
     }
     nucParts.forEach(([x,y,c])=>{ ctx.fillStyle=c; ctx.beginPath(); ctx.arc(x,y,10,0,Math.PI*2); ctx.fill(); });
-    label(cx,cy+180,'6 protons + 6 neutrons + 6 electrons = CARBON','#eef2ff');
-    label(cx,cy-190,'electrons (click to zoom)','#4fd3ff');
+    label(cx,cy+180,tr().canvas.wholeLabel1,'#eef2ff');
+    label(cx,cy-190,tr().canvas.wholeLabel2,'#4fd3ff');
   }
   function drawElectron(){
     const cx=W/2,cy=H/2;
     ctx.fillStyle='#4fd3ff'; ctx.beginPath(); ctx.arc(cx,cy,50,0,Math.PI*2); ctx.fill();
     ctx.fillStyle='#0b1020'; ctx.font='800 30px Segoe UI'; ctx.textAlign='center'; ctx.fillText('−',cx,cy+11);
-    label(cx,cy-90,'ELECTRON','#4fd3ff');
-    label(cx,cy+90,'negative charge · almost no mass · zips around the nucleus','#eef2ff');
+    label(cx,cy-90,tr().canvas.electronLabel,'#4fd3ff');
+    label(cx,cy+90,tr().canvas.electronDesc,'#eef2ff');
   }
   function drawNucleus(){
     const cx=W/2,cy=H/2;
@@ -131,22 +240,22 @@
       ctx.fillStyle= i%2===0 ? '#ff8f8f' : '#c7c9d9';
       ctx.beginPath(); ctx.arc(x,y,16,0,Math.PI*2); ctx.fill();
     }
-    label(cx,cy-140,'NUCLEUS','#ff8f8f');
-    label(cx,cy+150,'protons (red) + neutrons (grey) packed tight','#eef2ff');
+    label(cx,cy-140,tr().canvas.nucleusLabel,'#ff8f8f');
+    label(cx,cy+150,tr().canvas.nucleusDesc,'#eef2ff');
   }
   function drawProton(){
     const cx=W/2,cy=H/2;
     ctx.fillStyle='#ff8f8f'; ctx.beginPath(); ctx.arc(cx,cy,55,0,Math.PI*2); ctx.fill();
     ctx.fillStyle='#0b1020'; ctx.font='800 30px Segoe UI'; ctx.textAlign='center'; ctx.fillText('+',cx,cy+11);
-    label(cx,cy-95,'PROTON','#ff8f8f');
-    label(cx,cy+95,'positive charge · defines the element','#eef2ff');
+    label(cx,cy-95,tr().canvas.protonLabel,'#ff8f8f');
+    label(cx,cy+95,tr().canvas.protonDesc,'#eef2ff');
   }
   function drawNeutron(){
     const cx=W/2,cy=H/2;
     ctx.fillStyle='#c7c9d9'; ctx.beginPath(); ctx.arc(cx,cy,55,0,Math.PI*2); ctx.fill();
     ctx.fillStyle='#0b1020'; ctx.font='800 24px Segoe UI'; ctx.textAlign='center'; ctx.fillText('0',cx,cy+9);
-    label(cx,cy-95,'NEUTRON','#c7c9d9');
-    label(cx,cy+95,'no charge · adds mass · helps hold nucleus together','#eef2ff');
+    label(cx,cy-95,tr().canvas.neutronLabel,'#c7c9d9');
+    label(cx,cy+95,tr().canvas.neutronDesc,'#eef2ff');
   }
   function drawQuark(){
     const cx=W/2,cy=H/2;
@@ -154,11 +263,12 @@
     const quarks=[[0,-70,'#ffd23f','up','+2/3'],[-60,55,'#4fd3ff','up','+2/3'],[60,55,'#6dffb0','down','−1/3']];
     quarks.forEach(([dx,dy,c,name,charge],i)=>{
       const wob=Math.sin(t*3+i)*6;
+      const label_name = name==='up' ? tr().canvas.quarkUp : tr().canvas.quarkDown;
       ctx.fillStyle=c; ctx.beginPath(); ctx.arc(cx+dx,cy+dy+wob,22,0,Math.PI*2); ctx.fill();
-      ctx.fillStyle='#0b1020'; ctx.font='800 13px Segoe UI'; ctx.fillText(name,cx+dx,cy+dy+wob+4);
-      label(cx+dx,cy+dy+wob+40,'charge '+charge,c);
+      ctx.fillStyle='#0b1020'; ctx.font='800 13px Segoe UI'; ctx.textAlign='center'; ctx.fillText(label_name,cx+dx,cy+dy+wob+4);
+      label(cx+dx,cy+dy+wob+40,tr().canvas.quarkCharge(charge),c);
     });
-    label(cx,cy-140,'3 QUARKS inside one proton','#eef2ff');
+    label(cx,cy-140,tr().canvas.quarkTitle,'#eef2ff');
   }
 
   const DRAW={whole:drawWhole,electron:drawElectron,nucleus:drawNucleus,proton:drawProton,neutron:drawNeutron,quark:drawQuark};
@@ -167,7 +277,7 @@
     ctx.clearRect(0,0,W,H); ctx.fillStyle='#04060f'; ctx.fillRect(0,0,W,H);
     for(let i=0;i<40;i++){ ctx.fillStyle='rgba(255,255,255,'+(0.08+0.3*((i*37)%10)/10)+')'; ctx.fillRect((i*53)%W,(i*97)%H,2,2); }
     DRAW[part]();
-    captionEl.innerHTML=CAPTIONS[part];
+    captionEl.innerHTML=tr().captions[part];
   }
   function loop(){ t+=0.03; render(); requestAnimationFrame(loop); }
 
@@ -193,6 +303,10 @@
   });
 
   render(); requestAnimationFrame(loop);
+
+  window.__atomRefresh = function(){
+    render();
+  };
 })();
 </script>
 </body>

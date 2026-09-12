@@ -9,7 +9,11 @@
   *{box-sizing:border-box;}
   body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
   .wrap{max-width:1200px;margin:0 auto;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
   a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
   header{text-align:center;margin-bottom:20px;}
   h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
   header p{color:var(--dim);font-size:16px;margin:0;}
@@ -49,23 +53,26 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="index.html">&larr; Back to lahari.org</a>
+  <div class="topbar">
+    <a class="back" href="index.html" id="backLink">&larr; Back to lahari.org</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
   <header>
-    <h1>🧬 The Periodic Table</h1>
-    <p>All 118 known elements — the building blocks of everything. Tap any tile to learn more!</p>
+    <h1 id="pageTitle">🧬 The Periodic Table</h1>
+    <p id="pageSubtitle">All 118 known elements — the building blocks of everything. Tap any tile to learn more!</p>
   </header>
 
   <div class="grid" id="grid"></div>
-  <p style="text-align:center;color:var(--dim);font-size:13px;margin-top:10px;">🖱️ Hover a tile to zoom in · tap or click any tile for full details and an atom diagram</p>
+  <p style="text-align:center;color:var(--dim);font-size:13px;margin-top:10px;" id="hoverHint">🖱️ Hover a tile to zoom in · tap or click any tile for full details and an atom diagram</p>
 
   <div class="legend-block">
     <div class="legend-row" id="catLegend"></div>
     <div class="legend-row" id="stateLegend">
-      <span class="legend-label">Name color = state at room temp:</span>
+      <span class="legend-label" id="stateLegendLabel">Name color = state at room temp:</span>
     </div>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> Every single thing around you — your phone, your food, the air, even you — is built from combinations
     of these same ~118 elements. Only about 90 occur naturally; the rest were made by scientists in labs!
   </div>
@@ -79,154 +86,452 @@
     <div class="name-big" id="mName">Hydrogen</div>
     <div class="config" id="mConfig"></div>
     <div class="meta">
-      <div><b>Atomic Number</b><span id="mNum"></span></div>
-      <div><b>Atomic Mass</b><span id="mMass"></span></div>
-      <div><b>Category</b><span id="mCat"></span></div>
-      <div><b>State at room temp</b><span id="mState"></span></div>
+      <div><b id="mNumLabel">Atomic Number</b><span id="mNum"></span></div>
+      <div><b id="mMassLabel">Atomic Mass</b><span id="mMass"></span></div>
+      <div><b id="mCatLabel">Category</b><span id="mCat"></span></div>
+      <div><b id="mStateLabel">State at room temp</b><span id="mState"></span></div>
     </div>
     <div class="fun" id="mFun"></div>
   </div>
 </div>
 
 <script>
-const CATS={
-  'alkali metal':'#f2726c','alkaline earth metal':'#f7a94a','transition metal':'#a8d977',
-  'post-transition metal':'#b79bea','metalloid':'#f2df6e','nonmetal':'#d5e86a',
-  'halogen':'#d5e86a','noble gas':'#f4a6c6','lanthanide':'#4fc3a1','actinide':'#5b9bd5','unknown':'#bfbfbf'
-};
-const CAT_LABELS={
-  'alkali metal':'Alkali metal','alkaline earth metal':'Alkaline earth metal','transition metal':'Transition metal',
-  'post-transition metal':'Post-transition metal','metalloid':'Metalloid','nonmetal':'Reactive nonmetal',
-  'halogen':'Reactive nonmetal','noble gas':'Noble gas','lanthanide':'Lanthanide','actinide':'Actinide','unknown':'Unknown properties'
-};
-const STATE_COLORS={gas:'#0d6efd',liquid:'#0aa2c0',solid:'#1a1a1a',unknown:'#6b6b6b'};
+// ---------- element data (language-neutral facts: symbol, mass, category key, state key, period, group) ----------
 const P=[
-[1,'H','Hydrogen',1.008,'nonmetal','gas',1,1,'Lightest and most abundant element in the universe — fuels the Sun through fusion.'],
-[2,'He','Helium',4.003,'noble gas','gas',1,18,'Used in balloons and blimps because it is lighter than air and totally unreactive.'],
-[3,'Li','Lithium',6.94,'alkali metal','solid',2,1,'Powers the rechargeable batteries in phones and laptops.'],
-[4,'Be','Beryllium',9.012,'alkaline earth metal','solid',2,2,'Light but very strong — used in aerospace parts and X-ray equipment.'],
-[5,'B','Boron',10.81,'metalloid','solid',2,13,'Used in heat-resistant Pyrex glass and fiberglass.'],
-[6,'C','Carbon',12.011,'nonmetal','solid',2,14,'The backbone of all known life — also makes diamonds and pencil graphite!'],
-[7,'N','Nitrogen',14.007,'nonmetal','gas',2,15,'Makes up 78% of the air you breathe right now.'],
-[8,'O','Oxygen',15.999,'nonmetal','gas',2,16,'The element you need every few seconds to stay alive.'],
-[9,'F','Fluorine',18.998,'halogen','gas',2,17,'Added to toothpaste to help protect your teeth from decay.'],
-[10,'Ne','Neon',20.180,'noble gas','gas',2,18,'Glows bright red-orange in the glass tubes of neon signs.'],
-[11,'Na','Sodium',22.990,'alkali metal','solid',3,1,'Combines with chlorine to make ordinary table salt.'],
-[12,'Mg','Magnesium',24.305,'alkaline earth metal','solid',3,2,'Burns with a dazzling bright white light — used in fireworks and flares.'],
-[13,'Al','Aluminium',26.982,'post-transition metal','solid',3,13,'Light, rust-proof metal used in soda cans and airplanes.'],
-[14,'Si','Silicon',28.085,'metalloid','solid',3,14,'The heart of every computer chip — and most of the sand on beaches.'],
-[15,'P','Phosphorus',30.974,'nonmetal','solid',3,15,'Essential in your DNA and bones; some forms glow faintly in the dark.'],
-[16,'S','Sulfur',32.06,'nonmetal','solid',3,16,'Smells like rotten eggs and gives volcanoes their sulfurous odor.'],
-[17,'Cl','Chlorine',35.45,'halogen','gas',3,17,'Used to disinfect swimming pools and drinking water.'],
-[18,'Ar','Argon',39.948,'noble gas','gas',3,18,'Fills light bulbs to stop the glowing filament from burning up.'],
-[19,'K','Potassium',39.098,'alkali metal','solid',4,1,'Vital for your muscles and nerves — bananas are a famous source.'],
-[20,'Ca','Calcium',40.078,'alkaline earth metal','solid',4,2,'Builds strong bones and teeth.'],
-[21,'Sc','Scandium',44.956,'transition metal','solid',4,3,'Used in aerospace alloys and some baseball bats.'],
-[22,'Ti','Titanium',47.867,'transition metal','solid',4,4,'Strong as steel but much lighter — used in spacecraft and hip implants.'],
-[23,'V','Vanadium',50.942,'transition metal','solid',4,5,'Strengthens steel used in tools and car parts.'],
-[24,'Cr','Chromium',51.996,'transition metal','solid',4,6,'Gives stainless steel its shiny, rust-resistant surface.'],
-[25,'Mn','Manganese',54.938,'transition metal','solid',4,7,'Essential for making strong steel and for your body\'s metabolism.'],
-[26,'Fe','Iron',55.845,'transition metal','solid',4,8,'The main ingredient in steel — and the core of planet Earth itself!'],
-[27,'Co','Cobalt',58.933,'transition metal','solid',4,9,'Gives glass and ceramics a deep blue color; used in rechargeable batteries.'],
-[28,'Ni','Nickel',58.693,'transition metal','solid',4,10,'Used in coins and to make stainless steel resist corrosion.'],
-[29,'Cu','Copper',63.546,'transition metal','solid',4,11,'Conducts electricity well — found in almost every wire and cable.'],
-[30,'Zn','Zinc',65.38,'post-transition metal','solid',4,12,'Coats steel to stop it rusting, and helps your immune system.'],
-[31,'Ga','Gallium',69.723,'post-transition metal','solid',4,13,'Melts in your hand — its melting point is close to body temperature!'],
-[32,'Ge','Germanium',72.630,'metalloid','solid',4,14,'Used in fiber-optic cables and early transistors.'],
-[33,'As','Arsenic',74.922,'metalloid','solid',4,15,'Famous as a poison, but tiny amounts are used in semiconductors.'],
-[34,'Se','Selenium',78.971,'nonmetal','solid',4,16,'Used in solar cells and photocopiers because it reacts to light.'],
-[35,'Br','Bromine',79.904,'halogen','liquid',4,17,'One of only two elements that are liquid at room temperature.'],
-[36,'Kr','Krypton',83.798,'noble gas','gas',4,18,'Used in some bright camera flashes and energy-efficient lights.'],
-[37,'Rb','Rubidium',85.468,'alkali metal','solid',5,1,'So reactive it bursts into flame in air.'],
-[38,'Sr','Strontium',87.62,'alkaline earth metal','solid',5,2,'Produces the brilliant red color in fireworks.'],
-[39,'Y','Yttrium',88.906,'transition metal','solid',5,3,'Used in LED lights and camera lenses.'],
-[40,'Zr','Zirconium',91.224,'transition metal','solid',5,4,'Extremely heat-resistant — used to coat nuclear reactor fuel.'],
-[41,'Nb','Niobium',92.906,'transition metal','solid',5,5,'Used in superconducting magnets, like those in MRI machines.'],
-[42,'Mo','Molybdenum',95.95,'transition metal','solid',5,6,'Strengthens steel used in aircraft parts and tools.'],
-[43,'Tc','Technetium',98,'transition metal','solid',5,7,'The first element ever made artificially — doesn\'t occur naturally on Earth.'],
-[44,'Ru','Ruthenium',101.07,'transition metal','solid',5,8,'Used to harden platinum and palladium for jewelry.'],
-[45,'Rh','Rhodium',102.906,'transition metal','solid',5,9,'One of the rarest and most reflective metals — used in car catalytic converters.'],
-[46,'Pd','Palladium',106.42,'transition metal','solid',5,10,'Used in catalytic converters to reduce car pollution.'],
-[47,'Ag','Silver',107.868,'transition metal','solid',5,11,'The best conductor of electricity of any metal — also used in jewelry.'],
-[48,'Cd','Cadmium',112.414,'post-transition metal','solid',5,12,'Used in rechargeable nickel-cadmium batteries.'],
-[49,'In','Indium',114.818,'post-transition metal','solid',5,13,'Coats touchscreens so they conduct electricity while staying clear.'],
-[50,'Sn','Tin',118.710,'post-transition metal','solid',5,14,'Coats steel cans to keep food fresh — "tin cans" are really steel!'],
-[51,'Sb','Antimony',121.760,'metalloid','solid',5,15,'Used to make batteries and flame-resistant materials.'],
-[52,'Te','Tellurium',127.60,'metalloid','solid',5,16,'Used in solar panels and to strengthen alloys.'],
-[53,'I','Iodine',126.904,'halogen','solid',5,17,'Vital for your thyroid gland — added to table salt in many countries.'],
-[54,'Xe','Xenon',131.293,'noble gas','gas',5,18,'Used in some car headlights and ion engines on spacecraft.'],
-[55,'Cs','Caesium',132.905,'alkali metal','solid',6,1,'Used in the atomic clocks that define exactly how long a second is.'],
-[56,'Ba','Barium',137.327,'alkaline earth metal','solid',6,2,'Doctors drink a barium mixture before certain X-rays of the stomach.'],
-[57,'La','Lanthanum',138.905,'lanthanide','solid',6,3,'Used in camera lenses and rechargeable hybrid car batteries.'],
-[58,'Ce','Cerium',140.116,'lanthanide','solid',6,4,'Used in the flints of lighters — it sparks when scratched.'],
-[59,'Pr','Praseodymium',140.908,'lanthanide','solid',6,5,'Colors glass and ceramics a bright yellow-green.'],
-[60,'Nd','Neodymium',144.242,'lanthanide','solid',6,6,'Makes the strongest permanent magnets known — used in headphones and motors.'],
-[61,'Pm','Promethium',145,'lanthanide','solid',6,7,'Radioactive and glows faintly — used in some old watch dials.'],
-[62,'Sm','Samarium',150.36,'lanthanide','solid',6,8,'Used in powerful magnets for guitar pickups and headphones.'],
-[63,'Eu','Europium',151.964,'lanthanide','solid',6,9,'Makes the red color glow in TV and phone screens.'],
-[64,'Gd','Gadolinium',157.25,'lanthanide','solid',6,10,'Used as a contrast dye to make MRI scans clearer.'],
-[65,'Tb','Terbium',158.925,'lanthanide','solid',6,11,'Used in energy-efficient light bulbs for its green glow.'],
-[66,'Dy','Dysprosium',162.500,'lanthanide','solid',6,12,'Helps neodymium magnets keep working at high temperatures.'],
-[67,'Ho','Holmium',164.930,'lanthanide','solid',6,13,'Has the strongest magnetic pull of any natural element.'],
-[68,'Er','Erbium',167.259,'lanthanide','solid',6,14,'Used to boost signals in fiber-optic internet cables.'],
-[69,'Tm','Thulium',168.934,'lanthanide','solid',6,15,'One of the rarest lanthanides — used in portable X-ray machines.'],
-[70,'Yb','Ytterbium',173.045,'lanthanide','solid',6,16,'Used in some of the world\'s most precise atomic clocks.'],
-[71,'Lu','Lutetium',174.967,'lanthanide','solid',6,17,'Used in PET scan detectors in hospitals.'],
-[72,'Hf','Hafnium',178.49,'transition metal','solid',6,4,'Used in control rods that manage nuclear reactors.'],
-[73,'Ta','Tantalum',180.948,'transition metal','solid',6,5,'Used inside tiny capacitors in smartphones and laptops.'],
-[74,'W','Tungsten',183.84,'transition metal','solid',6,6,'Has the highest melting point of any metal — used in light bulb filaments.'],
-[75,'Re','Rhenium',186.207,'transition metal','solid',6,7,'One of the rarest elements on Earth — used in jet engine parts.'],
-[76,'Os','Osmium',190.23,'transition metal','solid',6,8,'The densest naturally occurring element.'],
-[77,'Ir','Iridium',192.217,'transition metal','solid',6,9,'Extremely hard-wearing — used for the tips of fountain pens and spark plugs.'],
-[78,'Pt','Platinum',195.084,'transition metal','solid',6,10,'A precious metal used in jewelry and car catalytic converters.'],
-[79,'Au','Gold',196.967,'transition metal','solid',6,11,'Prized for thousands of years — doesn\'t rust or tarnish.'],
-[80,'Hg','Mercury',200.592,'transition metal','liquid',6,12,'The only metal that is liquid at room temperature.'],
-[81,'Tl','Thallium',204.38,'post-transition metal','solid',6,13,'Was once used in rat poison — highly toxic.'],
-[82,'Pb','Lead',207.2,'post-transition metal','solid',6,14,'Very dense and once used in pipes and paint — now known to be toxic.'],
-[83,'Bi','Bismuth',208.980,'post-transition metal','solid',6,15,'Forms colorful rainbow crystals and is used in some stomach medicines.'],
-[84,'Po','Polonium',209,'metalloid','solid',6,16,'Highly radioactive; discovered by Marie Curie.'],
-[85,'At','Astatine',210,'halogen','solid',6,17,'So rare that only a few grams exist on Earth at any time.'],
-[86,'Rn','Radon',222,'noble gas','gas',6,18,'A radioactive gas that can seep into basements from the ground.'],
-[87,'Fr','Francium',223,'alkali metal','solid',7,1,'Extremely rare and radioactive — decays away in minutes.'],
-[88,'Ra','Radium',226,'alkaline earth metal','solid',7,2,'Once used in glow-in-the-dark paint before its radioactivity was understood.'],
-[89,'Ac','Actinium',227,'actinide','solid',7,3,'Glows faintly blue in the dark due to its radioactivity.'],
-[90,'Th','Thorium',232.038,'actinide','solid',7,4,'Being researched as a safer fuel for future nuclear reactors.'],
-[91,'Pa','Protactinium',231.036,'actinide','solid',7,5,'One of the rarest and most expensive naturally occurring elements.'],
-[92,'U','Uranium',238.029,'actinide','solid',7,6,'Fuels nuclear power plants through nuclear fission.'],
-[93,'Np','Neptunium',237,'actinide','solid',7,7,'The first man-made transuranium element, named after Neptune.'],
-[94,'Pu','Plutonium',244,'actinide','solid',7,8,'Used as fuel in some spacecraft, including Mars rovers.'],
-[95,'Am','Americium',243,'actinide','solid',7,9,'Found in tiny amounts inside household smoke detectors.'],
-[96,'Cm','Curium',247,'actinide','solid',7,10,'Named after Marie and Pierre Curie for their radioactivity research.'],
-[97,'Bk','Berkelium',247,'actinide','solid',7,11,'Named after Berkeley, California, where it was first made.'],
-[98,'Cf','Californium',251,'actinide','solid',7,12,'Used to help start up some nuclear reactors.'],
-[99,'Es','Einsteinium',252,'actinide','solid',7,13,'Named after Albert Einstein; discovered in debris from a hydrogen bomb test.'],
-[100,'Fm','Fermium',257,'actinide','solid',7,14,'Named after physicist Enrico Fermi.'],
-[101,'Md','Mendelevium',258,'actinide','solid',7,15,'Named after Dmitri Mendeleev, inventor of the periodic table.'],
-[102,'No','Nobelium',259,'actinide','solid',7,16,'Named after Alfred Nobel, founder of the Nobel Prize.'],
-[103,'Lr','Lawrencium',266,'actinide','solid',7,17,'Named after Ernest Lawrence, inventor of the cyclotron.'],
-[104,'Rf','Rutherfordium',267,'transition metal','solid',7,4,'A super-heavy element that only exists briefly in labs.'],
-[105,'Db','Dubnium',268,'transition metal','solid',7,5,'Named after Dubna, Russia, where it was discovered.'],
-[106,'Sg','Seaborgium',269,'transition metal','solid',7,6,'Named after scientist Glenn Seaborg while he was still alive!'],
-[107,'Bh','Bohrium',270,'transition metal','solid',7,7,'Named after physicist Niels Bohr.'],
-[108,'Hs','Hassium',269,'transition metal','solid',7,8,'Named after Hesse, the German state where it was discovered.'],
-[109,'Mt','Meitnerium',278,'unknown','solid',7,9,'Named after physicist Lise Meitner.'],
-[110,'Ds','Darmstadtium',281,'unknown','solid',7,10,'Named after Darmstadt, Germany, where it was made.'],
-[111,'Rg','Roentgenium',282,'unknown','solid',7,11,'Named after Wilhelm Röntgen, discoverer of X-rays.'],
-[112,'Cn','Copernicium',285,'transition metal','solid',7,12,'Named after astronomer Nicolaus Copernicus.'],
-[113,'Nh','Nihonium',286,'post-transition metal','solid',7,13,'Named after Japan ("Nihon"), where it was discovered.'],
-[114,'Fl','Flerovium',289,'post-transition metal','solid',7,14,'Named after the Flerov Laboratory in Russia.'],
-[115,'Mc','Moscovium',290,'post-transition metal','solid',7,15,'Named after Moscow, Russia.'],
-[116,'Lv','Livermorium',293,'post-transition metal','solid',7,16,'Named after Lawrence Livermore National Laboratory in the USA.'],
-[117,'Ts','Tennessine',294,'halogen','solid',7,17,'Named after the U.S. state of Tennessee.'],
-[118,'Og','Oganesson',294,'noble gas','solid',7,18,'The heaviest element made so far, named after scientist Yuri Oganessian.'],
+[1,'H',1.008,'nonmetal','gas',1,1],
+[2,'He',4.003,'noble gas','gas',1,18],
+[3,'Li',6.94,'alkali metal','solid',2,1],
+[4,'Be',9.012,'alkaline earth metal','solid',2,2],
+[5,'B',10.81,'metalloid','solid',2,13],
+[6,'C',12.011,'nonmetal','solid',2,14],
+[7,'N',14.007,'nonmetal','gas',2,15],
+[8,'O',15.999,'nonmetal','gas',2,16],
+[9,'F',18.998,'halogen','gas',2,17],
+[10,'Ne',20.180,'noble gas','gas',2,18],
+[11,'Na',22.990,'alkali metal','solid',3,1],
+[12,'Mg',24.305,'alkaline earth metal','solid',3,2],
+[13,'Al',26.982,'post-transition metal','solid',3,13],
+[14,'Si',28.085,'metalloid','solid',3,14],
+[15,'P',30.974,'nonmetal','solid',3,15],
+[16,'S',32.06,'nonmetal','solid',3,16],
+[17,'Cl',35.45,'halogen','gas',3,17],
+[18,'Ar',39.948,'noble gas','gas',3,18],
+[19,'K',39.098,'alkali metal','solid',4,1],
+[20,'Ca',40.078,'alkaline earth metal','solid',4,2],
+[21,'Sc',44.956,'transition metal','solid',4,3],
+[22,'Ti',47.867,'transition metal','solid',4,4],
+[23,'V',50.942,'transition metal','solid',4,5],
+[24,'Cr',51.996,'transition metal','solid',4,6],
+[25,'Mn',54.938,'transition metal','solid',4,7],
+[26,'Fe',55.845,'transition metal','solid',4,8],
+[27,'Co',58.933,'transition metal','solid',4,9],
+[28,'Ni',58.693,'transition metal','solid',4,10],
+[29,'Cu',63.546,'transition metal','solid',4,11],
+[30,'Zn',65.38,'post-transition metal','solid',4,12],
+[31,'Ga',69.723,'post-transition metal','solid',4,13],
+[32,'Ge',72.630,'metalloid','solid',4,14],
+[33,'As',74.922,'metalloid','solid',4,15],
+[34,'Se',78.971,'nonmetal','solid',4,16],
+[35,'Br',79.904,'halogen','liquid',4,17],
+[36,'Kr',83.798,'noble gas','gas',4,18],
+[37,'Rb',85.468,'alkali metal','solid',5,1],
+[38,'Sr',87.62,'alkaline earth metal','solid',5,2],
+[39,'Y',88.906,'transition metal','solid',5,3],
+[40,'Zr',91.224,'transition metal','solid',5,4],
+[41,'Nb',92.906,'transition metal','solid',5,5],
+[42,'Mo',95.95,'transition metal','solid',5,6],
+[43,'Tc',98,'transition metal','solid',5,7],
+[44,'Ru',101.07,'transition metal','solid',5,8],
+[45,'Rh',102.906,'transition metal','solid',5,9],
+[46,'Pd',106.42,'transition metal','solid',5,10],
+[47,'Ag',107.868,'transition metal','solid',5,11],
+[48,'Cd',112.414,'post-transition metal','solid',5,12],
+[49,'In',114.818,'post-transition metal','solid',5,13],
+[50,'Sn',118.710,'post-transition metal','solid',5,14],
+[51,'Sb',121.760,'metalloid','solid',5,15],
+[52,'Te',127.60,'metalloid','solid',5,16],
+[53,'I',126.904,'halogen','solid',5,17],
+[54,'Xe',131.293,'noble gas','gas',5,18],
+[55,'Cs',132.905,'alkali metal','solid',6,1],
+[56,'Ba',137.327,'alkaline earth metal','solid',6,2],
+[57,'La',138.905,'lanthanide','solid',6,3],
+[58,'Ce',140.116,'lanthanide','solid',6,4],
+[59,'Pr',140.908,'lanthanide','solid',6,5],
+[60,'Nd',144.242,'lanthanide','solid',6,6],
+[61,'Pm',145,'lanthanide','solid',6,7],
+[62,'Sm',150.36,'lanthanide','solid',6,8],
+[63,'Eu',151.964,'lanthanide','solid',6,9],
+[64,'Gd',157.25,'lanthanide','solid',6,10],
+[65,'Tb',158.925,'lanthanide','solid',6,11],
+[66,'Dy',162.500,'lanthanide','solid',6,12],
+[67,'Ho',164.930,'lanthanide','solid',6,13],
+[68,'Er',167.259,'lanthanide','solid',6,14],
+[69,'Tm',168.934,'lanthanide','solid',6,15],
+[70,'Yb',173.045,'lanthanide','solid',6,16],
+[71,'Lu',174.967,'lanthanide','solid',6,17],
+[72,'Hf',178.49,'transition metal','solid',6,4],
+[73,'Ta',180.948,'transition metal','solid',6,5],
+[74,'W',183.84,'transition metal','solid',6,6],
+[75,'Re',186.207,'transition metal','solid',6,7],
+[76,'Os',190.23,'transition metal','solid',6,8],
+[77,'Ir',192.217,'transition metal','solid',6,9],
+[78,'Pt',195.084,'transition metal','solid',6,10],
+[79,'Au',196.967,'transition metal','solid',6,11],
+[80,'Hg',200.592,'transition metal','liquid',6,12],
+[81,'Tl',204.38,'post-transition metal','solid',6,13],
+[82,'Pb',207.2,'post-transition metal','solid',6,14],
+[83,'Bi',208.980,'post-transition metal','solid',6,15],
+[84,'Po',209,'metalloid','solid',6,16],
+[85,'At',210,'halogen','solid',6,17],
+[86,'Rn',222,'noble gas','gas',6,18],
+[87,'Fr',223,'alkali metal','solid',7,1],
+[88,'Ra',226,'alkaline earth metal','solid',7,2],
+[89,'Ac',227,'actinide','solid',7,3],
+[90,'Th',232.038,'actinide','solid',7,4],
+[91,'Pa',231.036,'actinide','solid',7,5],
+[92,'U',238.029,'actinide','solid',7,6],
+[93,'Np',237,'actinide','solid',7,7],
+[94,'Pu',244,'actinide','solid',7,8],
+[95,'Am',243,'actinide','solid',7,9],
+[96,'Cm',247,'actinide','solid',7,10],
+[97,'Bk',247,'actinide','solid',7,11],
+[98,'Cf',251,'actinide','solid',7,12],
+[99,'Es',252,'actinide','solid',7,13],
+[100,'Fm',257,'actinide','solid',7,14],
+[101,'Md',258,'actinide','solid',7,15],
+[102,'No',259,'actinide','solid',7,16],
+[103,'Lr',266,'actinide','solid',7,17],
+[104,'Rf',267,'transition metal','solid',7,4],
+[105,'Db',268,'transition metal','solid',7,5],
+[106,'Sg',269,'transition metal','solid',7,6],
+[107,'Bh',270,'transition metal','solid',7,7],
+[108,'Hs',269,'transition metal','solid',7,8],
+[109,'Mt',278,'unknown','solid',7,9],
+[110,'Ds',281,'unknown','solid',7,10],
+[111,'Rg',282,'unknown','solid',7,11],
+[112,'Cn',285,'transition metal','solid',7,12],
+[113,'Nh',286,'post-transition metal','solid',7,13],
+[114,'Fl',289,'post-transition metal','solid',7,14],
+[115,'Mc',290,'post-transition metal','solid',7,15],
+[116,'Lv',293,'post-transition metal','solid',7,16],
+[117,'Ts',294,'halogen','solid',7,17],
+[118,'Og',294,'noble gas','solid',7,18],
 ];
+
+// ---------- per-language element name + fun-fact text ----------
+const EL_EN={
+1:{name:'Hydrogen',fun:'Lightest and most abundant element in the universe — fuels the Sun through fusion.'},
+2:{name:'Helium',fun:'Used in balloons and blimps because it is lighter than air and totally unreactive.'},
+3:{name:'Lithium',fun:'Powers the rechargeable batteries in phones and laptops.'},
+4:{name:'Beryllium',fun:'Light but very strong — used in aerospace parts and X-ray equipment.'},
+5:{name:'Boron',fun:'Used in heat-resistant Pyrex glass and fiberglass.'},
+6:{name:'Carbon',fun:'The backbone of all known life — also makes diamonds and pencil graphite!'},
+7:{name:'Nitrogen',fun:'Makes up 78% of the air you breathe right now.'},
+8:{name:'Oxygen',fun:'The element you need every few seconds to stay alive.'},
+9:{name:'Fluorine',fun:'Added to toothpaste to help protect your teeth from decay.'},
+10:{name:'Neon',fun:'Glows bright red-orange in the glass tubes of neon signs.'},
+11:{name:'Sodium',fun:'Combines with chlorine to make ordinary table salt.'},
+12:{name:'Magnesium',fun:'Burns with a dazzling bright white light — used in fireworks and flares.'},
+13:{name:'Aluminium',fun:'Light, rust-proof metal used in soda cans and airplanes.'},
+14:{name:'Silicon',fun:'The heart of every computer chip — and most of the sand on beaches.'},
+15:{name:'Phosphorus',fun:'Essential in your DNA and bones; some forms glow faintly in the dark.'},
+16:{name:'Sulfur',fun:'Smells like rotten eggs and gives volcanoes their sulfurous odor.'},
+17:{name:'Chlorine',fun:'Used to disinfect swimming pools and drinking water.'},
+18:{name:'Argon',fun:'Fills light bulbs to stop the glowing filament from burning up.'},
+19:{name:'Potassium',fun:'Vital for your muscles and nerves — bananas are a famous source.'},
+20:{name:'Calcium',fun:'Builds strong bones and teeth.'},
+21:{name:'Scandium',fun:'Used in aerospace alloys and some baseball bats.'},
+22:{name:'Titanium',fun:'Strong as steel but much lighter — used in spacecraft and hip implants.'},
+23:{name:'Vanadium',fun:'Strengthens steel used in tools and car parts.'},
+24:{name:'Chromium',fun:'Gives stainless steel its shiny, rust-resistant surface.'},
+25:{name:'Manganese',fun:'Essential for making strong steel and for your body\'s metabolism.'},
+26:{name:'Iron',fun:'The main ingredient in steel — and the core of planet Earth itself!'},
+27:{name:'Cobalt',fun:'Gives glass and ceramics a deep blue color; used in rechargeable batteries.'},
+28:{name:'Nickel',fun:'Used in coins and to make stainless steel resist corrosion.'},
+29:{name:'Copper',fun:'Conducts electricity well — found in almost every wire and cable.'},
+30:{name:'Zinc',fun:'Coats steel to stop it rusting, and helps your immune system.'},
+31:{name:'Gallium',fun:'Melts in your hand — its melting point is close to body temperature!'},
+32:{name:'Germanium',fun:'Used in fiber-optic cables and early transistors.'},
+33:{name:'Arsenic',fun:'Famous as a poison, but tiny amounts are used in semiconductors.'},
+34:{name:'Selenium',fun:'Used in solar cells and photocopiers because it reacts to light.'},
+35:{name:'Bromine',fun:'One of only two elements that are liquid at room temperature.'},
+36:{name:'Krypton',fun:'Used in some bright camera flashes and energy-efficient lights.'},
+37:{name:'Rubidium',fun:'So reactive it bursts into flame in air.'},
+38:{name:'Strontium',fun:'Produces the brilliant red color in fireworks.'},
+39:{name:'Yttrium',fun:'Used in LED lights and camera lenses.'},
+40:{name:'Zirconium',fun:'Extremely heat-resistant — used to coat nuclear reactor fuel.'},
+41:{name:'Niobium',fun:'Used in superconducting magnets, like those in MRI machines.'},
+42:{name:'Molybdenum',fun:'Strengthens steel used in aircraft parts and tools.'},
+43:{name:'Technetium',fun:'The first element ever made artificially — doesn\'t occur naturally on Earth.'},
+44:{name:'Ruthenium',fun:'Used to harden platinum and palladium for jewelry.'},
+45:{name:'Rhodium',fun:'One of the rarest and most reflective metals — used in car catalytic converters.'},
+46:{name:'Palladium',fun:'Used in catalytic converters to reduce car pollution.'},
+47:{name:'Silver',fun:'The best conductor of electricity of any metal — also used in jewelry.'},
+48:{name:'Cadmium',fun:'Used in rechargeable nickel-cadmium batteries.'},
+49:{name:'Indium',fun:'Coats touchscreens so they conduct electricity while staying clear.'},
+50:{name:'Tin',fun:'Coats steel cans to keep food fresh — "tin cans" are really steel!'},
+51:{name:'Antimony',fun:'Used to make batteries and flame-resistant materials.'},
+52:{name:'Tellurium',fun:'Used in solar panels and to strengthen alloys.'},
+53:{name:'Iodine',fun:'Vital for your thyroid gland — added to table salt in many countries.'},
+54:{name:'Xenon',fun:'Used in some car headlights and ion engines on spacecraft.'},
+55:{name:'Caesium',fun:'Used in the atomic clocks that define exactly how long a second is.'},
+56:{name:'Barium',fun:'Doctors drink a barium mixture before certain X-rays of the stomach.'},
+57:{name:'Lanthanum',fun:'Used in camera lenses and rechargeable hybrid car batteries.'},
+58:{name:'Cerium',fun:'Used in the flints of lighters — it sparks when scratched.'},
+59:{name:'Praseodymium',fun:'Colors glass and ceramics a bright yellow-green.'},
+60:{name:'Neodymium',fun:'Makes the strongest permanent magnets known — used in headphones and motors.'},
+61:{name:'Promethium',fun:'Radioactive and glows faintly — used in some old watch dials.'},
+62:{name:'Samarium',fun:'Used in powerful magnets for guitar pickups and headphones.'},
+63:{name:'Europium',fun:'Makes the red color glow in TV and phone screens.'},
+64:{name:'Gadolinium',fun:'Used as a contrast dye to make MRI scans clearer.'},
+65:{name:'Terbium',fun:'Used in energy-efficient light bulbs for its green glow.'},
+66:{name:'Dysprosium',fun:'Helps neodymium magnets keep working at high temperatures.'},
+67:{name:'Holmium',fun:'Has the strongest magnetic pull of any natural element.'},
+68:{name:'Erbium',fun:'Used to boost signals in fiber-optic internet cables.'},
+69:{name:'Thulium',fun:'One of the rarest lanthanides — used in portable X-ray machines.'},
+70:{name:'Ytterbium',fun:'Used in some of the world\'s most precise atomic clocks.'},
+71:{name:'Lutetium',fun:'Used in PET scan detectors in hospitals.'},
+72:{name:'Hafnium',fun:'Used in control rods that manage nuclear reactors.'},
+73:{name:'Tantalum',fun:'Used inside tiny capacitors in smartphones and laptops.'},
+74:{name:'Tungsten',fun:'Has the highest melting point of any metal — used in light bulb filaments.'},
+75:{name:'Rhenium',fun:'One of the rarest elements on Earth — used in jet engine parts.'},
+76:{name:'Osmium',fun:'The densest naturally occurring element.'},
+77:{name:'Iridium',fun:'Extremely hard-wearing — used for the tips of fountain pens and spark plugs.'},
+78:{name:'Platinum',fun:'A precious metal used in jewelry and car catalytic converters.'},
+79:{name:'Gold',fun:'Prized for thousands of years — doesn\'t rust or tarnish.'},
+80:{name:'Mercury',fun:'The only metal that is liquid at room temperature.'},
+81:{name:'Thallium',fun:'Was once used in rat poison — highly toxic.'},
+82:{name:'Lead',fun:'Very dense and once used in pipes and paint — now known to be toxic.'},
+83:{name:'Bismuth',fun:'Forms colorful rainbow crystals and is used in some stomach medicines.'},
+84:{name:'Polonium',fun:'Highly radioactive; discovered by Marie Curie.'},
+85:{name:'Astatine',fun:'So rare that only a few grams exist on Earth at any time.'},
+86:{name:'Radon',fun:'A radioactive gas that can seep into basements from the ground.'},
+87:{name:'Francium',fun:'Extremely rare and radioactive — decays away in minutes.'},
+88:{name:'Radium',fun:'Once used in glow-in-the-dark paint before its radioactivity was understood.'},
+89:{name:'Actinium',fun:'Glows faintly blue in the dark due to its radioactivity.'},
+90:{name:'Thorium',fun:'Being researched as a safer fuel for future nuclear reactors.'},
+91:{name:'Protactinium',fun:'One of the rarest and most expensive naturally occurring elements.'},
+92:{name:'Uranium',fun:'Fuels nuclear power plants through nuclear fission.'},
+93:{name:'Neptunium',fun:'The first man-made transuranium element, named after Neptune.'},
+94:{name:'Plutonium',fun:'Used as fuel in some spacecraft, including Mars rovers.'},
+95:{name:'Americium',fun:'Found in tiny amounts inside household smoke detectors.'},
+96:{name:'Curium',fun:'Named after Marie and Pierre Curie for their radioactivity research.'},
+97:{name:'Berkelium',fun:'Named after Berkeley, California, where it was first made.'},
+98:{name:'Californium',fun:'Used to help start up some nuclear reactors.'},
+99:{name:'Einsteinium',fun:'Named after Albert Einstein; discovered in debris from a hydrogen bomb test.'},
+100:{name:'Fermium',fun:'Named after physicist Enrico Fermi.'},
+101:{name:'Mendelevium',fun:'Named after Dmitri Mendeleev, inventor of the periodic table.'},
+102:{name:'Nobelium',fun:'Named after Alfred Nobel, founder of the Nobel Prize.'},
+103:{name:'Lawrencium',fun:'Named after Ernest Lawrence, inventor of the cyclotron.'},
+104:{name:'Rutherfordium',fun:'A super-heavy element that only exists briefly in labs.'},
+105:{name:'Dubnium',fun:'Named after Dubna, Russia, where it was discovered.'},
+106:{name:'Seaborgium',fun:'Named after scientist Glenn Seaborg while he was still alive!'},
+107:{name:'Bohrium',fun:'Named after physicist Niels Bohr.'},
+108:{name:'Hassium',fun:'Named after Hesse, the German state where it was discovered.'},
+109:{name:'Meitnerium',fun:'Named after physicist Lise Meitner.'},
+110:{name:'Darmstadtium',fun:'Named after Darmstadt, Germany, where it was made.'},
+111:{name:'Roentgenium',fun:'Named after Wilhelm Röntgen, discoverer of X-rays.'},
+112:{name:'Copernicium',fun:'Named after astronomer Nicolaus Copernicus.'},
+113:{name:'Nihonium',fun:'Named after Japan ("Nihon"), where it was discovered.'},
+114:{name:'Flerovium',fun:'Named after the Flerov Laboratory in Russia.'},
+115:{name:'Moscovium',fun:'Named after Moscow, Russia.'},
+116:{name:'Livermorium',fun:'Named after Lawrence Livermore National Laboratory in the USA.'},
+117:{name:'Tennessine',fun:'Named after the U.S. state of Tennessee.'},
+118:{name:'Oganesson',fun:'The heaviest element made so far, named after scientist Yuri Oganessian.'},
+};
+const EL_TE={
+1:{name:'హైడ్రోజన్',fun:'విశ్వంలో అత్యంత తేలికైనది మరియు అత్యధికంగా ఉండే మూలకం — సూర్యుడిలో సంలీనం ద్వారా శక్తిని ఇస్తుంది.'},
+2:{name:'హీలియం',fun:'గాలి కంటే తేలికగా ఉండి, పూర్తిగా చర్యారహితం కావడంతో బెలూన్లు, విమానాల్లో వాడతారు.'},
+3:{name:'లిథియం',fun:'ఫోన్లు, ల్యాప్‌టాప్‌లలోని రీఛార్జబుల్ బ్యాటరీలకు శక్తినిస్తుంది.'},
+4:{name:'బెరీలియం',fun:'తేలికైనది కానీ చాలా దృఢమైనది — విమానాల భాగాలు, X-రే పరికరాల్లో వాడతారు.'},
+5:{name:'బోరాన్',fun:'వేడిని తట్టుకునే పైరెక్స్ గాజు, ఫైబర్‌గ్లాస్‌లో వాడతారు.'},
+6:{name:'కార్బన్',fun:'తెలిసిన అన్ని జీవుల మూలాధారం — వజ్రాలు, పెన్సిల్ గ్రాఫైట్‌ను కూడా ఇదే తయారు చేస్తుంది!'},
+7:{name:'నైట్రోజన్',fun:'మీరు ఇప్పుడు పీల్చే గాలిలో 78% దీనితోనే ఉంటుంది.'},
+8:{name:'ఆక్సిజన్',fun:'బతికి ఉండటానికి ప్రతి కొన్ని సెకన్లకూ మీకు అవసరమైన మూలకం.'},
+9:{name:'ఫ్లోరిన్',fun:'దంతాలను క్షయం నుండి కాపాడేందుకు టూత్‌పేస్టులో కలుపుతారు.'},
+10:{name:'నియాన్',fun:'నియాన్ సైన్‌బోర్డుల గాజు గొట్టాల్లో ప్రకాశవంతమైన ఎరుపు-నారింజ రంగులో మెరుస్తుంది.'},
+11:{name:'సోడియం',fun:'క్లోరిన్‌తో కలిసి సాధారణ వంట ఉప్పును ఏర్పరుస్తుంది.'},
+12:{name:'మెగ్నీషియం',fun:'మెరుపు తెల్లని కాంతితో మండుతుంది — బాణసంచా, ఫ్లేర్లలో వాడతారు.'},
+13:{name:'అల్యూమినియం',fun:'తేలికైన, తుప్పు పట్టని లోహం — శీతల పానీయాల డబ్బాలు, విమానాల్లో వాడతారు.'},
+14:{name:'సిలికాన్',fun:'ప్రతి కంప్యూటర్ చిప్‌కు గుండెకాయ — బీచుల్లోని ఇసుకలో ఎక్కువ భాగం కూడా ఇదే.'},
+15:{name:'భాస్వరం',fun:'మీ DNA, ఎముకల్లో అత్యవసరం; కొన్ని రూపాలు చీకటిలో మసకగా మెరుస్తాయి.'},
+16:{name:'గంధకం',fun:'కుళ్ళిన గుడ్ల వాసన వేస్తుంది, అగ్నిపర్వతాలకు ఆ ప్రత్యేక వాసననిస్తుంది.'},
+17:{name:'క్లోరిన్',fun:'స్విమ్మింగ్ పూల్స్, తాగునీటిని క్రిమిరహితం చేయడానికి వాడతారు.'},
+18:{name:'ఆర్గాన్',fun:'లైట్ బల్బుల్లో మండుతున్న ఫిలమెంట్ కాలిపోకుండా నింపుతారు.'},
+19:{name:'పొటాషియం',fun:'మీ కండరాలు, నరాలకు అత్యవసరం — అరటిపండ్లు దీనికి ప్రసిద్ధ మూలం.'},
+20:{name:'కాల్షియం',fun:'బలమైన ఎముకలు, దంతాలను నిర్మిస్తుంది.'},
+21:{name:'స్కాండియం',fun:'విమానయాన మిశ్రమలోహాల్లో, కొన్ని బేస్‌బాల్ బ్యాట్లలో వాడతారు.'},
+22:{name:'టైటానియం',fun:'ఉక్కులా దృఢమైనది కానీ చాలా తేలికైనది — అంతరిక్ష నౌకలు, హిప్ ఇంప్లాంట్లలో వాడతారు.'},
+23:{name:'వెనేడియం',fun:'పనిముట్లు, కార్ల భాగాల్లో వాడే ఉక్కును బలపరుస్తుంది.'},
+24:{name:'క్రోమియం',fun:'స్టెయిన్‌లెస్ స్టీల్‌కు మెరుపు, తుప్పు నిరోధక తలాన్ని ఇస్తుంది.'},
+25:{name:'మాంగనీస్',fun:'బలమైన ఉక్కు తయారీకి, మీ శరీర జీవక్రియకు అవసరం.'},
+26:{name:'ఇనుము',fun:'ఉక్కులో ప్రధాన పదార్థం — భూమి కేంద్రంలో కూడా ఇదే ఉంది!'},
+27:{name:'కోబాల్ట్',fun:'గాజు, సిరామిక్‌లకు గాఢమైన నీలం రంగునిస్తుంది; రీఛార్జబుల్ బ్యాటరీల్లో వాడతారు.'},
+28:{name:'నికెల్',fun:'నాణేల్లో, స్టెయిన్‌లెస్ స్టీల్ తుప్పు పట్టకుండా చేయడానికి వాడతారు.'},
+29:{name:'రాగి',fun:'విద్యుత్తును బాగా నడిపిస్తుంది — దాదాపు ప్రతి వైరు, కేబుల్‌లో ఉంటుంది.'},
+30:{name:'జింక్',fun:'ఉక్కుకు తుప్పు పట్టకుండా పూత వేస్తుంది, మీ రోగనిరోధక వ్యవస్థకు సహాయపడుతుంది.'},
+31:{name:'గాలియం',fun:'మీ చేతిలోనే కరుగుతుంది — దీని ద్రవీభవన స్థానం శరీర ఉష్ణోగ్రతకు దగ్గరగా ఉంటుంది!'},
+32:{name:'జెర్మేనియం',fun:'ఫైబర్-ఆప్టిక్ కేబుళ్లలో, తొలి ట్రాన్సిస్టర్లలో వాడారు.'},
+33:{name:'ఆర్సెనిక్',fun:'విషంగా ప్రసిద్ధి చెందింది, కానీ చిన్న మోతాదుల్లో సెమీకండక్టర్లలో వాడతారు.'},
+34:{name:'సెలీనియం',fun:'కాంతికి స్పందించడం వల్ల సోలార్ సెల్స్, ఫోటోకాపియర్లలో వాడతారు.'},
+35:{name:'బ్రోమిన్',fun:'గది ఉష్ణోగ్రత వద్ద ద్రవంగా ఉండే రెండే మూలకాల్లో ఇది ఒకటి.'},
+36:{name:'క్రిప్టాన్',fun:'కొన్ని ప్రకాశవంతమైన కెమెరా ఫ్లాష్‌లు, శక్తి-సమర్థ లైట్లలో వాడతారు.'},
+37:{name:'రుబిడియం',fun:'గాలిలో అంటుకుని మంటలు రేగేంత చర్యాశీలమైనది.'},
+38:{name:'స్ట్రాన్షియం',fun:'బాణసంచాలో ప్రకాశవంతమైన ఎరుపు రంగును ఇస్తుంది.'},
+39:{name:'యట్రియం',fun:'LED లైట్లు, కెమెరా లెన్సుల్లో వాడతారు.'},
+40:{name:'జిర్కోనియం',fun:'అత్యంత వేడి-నిరోధకత కలది — అణు రియాక్టర్ ఇంధనానికి పూత వేయడానికి వాడతారు.'},
+41:{name:'నయోబియం',fun:'MRI యంత్రాల్లో వంటి సూపర్ కండక్టింగ్ అయస్కాంతాల్లో వాడతారు.'},
+42:{name:'మాలిబ్డినం',fun:'విమానాల భాగాలు, పనిముట్లలో వాడే ఉక్కును బలపరుస్తుంది.'},
+43:{name:'టెక్నీషియం',fun:'కృత్రిమంగా తయారు చేసిన మొదటి మూలకం — భూమిపై సహజంగా లభించదు.'},
+44:{name:'రుథేనియం',fun:'ఆభరణాల కోసం ప్లాటినం, పల్లాడియంను గట్టిపరచడానికి వాడతారు.'},
+45:{name:'రోడియం',fun:'అరుదైన, అత్యంత పరావర్తన లోహాల్లో ఒకటి — కార్ల ఉత్ప్రేరక కన్వర్టర్లలో వాడతారు.'},
+46:{name:'పల్లాడియం',fun:'కార్ కాలుష్యాన్ని తగ్గించే ఉత్ప్రేరక కన్వర్టర్లలో వాడతారు.'},
+47:{name:'వెండి',fun:'ఏ లోహం కంటే మెరుగ్గా విద్యుత్తును నడిపిస్తుంది — ఆభరణాల్లో కూడా వాడతారు.'},
+48:{name:'కాడ్మియం',fun:'రీఛార్జబుల్ నికెల్-కాడ్మియం బ్యాటరీల్లో వాడతారు.'},
+49:{name:'ఇండియం',fun:'టచ్‌స్క్రీన్‌లకు పారదర్శకంగా ఉంటూనే విద్యుత్తును నడిపేలా పూత వేస్తారు.'},
+50:{name:'తగరం',fun:'ఆహారాన్ని తాజాగా ఉంచేందుకు ఉక్కు డబ్బాలకు పూత వేస్తారు — "టిన్ డబ్బాలు" నిజానికి ఉక్కువే!'},
+51:{name:'యాంటిమొనీ',fun:'బ్యాటరీలు, మంటలను తట్టుకునే పదార్థాల తయారీలో వాడతారు.'},
+52:{name:'టెల్లూరియం',fun:'సోలార్ ప్యానెళ్లలో, మిశ్రమలోహాలను బలపరచడానికి వాడతారు.'},
+53:{name:'అయోడిన్',fun:'మీ థైరాయిడ్ గ్రంథికి అత్యవసరం — చాలా దేశాల్లో వంట ఉప్పులో కలుపుతారు.'},
+54:{name:'జినాన్',fun:'కొన్ని కార్ హెడ్‌లైట్లు, అంతరిక్ష నౌకల అయాన్ ఇంజన్లలో వాడతారు.'},
+55:{name:'సీసియం',fun:'ఒక సెకను ఎంత సమయమో ఖచ్చితంగా నిర్వచించే అణు గడియారాల్లో వాడతారు.'},
+56:{name:'బేరియం',fun:'కొన్ని కడుపు X-రేలకు ముందు వైద్యులు బేరియం మిశ్రమాన్ని తాగిస్తారు.'},
+57:{name:'లాంథనం',fun:'కెమెరా లెన్సులు, హైబ్రిడ్ కార్ బ్యాటరీల్లో వాడతారు.'},
+58:{name:'సీరియం',fun:'లైటర్ల ఫ్లింట్లలో వాడతారు — గీసినప్పుడు నిప్పురవ్వలు వస్తాయి.'},
+59:{name:'ప్రేసియోడైమియం',fun:'గాజు, సిరామిక్‌లకు ప్రకాశవంతమైన పసుపు-ఆకుపచ్చ రంగునిస్తుంది.'},
+60:{name:'నియోడైమియం',fun:'తెలిసిన అత్యంత శక్తివంతమైన శాశ్వత అయస్కాంతాలను తయారు చేస్తుంది — హెడ్‌ఫోన్లు, మోటార్లలో వాడతారు.'},
+61:{name:'ప్రోమేథియం',fun:'రేడియోధార్మికత కలది, మసకగా మెరుస్తుంది — పాత గడియార డయల్స్‌లో వాడేవారు.'},
+62:{name:'సమారియం',fun:'గిటార్ పికప్‌లు, హెడ్‌ఫోన్ల కోసం శక్తివంతమైన అయస్కాంతాల్లో వాడతారు.'},
+63:{name:'యూరోపియం',fun:'TV, ఫోన్ స్క్రీన్లలో ఎరుపు రంగు వెలుగును ఇస్తుంది.'},
+64:{name:'గాడోలినియం',fun:'MRI స్కాన్‌లను స్పష్టంగా చూపేందుకు కాంట్రాస్ట్ డైగా వాడతారు.'},
+65:{name:'టెర్బియం',fun:'ఆకుపచ్చ మెరుపు కోసం శక్తి-సమర్థ బల్బుల్లో వాడతారు.'},
+66:{name:'డిస్ప్రోసియం',fun:'అధిక ఉష్ణోగ్రతల వద్ద నియోడైమియం అయస్కాంతాలు పనిచేయడానికి సహాయపడుతుంది.'},
+67:{name:'హోల్మియం',fun:'సహజ మూలకాల్లోకెల్లా అత్యంత బలమైన అయస్కాంత శక్తి కలది.'},
+68:{name:'ఎర్బియం',fun:'ఫైబర్-ఆప్టిక్ ఇంటర్నెట్ కేబుళ్లలో సిగ్నళ్లను బలపరచడానికి వాడతారు.'},
+69:{name:'థూలియం',fun:'అరుదైన లాంథనైడ్లలో ఒకటి — పోర్టబుల్ X-రే యంత్రాల్లో వాడతారు.'},
+70:{name:'యటర్బియం',fun:'ప్రపంచంలోని అత్యంత కచ్చితమైన అణు గడియారాల్లో కొన్నింటిలో వాడతారు.'},
+71:{name:'లుటీషియం',fun:'ఆసుపత్రుల్లోని PET స్కాన్ డిటెక్టర్లలో వాడతారు.'},
+72:{name:'హాఫ్నియం',fun:'అణు రియాక్టర్లను నియంత్రించే కంట్రోల్ రాడ్లలో వాడతారు.'},
+73:{name:'టాంటాలమ్',fun:'స్మార్ట్‌ఫోన్లు, ల్యాప్‌టాప్‌ల లోపలి చిన్న కెపాసిటర్లలో వాడతారు.'},
+74:{name:'టంగ్స్టన్',fun:'ఏ లోహం కంటే అత్యధిక ద్రవీభవన స్థానం కలది — బల్బు ఫిలమెంట్లలో వాడతారు.'},
+75:{name:'రీనియం',fun:'భూమిపై అరుదైన మూలకాల్లో ఒకటి — జెట్ ఇంజన్ భాగాల్లో వాడతారు.'},
+76:{name:'ఆస్మియం',fun:'సహజంగా లభించే మూలకాల్లో అత్యంత సాంద్రత కలది.'},
+77:{name:'ఇరిడియం',fun:'చాలా గట్టిదనం కలది — ఫౌంటెన్ పెన్ మొనలు, స్పార్క్ ప్లగ్‌లలో వాడతారు.'},
+78:{name:'ప్లాటినం',fun:'ఆభరణాలు, కార్ ఉత్ప్రేరక కన్వర్టర్లలో వాడే విలువైన లోహం.'},
+79:{name:'బంగారం',fun:'వేల సంవత్సరాలుగా విలువైనదిగా భావిస్తారు — తుప్పు పట్టదు, మాసిపోదు.'},
+80:{name:'పాదరసం',fun:'గది ఉష్ణోగ్రత వద్ద ద్రవంగా ఉండే ఏకైక లోహం.'},
+81:{name:'థాలియం',fun:'ఒకప్పుడు ఎలుకల విషంగా వాడేవారు — తీవ్రమైన విషపూరితం.'},
+82:{name:'సీసం',fun:'చాలా సాంద్రత కలది, ఒకప్పుడు పైపులు, రంగుల్లో వాడేవారు — ఇప్పుడు విషపూరితమని తెలిసింది.'},
+83:{name:'బిస్మత్',fun:'రంగురంగుల ఇంద్రధనుస్సు స్ఫటికాలను ఏర్పరుస్తుంది, కొన్ని కడుపు మందుల్లో వాడతారు.'},
+84:{name:'పొలోనియం',fun:'తీవ్ర రేడియోధార్మికత కలది; మేరీ క్యూరీ కనుగొన్నారు.'},
+85:{name:'ఆస్టాటిన్',fun:'భూమిపై ఏ సమయంలోనైనా కొన్ని గ్రాముల కంటే ఎక్కువ లేనంత అరుదైనది.'},
+86:{name:'రేడాన్',fun:'నేల నుండి బేస్‌మెంట్లలోకి చేరగల రేడియోధార్మిక వాయువు.'},
+87:{name:'ఫ్రాన్షియం',fun:'అత్యంత అరుదైనది, రేడియోధార్మికమైనది — నిమిషాల్లోనే క్షయమవుతుంది.'},
+88:{name:'రేడియం',fun:'దీని రేడియోధార్మికత తెలియకముందు చీకటిలో మెరిసే రంగుల్లో వాడేవారు.'},
+89:{name:'ఆక్టీనియం',fun:'రేడియోధార్మికత వల్ల చీకటిలో మసక నీలం రంగులో మెరుస్తుంది.'},
+90:{name:'థోరియం',fun:'భవిష్యత్ అణు రియాక్టర్లకు సురక్షితమైన ఇంధనంగా పరిశోధిస్తున్నారు.'},
+91:{name:'ప్రొటాక్టీనియం',fun:'సహజంగా లభించే అత్యంత అరుదైన, ఖరీదైన మూలకాల్లో ఒకటి.'},
+92:{name:'యురేనియం',fun:'అణు విచ్ఛిత్తి ద్వారా అణు విద్యుత్ కేంద్రాలకు ఇంధనం అందిస్తుంది.'},
+93:{name:'నెప్ట్యూనియం',fun:'మనుషులు తయారు చేసిన మొదటి ట్రాన్స్‌యురేనియం మూలకం, నెప్ట్యూన్ గ్రహం పేరు మీద పెట్టారు.'},
+94:{name:'ప్లుటోనియం',fun:'మార్స్ రోవర్లు సహా కొన్ని అంతరిక్ష నౌకల్లో ఇంధనంగా వాడతారు.'},
+95:{name:'అమెరిసియం',fun:'ఇంటి పొగ డిటెక్టర్లలో స్వల్ప పరిమాణంలో ఉంటుంది.'},
+96:{name:'క్యూరియం',fun:'రేడియోధార్మికతపై పరిశోధనలకు గుర్తుగా మేరీ, పియరీ క్యూరీల పేరు పెట్టారు.'},
+97:{name:'బెర్కీలియం',fun:'ఇది మొదట తయారైన కాలిఫోర్నియాలోని బర్కిలీ పేరు మీద పెట్టారు.'},
+98:{name:'కాలిఫోర్నియం',fun:'కొన్ని అణు రియాక్టర్లను ప్రారంభించడానికి సహాయపడుతుంది.'},
+99:{name:'ఐన్‌స్టీనియం',fun:'ఆల్బర్ట్ ఐన్‌స్టీన్ పేరు మీద పెట్టారు; హైడ్రోజన్ బాంబు పరీక్ష శేషాల్లో కనుగొన్నారు.'},
+100:{name:'ఫెర్మియం',fun:'భౌతిక శాస్త్రవేత్త ఎన్రికో ఫెర్మీ పేరు మీద పెట్టారు.'},
+101:{name:'మెండలీవియం',fun:'ఆవర్తన పట్టిక రూపకర్త దిమిత్రి మెండలీవ్ పేరు మీద పెట్టారు.'},
+102:{name:'నోబెలియం',fun:'నోబెల్ బహుమతి స్థాపకుడు ఆల్ఫ్రెడ్ నోబెల్ పేరు మీద పెట్టారు.'},
+103:{name:'లారెన్షియం',fun:'సైక్లోట్రాన్ ఆవిష్కర్త ఎర్నెస్ట్ లారెన్స్ పేరు మీద పెట్టారు.'},
+104:{name:'రూథర్‌ఫోర్డియం',fun:'ల్యాబ్‌లలో కొద్దికాలం మాత్రమే ఉండే అతిభారీ మూలకం.'},
+105:{name:'డబ్నియం',fun:'ఇది కనుగొనబడిన రష్యాలోని డుబ్నా పేరు మీద పెట్టారు.'},
+106:{name:'సీబోర్జియం',fun:'శాస్త్రవేత్త గ్లెన్ సీబోర్గ్ జీవించి ఉండగానే అతని పేరు పెట్టారు!'},
+107:{name:'బోరియం',fun:'భౌతిక శాస్త్రవేత్త నీల్స్ బోర్ పేరు మీద పెట్టారు.'},
+108:{name:'హాసియం',fun:'ఇది కనుగొనబడిన జర్మన్ రాష్ట్రం హెస్సె పేరు మీద పెట్టారు.'},
+109:{name:'మైట్నేరియం',fun:'భౌతిక శాస్త్రవేత్త లీసే మైట్నర్ పేరు మీద పెట్టారు.'},
+110:{name:'డార్మ్‌స్టాటియం',fun:'ఇది తయారైన జర్మనీలోని డార్మ్‌స్టాట్ పేరు మీద పెట్టారు.'},
+111:{name:'రోంట్జేనియం',fun:'X-రేల ఆవిష్కర్త విల్హెల్మ్ రోంట్‌జెన్ పేరు మీద పెట్టారు.'},
+112:{name:'కోపర్నీషియం',fun:'ఖగోళ శాస్త్రవేత్త నికోలస్ కోపర్నికస్ పేరు మీద పెట్టారు.'},
+113:{name:'నిహోనియం',fun:'ఇది కనుగొనబడిన జపాన్ ("నిహోన్") పేరు మీద పెట్టారు.'},
+114:{name:'ఫ్లెరోవియం',fun:'రష్యాలోని ఫ్లెరోవ్ లాబొరేటరీ పేరు మీద పెట్టారు.'},
+115:{name:'మాస్కోవియం',fun:'రష్యాలోని మాస్కో నగరం పేరు మీద పెట్టారు.'},
+116:{name:'లివర్మోరియం',fun:'అమెరికాలోని లారెన్స్ లివర్మోర్ నేషనల్ లాబొరేటరీ పేరు మీద పెట్టారు.'},
+117:{name:'టెన్నెస్సైన్',fun:'అమెరికాలోని టెన్నెస్సీ రాష్ట్రం పేరు మీద పెట్టారు.'},
+118:{name:'ఒగానెసాన్',fun:'ఇప్పటివరకు తయారైన అత్యంత భారీ మూలకం, శాస్త్రవేత్త యూరి ఒగానేసియన్ పేరు మీద పెట్టారు.'},
+};
+
+// ---------- shared translation layer ----------
+const T={
+  en:{
+    langToggle:'తెలుగు',
+    backLink:'&larr; Back to lahari.org',
+    pageTitle:'🧬 The Periodic Table',
+    pageSubtitle:'All 118 known elements — the building blocks of everything. Tap any tile to learn more!',
+    hoverHint:'🖱️ Hover a tile to zoom in · tap or click any tile for full details and an atom diagram',
+    legendStateLabel:'Name color = state at room temp:',
+    catLabels:{
+      'alkali metal':'Alkali metal','alkaline earth metal':'Alkaline earth metal','transition metal':'Transition metal',
+      'post-transition metal':'Post-transition metal','metalloid':'Metalloid','nonmetal':'Reactive nonmetal',
+      'halogen':'Reactive nonmetal','noble gas':'Noble gas','lanthanide':'Lanthanide','actinide':'Actinide','unknown':'Unknown properties'
+    },
+    stateLabels:{gas:'gas',liquid:'liquid',solid:'solid',unknown:'unknown'},
+    fact:'🤯 <b>Mind-blowing part:</b> Every single thing around you — your phone, your food, the air, even you — is built from combinations of these same ~118 elements. Only about 90 occur naturally; the rest were made by scientists in labs!',
+    modal:{atomicNumber:'Atomic Number',atomicMass:'Atomic Mass',category:'Category',stateAtRoomTemp:'State at room temp'},
+    canvas:{electronShells:'electron shells: ',pLabel:'p',nLabel:'n'},
+    elements:EL_EN,
+  },
+  te:{
+    langToggle:'English',
+    backLink:'&larr; lahari.org కి తిరిగి',
+    pageTitle:'🧬 ఆవర్తన పట్టిక',
+    pageSubtitle:'తెలిసిన మొత్తం 118 మూలకాలు — ప్రతిదానికి మూలాధారాలు. మరింత తెలుసుకోవడానికి ఏదైనా టైల్‌ను నొక్కండి!',
+    hoverHint:'🖱️ జూమ్ చేయడానికి టైల్ మీద మౌస్ ఉంచండి · పూర్తి వివరాలు, అణు చిత్రం కోసం ఏదైనా టైల్‌ను నొక్కండి',
+    legendStateLabel:'పేరు రంగు = గది ఉష్ణోగ్రత వద్ద స్థితి:',
+    catLabels:{
+      'alkali metal':'క్షార లోహం','alkaline earth metal':'క్షారమృత్తిక లోహం','transition metal':'పరివర్తన లోహం',
+      'post-transition metal':'పరివర్తనానంతర లోహం','metalloid':'అర్ధలోహం','nonmetal':'చర్యాశీల అలోహం',
+      'halogen':'చర్యాశీల అలోహం','noble gas':'ఉత్కృష్ట వాయువు','lanthanide':'లాంథనైడ్','actinide':'ఆక్టినైడ్','unknown':'తెలియని గుణాలు'
+    },
+    stateLabels:{gas:'వాయువు',liquid:'ద్రవం',solid:'ఘనం',unknown:'తెలియదు'},
+    fact:'🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> మీ చుట్టూ ఉన్న ప్రతి వస్తువు — మీ ఫోన్, మీ ఆహారం, గాలి, మీరు కూడా — ఈ దాదాపు 118 మూలకాల కలయికలతోనే తయారయ్యాయి. వీటిలో దాదాపు 90 మాత్రమే సహజంగా లభిస్తాయి; మిగిలినవి శాస్త్రవేత్తలు ల్యాబ్‌లలో తయారు చేశారు!',
+    modal:{atomicNumber:'పరమాణు సంఖ్య',atomicMass:'పరమాణు ద్రవ్యరాశి',category:'వర్గం',stateAtRoomTemp:'గది ఉష్ణోగ్రత వద్ద స్థితి'},
+    canvas:{electronShells:'ఎలక్ట్రాన్ కర్పరాలు: ',pLabel:'p',nLabel:'n'},
+    elements:EL_TE,
+  }
+};
+let LANG='en';
+function tr(){ return T[LANG]; }
+
+function applyStaticText(){
+  const t=tr();
+  document.documentElement.lang=LANG;
+  document.getElementById('langToggle').textContent=t.langToggle;
+  document.getElementById('backLink').innerHTML=t.backLink;
+  document.getElementById('pageTitle').textContent=t.pageTitle;
+  document.getElementById('pageSubtitle').textContent=t.pageSubtitle;
+  document.getElementById('hoverHint').textContent=t.hoverHint;
+  document.getElementById('stateLegendLabel').textContent=t.legendStateLabel;
+  document.getElementById('factBox').innerHTML=t.fact;
+  document.getElementById('mNumLabel').textContent=t.modal.atomicNumber;
+  document.getElementById('mMassLabel').textContent=t.modal.atomicMass;
+  document.getElementById('mCatLabel').textContent=t.modal.category;
+  document.getElementById('mStateLabel').textContent=t.modal.stateAtRoomTemp;
+}
+
+document.getElementById('langToggle').addEventListener('click',()=>{
+  LANG = LANG==='en' ? 'te' : 'en';
+  applyStaticText();
+  if(window.__ptRefresh) window.__ptRefresh();
+  if(window.__modalRefresh) window.__modalRefresh();
+});
+applyStaticText();
 
 const grid=document.getElementById('grid');
 // build 18x10 layout (7 periods + gap row + lanthanide/actinide rows)
 const layout=[];
 for(let i=0;i<18*7;i++) layout.push(null);
 P.forEach(el=>{
-  const [num,,,,,,period,group]=el;
+  const num=el[0], period=el[5], group=el[6];
   if(num>=57 && num<=71){ return; }
   if(num>=89 && num<=103){ return; }
   const idx=(period-1)*18+(group-1);
@@ -236,16 +541,24 @@ function renderRow(rowArr,container){
   rowArr.forEach(el=>{
     const div=document.createElement('div');
     if(!el){ div.className='cell spacer'; container.appendChild(div); return; }
-    const [num,sym,name,mass,cat,state]=el;
+    const num=el[0], sym=el[1], mass=el[2], cat=el[3];
     div.className='cell';
+    div.dataset.num=num;
     div.style.background=CATS[cat];
     div.innerHTML='<span class="num">'+num+'</span><span class="sym">'+sym+'</span>'+
-      '<span class="name" style="color:'+STATE_COLORS[state]+'">'+name+'</span>'+
+      '<span class="name" style="color:'+STATE_COLORS[el[4]]+'">'+tr().elements[num].name+'</span>'+
       '<span class="mass">'+mass+'</span>';
     div.addEventListener('click',()=>openModal(el));
     container.appendChild(div);
   });
 }
+const CATS={
+  'alkali metal':'#f2726c','alkaline earth metal':'#f7a94a','transition metal':'#a8d977',
+  'post-transition metal':'#b79bea','metalloid':'#f2df6e','nonmetal':'#d5e86a',
+  'halogen':'#d5e86a','noble gas':'#f4a6c6','lanthanide':'#4fc3a1','actinide':'#5b9bd5','unknown':'#bfbfbf'
+};
+const STATE_COLORS={gas:'#0d6efd',liquid:'#0aa2c0',solid:'#1a1a1a',unknown:'#6b6b6b'};
+
 for(let p=0;p<7;p++){
   renderRow(layout.slice(p*18,p*18+18),grid);
 }
@@ -258,22 +571,29 @@ const arow=[null,null]; act.forEach(e=>arow.push(e)); while(arow.length<18) arow
 renderRow(lrow,grid);
 renderRow(arow,grid);
 
-const catLegend=document.getElementById('catLegend');
-const seenLabels=new Set();
-Object.entries(CATS).forEach(([key,color])=>{
-  const label=CAT_LABELS[key];
-  if(seenLabels.has(label)) return;
-  seenLabels.add(label);
-  const span=document.createElement('span');
-  span.innerHTML='<i style="background:'+color+'"></i>'+label;
-  catLegend.appendChild(span);
-});
-const stateLegend=document.getElementById('stateLegend');
-Object.entries(STATE_COLORS).forEach(([state,color])=>{
-  const span=document.createElement('span');
-  span.innerHTML='<i class="state-dot" style="background:'+color+'"></i>'+state;
-  stateLegend.appendChild(span);
-});
+function renderLegends(){
+  const catLegend=document.getElementById('catLegend');
+  catLegend.innerHTML='';
+  const seenLabels=new Set();
+  Object.entries(CATS).forEach(([key,color])=>{
+    const label=tr().catLabels[key];
+    if(seenLabels.has(label)) return;
+    seenLabels.add(label);
+    const span=document.createElement('span');
+    span.innerHTML='<i style="background:'+color+'"></i>'+label;
+    catLegend.appendChild(span);
+  });
+  const stateLegend=document.getElementById('stateLegend');
+  // keep the label span, rebuild the color dots after it
+  Array.from(stateLegend.querySelectorAll('span.state-item')).forEach(n=>n.remove());
+  Object.entries(STATE_COLORS).forEach(([state,color])=>{
+    const span=document.createElement('span');
+    span.className='state-item';
+    span.innerHTML='<i class="state-dot" style="background:'+color+'"></i>'+tr().stateLabels[state];
+    stateLegend.appendChild(span);
+  });
+}
+renderLegends();
 
 function shellConfig(protons){
   const capacities=[2,8,8,18,18,32,32];
@@ -308,27 +628,44 @@ function drawAtomVisual(protons,neutrons,color){
   ctx.fillStyle=color; ctx.beginPath(); ctx.arc(cx,cy,nucR,0,Math.PI*2); ctx.fill();
   ctx.strokeStyle='#0b1020'; ctx.lineWidth=2; ctx.stroke();
   ctx.fillStyle='#0b1020'; ctx.font='800 11px Segoe UI'; ctx.textAlign='center'; ctx.textBaseline='middle';
-  ctx.fillText(protons+'p '+neutrons+'n', cx, cy+1);
+  ctx.fillText(protons+tr().canvas.pLabel+' '+neutrons+tr().canvas.nLabel, cx, cy+1);
 }
 
 const modalBack=document.getElementById('modalBack');
+let lastEl=null;
 function openModal(el){
-  const [num,sym,name,mass,cat,state,,,fun]=el.length===9?el:[...el];
+  lastEl=el;
+  const num=el[0], sym=el[1], mass=el[2], cat=el[3], state=el[4];
   const neutrons=Math.max(0,Math.round(mass)-num);
+  const t=tr();
   document.getElementById('mSymbol').textContent=sym;
   document.getElementById('mSymbol').style.color=CATS[cat];
-  document.getElementById('mName').textContent=name;
+  document.getElementById('mName').textContent=t.elements[num].name;
   document.getElementById('mNum').textContent=num;
   document.getElementById('mMass').textContent=mass;
-  document.getElementById('mCat').textContent=CAT_LABELS[cat];
-  document.getElementById('mState').textContent=state;
-  document.getElementById('mFun').textContent='💡 '+el[8];
-  document.getElementById('mConfig').textContent='electron shells: '+shellConfig(num).join(', ');
+  document.getElementById('mCat').textContent=t.catLabels[cat];
+  document.getElementById('mState').textContent=t.stateLabels[state];
+  document.getElementById('mFun').textContent='💡 '+t.elements[num].fun;
+  document.getElementById('mConfig').textContent=t.canvas.electronShells+shellConfig(num).join(', ');
   drawAtomVisual(num,neutrons,CATS[cat]);
   modalBack.classList.add('on');
 }
 document.getElementById('closeModal').addEventListener('click',()=>modalBack.classList.remove('on'));
 modalBack.addEventListener('click',(e)=>{ if(e.target===modalBack) modalBack.classList.remove('on'); });
+
+window.__ptRefresh=function(){
+  document.querySelectorAll('.cell[data-num]').forEach(cell=>{
+    const num=cell.dataset.num;
+    const nameSpan=cell.querySelector('.name');
+    if(nameSpan) nameSpan.textContent=tr().elements[num].name;
+  });
+  renderLegends();
+};
+window.__modalRefresh=function(){
+  if(!modalBack.classList.contains('on') || !lastEl) return;
+  openModal(lastEl);
+};
 </script>
 </body>
 </html>
+</content>

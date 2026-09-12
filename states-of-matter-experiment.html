@@ -9,7 +9,11 @@
   *{box-sizing:border-box;}
   body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
   .wrap{max-width:960px;margin:0 auto;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
   a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
   header{text-align:center;margin-bottom:20px;}
   h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
   header p{color:var(--dim);font-size:16px;margin:0;}
@@ -35,10 +39,13 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="category-atoms.html">&larr; Back to Atoms & Matter</a>
+  <div class="topbar">
+    <a class="back" href="category-atoms.html" id="backLink">&larr; Back to Atoms & Matter</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
   <header>
-    <h1>🧊 States of Matter</h1>
-    <p>Ice, water, and steam are the exact same substance — only how fast its molecules move is different.</p>
+    <h1 id="pageTitle">🧊 States of Matter</h1>
+    <p id="pageSubtitle">Ice, water, and steam are the exact same substance — only how fast its molecules move is different.</p>
   </header>
 
   <div class="player">
@@ -57,23 +64,95 @@
   </div>
 
   <div class="steps">
-    <div class="step-card"><div class="num">1</div><h3>🧊 Solid: locked in place</h3>
-      <p>In a solid, molecules are packed tightly and only vibrate in place — they don't have enough energy to move around.</p></div>
-    <div class="step-card"><div class="num">2</div><h3>💧 Liquid: free to slide</h3>
-      <p>Add heat and molecules gain enough energy to slide past each other, while still staying close together — that's a liquid.</p></div>
-    <div class="step-card"><div class="num">3</div><h3>💨 Gas: flying free</h3>
-      <p>Add even more heat and molecules break completely free, flying around fast and spreading out to fill any space.</p></div>
-    <div class="step-card"><div class="num">4</div><h3>🌡️ It's all about energy</h3>
-      <p>Nothing about the molecules themselves changes — only how much energy (heat) they have, which controls how much they move.</p></div>
+    <div class="step-card"><div class="num">1</div><h3 id="s1t">🧊 Solid: locked in place</h3>
+      <p id="s1d">In a solid, molecules are packed tightly and only vibrate in place — they don't have enough energy to move around.</p></div>
+    <div class="step-card"><div class="num">2</div><h3 id="s2t">💧 Liquid: free to slide</h3>
+      <p id="s2d">Add heat and molecules gain enough energy to slide past each other, while still staying close together — that's a liquid.</p></div>
+    <div class="step-card"><div class="num">3</div><h3 id="s3t">💨 Gas: flying free</h3>
+      <p id="s3d">Add even more heat and molecules break completely free, flying around fast and spreading out to fill any space.</p></div>
+    <div class="step-card"><div class="num">4</div><h3 id="s4t">🌡️ It's all about energy</h3>
+      <p id="s4d">Nothing about the molecules themselves changes — only how much energy (heat) they have, which controls how much they move.</p></div>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> There's a fourth common state called <b>plasma</b> — add even more energy than a gas has, and
     electrons get ripped clean off their atoms. Stars, lightning, and neon signs are all glowing plasma!
   </div>
 </div>
 
 <script>
+// ---------- shared translation layer ----------
+const T = {
+  en: {
+    langToggle: 'తెలుగు',
+    backLink: '&larr; Back to Atoms &amp; Matter',
+    pageTitle: '🧊 States of Matter',
+    pageSubtitle: 'Ice, water, and steam are the exact same substance — only how fast its molecules move is different.',
+    solidBtn: '🧊 Solid', liquidBtn: '💧 Liquid', gasBtn: '💨 Gas',
+    steps: [
+      ['🧊 Solid: locked in place','In a solid, molecules are packed tightly and only vibrate in place — they don\'t have enough energy to move around.'],
+      ['💧 Liquid: free to slide','Add heat and molecules gain enough energy to slide past each other, while still staying close together — that\'s a liquid.'],
+      ['💨 Gas: flying free','Add even more heat and molecules break completely free, flying around fast and spreading out to fill any space.'],
+      ['🌡️ It\'s all about energy','Nothing about the molecules themselves changes — only how much energy (heat) they have, which controls how much they move.'],
+    ],
+    fact: '🤯 <b>Mind-blowing part:</b> There\'s a fourth common state called <b>plasma</b> — add even more energy than a gas has, and electrons get ripped clean off their atoms. Stars, lightning, and neon signs are all glowing plasma!',
+    captions: {
+      solid: '<b>Solid:</b> molecules vibrate in place, locked in a tight, orderly pattern — that\'s why ice holds its shape.',
+      liquid: '<b>Liquid:</b> molecules have enough energy to slide past each other, but still stay close together — that\'s why water flows but doesn\'t fly apart.',
+      gas: '<b>Gas:</b> molecules have broken completely free and zoom around fast, spreading out to fill whatever space they\'re in.',
+    },
+    temps: { solid: 'freezing cold', liquid: 'room temperature', gas: 'boiling hot' },
+    tempLabelPrefix: 'Temperature: ',
+  },
+  te: {
+    langToggle: 'English',
+    backLink: '&larr; అణువులు &amp; పదార్థం కి తిరిగి',
+    pageTitle: '🧊 పదార్థ స్థితులు',
+    pageSubtitle: 'మంచు, నీరు, మరియు ఆవిరి ఒకే పదార్థం — దాని అణువులు ఎంత వేగంగా కదులుతాయి అనేదే తేడా.',
+    solidBtn: '🧊 ఘనము', liquidBtn: '💧 ద్రవము', gasBtn: '💨 వాయువు',
+    steps: [
+      ['🧊 ఘనము: స్థిరంగా ఉంటుంది','ఘన పదార్థంలో, అణువులు గట్టిగా అమరి ఉండి కేవలం తమ స్థానంలోనే కంపిస్తుంటాయి — అవి కదలడానికి తగినంత శక్తిని కలిగి ఉండవు.'],
+      ['💧 ద్రవము: జారిపోవడానికి స్వేచ్ఛ','వేడి చేస్తే అణువులు ఒకదానికొకటి జారిపోయేంత శక్తిని పొందుతాయి, కానీ ఇంకా దగ్గరగానే ఉంటాయి — అదే ద్రవము.'],
+      ['💨 వాయువు: స్వేచ్ఛగా ఎగురుతుంది','ఇంకా ఎక్కువ వేడి చేస్తే అణువులు పూర్తిగా విడిపోయి, వేగంగా ఎగురుతూ దొరికిన స్థలమంతా వ్యాపిస్తాయి.'],
+      ['🌡️ అంతా శక్తి గురించే','అణువుల గురించి ఏదీ మారదు — అవి కలిగి ఉన్న శక్తి (వేడి) మాత్రమే మారుతుంది, అదే అవి ఎంత కదులుతాయో నియంత్రిస్తుంది.'],
+    ],
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> నాలుగవ సాధారణ స్థితి కూడా ఉంది, దాన్ని <b>ప్లాస్మా</b> అంటారు — వాయువు కంటే ఇంకా ఎక్కువ శక్తిని ఇస్తే, ఎలక్ట్రాన్లు వాటి అణువుల నుండి పూర్తిగా విడిపోతాయి. నక్షత్రాలు, మెరుపులు, మరియు నియాన్ సైన్లు అన్నీ మెరిసే ప్లాస్మానే!',
+    captions: {
+      solid: '<b>ఘనము:</b> అణువులు తమ స్థానంలోనే కంపిస్తూ, గట్టి, క్రమబద్ధమైన అమరికలో ఉంటాయి — అందుకే మంచు తన ఆకారాన్ని నిలుపుకుంటుంది.',
+      liquid: '<b>ద్రవము:</b> అణువులు ఒకదానికొకటి జారిపోయేంత శక్తిని కలిగి ఉంటాయి, కానీ ఇంకా దగ్గరగానే ఉంటాయి — అందుకే నీరు ప్రవహిస్తుంది కానీ చెదిరిపోదు.',
+      gas: '<b>వాయువు:</b> అణువులు పూర్తిగా విడిపోయి వేగంగా తిరుగుతూ, అవి ఉన్న స్థలమంతా వ్యాపిస్తాయి.',
+    },
+    temps: { solid: 'మంచు గడ్డకట్టే చలి', liquid: 'గది ఉష్ణోగ్రత', gas: 'మరుగుతున్న వేడి' },
+    tempLabelPrefix: 'ఉష్ణోగ్రత: ',
+  }
+};
+let LANG = 'en';
+function tr(){ return T[LANG]; }
+
+function applyStaticText(){
+  const t = tr();
+  document.documentElement.lang = LANG;
+  document.getElementById('langToggle').textContent = t.langToggle;
+  document.getElementById('backLink').innerHTML = t.backLink;
+  document.getElementById('pageTitle').textContent = t.pageTitle;
+  document.getElementById('pageSubtitle').textContent = t.pageSubtitle;
+  document.getElementById('solidBtn').textContent = t.solidBtn;
+  document.getElementById('liquidBtn').textContent = t.liquidBtn;
+  document.getElementById('gasBtn').textContent = t.gasBtn;
+  for(let i=0;i<4;i++){
+    document.getElementById('s'+(i+1)+'t').textContent = t.steps[i][0];
+    document.getElementById('s'+(i+1)+'d').textContent = t.steps[i][1];
+  }
+  document.getElementById('factBox').innerHTML = t.fact;
+}
+
+document.getElementById('langToggle').addEventListener('click', () => {
+  LANG = LANG === 'en' ? 'te' : 'en';
+  applyStaticText();
+  if (window.__somRefresh) window.__somRefresh();
+});
+applyStaticText();
+
 (function(){
   const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
   const W=canvas.width, H=canvas.height;
@@ -95,19 +174,12 @@
   }
   particles.forEach(p=>{ p.x=p.hx; p.y=p.hy; });
 
-  const CAPTIONS={
-    solid:'<b>Solid:</b> molecules vibrate in place, locked in a tight, orderly pattern — that\'s why ice holds its shape.',
-    liquid:'<b>Liquid:</b> molecules have enough energy to slide past each other, but still stay close together — that\'s why water flows but doesn\'t fly apart.',
-    gas:'<b>Gas:</b> molecules have broken completely free and zoom around fast, spreading out to fill whatever space they\'re in.'
-  };
-  const TEMPS={solid:'freezing cold',liquid:'room temperature',gas:'boiling hot'};
-
   function setState(s){
     state=s;
     [solidBtn,liquidBtn,gasBtn].forEach(b=>b.classList.remove('on'));
     ({solid:solidBtn,liquid:liquidBtn,gas:gasBtn})[s].classList.add('on');
-    captionEl.innerHTML=CAPTIONS[s];
-    tempLabel.textContent='Temperature: '+TEMPS[s];
+    captionEl.innerHTML=tr().captions[s];
+    tempLabel.textContent=tr().tempLabelPrefix+tr().temps[s];
     slider.value = s==='solid'?0:s==='liquid'?50:100;
   }
 
@@ -165,6 +237,11 @@
 
   setState('solid');
   render(); requestAnimationFrame(loop);
+
+  window.__somRefresh = function(){
+    captionEl.innerHTML = tr().captions[state];
+    tempLabel.textContent = tr().tempLabelPrefix+tr().temps[state];
+  };
 })();
 </script>
 </body>

@@ -9,7 +9,11 @@
   *{box-sizing:border-box;}
   body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
   .wrap{max-width:960px;margin:0 auto;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
   a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
   header{text-align:center;margin-bottom:20px;}
   h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
   header p{color:var(--dim);font-size:16px;margin:0;}
@@ -35,10 +39,13 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="index.html">&larr; Back to lahari.org</a>
+  <div class="topbar">
+    <a class="back" href="index.html" id="backLink">&larr; Back to lahari.org</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
   <header>
-    <h1>🧪 Hydrogen vs Helium Atoms</h1>
-    <p>The two simplest atoms in the universe — and the two that filled it first. Let's look inside both.</p>
+    <h1 id="pageTitle">🧪 Hydrogen vs Helium Atoms</h1>
+    <p id="pageSubtitle">The two simplest atoms in the universe — and the two that filled it first. Let's look inside both.</p>
   </header>
 
   <div class="player">
@@ -51,32 +58,135 @@
   </div>
 
   <table class="compare">
-    <tr><th></th><th>Hydrogen (H)</th><th>Helium (He)</th></tr>
-    <tr><td>Protons</td><td>1</td><td>2</td></tr>
-    <tr><td>Neutrons</td><td>0 (usually)</td><td>2</td></tr>
-    <tr><td>Electrons</td><td>1</td><td>2</td></tr>
-    <tr><td>Atomic number</td><td>1</td><td>2</td></tr>
-    <tr><td>Fun fact</td><td>Most common element in the universe</td><td>Makes your voice squeaky — and balloons float!</td></tr>
+    <tr><th></th><th id="thHydrogen">Hydrogen (H)</th><th id="thHelium">Helium (He)</th></tr>
+    <tr><td id="rowProtonsLabel">Protons</td><td>1</td><td>2</td></tr>
+    <tr><td id="rowNeutronsLabel">Neutrons</td><td id="neutronsH">0 (usually)</td><td>2</td></tr>
+    <tr><td id="rowElectronsLabel">Electrons</td><td>1</td><td>2</td></tr>
+    <tr><td id="rowAtomicLabel">Atomic number</td><td>1</td><td>2</td></tr>
+    <tr><td id="rowFunFactLabel">Fun fact</td><td id="funFactH">Most common element in the universe</td><td id="funFactHe">Makes your voice squeaky — and balloons float!</td></tr>
   </table>
 
   <div class="steps">
-    <div class="step-card"><div class="num">1</div><h3>⚛️ Hydrogen: the simplest atom</h3>
-      <p>Just 1 proton in the nucleus and 1 electron zipping around it. No neutrons in the most common version. It's the lightest, simplest element that exists.</p></div>
-    <div class="step-card"><div class="num">2</div><h3>⚛️ Helium: one step up</h3>
-      <p>2 protons AND 2 neutrons packed into the nucleus, with 2 electrons circling outside. It's the second-simplest and second-lightest element.</p></div>
-    <div class="step-card"><div class="num">3</div><h3>🎈 Why helium floats</h3>
-      <p>Helium atoms are much lighter than the nitrogen and oxygen molecules that make up air, so a balloon full of helium floats upward.</p></div>
-    <div class="step-card"><div class="num">4</div><h3>🌌 Made in the Big Bang</h3>
-      <p>Hydrogen and helium were the very first atoms to form in the early universe, before any stars existed.</p></div>
+    <div class="step-card"><div class="num">1</div><h3 id="s1t">⚛️ Hydrogen: the simplest atom</h3>
+      <p id="s1d">Just 1 proton in the nucleus and 1 electron zipping around it. No neutrons in the most common version. It's the lightest, simplest element that exists.</p></div>
+    <div class="step-card"><div class="num">2</div><h3 id="s2t">⚛️ Helium: one step up</h3>
+      <p id="s2d">2 protons AND 2 neutrons packed into the nucleus, with 2 electrons circling outside. It's the second-simplest and second-lightest element.</p></div>
+    <div class="step-card"><div class="num">3</div><h3 id="s3t">🎈 Why helium floats</h3>
+      <p id="s3d">Helium atoms are much lighter than the nitrogen and oxygen molecules that make up air, so a balloon full of helium floats upward.</p></div>
+    <div class="step-card"><div class="num">4</div><h3 id="s4t">🌌 Made in the Big Bang</h3>
+      <p id="s4d">Hydrogen and helium were the very first atoms to form in the early universe, before any stars existed.</p></div>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> Helium is named after <b>Helios</b>, the Greek word for the Sun — because it was discovered in
     sunlight (using a special instrument) in 1868, a full 27 years before it was ever found on Earth!
   </div>
 </div>
 
 <script>
+// ---------- shared translation layer ----------
+const T = {
+  en: {
+    langToggle: 'తెలుగు',
+    backLink: '&larr; Back to lahari.org',
+    pageTitle: '🧪 Hydrogen vs Helium Atoms',
+    pageSubtitle: "The two simplest atoms in the universe — and the two that filled it first. Let's look inside both.",
+    hBtn: '⚛️ Hydrogen (H)', heBtn: '⚛️ Helium (He)',
+    captionH: '<b>Hydrogen</b>: just 1 proton and 1 electron — the simplest, most abundant atom in the universe.',
+    captionHe: '<b>Helium</b>: 2 protons, 2 neutrons, and 2 electrons — one step more complex than hydrogen.',
+    thHydrogen: 'Hydrogen (H)', thHelium: 'Helium (He)',
+    rowProtonsLabel: 'Protons', rowNeutronsLabel: 'Neutrons', rowElectronsLabel: 'Electrons',
+    rowAtomicLabel: 'Atomic number', rowFunFactLabel: 'Fun fact',
+    neutronsH: '0 (usually)',
+    funFactH: 'Most common element in the universe',
+    funFactHe: 'Makes your voice squeaky — and balloons float!',
+    steps: [
+      ['⚛️ Hydrogen: the simplest atom', "Just 1 proton in the nucleus and 1 electron zipping around it. No neutrons in the most common version. It's the lightest, simplest element that exists."],
+      ['⚛️ Helium: one step up', "2 protons AND 2 neutrons packed into the nucleus, with 2 electrons circling outside. It's the second-simplest and second-lightest element."],
+      ['🎈 Why helium floats', 'Helium atoms are much lighter than the nitrogen and oxygen molecules that make up air, so a balloon full of helium floats upward.'],
+      ['🌌 Made in the Big Bang', 'Hydrogen and helium were the very first atoms to form in the early universe, before any stars existed.'],
+    ],
+    fact: '🤯 <b>Mind-blowing part:</b> Helium is named after <b>Helios</b>, the Greek word for the Sun — because it was discovered in sunlight (using a special instrument) in 1868, a full 27 years before it was ever found on Earth!',
+    canvas: {
+      hTitle: 'HYDROGEN (H)',
+      heTitle: 'HELIUM (He)',
+      oneProton: '1 PROTON',
+      oneElectron: '1 ELECTRON',
+      hNote: 'atomic number 1 · lightest element in the universe',
+      twoProtonsNeutrons: '2 PROTONS + 2 NEUTRONS',
+      twoElectrons: '2 ELECTRONS',
+      heNote: 'atomic number 2 · lighter than air, so balloons float',
+    },
+  },
+  te: {
+    langToggle: 'English',
+    backLink: '&larr; lahari.org కి తిరిగి',
+    pageTitle: '🧪 హైడ్రోజన్ vs హీలియం పరమాణువులు',
+    pageSubtitle: 'విశ్వంలోని అత్యంత సరళమైన రెండు పరమాణువులు — విశ్వాన్ని మొదట నింపినవి కూడా ఇవే. రెండింటినీ లోపలికి చూద్దాం.',
+    hBtn: '⚛️ హైడ్రోజన్ (H)', heBtn: '⚛️ హీలియం (He)',
+    captionH: '<b>హైడ్రోజన్</b>: కేవలం 1 ప్రోటాన్ మరియు 1 ఎలక్ట్రాన్ — విశ్వంలో అత్యంత సరళమైన, అత్యధికంగా లభించే పరమాణువు.',
+    captionHe: '<b>హీలియం</b>: 2 ప్రోటాన్లు, 2 న్యూట్రాన్లు, మరియు 2 ఎలక్ట్రాన్లు — హైడ్రోజన్ కంటే ఒక అడుగు సంక్లిష్టమైనది.',
+    thHydrogen: 'హైడ్రోజన్ (H)', thHelium: 'హీలియం (He)',
+    rowProtonsLabel: 'ప్రోటాన్లు', rowNeutronsLabel: 'న్యూట్రాన్లు', rowElectronsLabel: 'ఎలక్ట్రాన్లు',
+    rowAtomicLabel: 'పరమాణు సంఖ్య', rowFunFactLabel: 'ఆసక్తికరమైన విషయం',
+    neutronsH: '0 (సాధారణంగా)',
+    funFactH: 'విశ్వంలో అత్యంత సాధారణ మూలకం',
+    funFactHe: 'మీ గొంతును సన్నగా చేస్తుంది — బెలూన్లను తేలేలా చేస్తుంది కూడా!',
+    steps: [
+      ['⚛️ హైడ్రోజన్: అత్యంత సరళమైన పరమాణువు', 'కేంద్రకంలో కేవలం 1 ప్రోటాన్ మరియు దాని చుట్టూ తిరిగే 1 ఎలక్ట్రాన్ మాత్రమే ఉంటాయి. అత్యంత సాధారణ రూపంలో న్యూట్రాన్లు ఉండవు. ఇది అత్యంత తేలికైన, అత్యంత సరళమైన మూలకం.'],
+      ['⚛️ హీలియం: ఒక అడుగు ముందుకు', 'కేంద్రకంలో 2 ప్రోటాన్లు మరియు 2 న్యూట్రాన్లు ఉంటాయి, బయట 2 ఎలక్ట్రాన్లు తిరుగుతూ ఉంటాయి. ఇది రెండవ అత్యంత సరళమైన, రెండవ అత్యంత తేలికైన మూలకం.'],
+      ['🎈 హీలియం ఎందుకు తేలుతుంది', 'గాలిని తయారు చేసే నైట్రోజన్, ఆక్సిజన్ అణువుల కంటే హీలియం పరమాణువులు చాలా తేలికగా ఉంటాయి, కాబట్టి హీలియంతో నింపిన బెలూన్ పైకి తేలుతుంది.'],
+      ['🌌 బిగ్ బ్యాంగ్‌లో తయారైనవి', 'నక్షత్రాలు ఏర్పడకముందే, తొలి విశ్వంలో ఏర్పడిన మొట్టమొదటి పరమాణువులు హైడ్రోజన్ మరియు హీలియం.'],
+    ],
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> హీలియంకు సూర్యుడిని సూచించే గ్రీకు పదం <b>హీలియోస్</b> పేరు పెట్టారు — ఎందుకంటే ఇది 1868లో సూర్యకాంతిలో (ఒక ప్రత్యేక పరికరం ఉపయోగించి) కనుగొనబడింది, భూమిపై కనుగొనబడటానికి పూర్తి 27 సంవత్సరాల ముందే!',
+    canvas: {
+      hTitle: 'హైడ్రోజన్ (H)',
+      heTitle: 'హీలియం (He)',
+      oneProton: '1 ప్రోటాన్',
+      oneElectron: '1 ఎలక్ట్రాన్',
+      hNote: 'పరమాణు సంఖ్య 1 · విశ్వంలో అత్యంత తేలికైన మూలకం',
+      twoProtonsNeutrons: '2 ప్రోటాన్లు + 2 న్యూట్రాన్లు',
+      twoElectrons: '2 ఎలక్ట్రాన్లు',
+      heNote: 'పరమాణు సంఖ్య 2 · గాలి కంటే తేలికైనది, కాబట్టి బెలూన్లు తేలతాయి',
+    },
+  }
+};
+let LANG = 'en';
+function tr(){ return T[LANG]; }
+
+function applyStaticText(){
+  const t = tr();
+  document.documentElement.lang = LANG;
+  document.getElementById('langToggle').textContent = t.langToggle;
+  document.getElementById('backLink').innerHTML = t.backLink;
+  document.getElementById('pageTitle').textContent = t.pageTitle;
+  document.getElementById('pageSubtitle').textContent = t.pageSubtitle;
+  document.getElementById('hBtn').textContent = t.hBtn;
+  document.getElementById('heBtn').textContent = t.heBtn;
+  document.getElementById('thHydrogen').textContent = t.thHydrogen;
+  document.getElementById('thHelium').textContent = t.thHelium;
+  document.getElementById('rowProtonsLabel').textContent = t.rowProtonsLabel;
+  document.getElementById('rowNeutronsLabel').textContent = t.rowNeutronsLabel;
+  document.getElementById('rowElectronsLabel').textContent = t.rowElectronsLabel;
+  document.getElementById('rowAtomicLabel').textContent = t.rowAtomicLabel;
+  document.getElementById('rowFunFactLabel').textContent = t.rowFunFactLabel;
+  document.getElementById('neutronsH').textContent = t.neutronsH;
+  document.getElementById('funFactH').textContent = t.funFactH;
+  document.getElementById('funFactHe').textContent = t.funFactHe;
+  for(let i=0;i<4;i++){
+    document.getElementById('s'+(i+1)+'t').textContent = t.steps[i][0];
+    document.getElementById('s'+(i+1)+'d').textContent = t.steps[i][1];
+  }
+  document.getElementById('factBox').innerHTML = t.fact;
+}
+
+document.getElementById('langToggle').addEventListener('click', () => {
+  LANG = LANG === 'en' ? 'te' : 'en';
+  applyStaticText();
+  if (window.__hheRefresh) window.__hheRefresh();
+});
+applyStaticText();
+
 (function(){
   const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
   const W=canvas.width, H=canvas.height;
@@ -98,6 +208,7 @@
 
   function drawHydrogen(){
     const cx=W/2,cy=H/2, rot=t*0.3;
+    const c=tr().canvas;
     ctx.strokeStyle='rgba(79,211,255,.5)'; ctx.lineWidth=2;
     ctx.beginPath(); ctx.ellipse(cx,cy,150,70,rot,0,Math.PI*2); ctx.stroke();
     const a=t*1.2;
@@ -108,13 +219,14 @@
     ctx.fillStyle='#ff8f8f'; ctx.beginPath(); ctx.arc(cx,cy,22,0,Math.PI*2); ctx.fill();
     ctx.fillStyle='#0b1020'; ctx.font='800 20px Segoe UI'; ctx.fillText('+',cx,cy+7);
 
-    bigLabel(cx,60,'HYDROGEN (H)','#ffd23f');
-    label(cx,cy+110,'1 PROTON','#ff8f8f');
-    label(cx,cy-110,'1 ELECTRON','#4fd3ff');
-    label(cx,H-30,'atomic number 1 · lightest element in the universe','#eef2ff');
+    bigLabel(cx,60,c.hTitle,'#ffd23f');
+    label(cx,cy+110,c.oneProton,'#ff8f8f');
+    label(cx,cy-110,c.oneElectron,'#4fd3ff');
+    label(cx,H-30,c.hNote,'#eef2ff');
   }
   function drawHelium(){
     const cx=W/2,cy=H/2, rot=t*0.3;
+    const c=tr().canvas;
     ctx.strokeStyle='rgba(79,211,255,.5)'; ctx.lineWidth=2;
     ctx.beginPath(); ctx.ellipse(cx,cy,160,80,rot,0,Math.PI*2); ctx.stroke();
     [0,Math.PI].forEach((off,i)=>{
@@ -124,21 +236,21 @@
       ctx.fillStyle='#0b1020'; ctx.font='800 12px Segoe UI'; ctx.textAlign='center'; ctx.fillText('−',x,y+4);
     });
     const nuc=[[-13,-8,'#ff8f8f','+'],[13,-8,'#c7c9d9','0'],[-13,10,'#c7c9d9','0'],[13,10,'#ff8f8f','+']];
-    nuc.forEach(([dx,dy,c,sym])=>{
-      ctx.fillStyle=c; ctx.beginPath(); ctx.arc(cx+dx,cy+dy,15,0,Math.PI*2); ctx.fill();
+    nuc.forEach(([dx,dy,c2,sym])=>{
+      ctx.fillStyle=c2; ctx.beginPath(); ctx.arc(cx+dx,cy+dy,15,0,Math.PI*2); ctx.fill();
       ctx.fillStyle='#0b1020'; ctx.font='800 13px Segoe UI'; ctx.fillText(sym,cx+dx,cy+dy+4);
     });
-    bigLabel(cx,60,'HELIUM (He)','#ffd23f');
-    label(cx,cy+130,'2 PROTONS + 2 NEUTRONS','#eef2ff');
-    label(cx,cy-140,'2 ELECTRONS','#4fd3ff');
-    label(cx,H-30,'atomic number 2 · lighter than air, so balloons float','#eef2ff');
+    bigLabel(cx,60,c.heTitle,'#ffd23f');
+    label(cx,cy+130,c.twoProtonsNeutrons,'#eef2ff');
+    label(cx,cy-140,c.twoElectrons,'#4fd3ff');
+    label(cx,H-30,c.heNote,'#eef2ff');
   }
 
   function render(){
     ctx.clearRect(0,0,W,H); ctx.fillStyle='#04060f'; ctx.fillRect(0,0,W,H);
     for(let i=0;i<40;i++){ ctx.fillStyle='rgba(255,255,255,'+(0.08+0.3*((i*37)%10)/10)+')'; ctx.fillRect((i*53)%W,(i*97)%H,2,2); }
-    if(mode==='h'){ drawHydrogen(); captionEl.innerHTML='<b>Hydrogen</b>: just 1 proton and 1 electron — the simplest, most abundant atom in the universe.'; }
-    else { drawHelium(); captionEl.innerHTML='<b>Helium</b>: 2 protons, 2 neutrons, and 2 electrons — one step more complex than hydrogen.'; }
+    if(mode==='h'){ drawHydrogen(); captionEl.innerHTML=tr().captionH; }
+    else { drawHelium(); captionEl.innerHTML=tr().captionHe; }
   }
   function loop(){ t+=0.02; render(); requestAnimationFrame(loop); }
 
@@ -146,6 +258,10 @@
   heBtn.addEventListener('click',()=>{ mode='he'; heBtn.classList.add('on'); hBtn.classList.remove('on'); });
 
   render(); requestAnimationFrame(loop);
+
+  window.__hheRefresh = function(){
+    render();
+  };
 })();
 </script>
 </body>

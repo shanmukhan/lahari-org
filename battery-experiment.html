@@ -9,7 +9,11 @@
   *{box-sizing:border-box;}
   body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
   .wrap{max-width:960px;margin:0 auto;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
   a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
   header{text-align:center;margin-bottom:20px;}
   h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
   header p{color:var(--dim);font-size:16px;margin:0;}
@@ -43,10 +47,13 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="category-tech.html">&larr; Back to Everyday Tech</a>
+  <div class="topbar">
+    <a class="back" href="category-tech.html" id="backLink">&larr; Back to Everyday Tech</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
   <header>
-    <h1>🔋 How a Battery Works</h1>
-    <p>A battery is a tiny chemical factory that pushes electrons through your gadget to make them run.</p>
+    <h1 id="pageTitle">🔋 How a Battery Works</h1>
+    <p id="pageSubtitle">A battery is a tiny chemical factory that pushes electrons through your gadget to make them run.</p>
   </header>
 
   <div class="player">
@@ -61,23 +68,23 @@
   </div>
 
   <div class="steps">
-    <div class="step-card"><div class="num">1</div><h3>⚗️ Two different metals</h3>
-      <p>A battery has two different chemical materials at each end — one that "wants" to give away electrons, one that "wants" to take them.</p></div>
-    <div class="step-card"><div class="num">2</div><h3>🧪 Chemistry builds pressure</h3>
-      <p>A chemical reaction inside piles up extra electrons on the negative end (−), building up electrical "pressure," called voltage.</p></div>
-    <div class="step-card"><div class="num">3</div><h3>🔌 Complete the circuit</h3>
-      <p>Connect a wire (through a bulb, motor, or phone) from − to +, and those extra electrons finally have a path to flow through.</p></div>
-    <div class="step-card"><div class="num">4</div><h3>💡 Flowing electrons do work</h3>
-      <p>As electrons flow through your device, they light bulbs, spin motors, or power a chip — then keep going until the chemicals run out.</p></div>
+    <div class="step-card"><div class="num">1</div><h3 id="s1t">⚗️ Two different metals</h3>
+      <p id="s1d">A battery has two different chemical materials at each end — one that "wants" to give away electrons, one that "wants" to take them.</p></div>
+    <div class="step-card"><div class="num">2</div><h3 id="s2t">🧪 Chemistry builds pressure</h3>
+      <p id="s2d">A chemical reaction inside piles up extra electrons on the negative end (−), building up electrical "pressure," called voltage.</p></div>
+    <div class="step-card"><div class="num">3</div><h3 id="s3t">🔌 Complete the circuit</h3>
+      <p id="s3d">Connect a wire (through a bulb, motor, or phone) from − to +, and those extra electrons finally have a path to flow through.</p></div>
+    <div class="step-card"><div class="num">4</div><h3 id="s4t">💡 Flowing electrons do work</h3>
+      <p id="s4d">As electrons flow through your device, they light bulbs, spin motors, or power a chip — then keep going until the chemicals run out.</p></div>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> A battery never actually "runs out" of electrons — it runs out of usable
     <b>chemistry</b>. Once the chemical reaction can't push electrons uphill anymore, the flow stops even though the metal is all still there.
   </div>
 
-  <div class="try-title">🧪 Now try it yourself</div>
-  <p class="try-subtitle">Close the circuit and watch electrons flow from − to +, lighting the bulb.</p>
+  <div class="try-title" id="tryTitle">🧪 Now try it yourself</div>
+  <p class="try-subtitle" id="trySubtitle">Close the circuit and watch electrons flow from − to +, lighting the bulb.</p>
   <div class="try-card">
     <canvas id="tryScene" width="560" height="280"></canvas>
     <div class="try-controls">
@@ -89,21 +96,111 @@
 </div>
 
 <script>
+const T = {
+  en: {
+    langToggle: 'తెలుగు', backLink: '&larr; Back to Everyday Tech',
+    pageTitle: '🔋 How a Battery Works',
+    pageSubtitle: 'A battery is a tiny chemical factory that pushes electrons through your gadget to make them run.',
+    playBtn: '▶ Play', pauseBtn: '⏸ Pause', restartBtn: '⟲ Restart',
+    captionInitial: 'Press <b>Play</b> to start!',
+    captionEnd: '🎬 The End! Press <b>Restart</b> to watch again.',
+    steps: [
+      ['⚗️ Two different metals','A battery has two different chemical materials at each end — one that "wants" to give away electrons, one that "wants" to take them.'],
+      ['🧪 Chemistry builds pressure','A chemical reaction inside piles up extra electrons on the negative end (−), building up electrical "pressure," called voltage.'],
+      ['🔌 Complete the circuit','Connect a wire (through a bulb, motor, or phone) from − to +, and those extra electrons finally have a path to flow through.'],
+      ['💡 Flowing electrons do work','As electrons flow through your device, they light bulbs, spin motors, or power a chip — then keep going until the chemicals run out.'],
+    ],
+    fact: '🤯 <b>Mind-blowing part:</b> A battery never actually "runs out" of electrons — it runs out of usable <b>chemistry</b>. Once the chemical reaction can\'t push electrons uphill anymore, the flow stops even though the metal is all still there.',
+    tryTitle: '🧪 Now try it yourself',
+    trySubtitle: 'Close the circuit and watch electrons flow from − to +, lighting the bulb.',
+    toggleClose: '🔌 Close the Circuit', toggleOpen: '🔌 Open the Circuit', tryReset: '↻ Reset',
+    resultOpen: 'Circuit open — no path for electrons yet. The bulb stays dark.',
+    resultClosed: 'Circuit closed — electrons flow from − through the bulb to + and light it up!',
+    scenes: [
+      ['⚗️ STEP 1: TWO DIFFERENT MATERIALS','Inside a battery are two different materials — one end (−) is happy to give up electrons, the other end (+) wants to receive them.'],
+      ['🧪 STEP 2: CHEMISTRY BUILDS PRESSURE','A chemical reaction pushes electrons to pile up at the negative end, building electrical "pressure" — we call it <b>voltage</b>.'],
+      ['🔌 STEP 3: NO PATH = NO FLOW','With no wire connecting the ends, those piled-up electrons have nowhere to go. The battery just waits, fully charged.'],
+      ['💡 STEP 4: CLOSE THE LOOP','Connect a wire (through a bulb or motor) from − to +, and electrons finally flow through it — powering your device until the chemicals run low!'],
+    ],
+    canvas: {
+      givesUp: 'gives up electrons', wantsElectrons: 'wants electrons',
+      pilingUp: 'electrons piling up on the negative end',
+      extraWaiting: 'extra electrons waiting', noPath: 'no path yet',
+      noWire: 'no wire connected — nothing can flow',
+      flowLoop: 'electrons flow − → through the bulb → back to +',
+    },
+  },
+  te: {
+    langToggle: 'English', backLink: '&larr; ఎవ్రీడే టెక్ కి తిరిగి',
+    pageTitle: '🔋 బ్యాటరీ ఎలా పనిచేస్తుంది',
+    pageSubtitle: 'బ్యాటరీ అనేది మీ పరికరం గుండా ఎలక్ట్రాన్లను నెట్టి దాన్ని నడిపే ఒక చిన్న రసాయన కర్మాగారం.',
+    playBtn: '▶ ప్లే', pauseBtn: '⏸ పాజ్', restartBtn: '⟲ మళ్ళీ మొదలు',
+    captionInitial: 'ప్రారంభించడానికి <b>ప్లే</b> నొక్కండి!',
+    captionEnd: '🎬 ముగింపు! మళ్ళీ చూడటానికి <b>మళ్ళీ మొదలు</b> నొక్కండి.',
+    steps: [
+      ['⚗️ రెండు వేర్వేరు లోహాలు','బ్యాటరీ ప్రతి చివర రెండు వేర్వేరు రసాయన పదార్థాలను కలిగి ఉంటుంది — ఒకటి ఎలక్ట్రాన్లను ఇవ్వడానికి "కోరుకుంటుంది", మరొకటి వాటిని తీసుకోవడానికి "కోరుకుంటుంది".'],
+      ['🧪 రసాయన శాస్త్రం ఒత్తిడిని పెంచుతుంది','లోపల రసాయన చర్య ప్రతికూల చివర (−) వద్ద అదనపు ఎలక్ట్రాన్లను గుమిగూడుస్తుంది, విద్యుత్ "ఒత్తిడి"ని పెంచుతుంది, దీన్ని వోల్టేజ్ అంటారు.'],
+      ['🔌 సర్క్యూట్‌ను పూర్తి చేయండి','− నుండి + కి ఒక తీగను (బల్బు, మోటార్ లేదా ఫోన్ గుండా) కనెక్ట్ చేయండి, ఆ అదనపు ఎలక్ట్రాన్లకు చివరకు ప్రవహించడానికి ఒక మార్గం లభిస్తుంది.'],
+      ['💡 ప్రవహించే ఎలక్ట్రాన్లు పని చేస్తాయి','ఎలక్ట్రాన్లు మీ పరికరం గుండా ప్రవహిస్తున్నప్పుడు, అవి బల్బులను వెలిగిస్తాయి, మోటార్లను తిప్పుతాయి, లేదా చిప్‌కు శక్తినిస్తాయి — రసాయనాలు అయిపోయేవరకు కొనసాగుతాయి.'],
+    ],
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> బ్యాటరీ నిజంగా ఎలక్ట్రాన్లను "అయిపోదు" — అది వాడదగిన <b>రసాయన శాస్త్రాన్ని</b> అయిపోతుంది. రసాయన చర్య ఎలక్ట్రాన్లను ఇక పైకి నెట్టలేకపోయినప్పుడు, లోహం అంతా అలాగే ఉన్నా ప్రవాహం ఆగిపోతుంది.',
+    tryTitle: '🧪 ఇప్పుడు మీరే ప్రయత్నించండి',
+    trySubtitle: 'సర్క్యూట్‌ను మూసివేసి − నుండి + కి ఎలక్ట్రాన్లు ప్రవహించడం, బల్బు వెలగడం చూడండి.',
+    toggleClose: '🔌 సర్క్యూట్‌ను మూసివేయండి', toggleOpen: '🔌 సర్క్యూట్‌ను తెరవండి', tryReset: '↻ రీసెట్',
+    resultOpen: 'సర్క్యూట్ తెరిచి ఉంది — ఎలక్ట్రాన్లకు ఇంకా మార్గం లేదు. బల్బు చీకటిగానే ఉంటుంది.',
+    resultClosed: 'సర్క్యూట్ మూసివేయబడింది — ఎలక్ట్రాన్లు − నుండి బల్బు గుండా + కి ప్రవహించి దాన్ని వెలిగిస్తాయి!',
+    scenes: [
+      ['⚗️ దశ 1: రెండు వేర్వేరు పదార్థాలు','బ్యాటరీ లోపల రెండు వేర్వేరు పదార్థాలు ఉంటాయి — ఒక చివర (−) ఎలక్ట్రాన్లను ఇవ్వడానికి సంతోషంగా ఉంటుంది, మరొక చివర (+) వాటిని స్వీకరించాలనుకుంటుంది.'],
+      ['🧪 దశ 2: రసాయన శాస్త్రం ఒత్తిడిని పెంచుతుంది','రసాయన చర్య ఎలక్ట్రాన్లను ప్రతికూల చివర గుమిగూడేలా నెడుతుంది, విద్యుత్ "ఒత్తిడి"ని పెంచుతుంది — దీన్ని మనం <b>వోల్టేజ్</b> అంటాము.'],
+      ['🔌 దశ 3: మార్గం లేదు = ప్రవాహం లేదు','చివరలను కలిపే తీగ లేకుండా, ఆ గుమిగూడిన ఎలక్ట్రాన్లకు వెళ్ళడానికి ఎక్కడా లేదు. బ్యాటరీ పూర్తిగా ఛార్జ్ అయి కేవలం వేచి ఉంటుంది.'],
+      ['💡 దశ 4: లూప్‌ను మూసివేయండి','− నుండి + కి ఒక తీగను (బల్బు లేదా మోటార్ గుండా) కనెక్ట్ చేయండి, రసాయనాలు తక్కువయ్యే వరకు మీ పరికరానికి శక్తినిస్తూ ఎలక్ట్రాన్లు చివరకు దాని గుండా ప్రవహిస్తాయి!'],
+    ],
+    canvas: {
+      givesUp: 'ఎలక్ట్రాన్లను ఇస్తుంది', wantsElectrons: 'ఎలక్ట్రాన్లను కోరుకుంటుంది',
+      pilingUp: 'ప్రతికూల చివర వద్ద ఎలక్ట్రాన్లు గుమిగూడుతున్నాయి',
+      extraWaiting: 'అదనపు ఎలక్ట్రాన్లు వేచి ఉన్నాయి', noPath: 'ఇంకా మార్గం లేదు',
+      noWire: 'తీగ కనెక్ట్ చేయబడలేదు — ఏమీ ప్రవహించదు',
+      flowLoop: 'ఎలక్ట్రాన్లు − → బల్బు గుండా → తిరిగి + కి ప్రవహిస్తాయి',
+    },
+  }
+};
+let LANG='en';
+function tr(){ return T[LANG]; }
+function applyStaticText(){
+  const t=tr();
+  document.documentElement.lang=LANG;
+  document.getElementById('langToggle').textContent=t.langToggle;
+  document.getElementById('backLink').innerHTML=t.backLink;
+  document.getElementById('pageTitle').textContent=t.pageTitle;
+  document.getElementById('pageSubtitle').textContent=t.pageSubtitle;
+  document.getElementById('restartBtn').textContent=t.restartBtn;
+  for(let i=0;i<4;i++){
+    document.getElementById('s'+(i+1)+'t').textContent=t.steps[i][0];
+    document.getElementById('s'+(i+1)+'d').innerHTML=t.steps[i][1];
+  }
+  document.getElementById('factBox').innerHTML=t.fact;
+  document.getElementById('tryTitle').textContent=t.tryTitle;
+  document.getElementById('trySubtitle').textContent=t.trySubtitle;
+  document.getElementById('tryReset').textContent=t.tryReset;
+}
+document.getElementById('langToggle').addEventListener('click',()=>{
+  LANG = LANG==='en' ? 'te' : 'en';
+  applyStaticText();
+  if(window.__battRefresh) window.__battRefresh();
+  if(window.__tryRefresh) window.__tryRefresh();
+});
+applyStaticText();
+
 (function(){
   const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
   const W=canvas.width, H=canvas.height;
   const captionEl=document.getElementById('caption'), bannerEl=document.getElementById('banner'), progressBar=document.getElementById('progressBar');
   const playBtn=document.getElementById('playBtn'), restartBtn=document.getElementById('restartBtn');
 
-  const SCENES=[
-    {t:0,dur:6,banner:'⚗️ STEP 1: TWO DIFFERENT MATERIALS',caption:'Inside a battery are two different materials — one end (−) is happy to give up electrons, the other end (+) wants to receive them.'},
-    {t:6,dur:7,banner:'🧪 STEP 2: CHEMISTRY BUILDS PRESSURE',caption:'A chemical reaction pushes electrons to pile up at the negative end, building electrical "pressure" — we call it <b>voltage</b>.'},
-    {t:13,dur:6,banner:'🔌 STEP 3: NO PATH = NO FLOW',caption:'With no wire connecting the ends, those piled-up electrons have nowhere to go. The battery just waits, fully charged.'},
-    {t:19,dur:9,banner:'💡 STEP 4: CLOSE THE LOOP',caption:'Connect a wire (through a bulb or motor) from − to +, and electrons finally flow through it — powering your device until the chemicals run low!'},
-  ];
+  const starts=[0,6,13,19];
   const totalDur=28;
-  let simTime=0, playing=false, lastTs=null;
-  function currentScene(t){ for(let i=SCENES.length-1;i>=0;i--) if(t>=SCENES[i].t) return i; return 0; }
+  let simTime=0, playing=false, lastTs=null, captionOverride='initial';
+  function currentScene(t){ for(let i=starts.length-1;i>=0;i--) if(t>=starts[i]) return i; return 0; }
   function label(x,y,text,color,align){
     align = align||'center';
     ctx.font='700 13px Segoe UI'; ctx.textAlign=align;
@@ -121,8 +218,8 @@
     ctx.fillStyle='#fff'; ctx.font='800 26px Segoe UI'; ctx.textAlign='center';
     ctx.fillText('−',bx+bw*0.25,by+bh/2+9);
     ctx.fillText('+',bx+bw*0.75,by+bh/2+9);
-    label(bx-4,by-14,negLabel||'gives up electrons','#8fd2ff','right');
-    label(bx+bw+4,by-14,posLabel||'wants electrons','#ff9d9d','left');
+    label(bx-4,by-14,negLabel||tr().canvas.givesUp,'#8fd2ff','right');
+    label(bx+bw+4,by-14,posLabel||tr().canvas.wantsElectrons,'#ff9d9d','left');
   }
   function drawElectronsPiling(local){
     drawBattery();
@@ -133,10 +230,10 @@
       ctx.fillStyle='#4fd3ff'; ctx.beginPath(); ctx.arc(x,y,6,0,Math.PI*2); ctx.fill();
       ctx.fillStyle='#0b1020'; ctx.font='700 8px Segoe UI'; ctx.fillText('−',x,y+3);
     }
-    label(W/2,H/2+90,'electrons piling up on the negative end','#8fd2ff');
+    label(W/2,H/2+90,tr().canvas.pilingUp,'#8fd2ff');
   }
   function drawWaiting(local){
-    drawBattery('extra electrons waiting','no path yet');
+    drawBattery(tr().canvas.extraWaiting,tr().canvas.noPath);
     for(let i=0;i<14;i++){
       const x=W/2-90+15+((i*13)%50);
       const y=H/2-30+((i*23)%70);
@@ -145,7 +242,7 @@
     ctx.strokeStyle='rgba(255,255,255,.2)'; ctx.setLineDash([6,6]); ctx.lineWidth=3;
     ctx.beginPath(); ctx.moveTo(W/2-90,H/2+70); ctx.lineTo(W/2-90,H/2+140); ctx.lineTo(W/2+90,H/2+140); ctx.lineTo(W/2+90,H/2+70); ctx.stroke();
     ctx.setLineDash([]);
-    label(W/2,H/2+170,'no wire connected — nothing can flow','#9aa4cc');
+    label(W/2,H/2+170,tr().canvas.noWire,'#9aa4cc');
   }
   function drawCircuit(local){
     drawBattery();
@@ -159,7 +256,6 @@
     ctx.fillStyle=g; ctx.beginPath(); ctx.arc(bulbX,bulbY,40*glow+10,0,Math.PI*2); ctx.fill();
     ctx.fillStyle=glow>0.3?'#ffe9a8':'#4a4a55'; ctx.beginPath(); ctx.arc(bulbX,bulbY,18,0,Math.PI*2); ctx.fill();
     ctx.strokeStyle='#0b1020'; ctx.lineWidth=2; ctx.stroke();
-    // moving electrons around loop
     const perim=2*(x2-x1)+2*(y2-y1);
     for(let i=0;i<8;i++){
       const d=((local*80)+i*(perim/8))%perim;
@@ -171,13 +267,13 @@
       else { ex=x2-(d-segA-segB-segA); ey=y1; }
       ctx.fillStyle='#4fd3ff'; ctx.beginPath(); ctx.arc(ex,ey,5,0,Math.PI*2); ctx.fill();
     }
-    label(W/2,y1-10,'electrons flow − → through the bulb → back to +','#eef2ff');
+    label(W/2,y1-10,tr().canvas.flowLoop,'#eef2ff');
   }
 
   function render(t){
     ctx.clearRect(0,0,W,H); ctx.fillStyle='#04060f'; ctx.fillRect(0,0,W,H);
-    const idx=currentScene(t), scene=SCENES[idx], local=t-scene.t;
-    bannerEl.textContent=scene.banner; captionEl.innerHTML=scene.caption;
+    const idx=currentScene(t), scene=tr().scenes[idx], local=t-starts[idx];
+    bannerEl.textContent=scene[0]; captionEl.innerHTML=scene[1];
     if(idx===0) drawBattery();
     else if(idx===1) drawElectronsPiling(local);
     else if(idx===2) drawWaiting(local);
@@ -190,15 +286,24 @@
     const dt=Math.min(0.05,(ts-lastTs)/1000); lastTs=ts;
     simTime+=dt;
     if(simTime>=totalDur){ simTime=totalDur; render(simTime); pause();
-      captionEl.innerHTML='🎬 The End! Press <b>Restart</b> to watch again.'; return; }
+      captionOverride='ended'; captionEl.innerHTML=tr().captionEnd; return; }
+    captionOverride=null;
     render(simTime); requestAnimationFrame(step);
   }
-  function play(){ if(playing) return; playing=true; lastTs=null; playBtn.textContent='⏸ Pause'; requestAnimationFrame(step); }
-  function pause(){ playing=false; playBtn.textContent='▶ Play'; }
-  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionEl.innerHTML='Press <b>Play</b> to start!'; }
+  function play(){ if(playing) return; playing=true; lastTs=null; captionOverride=null; playBtn.textContent=tr().pauseBtn; requestAnimationFrame(step); }
+  function pause(){ playing=false; playBtn.textContent=tr().playBtn; }
+  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionOverride='initial'; captionEl.innerHTML=tr().captionInitial; }
   playBtn.addEventListener('click',()=>playing?pause():play());
   restartBtn.addEventListener('click',restart);
+  playBtn.textContent=tr().playBtn;
   render(0);
+
+  window.__battRefresh=function(){
+    playBtn.textContent = playing ? tr().pauseBtn : tr().playBtn;
+    render(simTime);
+    if(captionOverride==='initial') captionEl.innerHTML=tr().captionInitial;
+    else if(captionOverride==='ended') captionEl.innerHTML=tr().captionEnd;
+  };
 })();
 
 (function(){
@@ -206,6 +311,7 @@
   const w=cv.width,h=cv.height;
   let closed=false, t=0;
   const resultEl=document.getElementById('tryResult');
+  function updateResultText(){ resultEl.textContent = closed ? tr().resultClosed : tr().resultOpen; }
   function draw(){
     c.clearRect(0,0,w,h); c.fillStyle='#04060f'; c.fillRect(0,0,w,h);
     const bx=w/2-70, by=40, bw=140, bh=70;
@@ -248,18 +354,23 @@
   function loop(){ t+=0.03; if(closed) draw(); requestAnimationFrame(loop); }
   document.getElementById('toggleCircuit').addEventListener('click',(e)=>{
     closed=!closed;
-    e.target.textContent = closed ? '🔌 Open the Circuit' : '🔌 Close the Circuit';
-    resultEl.textContent = closed
-      ? 'Circuit closed — electrons flow from − through the bulb to + and light it up!'
-      : 'Circuit open — no path for electrons yet. The bulb stays dark.';
+    e.target.textContent = closed ? tr().toggleOpen : tr().toggleClose;
+    updateResultText();
     draw();
   });
   document.getElementById('tryReset').addEventListener('click',()=>{
-    closed=false; document.getElementById('toggleCircuit').textContent='🔌 Close the Circuit';
-    resultEl.textContent='Circuit open — no path for electrons yet. The bulb stays dark.';
+    closed=false; document.getElementById('toggleCircuit').textContent=tr().toggleClose;
+    updateResultText();
     draw();
   });
+  updateResultText();
   draw(); requestAnimationFrame(loop);
+
+  window.__tryRefresh=function(){
+    document.getElementById('toggleCircuit').textContent = closed ? tr().toggleOpen : tr().toggleClose;
+    updateResultText();
+    draw();
+  };
 })();
 </script>
 </body>

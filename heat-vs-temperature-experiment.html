@@ -9,7 +9,11 @@
   *{box-sizing:border-box;}
   body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
   .wrap{max-width:960px;margin:0 auto;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
   a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
   header{text-align:center;margin-bottom:20px;}
   h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
   header p{color:var(--dim);font-size:16px;margin:0;}
@@ -36,10 +40,13 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="category-physics.html">&larr; Back to Physics in Action</a>
+  <div class="topbar">
+    <a class="back" href="category-physics.html" id="backLink">&larr; Back to Physics in Action</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
   <header>
-    <h1>🌡️ Heat vs Temperature</h1>
-    <p>A cup of tea and a swimming pool can be the exact same temperature — but they hold wildly different amounts of heat.</p>
+    <h1 id="pageTitle">🌡️ Heat vs Temperature</h1>
+    <p id="pageSubtitle">A cup of tea and a swimming pool can be the exact same temperature — but they hold wildly different amounts of heat.</p>
   </header>
 
   <div class="player">
@@ -54,17 +61,17 @@
   </div>
 
   <div class="steps">
-    <div class="step-card"><div class="num">1</div><h3>🌡️ Temperature: how fast, on average</h3>
-      <p>Temperature measures the AVERAGE speed of molecules jiggling around — it doesn't care how many molecules there are.</p></div>
-    <div class="step-card"><div class="num">2</div><h3>🔥 Heat: total energy</h3>
-      <p>Heat is the TOTAL energy of all those jiggling molecules added together — it very much depends on how much stuff there is.</p></div>
-    <div class="step-card"><div class="num">3</div><h3>☕ Same temperature, different heat</h3>
-      <p>A cup of 90°C tea and a bathtub of 90°C water are the same temperature — but the bathtub has vastly more total heat energy, because it has vastly more molecules.</p></div>
-    <div class="step-card"><div class="num">4</div><h3>🥶 That's why the ocean cools slowly</h3>
-      <p>The ocean holds so much heat energy that it takes a huge amount of cooling to drop its temperature even slightly — which is why it warms and cools land nearby.</p></div>
+    <div class="step-card"><div class="num">1</div><h3 id="s1t">🌡️ Temperature: how fast, on average</h3>
+      <p id="s1d">Temperature measures the AVERAGE speed of molecules jiggling around — it doesn't care how many molecules there are.</p></div>
+    <div class="step-card"><div class="num">2</div><h3 id="s2t">🔥 Heat: total energy</h3>
+      <p id="s2d">Heat is the TOTAL energy of all those jiggling molecules added together — it very much depends on how much stuff there is.</p></div>
+    <div class="step-card"><div class="num">3</div><h3 id="s3t">☕ Same temperature, different heat</h3>
+      <p id="s3d">A cup of 90°C tea and a bathtub of 90°C water are the same temperature — but the bathtub has vastly more total heat energy, because it has vastly more molecules.</p></div>
+    <div class="step-card"><div class="num">4</div><h3 id="s4t">🥶 That's why the ocean cools slowly</h3>
+      <p id="s4d">The ocean holds so much heat energy that it takes a huge amount of cooling to drop its temperature even slightly — which is why it warms and cools land nearby.</p></div>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> A single lit match reaches a higher TEMPERATURE (over 600°C) than a giant iceberg's surface, sure —
     but that entire iceberg holds astronomically more total HEAT energy than the match. If you dropped the iceberg into a bathtub
     of match-hot water, the iceberg would barely feel it — but a tub full of icebergs would freeze that match's heat away instantly!
@@ -72,21 +79,107 @@
 </div>
 
 <script>
+const T = {
+  en: {
+    langToggle: 'తెలుగు', backLink: '&larr; Back to Physics in Action',
+    pageTitle: '🌡️ Heat vs Temperature',
+    pageSubtitle: 'A cup of tea and a swimming pool can be the exact same temperature — but they hold wildly different amounts of heat.',
+    playBtn: '▶ Play', pauseBtn: '⏸ Pause', restartBtn: '⟲ Restart',
+    captionInitial: 'Press <b>Play</b> to start!',
+    captionEnd: '🎬 The End! Press <b>Restart</b> to watch again.',
+    steps: [
+      ['🌡️ Temperature: how fast, on average','Temperature measures the AVERAGE speed of molecules jiggling around — it doesn\'t care how many molecules there are.'],
+      ['🔥 Heat: total energy','Heat is the TOTAL energy of all those jiggling molecules added together — it very much depends on how much stuff there is.'],
+      ['☕ Same temperature, different heat','A cup of 90°C tea and a bathtub of 90°C water are the same temperature — but the bathtub has vastly more total heat energy, because it has vastly more molecules.'],
+      ['🥶 That\'s why the ocean cools slowly','The ocean holds so much heat energy that it takes a huge amount of cooling to drop its temperature even slightly — which is why it warms and cools land nearby.'],
+    ],
+    fact: '🤯 <b>Mind-blowing part:</b> A single lit match reaches a higher TEMPERATURE (over 600°C) than a giant iceberg\'s surface, sure — but that entire iceberg holds astronomically more total HEAT energy than the match. If you dropped the iceberg into a bathtub of match-hot water, the iceberg would barely feel it — but a tub full of icebergs would freeze that match\'s heat away instantly!',
+    scenes: [
+      ['🌡️ STEP 1: TEMPERATURE = AVERAGE SPEED','Temperature measures the AVERAGE jiggling speed of molecules — it doesn\'t care how many molecules are jiggling.'],
+      ['🔥 STEP 2: HEAT = TOTAL ENERGY','Heat is the TOTAL energy of ALL those jiggling molecules added up — it depends heavily on how much stuff is there.'],
+      ['☕ STEP 3: SAME TEMP, DIFFERENT HEAT','A cup of hot tea and a bathtub of water at the exact same temperature — but the tub has WAY more total heat energy, just because it has more molecules.'],
+      ['🌊 STEP 4: WHY OCEANS COOL SLOWLY','The ocean holds enormous total heat energy — that\'s why it takes so long to warm up or cool down, keeping nearby coastlines mild.'],
+    ],
+    canvas: {
+      highTemp: 'jiggling fast — HIGH temperature',
+      lowTemp: 'jiggling slow — LOW temperature',
+      tempDef: 'temperature = how fast, on average',
+      lessHeat: 'few molecules — LESS total heat',
+      moreHeat: 'many molecules — MORE total heat',
+      heatDef: 'heat = total energy of ALL molecules combined',
+      smallHeat: '90°C — small amount of heat',
+      hugeHeat: '90°C — huge amount of heat',
+      sameTempDiffHeat: 'same temperature, very different heat!',
+      oceanBarely: 'so much stored heat, temperature barely budges',
+    },
+  },
+  te: {
+    langToggle: 'English', backLink: '&larr; ఫిజిక్స్ ఇన్ యాక్షన్ కి తిరిగి',
+    pageTitle: '🌡️ ఉష్ణం vs ఉష్ణోగ్రత',
+    pageSubtitle: 'ఒక కప్పు టీ మరియు ఈత కొలను ఖచ్చితంగా ఒకే ఉష్ణోగ్రత కలిగి ఉండవచ్చు — కానీ అవి చాలా భిన్నమైన ఉష్ణ మొత్తాలను కలిగి ఉంటాయి.',
+    playBtn: '▶ ప్లే', pauseBtn: '⏸ పాజ్', restartBtn: '⟲ మళ్ళీ మొదలు',
+    captionInitial: 'ప్రారంభించడానికి <b>ప్లే</b> నొక్కండి!',
+    captionEnd: '🎬 ముగింపు! మళ్ళీ చూడటానికి <b>మళ్ళీ మొదలు</b> నొక్కండి.',
+    steps: [
+      ['🌡️ ఉష్ణోగ్రత: సగటు వేగం','ఉష్ణోగ్రత అణువులు కదులుతున్న సగటు వేగాన్ని కొలుస్తుంది — అక్కడ ఎన్ని అణువులు ఉన్నాయో దానితో దానికి సంబంధం లేదు.'],
+      ['🔥 ఉష్ణం: మొత్తం శక్తి','ఉష్ణం అంటే కదులుతున్న ఆ అణువులన్నింటి మొత్తం శక్తి కలిపి ఉంటుంది — అక్కడ ఎంత పదార్థం ఉందో దానిపై ఇది చాలా ఆధారపడి ఉంటుంది.'],
+      ['☕ ఒకే ఉష్ణోగ్రత, వేర్వేరు ఉష్ణం','90°C టీ కప్పు మరియు 90°C నీటి స్నానపు తొట్టె రెండూ ఒకే ఉష్ణోగ్రత కలిగి ఉంటాయి — కానీ తొట్టెలో అపారమైన ఎక్కువ మొత్తం ఉష్ణ శక్తి ఉంటుంది, ఎందుకంటే అందులో చాలా ఎక్కువ అణువులు ఉన్నాయి.'],
+      ['🥶 అందుకే సముద్రం నెమ్మదిగా చల్లబడుతుంది','సముద్రం చాలా ఉష్ణ శక్తిని నిల్వ చేస్తుంది, కాబట్టి దాని ఉష్ణోగ్రత కొద్దిగా తగ్గాలన్నా భారీ మొత్తంలో చల్లబడాలి — అందుకే అది దగ్గరలోని భూభాగాన్ని వెచ్చగా, చల్లగా ఉంచుతుంది.'],
+    ],
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> వెలిగించిన ఒక అగ్గిపుల్ల చాలా ఎక్కువ ఉష్ణోగ్రతను (600°C కంటే ఎక్కువ) చేరుకుంటుంది — ఒక పెద్ద మంచుకొండ ఉపరితలం కంటే ఎక్కువగా. కానీ ఆ మొత్తం మంచుకొండ అగ్గిపుల్ల కంటే చాలా ఎక్కువ మొత్తం ఉష్ణ శక్తిని కలిగి ఉంటుంది. అగ్గిపుల్ల అంత వేడి నీటి తొట్టెలో మంచుకొండను వేస్తే, ఆ మంచుకొండకు అది కొద్దిగా కూడా తెలియదు — కానీ మంచుకొండలతో నిండిన తొట్టె ఆ అగ్గిపుల్ల ఉష్ణాన్ని తక్షణమే గడ్డకట్టిస్తుంది!',
+    scenes: [
+      ['🌡️ దశ 1: ఉష్ణోగ్రత = సగటు వేగం','ఉష్ణోగ్రత అణువుల సగటు కదిలే వేగాన్ని కొలుస్తుంది — ఎన్ని అణువులు కదులుతున్నాయో దానితో దీనికి సంబంధం లేదు.'],
+      ['🔥 దశ 2: ఉష్ణం = మొత్తం శక్తి','ఉష్ణం అంటే కదులుతున్న అణువులన్నింటి మొత్తం శక్తి కలిపింది — అక్కడ ఎంత పదార్థం ఉందో దానిపై ఇది గట్టిగా ఆధారపడి ఉంటుంది.'],
+      ['☕ దశ 3: ఒకే ఉష్ణోగ్రత, వేర్వేరు ఉష్ణం','వేడి టీ కప్పు, నీటి తొట్టె రెండూ సరిగ్గా ఒకే ఉష్ణోగ్రత వద్ద ఉన్నాయి — కానీ తొట్టెలో చాలా ఎక్కువ మొత్తం ఉష్ణ శక్తి ఉంది, ఎందుకంటే అందులో ఎక్కువ అణువులు ఉన్నాయి.'],
+      ['🌊 దశ 4: సముద్రాలు నెమ్మదిగా ఎందుకు చల్లబడతాయి','సముద్రం అపారమైన మొత్తం ఉష్ణ శక్తిని కలిగి ఉంది — అందుకే అది వేడెక్కడానికి లేదా చల్లబడటానికి చాలా సమయం పడుతుంది, దగ్గరలోని తీర ప్రాంతాలను మధ్యస్థంగా ఉంచుతుంది.'],
+    ],
+    canvas: {
+      highTemp: 'వేగంగా కదులుతున్నాయి — అధిక ఉష్ణోగ్రత',
+      lowTemp: 'నెమ్మదిగా కదులుతున్నాయి — తక్కువ ఉష్ణోగ్రత',
+      tempDef: 'ఉష్ణోగ్రత = సగటున ఎంత వేగంగా కదులుతున్నాయి',
+      lessHeat: 'కొద్ది అణువులు — తక్కువ మొత్తం ఉష్ణం',
+      moreHeat: 'ఎక్కువ అణువులు — ఎక్కువ మొత్తం ఉష్ణం',
+      heatDef: 'ఉష్ణం = అన్ని అణువుల మొత్తం శక్తి కలిపింది',
+      smallHeat: '90°C — తక్కువ మొత్తం ఉష్ణం',
+      hugeHeat: '90°C — ఎక్కువ మొత్తం ఉష్ణం',
+      sameTempDiffHeat: 'ఒకే ఉష్ణోగ్రత, చాలా భిన్నమైన ఉష్ణం!',
+      oceanBarely: 'ఇంత ఎక్కువ నిల్వ ఉష్ణం ఉంది, ఉష్ణోగ్రత అంతగా మారదు',
+    },
+  }
+};
+let LANG='en';
+function tr(){ return T[LANG]; }
+function applyStaticText(){
+  const t=tr();
+  document.documentElement.lang=LANG;
+  document.getElementById('langToggle').textContent=t.langToggle;
+  document.getElementById('backLink').innerHTML=t.backLink;
+  document.getElementById('pageTitle').textContent=t.pageTitle;
+  document.getElementById('pageSubtitle').textContent=t.pageSubtitle;
+  document.getElementById('restartBtn').textContent=t.restartBtn;
+  for(let i=0;i<4;i++){
+    document.getElementById('s'+(i+1)+'t').textContent=t.steps[i][0];
+    document.getElementById('s'+(i+1)+'d').innerHTML=t.steps[i][1];
+  }
+  document.getElementById('factBox').innerHTML=t.fact;
+}
+document.getElementById('langToggle').addEventListener('click',()=>{
+  LANG = LANG==='en' ? 'te' : 'en';
+  applyStaticText();
+  if(window.__heatRefresh) window.__heatRefresh();
+});
+applyStaticText();
+
 (function(){
   const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
   const W=canvas.width, H=canvas.height;
   const captionEl=document.getElementById('caption'), bannerEl=document.getElementById('banner'), progressBar=document.getElementById('progressBar');
   const playBtn=document.getElementById('playBtn'), restartBtn=document.getElementById('restartBtn');
 
-  const SCENES=[
-    {t:0,dur:6,banner:'🌡️ STEP 1: TEMPERATURE = AVERAGE SPEED',caption:'Temperature measures the AVERAGE jiggling speed of molecules — it doesn\'t care how many molecules are jiggling.'},
-    {t:6,dur:7,banner:'🔥 STEP 2: HEAT = TOTAL ENERGY',caption:'Heat is the TOTAL energy of ALL those jiggling molecules added up — it depends heavily on how much stuff is there.'},
-    {t:13,dur:8,banner:'☕ STEP 3: SAME TEMP, DIFFERENT HEAT',caption:'A cup of hot tea and a bathtub of water at the exact same temperature — but the tub has WAY more total heat energy, just because it has more molecules.'},
-    {t:21,dur:8,banner:'🌊 STEP 4: WHY OCEANS COOL SLOWLY',caption:'The ocean holds enormous total heat energy — that\'s why it takes so long to warm up or cool down, keeping nearby coastlines mild.'},
-  ];
+  const starts=[0,6,13,21];
   const totalDur=29;
-  let simTime=0, playing=false, lastTs=null;
-  function currentScene(t){ for(let i=SCENES.length-1;i>=0;i--) if(t>=SCENES[i].t) return i; return 0; }
+  let simTime=0, playing=false, lastTs=null, captionOverride='initial';
+  function currentScene(t){ for(let i=starts.length-1;i>=0;i--) if(t>=starts[i]) return i; return 0; }
   function label(x,y,text,color){
     ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
     const tw=ctx.measureText(text).width;
@@ -105,16 +198,16 @@
   function drawScene0(local){
     drawMolecules(220,H/2,240,240,15,3,local);
     drawMolecules(680,H/2,240,240,15,3,local*0.3);
-    label(220,H/2+150,'jiggling fast — HIGH temperature','#ff9d5a');
-    label(680,H/2+150,'jiggling slow — LOW temperature','#4fd3ff');
-    label(W/2,60,'temperature = how fast, on average','#eef2ff');
+    label(220,H/2+150,tr().canvas.highTemp,'#ff9d5a');
+    label(680,H/2+150,tr().canvas.lowTemp,'#4fd3ff');
+    label(W/2,60,tr().canvas.tempDef,'#eef2ff');
   }
   function drawScene1(local){
     drawMolecules(220,H/2,160,160,8,3,local);
     drawMolecules(680,H/2,300,300,40,3,local);
-    label(220,H/2+120,'few molecules — LESS total heat','#ff9d5a');
-    label(680,H/2+180,'many molecules — MORE total heat','#ffd23f');
-    label(W/2,60,'heat = total energy of ALL molecules combined','#eef2ff');
+    label(220,H/2+120,tr().canvas.lessHeat,'#ff9d5a');
+    label(680,H/2+180,tr().canvas.moreHeat,'#ffd23f');
+    label(W/2,60,tr().canvas.heatDef,'#eef2ff');
   }
   function drawScene2(local){
     ctx.font='50px Segoe UI'; ctx.textAlign='center';
@@ -122,21 +215,21 @@
     ctx.fillText('🛁',680,H/2-60);
     drawMolecules(220,H/2+60,120,120,10,3,local);
     drawMolecules(680,H/2+60,260,260,45,3,local);
-    label(220,H/2+150,'90°C — small amount of heat','#ff9d5a');
-    label(680,H/2+200,'90°C — huge amount of heat','#ffd23f');
-    label(W/2,60,'same temperature, very different heat!','#eef2ff');
+    label(220,H/2+150,tr().canvas.smallHeat,'#ff9d5a');
+    label(680,H/2+200,tr().canvas.hugeHeat,'#ffd23f');
+    label(W/2,60,tr().canvas.sameTempDiffHeat,'#eef2ff');
   }
   function drawScene3(local){
     ctx.font='60px Segoe UI'; ctx.textAlign='center';
     ctx.fillText('🌊',W/2,H/2-60);
     drawMolecules(W/2,H/2+40,500,220,60,2,local);
-    label(W/2,H-30,'so much stored heat, temperature barely budges','#8fd2ff');
+    label(W/2,H-30,tr().canvas.oceanBarely,'#8fd2ff');
   }
 
   function render(t){
     ctx.clearRect(0,0,W,H); ctx.fillStyle='#04060f'; ctx.fillRect(0,0,W,H);
-    const idx=currentScene(t), scene=SCENES[idx], local=t-scene.t;
-    bannerEl.textContent=scene.banner; captionEl.innerHTML=scene.caption;
+    const idx=currentScene(t), scene=tr().scenes[idx], local=t-starts[idx];
+    bannerEl.textContent=scene[0]; captionEl.innerHTML=scene[1];
     if(idx===0) drawScene0(local);
     else if(idx===1) drawScene1(local);
     else if(idx===2) drawScene2(local);
@@ -149,15 +242,24 @@
     const dt=Math.min(0.05,(ts-lastTs)/1000); lastTs=ts;
     simTime+=dt;
     if(simTime>=totalDur){ simTime=totalDur; render(simTime); pause();
-      captionEl.innerHTML='🎬 The End! Press <b>Restart</b> to watch again.'; return; }
+      captionOverride='ended'; captionEl.innerHTML=tr().captionEnd; return; }
+    captionOverride=null;
     render(simTime); requestAnimationFrame(step);
   }
-  function play(){ if(playing) return; playing=true; lastTs=null; playBtn.textContent='⏸ Pause'; requestAnimationFrame(step); }
-  function pause(){ playing=false; playBtn.textContent='▶ Play'; }
-  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionEl.innerHTML='Press <b>Play</b> to start!'; }
+  function play(){ if(playing) return; playing=true; lastTs=null; captionOverride=null; playBtn.textContent=tr().pauseBtn; requestAnimationFrame(step); }
+  function pause(){ playing=false; playBtn.textContent=tr().playBtn; }
+  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionOverride='initial'; captionEl.innerHTML=tr().captionInitial; }
   playBtn.addEventListener('click',()=>playing?pause():play());
   restartBtn.addEventListener('click',restart);
+  playBtn.textContent=tr().playBtn;
   render(0);
+
+  window.__heatRefresh=function(){
+    playBtn.textContent = playing ? tr().pauseBtn : tr().playBtn;
+    render(simTime);
+    if(captionOverride==='initial') captionEl.innerHTML=tr().captionInitial;
+    else if(captionOverride==='ended') captionEl.innerHTML=tr().captionEnd;
+  };
 })();
 </script>
 </body>

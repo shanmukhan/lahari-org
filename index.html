@@ -44,6 +44,11 @@
   .nav-cta { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px;
     border-radius: 999px; border: 1px solid var(--line-strong); color: var(--text) !important;
     font-size: .82rem; font-weight: 600; }
+  .lang-toggle { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px;
+    border-radius: 999px; border: 1px solid var(--line-strong); background: transparent;
+    color: var(--text); font-size: .82rem; font-weight: 600; font-family: inherit;
+    cursor: pointer; transition: border-color .2s ease, background .2s ease; }
+  .lang-toggle:hover { border-color: var(--accent); background: rgba(52,211,153,.10); }
   header.hero { padding: 22px 0 10px; text-align: center; }
   h1 { font-family: "Space Grotesk", Inter, sans-serif; font-size: clamp(1.5rem, 3.6vw, 2.1rem);
     margin: 0 0 6px; letter-spacing: -.03em; }
@@ -72,16 +77,17 @@
   <div class="container nav-inner">
     <a class="brand" href="index.html"><span class="brand-mark"></span>Shanmukhan</a>
     <div class="nav-links">
-      <a href="play.html">Play</a>
-      <a class="nav-cta" href="https://shanmukhan.com/" target="_blank" rel="noopener">See my products →</a>
+      <a href="play.html" id="navPlay">Play</a>
+      <a class="nav-cta" href="https://shanmukhan.com/" target="_blank" rel="noopener" id="navCta">See my products →</a>
+      <button class="lang-toggle" id="langToggle">తెలుగు</button>
     </div>
   </div>
 </nav>
 
 <header class="hero">
   <div class="container">
-    <h1>🔬 Science Lab</h1>
-    <p>Animated, interactive explainers for the biggest ideas in science — built for curious minds of any age. Pick a topic below.</p>
+    <h1 id="heroTitle">🔬 Science Lab</h1>
+    <p id="heroDesc">Animated, interactive explainers for the biggest ideas in science — built for curious minds of any age. Pick a topic below.</p>
   </div>
 </header>
 
@@ -90,31 +96,97 @@
 </div>
 
 <footer>
-  <div class="container">© <span id="year"></span> Shanmukhan · Hosted at home on a Raspberry Pi · <a href="play.html">Play some games</a></div>
+  <div class="container">© <span id="year"></span> <span id="footerText">Shanmukhan · Hosted at home on a Raspberry Pi · </span><a href="play.html" id="footerPlayLink">Play some games</a></div>
 </footer>
 
 <script>
 document.getElementById('year').textContent = new Date().getFullYear();
 
+let LANG = 'en';
+
+const T = {
+  en: {
+    navPlay: 'Play',
+    navCta: 'See my products →',
+    heroTitle: '🔬 Science Lab',
+    heroDesc: 'Animated, interactive explainers for the biggest ideas in science — built for curious minds of any age. Pick a topic below.',
+    footerText: 'Shanmukhan · Hosted at home on a Raspberry Pi · ',
+    footerPlayLink: 'Play some games',
+    comingSoon: 'Coming soon',
+    experiment: 'experiment',
+    experiments: 'experiments',
+  },
+  te: {
+    navPlay: 'ఆటలు',
+    navCta: 'నా ఉత్పత్తులు చూడండి →',
+    heroTitle: '🔬 సైన్స్ ల్యాబ్',
+    heroDesc: 'సైన్స్‌లోని గొప్ప ఆలోచనలను వివరించే యానిమేటెడ్, ఇంటరాక్టివ్ పాఠాలు — ఏ వయసు వారికైనా ఆసక్తికరంగా ఉంటాయి. కింద ఒక అంశాన్ని ఎంచుకోండి.',
+    footerText: 'శన్ముఖన్ · ఇంటి వద్ద Raspberry Pi పై హోస్ట్ చేయబడింది · ',
+    footerPlayLink: 'కొన్ని ఆటలు ఆడండి',
+    comingSoon: 'త్వరలో వస్తుంది',
+    experiment: 'ప్రయోగం',
+    experiments: 'ప్రయోగాలు',
+  }
+};
+
+function tr() { return T[LANG]; }
+
 const CATEGORIES = [
-  {href:'category-space.html', icon:'🌌', title:'Space & Universe', desc:'Gravity, eclipses, black holes, tides, seasons, and the Big Bang.', count:8},
-  {href:'category-physics.html', icon:'🌀', title:'Physics in Action', desc:'String theory, relativity, rainbows, rockets, sound, and electromagnetic induction.', count:14},
-  {href:'category-atoms.html', icon:'⚛️', title:'Atoms & Matter', desc:'What\'s inside an atom, the periodic table, states of matter, and the pH scale.', count:7},
-  {href:'category-tech.html', icon:'🔧', title:'Everyday Tech', desc:'Motors, batteries, magnets, screens, Wi-Fi, flight, diodes, transistors, and circuits.', count:9},
-  {href:'category-life.html', icon:'🧬', title:'Life Science', desc:'Photosynthesis, vaccines, DNA, DNA replication, cell division, and how your eye works.', count:6},
-  {href:'category-math.html', icon:'➗', title:'Math Made Simple', desc:'Calculus, derivatives, integrals, and probability, explained visually.', count:3},
-  {href:'category-indian-scientists.html', icon:'🇮🇳', title:'Indian Scientists', desc:'From ancient surgery to Nobel-winning physics — the people behind the discoveries.', count:6},
+  {href:'category-space.html', icon:'🌌', count:8,
+    title:{en:'Space & Universe', te:'అంతరిక్షం & విశ్వం'},
+    desc:{en:'Gravity, eclipses, black holes, tides, seasons, and the Big Bang.', te:'గురుత్వాకర్షణ, గ్రహణాలు, కృష్ణ బిలాలు, ఆటుపోట్లు, ఋతువులు, మరియు బిగ్ బ్యాంగ్.'}},
+  {href:'category-physics.html', icon:'🌀', count:14,
+    title:{en:'Physics in Action', te:'చలనశీలంలో భౌతికశాస్త్రం'},
+    desc:{en:'String theory, relativity, rainbows, rockets, sound, and electromagnetic induction.', te:'స్ట్రింగ్ థియరీ, సాపేక్షతా సిద్ధాంతం, హరివిల్లులు, రాకెట్లు, ధ్వని, మరియు విద్యుదయస్కాంత ప్రేరణ.'}},
+  {href:'category-atoms.html', icon:'⚛️', count:7,
+    title:{en:'Atoms & Matter', te:'పరమాణువులు & పదార్థం'},
+    desc:{en:'What\'s inside an atom, the periodic table, states of matter, and the pH scale.', te:'పరమాణువు లోపల ఏముంది, ఆవర్తన పట్టిక, పదార్థ స్థితులు, మరియు pH స్కేల్.'}},
+  {href:'category-tech.html', icon:'🔧', count:9,
+    title:{en:'Everyday Tech', te:'నిత్యజీవిత సాంకేతికత'},
+    desc:{en:'Motors, batteries, magnets, screens, Wi-Fi, flight, diodes, transistors, and circuits.', te:'మోటార్లు, బ్యాటరీలు, అయస్కాంతాలు, స్క్రీన్‌లు, Wi-Fi, విమానయానం, డయోడ్‌లు, ట్రాన్సిస్టర్‌లు, మరియు సర్క్యూట్‌లు.'}},
+  {href:'category-life.html', icon:'🧬', count:6,
+    title:{en:'Life Science', te:'జీవశాస్త్రం'},
+    desc:{en:'Photosynthesis, vaccines, DNA, DNA replication, cell division, and how your eye works.', te:'కిరణజన్య సంయోగక్రియ, వ్యాక్సిన్‌లు, DNA, DNA ప్రతిరూపణ, కణ విభజన, మరియు కన్ను ఎలా పనిచేస్తుంది.'}},
+  {href:'category-math.html', icon:'➗', count:3,
+    title:{en:'Math Made Simple', te:'సులభమైన గణితం'},
+    desc:{en:'Calculus, derivatives, integrals, and probability, explained visually.', te:'కలన గణితం, అవకలనాలు, సమాకలనాలు, మరియు సంభావ్యత — చిత్రాల ద్వారా వివరణ.'}},
+  {href:'category-indian-scientists.html', icon:'🇮🇳', count:6,
+    title:{en:'Indian Scientists', te:'భారతీయ శాస్త్రవేత్తలు'},
+    desc:{en:'From ancient surgery to Nobel-winning physics — the people behind the discoveries.', te:'ప్రాచీన శస్త్రచికిత్స నుండి నోబెల్ బహుమతి పొందిన భౌతికశాస్త్రం వరకు — ఆవిష్కరణల వెనుక ఉన్న వ్యక్తులు.'}},
 ];
 
 const grid = document.getElementById('grid');
-CATEGORIES.forEach(c => {
-  const a = document.createElement('a');
-  a.className = 'card';
-  a.href = c.href;
-  const countLabel = c.count === 0 ? 'Coming soon' : c.count + ' experiment' + (c.count === 1 ? '' : 's');
-  a.innerHTML = `<div class="icon">${c.icon}</div><h3>${c.title}</h3><p>${c.desc}</p><span class="tag">${countLabel} →</span>`;
-  grid.appendChild(a);
+
+function renderGrid() {
+  grid.innerHTML = '';
+  CATEGORIES.forEach(c => {
+    const a = document.createElement('a');
+    a.className = 'card';
+    a.href = c.href;
+    const countLabel = c.count === 0 ? tr().comingSoon : c.count + ' ' + (c.count === 1 ? tr().experiment : tr().experiments);
+    a.innerHTML = `<div class="icon">${c.icon}</div><h3>${c.title[LANG]}</h3><p>${c.desc[LANG]}</p><span class="tag">${countLabel} →</span>`;
+    grid.appendChild(a);
+  });
+}
+
+function applyStaticText() {
+  const t = tr();
+  document.getElementById('navPlay').textContent = t.navPlay;
+  document.getElementById('navCta').textContent = t.navCta;
+  document.getElementById('heroTitle').textContent = t.heroTitle;
+  document.getElementById('heroDesc').textContent = t.heroDesc;
+  document.getElementById('footerText').textContent = t.footerText;
+  document.getElementById('footerPlayLink').textContent = t.footerPlayLink;
+  document.getElementById('langToggle').textContent = LANG === 'en' ? 'తెలుగు' : 'English';
+  renderGrid();
+}
+
+document.getElementById('langToggle').addEventListener('click', () => {
+  LANG = LANG === 'en' ? 'te' : 'en';
+  applyStaticText();
 });
+
+applyStaticText();
 </script>
 </body>
 </html>

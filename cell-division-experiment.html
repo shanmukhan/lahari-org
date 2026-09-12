@@ -9,7 +9,11 @@
   *{box-sizing:border-box;}
   body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
   .wrap{max-width:960px;margin:0 auto;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
   a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
   header{text-align:center;margin-bottom:20px;}
   h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
   header p{color:var(--dim);font-size:16px;margin:0;}
@@ -32,10 +36,13 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="category-life.html">&larr; Back to Life Science</a>
+  <div class="topbar">
+    <a class="back" href="category-life.html" id="backLink">&larr; Back to Life Science</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
   <header>
-    <h1>🔬 Cell Division — Mitosis & Meiosis</h1>
-    <p>Every cell in your body came from one cell splitting, over and over. There are two very different ways it happens.</p>
+    <h1 id="pageTitle">🔬 Cell Division — Mitosis & Meiosis</h1>
+    <p id="pageSubtitle">Every cell in your body came from one cell splitting, over and over. There are two very different ways it happens.</p>
   </header>
 
   <div class="player">
@@ -49,29 +56,115 @@
   </div>
 
   <div class="steps">
-    <div class="step-card"><div class="num">1</div><h3>🔵 Mitosis: exact copies</h3>
-      <p>Most of your cells divide by <b>mitosis</b> — one cell copies its DNA and splits into two IDENTICAL cells, for growth and repair.</p></div>
-    <div class="step-card"><div class="num">2</div><h3>🟠 Meiosis: making sex cells</h3>
-      <p><b>Meiosis</b> is different — it makes sperm or egg cells, dividing TWICE to make four cells with HALF the DNA.</p></div>
-    <div class="step-card"><div class="num">3</div><h3>➗ Why half the DNA matters</h3>
-      <p>When a sperm (half DNA) meets an egg (half DNA), they combine to make a full set again — that's how you got exactly half your DNA from each parent!</p></div>
-    <div class="step-card"><div class="num">4</div><h3>🔀 Meiosis also shuffles genes</h3>
-      <p>During meiosis, chromosomes swap little pieces with each other — which is a big reason siblings all look different from each other.</p></div>
+    <div class="step-card"><div class="num">1</div><h3 id="s1t">🔵 Mitosis: exact copies</h3>
+      <p id="s1d">Most of your cells divide by <b>mitosis</b> — one cell copies its DNA and splits into two IDENTICAL cells, for growth and repair.</p></div>
+    <div class="step-card"><div class="num">2</div><h3 id="s2t">🟠 Meiosis: making sex cells</h3>
+      <p id="s2d"><b>Meiosis</b> is different — it makes sperm or egg cells, dividing TWICE to make four cells with HALF the DNA.</p></div>
+    <div class="step-card"><div class="num">3</div><h3 id="s3t">➗ Why half the DNA matters</h3>
+      <p id="s3d">When a sperm (half DNA) meets an egg (half DNA), they combine to make a full set again — that's how you got exactly half your DNA from each parent!</p></div>
+    <div class="step-card"><div class="num">4</div><h3 id="s4t">🔀 Meiosis also shuffles genes</h3>
+      <p id="s4d">During meiosis, chromosomes swap little pieces with each other — which is a big reason siblings all look different from each other.</p></div>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> Your body performs mitosis roughly <b>2 trillion times a day</b> just to replace worn-out cells —
     skin, blood, and gut lining cells especially. You are, quite literally, rebuilding yourself constantly!
   </div>
 </div>
 
 <script>
+// ---------- shared translation layer ----------
+const T = {
+  en: {
+    langToggle: 'తెలుగు',
+    backLink: '&larr; Back to Life Science',
+    pageTitle: '🔬 Cell Division — Mitosis & Meiosis',
+    pageSubtitle: 'Every cell in your body came from one cell splitting, over and over. There are two very different ways it happens.',
+    captionInitial: 'Pick mitosis or meiosis to see how it works.',
+    mitosisBtn: '🔵 Mitosis', meiosisBtn: '🟠 Meiosis', playBtn: '▶ Replay',
+    captionMitosis: '<b>Mitosis</b>: one cell splits into two identical cells — for growth and repair.',
+    captionMeiosis: '<b>Meiosis</b>: one cell divides twice into four cells, each with half the DNA — sperm or eggs.',
+    steps: [
+      ['🔵 Mitosis: exact copies','Most of your cells divide by <b>mitosis</b> — one cell copies its DNA and splits into two IDENTICAL cells, for growth and repair.'],
+      ['🟠 Meiosis: making sex cells','<b>Meiosis</b> is different — it makes sperm or egg cells, dividing TWICE to make four cells with HALF the DNA.'],
+      ['➗ Why half the DNA matters','When a sperm (half DNA) meets an egg (half DNA), they combine to make a full set again — that\'s how you got exactly half your DNA from each parent!'],
+      ['🔀 Meiosis also shuffles genes','During meiosis, chromosomes swap little pieces with each other — which is a big reason siblings all look different from each other.'],
+    ],
+    fact: '🤯 <b>Mind-blowing part:</b> Your body performs mitosis roughly <b>2 trillion times a day</b> just to replace worn-out cells — skin, blood, and gut lining cells especially. You are, quite literally, rebuilding yourself constantly!',
+    canvas: {
+      modeMitosisTitle: 'MITOSIS: exact copies',
+      modeMeiosisTitle: 'MEIOSIS: half-DNA cells',
+      mitosisCopy: 'one cell, DNA copied (4 chromatids)',
+      mitosisSplit: 'chromosomes line up and split apart',
+      mitosisDone: 'TWO IDENTICAL cells — same DNA as the original',
+      meiosisCopy: 'one cell, DNA copied',
+      meiosisFirst: 'FIRST division: two cells',
+      meiosisSecond: 'SECOND division: now four cells',
+      meiosisDone: 'four cells, each with HALF the DNA (sperm/egg)',
+    },
+  },
+  te: {
+    langToggle: 'English',
+    backLink: '&larr; జీవశాస్త్రానికి తిరిగి',
+    pageTitle: '🔬 కణ విభజన — మైటోసిస్ & మియోసిస్',
+    pageSubtitle: 'మీ శరీరంలోని ప్రతి కణం ఒకే కణం మళ్ళీ మళ్ళీ విడిపోవడం వల్ల వచ్చిందే. ఇది జరిగే విధానాలు రెండు — చాలా భిన్నమైనవి.',
+    captionInitial: 'ఇది ఎలా పనిచేస్తుందో చూడటానికి మైటోసిస్ లేదా మియోసిస్‌ను ఎంచుకోండి.',
+    mitosisBtn: '🔵 మైటోసిస్', meiosisBtn: '🟠 మియోసిస్', playBtn: '▶ మళ్ళీ చూపించు',
+    captionMitosis: '<b>మైటోసిస్</b>: ఒక కణం రెండు ఒకేలాంటి కణాలుగా విడిపోతుంది — పెరుగుదల మరియు మరమ్మత్తు కోసం.',
+    captionMeiosis: '<b>మియోసిస్</b>: ఒక కణం రెండుసార్లు విభజన చెంది, సగం డి.ఎన్.ఏ ఉన్న నాలుగు కణాలు — స్పెర్మ్ లేదా గుడ్లు — తయారవుతాయి.',
+    steps: [
+      ['🔵 మైటోసిస్: ఖచ్చితమైన కాపీలు','మీ కణాలలో చాలా వరకు <b>మైటోసిస్</b> ద్వారా విభజన చెందుతాయి — ఒక కణం తన డి.ఎన్.ఏను కాపీ చేసి రెండు ఒకేలాంటి కణాలుగా విడిపోతుంది, పెరుగుదల మరియు మరమ్మత్తు కోసం.'],
+      ['🟠 మియోసిస్: లైంగిక కణాల తయారీ','<b>మియోసిస్</b> వేరుగా ఉంటుంది — ఇది స్పెర్మ్ లేదా గుడ్డు కణాలను తయారు చేస్తుంది, రెండుసార్లు విభజన చెంది సగం డి.ఎన్.ఏ ఉన్న నాలుగు కణాలను తయారు చేస్తుంది.'],
+      ['➗ సగం డి.ఎన్.ఏ ఎందుకు ముఖ్యం','సగం డి.ఎన్.ఏ ఉన్న స్పెర్మ్, సగం డి.ఎన్.ఏ ఉన్న గుడ్డును కలిసినప్పుడు, అవి కలిసి పూర్తి సెట్‌ను మళ్ళీ తయారు చేస్తాయి — అలాగే మీకు ప్రతి తల్లిదండ్రుల నుండి సరిగ్గా సగం డి.ఎన్.ఏ వచ్చింది!'],
+      ['🔀 మియోసిస్ జన్యువులను కూడా కలుపుతుంది','మియోసిస్ సమయంలో, క్రోమోజోములు ఒకదానితో ఒకటి చిన్న భాగాలను మార్చుకుంటాయి — అందుకే తోబుట్టువులందరూ ఒకరికొకరు వేరుగా కనిపించడానికి ఇదే ప్రధాన కారణం.'],
+    ],
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> అరిగిపోయిన కణాలను — ముఖ్యంగా చర్మం, రక్తం, జీర్ణాశయ లోపలి పొర కణాలను — భర్తీ చేయడానికి మీ శరీరం రోజుకు దాదాపు <b>2 ట్రిలియన్ సార్లు</b> మైటోసిస్ చేస్తుంది. మీరు నిజంగానే ఎప్పటికప్పుడు మిమ్మల్ని మీరు తిరిగి నిర్మించుకుంటున్నారు!',
+    canvas: {
+      modeMitosisTitle: 'మైటోసిస్: ఖచ్చితమైన కాపీలు',
+      modeMeiosisTitle: 'మియోసిస్: సగం-డి.ఎన్.ఏ కణాలు',
+      mitosisCopy: 'ఒక కణం, డి.ఎన్.ఏ కాపీ అయింది (4 క్రోమటిడ్‌లు)',
+      mitosisSplit: 'క్రోమోజోములు వరుసగా నిలబడి విడిపోతాయి',
+      mitosisDone: 'రెండు ఒకేలాంటి కణాలు — మూల కణంతో సమానమైన డి.ఎన్.ఏ',
+      meiosisCopy: 'ఒక కణం, డి.ఎన్.ఏ కాపీ అయింది',
+      meiosisFirst: 'మొదటి విభజన: రెండు కణాలు',
+      meiosisSecond: 'రెండవ విభజన: ఇప్పుడు నాలుగు కణాలు',
+      meiosisDone: 'నాలుగు కణాలు, ఒక్కొక్కటి సగం డి.ఎన్.ఏతో (స్పెర్మ్/గుడ్డు)',
+    },
+  }
+};
+let LANG = 'en';
+function tr(){ return T[LANG]; }
+
+function applyStaticText(){
+  const t = tr();
+  document.documentElement.lang = LANG;
+  document.getElementById('langToggle').textContent = t.langToggle;
+  document.getElementById('backLink').innerHTML = t.backLink;
+  document.getElementById('pageTitle').textContent = t.pageTitle;
+  document.getElementById('pageSubtitle').textContent = t.pageSubtitle;
+  document.getElementById('mitosisBtn').textContent = t.mitosisBtn;
+  document.getElementById('meiosisBtn').textContent = t.meiosisBtn;
+  document.getElementById('playBtn').textContent = t.playBtn;
+  for(let i=0;i<4;i++){
+    document.getElementById('s'+(i+1)+'t').textContent = t.steps[i][0];
+    document.getElementById('s'+(i+1)+'d').innerHTML = t.steps[i][1];
+  }
+  document.getElementById('factBox').innerHTML = t.fact;
+}
+
+document.getElementById('langToggle').addEventListener('click', () => {
+  LANG = LANG === 'en' ? 'te' : 'en';
+  applyStaticText();
+  if (window.__cellRefresh) window.__cellRefresh();
+});
+applyStaticText();
+
 (function(){
   const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
   const W=canvas.width, H=canvas.height;
   const captionEl=document.getElementById('caption');
   const mitosisBtn=document.getElementById('mitosisBtn'), meiosisBtn=document.getElementById('meiosisBtn'), playBtn=document.getElementById('playBtn');
-  let mode='mitosis', t=0, playing=true;
+  let mode='mitosis', t=0, playing=true, captionState='initial';
 
   function label(x,y,text,color){
     ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
@@ -89,56 +182,64 @@
   function drawMitosis(local){
     const cyc=local%MITOSIS_DUR;
     const cx=W/2;
+    const c=tr().canvas;
     if(cyc<2){
       drawCell(cx,H/2,60,[[-10,-10],[10,-10],[-10,10],[10,10]],'#4fd3ff');
-      label(cx,H/2+90,'one cell, DNA copied (4 chromatids)','#4fd3ff');
+      label(cx,H/2+90,c.mitosisCopy,'#4fd3ff');
     } else if(cyc<4){
       const sep=(cyc-2)/2*40;
       drawCell(cx-sep,H/2,55,[[-8,-8],[8,8]],'#4fd3ff');
       drawCell(cx+sep,H/2,55,[[-8,-8],[8,8]],'#4fd3ff');
-      label(cx,H/2+90,'chromosomes line up and split apart','#4fd3ff');
+      label(cx,H/2+90,c.mitosisSplit,'#4fd3ff');
     } else {
       const sep=80;
       drawCell(cx-sep,H/2,50,[[-8,-8],[8,8]],'#6dffb0');
       drawCell(cx+sep,H/2,50,[[-8,-8],[8,8]],'#6dffb0');
-      label(cx,H/2+80,'TWO IDENTICAL cells — same DNA as the original','#6dffb0');
+      label(cx,H/2+80,c.mitosisDone,'#6dffb0');
     }
   }
   const MEIOSIS_DUR=12;
   function drawMeiosis(local){
     const cyc=local%MEIOSIS_DUR;
     const cx=W/2;
+    const c=tr().canvas;
     if(cyc<3){
       drawCell(cx,H/2,60,[[-10,-10],[10,-10],[-10,10],[10,10]],'#ffd23f');
-      label(cx,H/2+90,'one cell, DNA copied','#ffd23f');
+      label(cx,H/2+90,c.meiosisCopy,'#ffd23f');
     } else if(cyc<6){
       const sep=(cyc-3)/3*40;
       drawCell(cx-sep,H/2,50,[[-8,-8],[8,8]],'#ffd23f');
       drawCell(cx+sep,H/2,50,[[-8,-8],[8,8]],'#ffd23f');
-      label(cx,H/2+80,'FIRST division: two cells','#ffd23f');
+      label(cx,H/2+80,c.meiosisFirst,'#ffd23f');
     } else if(cyc<9){
       const positions=[[-160,0],[-55,0],[55,0],[160,0]];
       positions.forEach(([dx])=>{ drawCell(cx+dx,H/2,35,[[-6,0]],'#ff9d5a'); });
-      label(cx,H/2+70,'SECOND division: now four cells','#ff9d5a');
+      label(cx,H/2+70,c.meiosisSecond,'#ff9d5a');
     } else {
       const positions=[[-160,0],[-55,0],[55,0],[160,0]];
       positions.forEach(([dx])=>{ drawCell(cx+dx,H/2,35,[[-6,0]],'#6dffb0'); });
-      label(cx,H/2+70,'four cells, each with HALF the DNA (sperm/egg)','#6dffb0');
+      label(cx,H/2+70,c.meiosisDone,'#6dffb0');
     }
   }
   function render(){
     ctx.clearRect(0,0,W,H); ctx.fillStyle='#04060f'; ctx.fillRect(0,0,W,H);
     ctx.font='700 16px Segoe UI'; ctx.fillStyle='#eef2ff'; ctx.textAlign='center';
-    ctx.fillText(mode==='mitosis'?'MITOSIS: exact copies':'MEIOSIS: half-DNA cells',W/2,40);
+    ctx.fillText(mode==='mitosis'?tr().canvas.modeMitosisTitle:tr().canvas.modeMeiosisTitle,W/2,40);
     if(mode==='mitosis') drawMitosis(t); else drawMeiosis(t);
   }
   function loop(){ if(playing) t+=0.02; render(); requestAnimationFrame(loop); }
   mitosisBtn.addEventListener('click',()=>{ mode='mitosis'; t=0; mitosisBtn.classList.add('on'); meiosisBtn.classList.remove('on');
-    captionEl.innerHTML='<b>Mitosis</b>: one cell splits into two identical cells — for growth and repair.'; });
+    captionState='mitosis'; captionEl.innerHTML=tr().captionMitosis; });
   meiosisBtn.addEventListener('click',()=>{ mode='meiosis'; t=0; meiosisBtn.classList.add('on'); mitosisBtn.classList.remove('on');
-    captionEl.innerHTML='<b>Meiosis</b>: one cell divides twice into four cells, each with half the DNA — sperm or eggs.'; });
+    captionState='meiosis'; captionEl.innerHTML=tr().captionMeiosis; });
   playBtn.addEventListener('click',()=>{ t=0; });
   render(); requestAnimationFrame(loop);
+
+  window.__cellRefresh = function(){
+    if(captionState==='mitosis') captionEl.innerHTML=tr().captionMitosis;
+    else if(captionState==='meiosis') captionEl.innerHTML=tr().captionMeiosis;
+    else captionEl.textContent=tr().captionInitial;
+  };
 })();
 </script>
 </body>

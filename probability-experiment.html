@@ -9,7 +9,11 @@
   *{box-sizing:border-box;}
   body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
   .wrap{max-width:960px;margin:0 auto;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
   a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
   header{text-align:center;margin-bottom:20px;}
   h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
   header p{color:var(--dim);font-size:16px;margin:0;}
@@ -32,10 +36,13 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="category-math.html">&larr; Back to Math Made Simple</a>
+  <div class="topbar">
+    <a class="back" href="category-math.html" id="backLink">&larr; Back to Math Made Simple</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
   <header>
-    <h1>🎲 Probability & Statistics Basics</h1>
-    <p>A coin flip is 50/50 no matter what — but watch what happens the more times you flip it.</p>
+    <h1 id="pageTitle">🎲 Probability & Statistics Basics</h1>
+    <p id="pageSubtitle">A coin flip is 50/50 no matter what — but watch what happens the more times you flip it.</p>
   </header>
 
   <div class="player">
@@ -49,17 +56,17 @@
   </div>
 
   <div class="steps">
-    <div class="step-card"><div class="num">1</div><h3>🎲 Probability = a fraction of outcomes</h3>
-      <p>Probability measures how likely something is — a coin has 2 equally likely sides, so heads has a probability of 1 in 2.</p></div>
-    <div class="step-card"><div class="num">2</div><h3>🪙 A few flips can be lopsided</h3>
-      <p>Flip a coin just 5 times, and it's totally normal to get 4 heads and 1 tail — small samples can look "unfair" by chance.</p></div>
-    <div class="step-card"><div class="num">3</div><h3>📊 More flips settle toward 50/50</h3>
-      <p>Flip it 1,000 times, and the results settle very close to 50% heads, 50% tails — this is called the "Law of Large Numbers."</p></div>
-    <div class="step-card"><div class="num">4</div><h3>📈 Statistics: making sense of data</h3>
-      <p>Statistics is the toolbox for summarizing all that data — averages, spread, and patterns — instead of getting lost in individual results.</p></div>
+    <div class="step-card"><div class="num">1</div><h3 id="s1t">🎲 Probability = a fraction of outcomes</h3>
+      <p id="s1d">Probability measures how likely something is — a coin has 2 equally likely sides, so heads has a probability of 1 in 2.</p></div>
+    <div class="step-card"><div class="num">2</div><h3 id="s2t">🪙 A few flips can be lopsided</h3>
+      <p id="s2d">Flip a coin just 5 times, and it's totally normal to get 4 heads and 1 tail — small samples can look "unfair" by chance.</p></div>
+    <div class="step-card"><div class="num">3</div><h3 id="s3t">📊 More flips settle toward 50/50</h3>
+      <p id="s3d">Flip it 1,000 times, and the results settle very close to 50% heads, 50% tails — this is called the "Law of Large Numbers."</p></div>
+    <div class="step-card"><div class="num">4</div><h3 id="s4t">📈 Statistics: making sense of data</h3>
+      <p id="s4d">Statistics is the toolbox for summarizing all that data — averages, spread, and patterns — instead of getting lost in individual results.</p></div>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> This is exactly why casinos always make money in the long run, even though any single player CAN win —
     each game has odds slightly in the casino's favor, and over millions of plays, the Law of Large Numbers guarantees the casino comes
     out ahead, even though no one can predict any single spin or hand.
@@ -67,11 +74,94 @@
 </div>
 
 <script>
+// ---------- shared translation layer ----------
+const T = {
+  en: {
+    langToggle: 'తెలుగు',
+    backLink: '&larr; Back to Math Made Simple',
+    pageTitle: '🎲 Probability & Statistics Basics',
+    pageSubtitle: 'A coin flip is 50/50 no matter what — but watch what happens the more times you flip it.',
+    flip1Btn: '🪙 Flip Once', flip100Btn: '🪙 Flip 100 Times', resetBtn: '↻ Reset',
+    captionDefault: 'Flip a coin many times and watch the results settle down.',
+    captionFew: (total)=>'With just '+total+' flip(s), results can look uneven — that\'s totally normal.',
+    captionSettling: (total)=>'After '+total+' flips, the ratio is settling toward 50/50.',
+    captionAfter100: (total,pct)=>'After '+total+' flips: '+pct+'% heads — very close to 50%, just as the Law of Large Numbers predicts!',
+    steps: [
+      ['🎲 Probability = a fraction of outcomes','Probability measures how likely something is — a coin has 2 equally likely sides, so heads has a probability of 1 in 2.'],
+      ['🪙 A few flips can be lopsided','Flip a coin just 5 times, and it\'s totally normal to get 4 heads and 1 tail — small samples can look "unfair" by chance.'],
+      ['📊 More flips settle toward 50/50','Flip it 1,000 times, and the results settle very close to 50% heads, 50% tails — this is called the "Law of Large Numbers."'],
+      ['📈 Statistics: making sense of data','Statistics is the toolbox for summarizing all that data — averages, spread, and patterns — instead of getting lost in individual results.'],
+    ],
+    fact: '🤯 <b>Mind-blowing part:</b> This is exactly why casinos always make money in the long run, even though any single player CAN win — each game has odds slightly in the casino\'s favor, and over millions of plays, the Law of Large Numbers guarantees the casino comes out ahead, even though no one can predict any single spin or hand.',
+    canvasExpected: '50% (expected)',
+    canvasHeadsLabel: (heads,pct)=>'HEADS: '+heads+' ('+pct+'%)',
+    canvasTailsLabel: (tails,pct)=>'TAILS: '+tails+' ('+pct+'%)',
+    canvasTotalFlips: (total)=>'Total flips: '+total,
+  },
+  te: {
+    langToggle: 'English',
+    backLink: '&larr; గణితం సులభంగా కి తిరిగి',
+    pageTitle: '🎲 సంభావ్యత & గణాంకాల మూలాలు',
+    pageSubtitle: 'నాణెం ఎగరవేస్తే 50/50 అవకాశం ఎప్పుడూ మారదు — కానీ ఎక్కువసార్లు ఎగరవేస్తే ఏమి జరుగుతుందో చూడండి.',
+    flip1Btn: '🪙 ఒకసారి ఎగరవేయి', flip100Btn: '🪙 100 సార్లు ఎగరవేయి', resetBtn: '↻ రీసెట్',
+    captionDefault: 'నాణెాన్ని చాలాసార్లు ఎగరవేసి ఫలితాలు ఎలా స్థిరపడతాయో చూడండి.',
+    captionFew: (total)=>'కేవలం '+total+' సార్లు ఎగరవేయగా, ఫలితాలు అసమానంగా కనిపించవచ్చు — ఇది పూర్తిగా సహజం.',
+    captionSettling: (total)=>total+' సార్లు ఎగరవేసిన తర్వాత, నిష్పత్తి 50/50 వైపు స్థిరపడుతోంది.',
+    captionAfter100: (total,pct)=>total+' సార్లు ఎగరవేసిన తర్వాత: '+pct+'% బొమ్మ (heads) — పెద్ద సంఖ్యల నియమం (Law of Large Numbers) చెప్పినట్లుగా 50%కి చాలా దగ్గరగా ఉంది!',
+    steps: [
+      ['🎲 సంభావ్యత = ఫలితాల భిన్నం','సంభావ్యత అనేది ఒక సంఘటన ఎంత అవకాశం ఉందో కొలుస్తుంది — నాణేనికి సమాన అవకాశం ఉన్న 2 వైపులు ఉంటాయి, కాబట్టి బొమ్మ (heads) వచ్చే సంభావ్యత 2లో 1.'],
+      ['🪙 కొన్ని ఎగరవేతలు అసమానంగా ఉండొచ్చు','నాణేాన్ని కేవలం 5 సార్లు ఎగరవేస్తే, 4 బొమ్మలు, 1 బొర్రుసు (tails) రావడం పూర్తిగా సహజం — చిన్న నమూనాలు యాదృచ్ఛికంగా "అన్యాయంగా" కనిపించవచ్చు.'],
+      ['📊 ఎక్కువ ఎగరవేతలు 50/50 వైపు స్థిరపడతాయి','దాన్ని 1,000 సార్లు ఎగరవేస్తే, ఫలితాలు 50% బొమ్మ, 50% బొర్రుసుకు చాలా దగ్గరగా స్థిరపడతాయి — దీన్నే "పెద్ద సంఖ్యల నియమం" (Law of Large Numbers) అంటారు.'],
+      ['📈 గణాంకాలు: డేటాను అర్థం చేసుకోవడం','గణాంకశాస్త్రం (Statistics) అనేది ఆ డేటా మొత్తాన్ని సంక్షిప్తం చేసే పనిముట్ల సమితి — సగటులు, విస్తరణ, మరియు నమూనాలు — విడివిడి ఫలితాల్లో తికమక పడకుండా.'],
+    ],
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> కాసినోలు ఎల్లప్పుడూ దీర్ఘకాలంలో లాభం సంపాదించడానికి ఇదే కారణం, ఏ ఒక్క ఆటగాడైనా గెలవగలిగినప్పటికీ — ప్రతి ఆటలో అవకాశాలు కాసినోకు కొద్దిగా అనుకూలంగా ఉంటాయి, మరియు లక్షలాది ఆటల తర్వాత, పెద్ద సంఖ్యల నియమం కాసినో ముందంజలో ఉంటుందని నిర్ధారిస్తుంది — ఏ ఒక్క స్పిన్ లేదా చేతి ఫలితాన్ని ఎవరూ ముందుగానే చెప్పలేకపోయినా.',
+    canvasExpected: '50% (అంచనా)',
+    canvasHeadsLabel: (heads,pct)=>'బొమ్మ: '+heads+' ('+pct+'%)',
+    canvasTailsLabel: (tails,pct)=>'బొర్రుసు: '+tails+' ('+pct+'%)',
+    canvasTotalFlips: (total)=>'మొత్తం ఎగరవేతలు: '+total,
+  }
+};
+let LANG = 'en';
+function tr(){ return T[LANG]; }
+
+function applyStaticText(){
+  const t = tr();
+  document.documentElement.lang = LANG;
+  document.getElementById('langToggle').textContent = t.langToggle;
+  document.getElementById('backLink').innerHTML = t.backLink;
+  document.getElementById('pageTitle').textContent = t.pageTitle;
+  document.getElementById('pageSubtitle').textContent = t.pageSubtitle;
+  document.getElementById('flip1Btn').textContent = t.flip1Btn;
+  document.getElementById('flip100Btn').textContent = t.flip100Btn;
+  document.getElementById('resetBtn').textContent = t.resetBtn;
+  for(let i=0;i<4;i++){
+    document.getElementById('s'+(i+1)+'t').textContent = t.steps[i][0];
+    document.getElementById('s'+(i+1)+'d').textContent = t.steps[i][1];
+  }
+  document.getElementById('factBox').innerHTML = t.fact;
+}
+
+document.getElementById('langToggle').addEventListener('click', () => {
+  LANG = LANG === 'en' ? 'te' : 'en';
+  applyStaticText();
+  if (window.__probRefresh) window.__probRefresh();
+});
+applyStaticText();
+
 (function(){
   const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
   const W=canvas.width, H=canvas.height;
   const captionEl=document.getElementById('caption');
   let heads=0, tails=0, history=[];
+  let lastCaption={type:'default'};
+
+  function updateCaptionText(){
+    const t=tr();
+    if(lastCaption.type==='few') captionEl.innerHTML = t.captionFew(lastCaption.total);
+    else if(lastCaption.type==='settling') captionEl.innerHTML = t.captionSettling(lastCaption.total);
+    else if(lastCaption.type==='after100') captionEl.innerHTML = t.captionAfter100(lastCaption.total, lastCaption.pct);
+    else captionEl.innerHTML = t.captionDefault;
+  }
 
   function label(x,y,text,color){
     ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
@@ -84,6 +174,7 @@
     const total=heads+tails;
     const pctH = total>0 ? heads/total : 0.5;
     const pctT = total>0 ? tails/total : 0.5;
+    const t=tr();
 
     const barY=100, barH=160, barW=200;
     const hX=W/2-260, tX=W/2+60;
@@ -93,13 +184,13 @@
     ctx.strokeRect(hX,barY,barW,barH); ctx.strokeRect(tX,barY,barW,barH);
     ctx.strokeStyle='rgba(255,255,255,.4)'; ctx.setLineDash([4,4]);
     ctx.beginPath(); ctx.moveTo(hX-20,barY+barH/2); ctx.lineTo(tX+barW+20,barY+barH/2); ctx.stroke(); ctx.setLineDash([]);
-    label((hX+tX+barW)/2,barY+barH/2-10,'50% (expected)','#eef2ff');
+    label((hX+tX+barW)/2,barY+barH/2-10,t.canvasExpected,'#eef2ff');
 
-    label(hX+barW/2,barY-14,'HEADS: '+heads+' ('+(pctH*100).toFixed(1)+'%)','#4fd3ff');
-    label(tX+barW/2,barY-14,'TAILS: '+tails+' ('+(pctT*100).toFixed(1)+'%)','#ff9d5a');
+    label(hX+barW/2,barY-14,t.canvasHeadsLabel(heads,(pctH*100).toFixed(1)),'#4fd3ff');
+    label(tX+barW/2,barY-14,t.canvasTailsLabel(tails,(pctT*100).toFixed(1)),'#ff9d5a');
 
     ctx.fillStyle='#eef2ff'; ctx.font='800 20px Segoe UI'; ctx.textAlign='center';
-    ctx.fillText('Total flips: '+total, W/2, barY+barH+60);
+    ctx.fillText(t.canvasTotalFlips(total), W/2, barY+barH+60);
 
     // recent history strip
     const recent=history.slice(-40);
@@ -114,21 +205,30 @@
     history.push(h);
     draw();
     const total=heads+tails;
-    captionEl.innerHTML = total<10
-      ? 'With just '+total+' flip(s), results can look uneven — that\'s totally normal.'
-      : 'After '+total+' flips, the ratio is settling toward 50/50.';
+    if(total<10) lastCaption={type:'few', total};
+    else lastCaption={type:'settling', total};
+    updateCaptionText();
   }
   document.getElementById('flip1Btn').addEventListener('click',flipOnce);
   document.getElementById('flip100Btn').addEventListener('click',()=>{
     for(let i=0;i<100;i++){ const h=Math.random()<0.5; if(h) heads++; else tails++; history.push(h); }
     draw();
-    captionEl.innerHTML='After '+(heads+tails)+' flips: '+((heads/(heads+tails))*100).toFixed(1)+'% heads — very close to 50%, just as the Law of Large Numbers predicts!';
+    const total=heads+tails;
+    const pct=((heads/total)*100).toFixed(1);
+    lastCaption={type:'after100', total, pct};
+    updateCaptionText();
   });
   document.getElementById('resetBtn').addEventListener('click',()=>{
     heads=0; tails=0; history=[]; draw();
-    captionEl.innerHTML='Flip a coin many times and watch the results settle down.';
+    lastCaption={type:'default'};
+    updateCaptionText();
   });
   draw();
+
+  window.__probRefresh = function(){
+    draw();
+    updateCaptionText();
+  };
 })();
 </script>
 </body>

@@ -9,7 +9,11 @@
   *{box-sizing:border-box;}
   body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
   .wrap{max-width:960px;margin:0 auto;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
   a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
   header{text-align:center;margin-bottom:20px;}
   h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
   header p{color:var(--dim);font-size:16px;margin:0;}
@@ -30,10 +34,13 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="category-atoms.html">&larr; Back to Atoms & Matter</a>
+  <div class="topbar">
+    <a class="back" href="category-atoms.html" id="backLink">&larr; Back to Atoms & Matter</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
   <header>
-    <h1>🧪 The pH Scale — Acids & Bases</h1>
-    <p>Lemon juice, soap, and pure water are all different in one key way: how many free hydrogen ions they contain.</p>
+    <h1 id="pageTitle">🧪 The pH Scale — Acids & Bases</h1>
+    <p id="pageSubtitle">Lemon juice, soap, and pure water are all different in one key way: how many free hydrogen ions they contain.</p>
   </header>
 
   <div class="player">
@@ -45,45 +52,126 @@
   </div>
 
   <div class="steps">
-    <div class="step-card"><div class="num">1</div><h3>💧 It's about H⁺ ions</h3>
-      <p>pH measures how many free hydrogen ions (H⁺) are floating in a liquid — more H⁺ means more acidic.</p></div>
-    <div class="step-card"><div class="num">2</div><h3>📏 A scale from 0 to 14</h3>
-      <p>0 is extremely acidic, 14 is extremely basic (alkaline), and 7 — like pure water — is neutral, right in the middle.</p></div>
-    <div class="step-card"><div class="num">3</div><h3>🍋 Acids taste sour, react with metal</h3>
-      <p>Acids (low pH) taste sour and can dissolve certain metals — lemon juice, vinegar, and stomach acid are all acidic.</p></div>
-    <div class="step-card"><div class="num">4</div><h3>🧼 Bases feel slippery, taste bitter</h3>
-      <p>Bases (high pH) often feel slippery and taste bitter — soap, baking soda, and bleach are all basic.</p></div>
+    <div class="step-card"><div class="num">1</div><h3 id="s1t">💧 It's about H⁺ ions</h3>
+      <p id="s1d">pH measures how many free hydrogen ions (H⁺) are floating in a liquid — more H⁺ means more acidic.</p></div>
+    <div class="step-card"><div class="num">2</div><h3 id="s2t">📏 A scale from 0 to 14</h3>
+      <p id="s2d">0 is extremely acidic, 14 is extremely basic (alkaline), and 7 — like pure water — is neutral, right in the middle.</p></div>
+    <div class="step-card"><div class="num">3</div><h3 id="s3t">🍋 Acids taste sour, react with metal</h3>
+      <p id="s3d">Acids (low pH) taste sour and can dissolve certain metals — lemon juice, vinegar, and stomach acid are all acidic.</p></div>
+    <div class="step-card"><div class="num">4</div><h3 id="s4t">🧼 Bases feel slippery, taste bitter</h3>
+      <p id="s4d">Bases (high pH) often feel slippery and taste bitter — soap, baking soda, and bleach are all basic.</p></div>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> The pH scale is <b>logarithmic</b> — each whole number is 10 times more acidic or basic than the
     next. That means pH 4 (like orange juice) is 1,000 times more acidic than pH 7 (neutral water), not just "3 more"!
   </div>
 </div>
 
 <script>
+// ---------- shared translation layer ----------
+const T = {
+  en: {
+    langToggle: 'తెలుగు',
+    backLink: '&larr; Back to Atoms & Matter',
+    pageTitle: '🧪 The pH Scale — Acids & Bases',
+    pageSubtitle: 'Lemon juice, soap, and pure water are all different in one key way: how many free hydrogen ions they contain.',
+    captionDefault: 'Drag the slider to explore the pH scale.',
+    steps: [
+      ["💧 It's about H⁺ ions", 'pH measures how many free hydrogen ions (H⁺) are floating in a liquid — more H⁺ means more acidic.'],
+      ['📏 A scale from 0 to 14', '0 is extremely acidic, 14 is extremely basic (alkaline), and 7 — like pure water — is neutral, right in the middle.'],
+      ['🍋 Acids taste sour, react with metal', 'Acids (low pH) taste sour and can dissolve certain metals — lemon juice, vinegar, and stomach acid are all acidic.'],
+      ['🧼 Bases feel slippery, taste bitter', 'Bases (high pH) often feel slippery and taste bitter — soap, baking soda, and bleach are all basic.'],
+    ],
+    fact: '🤯 <b>Mind-blowing part:</b> The pH scale is <b>logarithmic</b> — each whole number is 10 times more acidic or basic than the next. That means pH 4 (like orange juice) is 1,000 times more acidic than pH 7 (neutral water), not just "3 more"!',
+    items: [
+      {ph:0,name:'Battery acid',desc:'extremely acidic — corrosive!'},
+      {ph:2,name:'Lemon juice',desc:'very acidic, sour'},
+      {ph:2.5,name:'Vinegar',desc:'acidic, sour'},
+      {ph:4,name:'Orange juice',desc:'mildly acidic'},
+      {ph:6,name:'Milk',desc:'slightly acidic'},
+      {ph:7,name:'Pure water',desc:'perfectly neutral'},
+      {ph:8,name:'Sea water',desc:'mildly basic'},
+      {ph:9,name:'Baking soda',desc:'basic, slightly bitter'},
+      {ph:11,name:'Ammonia',desc:'strongly basic'},
+      {ph:13,name:'Bleach',desc:'very basic, slippery'},
+      {ph:14,name:'Drain cleaner',desc:'extremely basic — corrosive!'},
+    ],
+    canvasAcidic: 'ACIDIC', canvasBasic: 'BASIC', canvasNeutral: 'NEUTRAL',
+    canvasPhLabel: (ph,name)=>'pH '+ph+' — like '+name,
+    captionAcidic: '<b>Acidic</b>: lots of free H⁺ ions.',
+    captionBasic: '<b>Basic</b>: few free H⁺ ions.',
+    captionNeutral: '<b>Neutral</b>: balanced, like pure water.',
+  },
+  te: {
+    langToggle: 'English',
+    backLink: '&larr; అణువులు & పదార్థం కి తిరిగి',
+    pageTitle: '🧪 pH స్కేల్ — ఆమ్లాలు & క్షారాలు',
+    pageSubtitle: 'నిమ్మరసం, సబ్బు, మరియు స్వచ్ఛమైన నీరు అన్నీ ఒక ముఖ్యమైన విషయంలో భిన్నంగా ఉంటాయి: వాటిలో ఎన్ని స్వేచ్ఛా హైడ్రోజన్ అయాన్లు (H⁺) ఉన్నాయో అనేదానిలో.',
+    captionDefault: 'pH స్కేల్‌ను అన్వేషించడానికి స్లయిడర్‌ను లాగండి.',
+    steps: [
+      ['💧 ఇది H⁺ అయాన్ల గురించి', 'pH అనేది ఒక ద్రవంలో ఎన్ని స్వేచ్ఛా హైడ్రోజన్ అయాన్లు (H⁺) తేలుతున్నాయో కొలుస్తుంది — ఎక్కువ H⁺ అంటే ఎక్కువ ఆమ్లత్వం.'],
+      ['📏 0 నుండి 14 వరకు స్కేల్', '0 అత్యంత ఆమ్లం, 14 అత్యంత క్షారం (ఆల్కలైన్), మరియు 7 — స్వచ్ఛమైన నీటిలా — సరిగ్గా మధ్యలో తటస్థంగా ఉంటుంది.'],
+      ['🍋 ఆమ్లాలు పులుపుగా ఉంటాయి, లోహంతో చర్య జరుపుతాయి', 'ఆమ్లాలు (తక్కువ pH) పులుపుగా ఉంటాయి మరియు కొన్ని లోహాలను కరిగించగలవు — నిమ్మరసం, వెనిగర్, మరియు కడుపులోని ఆమ్లం అన్నీ ఆమ్లాలే.'],
+      ['🧼 క్షారాలు జారుడుగా ఉంటాయి, చేదుగా ఉంటాయి', 'క్షారాలు (ఎక్కువ pH) తరచుగా జారుడుగా అనిపిస్తాయి మరియు చేదుగా ఉంటాయి — సబ్బు, బేకింగ్ సోడా, మరియు బ్లీచ్ అన్నీ క్షారాలే.'],
+    ],
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> pH స్కేల్ <b>లాగరిథమిక్</b> — ప్రతి పూర్ణ సంఖ్య తర్వాతి దానికంటే 10 రెట్లు ఎక్కువ ఆమ్లంగా లేదా క్షారంగా ఉంటుంది. అంటే pH 4 (ఆరెంజ్ జ్యూస్ లాంటిది) pH 7 (తటస్థ నీరు) కంటే కేవలం "3 ఎక్కువ" కాదు, 1,000 రెట్లు ఎక్కువ ఆమ్లంగా ఉంటుంది!',
+    items: [
+      {ph:0,name:'బ్యాటరీ ఆమ్లం',desc:'అత్యంత ఆమ్లం — క్షయకరం!'},
+      {ph:2,name:'నిమ్మరసం',desc:'చాలా ఆమ్లం, పులుపు'},
+      {ph:2.5,name:'వెనిగర్',desc:'ఆమ్లం, పులుపు'},
+      {ph:4,name:'ఆరెంజ్ జ్యూస్',desc:'తేలికపాటి ఆమ్లం'},
+      {ph:6,name:'పాలు',desc:'కొద్దిగా ఆమ్లం'},
+      {ph:7,name:'స్వచ్ఛమైన నీరు',desc:'పూర్తిగా తటస్థం'},
+      {ph:8,name:'సముద్రపు నీరు',desc:'తేలికపాటి క్షారం'},
+      {ph:9,name:'బేకింగ్ సోడా',desc:'క్షారం, కొద్దిగా చేదు'},
+      {ph:11,name:'అమ్మోనియా',desc:'బలమైన క్షారం'},
+      {ph:13,name:'బ్లీచ్',desc:'చాలా క్షారం, జారుడు'},
+      {ph:14,name:'డ్రెయిన్ క్లీనర్',desc:'అత్యంత క్షారం — క్షయకరం!'},
+    ],
+    canvasAcidic: 'ఆమ్లం', canvasBasic: 'క్షారం', canvasNeutral: 'తటస్థం',
+    canvasPhLabel: (ph,name)=>'pH '+ph+' — '+name+' లాంటిది',
+    captionAcidic: '<b>ఆమ్లం</b>: చాలా స్వేచ్ఛా H⁺ అయాన్లు ఉన్నాయి.',
+    captionBasic: '<b>క్షారం</b>: కొద్ది స్వేచ్ఛా H⁺ అయాన్లు ఉన్నాయి.',
+    captionNeutral: '<b>తటస్థం</b>: సమతుల్యంగా, స్వచ్ఛమైన నీటిలా ఉంది.',
+  }
+};
+let LANG = 'en';
+function tr(){ return T[LANG]; }
+
+function applyStaticText(){
+  const t = tr();
+  document.documentElement.lang = LANG;
+  document.getElementById('langToggle').textContent = t.langToggle;
+  document.getElementById('backLink').innerHTML = t.backLink;
+  document.getElementById('pageTitle').textContent = t.pageTitle;
+  document.getElementById('pageSubtitle').textContent = t.pageSubtitle;
+  for(let i=0;i<4;i++){
+    document.getElementById('s'+(i+1)+'t').textContent = t.steps[i][0];
+    document.getElementById('s'+(i+1)+'d').textContent = t.steps[i][1];
+  }
+  document.getElementById('factBox').innerHTML = t.fact;
+}
+
+document.getElementById('langToggle').addEventListener('click', () => {
+  LANG = LANG === 'en' ? 'te' : 'en';
+  applyStaticText();
+  if (window.__phRefresh) window.__phRefresh();
+});
+applyStaticText();
+
 (function(){
   const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
   const W=canvas.width, H=canvas.height;
   const captionEl=document.getElementById('caption');
   const slider=document.getElementById('phSlider');
 
-  const ITEMS=[
-    {ph:0,name:'Battery acid',desc:'extremely acidic — corrosive!'},
-    {ph:2,name:'Lemon juice',desc:'very acidic, sour'},
-    {ph:2.5,name:'Vinegar',desc:'acidic, sour'},
-    {ph:4,name:'Orange juice',desc:'mildly acidic'},
-    {ph:6,name:'Milk',desc:'slightly acidic'},
-    {ph:7,name:'Pure water',desc:'perfectly neutral'},
-    {ph:8,name:'Sea water',desc:'mildly basic'},
-    {ph:9,name:'Baking soda',desc:'basic, slightly bitter'},
-    {ph:11,name:'Ammonia',desc:'strongly basic'},
-    {ph:13,name:'Bleach',desc:'very basic, slippery'},
-    {ph:14,name:'Drain cleaner',desc:'extremely basic — corrosive!'},
-  ];
+  let captionOverride='default';
+
   function closest(ph){
-    let best=ITEMS[0], bd=999;
-    ITEMS.forEach(it=>{ const d=Math.abs(it.ph-ph); if(d<bd){bd=d;best=it;} });
+    const items=tr().items;
+    let best=items[0], bd=999;
+    items.forEach(it=>{ const d=Math.abs(it.ph-ph); if(d<bd){bd=d;best=it;} });
     return best;
   }
   function colorForPh(ph){
@@ -111,9 +199,9 @@
       ctx.fillStyle='#eef2ff'; ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
       ctx.fillText(i,x,barY+barH+22);
     }
-    ctx.fillStyle='#ff9d5a'; ctx.font='700 13px Segoe UI'; ctx.fillText('ACIDIC',barX+40,barY-14);
-    ctx.fillStyle='#9dc4ff'; ctx.fillText('BASIC',barX+barW-40,barY-14);
-    ctx.fillStyle='#eef2ff'; ctx.fillText('NEUTRAL',barX+barW/2,barY-14);
+    ctx.fillStyle='#ff9d5a'; ctx.font='700 13px Segoe UI'; ctx.fillText(tr().canvasAcidic,barX+40,barY-14);
+    ctx.fillStyle='#9dc4ff'; ctx.fillText(tr().canvasBasic,barX+barW-40,barY-14);
+    ctx.fillStyle='#eef2ff'; ctx.fillText(tr().canvasNeutral,barX+barW/2,barY-14);
 
     const ph=+slider.value;
     const px=barX+(ph/14)*barW;
@@ -121,15 +209,21 @@
 
     const item=closest(ph);
     ctx.fillStyle='#eef2ff'; ctx.font='800 22px Segoe UI'; ctx.textAlign='center';
-    ctx.fillText('pH '+ph+' — like '+item.name, W/2, 280);
+    ctx.fillText(tr().canvasPhLabel(ph,item.name), W/2, 280);
     ctx.font='15px Segoe UI'; ctx.fillStyle='#9aa4cc';
     ctx.fillText(item.desc, W/2, 310);
 
-    captionEl.innerHTML = ph<7 ? '<b>Acidic</b>: lots of free H⁺ ions.' : ph>7 ? '<b>Basic</b>: few free H⁺ ions.' : '<b>Neutral</b>: balanced, like pure water.';
+    captionOverride = ph<7 ? 'acidic' : ph>7 ? 'basic' : 'neutral';
+    captionEl.innerHTML = ph<7 ? tr().captionAcidic : ph>7 ? tr().captionBasic : tr().captionNeutral;
   }
   slider.addEventListener('input',draw);
   draw();
+
+  window.__phRefresh = function(){
+    draw();
+  };
 })();
 </script>
 </body>
 </html>
+</content>

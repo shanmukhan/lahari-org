@@ -24,11 +24,15 @@
     padding: 20px 16px 60px;
   }
   .wrap{ max-width: 960px; margin: 0 auto; }
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
   a.back{ color: var(--accent2); text-decoration: none; font-weight: 700; }
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
   header{ text-align:center; margin-bottom: 20px; }
   h1{
     font-size: clamp(24px, 5vw, 38px);
-    margin: 0 0 6px;
+    margin: 10px 0 6px;
     background: linear-gradient(90deg, var(--accent), #ff8fd0);
     -webkit-background-clip: text;
     background-clip: text;
@@ -159,11 +163,14 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="category-atoms.html">&larr; Back to Atoms & Matter</a>
+  <div class="topbar">
+    <a class="back" href="category-atoms.html" id="backLink">&larr; Back to Atoms & Matter</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
 
   <header>
-    <h1>🧪 Elephant Toothpaste</h1>
-    <p>A catalyst, a fizz, and a giant foam explosion — let's see chemistry in action like a video!</p>
+    <h1 id="pageTitle">🧪 Elephant Toothpaste</h1>
+    <p id="pageSubtitle">A catalyst, a fizz, and a giant foam explosion — let's see chemistry in action like a video!</p>
   </header>
 
   <div class="player">
@@ -182,39 +189,39 @@
   <div class="steps">
     <div class="step-card">
       <div class="num">1</div>
-      <h3>🧴 The mix</h3>
-      <p>We start with hydrogen peroxide (like a strong version of the stuff in your first-aid kit), some dish soap, and a squirt of food coloring.</p>
+      <h3 id="s1t">🧴 The mix</h3>
+      <p id="s1d">We start with hydrogen peroxide (like a strong version of the stuff in your first-aid kit), some dish soap, and a squirt of food coloring.</p>
     </div>
     <div class="step-card">
       <div class="num">2</div>
-      <h3>⚡ Add the catalyst</h3>
-      <p>A pinch of dry yeast goes in. A <b>catalyst</b> is something that speeds up a reaction WITHOUT being used up itself.</p>
+      <h3 id="s2t">⚡ Add the catalyst</h3>
+      <p id="s2d">A pinch of dry yeast goes in. A <b>catalyst</b> is something that speeds up a reaction WITHOUT being used up itself.</p>
     </div>
     <div class="step-card">
       <div class="num">3</div>
-      <h3>💨 Oxygen bubbles</h3>
-      <p>The yeast makes the peroxide break apart super fast into water + oxygen gas. The soap traps all that gas into millions of tiny bubbles — foam!</p>
+      <h3 id="s3t">💨 Oxygen bubbles</h3>
+      <p id="s3d">The yeast makes the peroxide break apart super fast into water + oxygen gas. The soap traps all that gas into millions of tiny bubbles — foam!</p>
     </div>
     <div class="step-card">
       <div class="num">4</div>
-      <h3>🔥 It gets warm!</h3>
-      <p>This reaction is <b>exothermic</b> — it releases heat. If you touched the bottle right after, it would feel warm!</p>
+      <h3 id="s4t">🔥 It gets warm!</h3>
+      <p id="s4d">This reaction is <b>exothermic</b> — it releases heat. If you touched the bottle right after, it would feel warm!</p>
     </div>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> the yeast comes out of this reaction completely unchanged — that's exactly what makes it a <b>catalyst</b>. Real demos with strong peroxide can shoot foam several feet in the air, hot to the touch!
   </div>
 
-  <div class="try-title">🧪 Now try it yourself</div>
-  <p class="try-subtitle">Pick how much catalyst to add, then trigger your own eruption.</p>
+  <div class="try-title" id="tryTitle">🧪 Now try it yourself</div>
+  <p class="try-subtitle" id="trySubtitle">Pick how much catalyst to add, then trigger your own eruption.</p>
   <div class="try-card">
     <canvas id="tryScene" width="480" height="360"></canvas>
     <div class="try-controls">
       <button id="tryFire" class="primary">⚡ Add Catalyst!</button>
       <button id="tryReset">↻ Reset</button>
       <div class="try-slider">
-        <span>Catalyst:</span>
+        <span id="catalystLabel">Catalyst:</span>
         <input id="tryAmount" type="range" min="1" max="3" value="2" step="1">
         <span id="tryAmountLabel">Medium</span>
       </div>
@@ -225,6 +232,114 @@
 </div>
 
 <script>
+// ---------- shared translation layer ----------
+const T = {
+  en: {
+    langToggle: 'తెలుగు',
+    backLink: '&larr; Back to Atoms & Matter',
+    pageTitle: '🧪 Elephant Toothpaste',
+    pageSubtitle: 'A catalyst, a fizz, and a giant foam explosion — let\'s see chemistry in action like a video!',
+    playBtn: '▶ Play', pauseBtn: '⏸ Pause', restartBtn: '⟲ Restart',
+    slowBtn: '🐢 Slow Motion', normalBtn: '🐇 Normal Speed',
+    captionInitial: 'Press <b>Play</b> to start the show!',
+    captionEnd: '🎬 The End! Press <b>Restart</b> to watch again.',
+    steps: [
+      ['🧴 The mix', 'We start with hydrogen peroxide (like a strong version of the stuff in your first-aid kit), some dish soap, and a squirt of food coloring.'],
+      ['⚡ Add the catalyst', 'A pinch of dry yeast goes in. A <b>catalyst</b> is something that speeds up a reaction WITHOUT being used up itself.'],
+      ['💨 Oxygen bubbles', 'The yeast makes the peroxide break apart super fast into water + oxygen gas. The soap traps all that gas into millions of tiny bubbles — foam!'],
+      ['🔥 It gets warm!', 'This reaction is <b>exothermic</b> — it releases heat. If you touched the bottle right after, it would feel warm!'],
+    ],
+    fact: '🤯 <b>Mind-blowing part:</b> the yeast comes out of this reaction completely unchanged — that\'s exactly what makes it a <b>catalyst</b>. Real demos with strong peroxide can shoot foam several feet in the air, hot to the touch!',
+    tryTitle: '🧪 Now try it yourself',
+    trySubtitle: 'Pick how much catalyst to add, then trigger your own eruption.',
+    tryFire: '⚡ Add Catalyst!', tryReset: '↻ Reset',
+    catalystLabel: 'Catalyst:',
+    amountLabels: {1:'Low', 2:'Medium', 3:'High'},
+    tryResult: (px)=>'Foam height reached '+px+'px — try a different catalyst amount!',
+    scenes: [
+      ['🧴 THE SETUP', 'This bottle has hydrogen peroxide, a squirt of dish soap, and food coloring for a splash of color.'],
+      ['❓ WHAT WILL HAPPEN?', 'We\'re about to drop in a pinch of dry yeast — a <b>catalyst</b>. What do you think will happen?'],
+      ['❓ WHAT WILL HAPPEN?', 'In it goes...'],
+      ['🎉 REACTION TIME!', '💥 The yeast breaks the peroxide apart into water and oxygen gas — the soap traps it all into a huge foam eruption!'],
+      ['🔬 WHY DID THAT HAPPEN?', 'The yeast is a <b>catalyst</b> — it speeds up the reaction but comes out unchanged. This reaction also releases heat, so the bottle feels warm!'],
+      ['🔬 WHY DID THAT HAPPEN?', '🧪 Peroxide (H₂O₂) → Water + Oxygen, sped up by the catalyst. Soap just traps the oxygen bubbles so we can SEE it happen!'],
+    ],
+    canvas: {
+      h2o2Soap: 'H₂O₂ + soap',
+      foodColor: '+ food color',
+      yeastCatalyst: 'YEAST — the catalyst?',
+      reactionEquation: 'H₂O₂ --catalyst--> H₂O + O₂',
+    },
+  },
+  te: {
+    langToggle: 'English',
+    backLink: '&larr; పరమాణువులు & పదార్థం కి తిరిగి',
+    pageTitle: '🧪 ఎలిఫెంట్ టూత్‌పేస్ట్',
+    pageSubtitle: 'ఒక ఉత్ప్రేరకం, నురగ, ఒక భారీ ఫోమ్ పేలుడు — వీడియోలా రసాయన శాస్త్రాన్ని చూద్దాం!',
+    playBtn: '▶ ప్లే', pauseBtn: '⏸ పాజ్', restartBtn: '⟲ మళ్ళీ మొదలు',
+    slowBtn: '🐢 స్లో మోషన్', normalBtn: '🐇 సాధారణ వేగం',
+    captionInitial: 'ప్రదర్శన ప్రారంభించడానికి <b>ప్లే</b> నొక్కండి!',
+    captionEnd: '🎬 ముగింపు! మళ్ళీ చూడటానికి <b>మళ్ళీ మొదలు</b> నొక్కండి.',
+    steps: [
+      ['🧴 మిశ్రమం', 'మనం హైడ్రోజన్ పెరాక్సైడ్ (మీ ఫస్ట్-ఎయిడ్ కిట్‌లో ఉండే దాని బలమైన రూపం లాంటిది), కొంచెం డిష్ సోప్, ఇంకా కొన్ని చుక్కల ఫుడ్ కలర్‌తో మొదలుపెడతాం.'],
+      ['⚡ ఉత్ప్రేరకాన్ని జోడించండి', 'కొద్దిగా డ్రై ఈస్ట్ వేస్తాం. <b>ఉత్ప్రేరకం (catalyst)</b> అంటే అది తనలో ఏ మార్పు లేకుండానే ఒక చర్యను వేగవంతం చేసేది.'],
+      ['💨 ఆక్సిజన్ బుడగలు', 'ఈస్ట్ పెరాక్సైడ్‌ను వేగంగా నీరు + ఆక్సిజన్ వాయువుగా విడగొడుతుంది. సబ్బు ఆ వాయువునంతా లక్షలాది చిన్న బుడగల్లో బంధిస్తుంది — నురగ!'],
+      ['🔥 వేడెక్కుతుంది!', 'ఈ చర్య <b>ఉష్ణమోచక (exothermic)</b> చర్య — అంటే వేడిని విడుదల చేస్తుంది. వెంటనే సీసాను తాకితే అది వెచ్చగా అనిపిస్తుంది!'],
+    ],
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> ఈ చర్య తర్వాత కూడా ఈస్ట్‌లో ఎలాంటి మార్పు ఉండదు — అదే దీన్ని <b>ఉత్ప్రేరకం</b> అనేలా చేస్తుంది. బలమైన పెరాక్సైడ్‌తో చేసే నిజమైన ప్రదర్శనలలో ఫోమ్ చాలా అడుగుల ఎత్తుకు ఎగిరిపోతుంది, అది తాకితే వేడిగా కూడా ఉంటుంది!',
+    tryTitle: '🧪 ఇప్పుడు మీరే ప్రయత్నించండి',
+    trySubtitle: 'ఎంత ఉత్ప్రేరకం వేయాలో ఎంచుకుని, మీ సొంత పేలుడును ప్రారంభించండి.',
+    tryFire: '⚡ ఉత్ప్రేరకం వేయండి!', tryReset: '↻ రీసెట్',
+    catalystLabel: 'ఉత్ప్రేరకం:',
+    amountLabels: {1:'తక్కువ', 2:'మధ్యస్థం', 3:'ఎక్కువ'},
+    tryResult: (px)=>'ఫోమ్ ఎత్తు '+px+'px చేరుకుంది — వేరే ఉత్ప్రేరక పరిమాణంతో ప్రయత్నించండి!',
+    scenes: [
+      ['🧴 సెటప్', 'ఈ సీసాలో హైడ్రోజన్ పెరాక్సైడ్, కొంచెం డిష్ సోప్, రంగు కోసం కొన్ని చుక్కల ఫుడ్ కలర్ ఉన్నాయి.'],
+      ['❓ ఏమి జరుగుతుంది?', 'మనం ఇప్పుడు కొద్దిగా డ్రై ఈస్ట్ — ఒక <b>ఉత్ప్రేరకం</b> — వేయబోతున్నాం. ఏమి జరుగుతుందో మీ ఊహ?'],
+      ['❓ ఏమి జరుగుతుంది?', 'అది లోపలికి వెళ్తోంది...'],
+      ['🎉 చర్య సమయం!', '💥 ఈస్ట్ పెరాక్సైడ్‌ను నీరు, ఆక్సిజన్ వాయువుగా విడగొడుతుంది — సబ్బు దాన్నంతా భారీ ఫోమ్ పేలుడుగా బంధిస్తుంది!'],
+      ['🔬 అది ఎందుకు జరిగింది?', 'ఈస్ట్ ఒక <b>ఉత్ప్రేరకం</b> — ఇది చర్యను వేగవంతం చేస్తుంది కానీ మారకుండానే ఉంటుంది. ఈ చర్య వేడిని కూడా విడుదల చేస్తుంది, అందుకే సీసా వెచ్చగా అనిపిస్తుంది!'],
+      ['🔬 అది ఎందుకు జరిగింది?', '🧪 పెరాక్సైడ్ (H₂O₂) → నీరు + ఆక్సిజన్, ఉత్ప్రేరకంతో వేగవంతం అవుతుంది. సబ్బు కేవలం ఆక్సిజన్ బుడగలను బంధించి మనం దీన్ని చూసేలా చేస్తుంది!'],
+    ],
+    canvas: {
+      h2o2Soap: 'H₂O₂ + సోప్',
+      foodColor: '+ ఫుడ్ కలర్',
+      yeastCatalyst: 'ఈస్ట్ — ఉత్ప్రేరకమేనా?',
+      reactionEquation: 'H₂O₂ --ఉత్ప్రేరకం--> H₂O + O₂',
+    },
+  }
+};
+let LANG = 'en';
+function tr(){ return T[LANG]; }
+
+function applyStaticText(){
+  const t = tr();
+  document.documentElement.lang = LANG;
+  document.getElementById('langToggle').textContent = t.langToggle;
+  document.getElementById('backLink').innerHTML = t.backLink;
+  document.getElementById('pageTitle').textContent = t.pageTitle;
+  document.getElementById('pageSubtitle').textContent = t.pageSubtitle;
+  document.getElementById('restartBtn').textContent = t.restartBtn;
+  for(let i=0;i<4;i++){
+    document.getElementById('s'+(i+1)+'t').textContent = t.steps[i][0];
+    document.getElementById('s'+(i+1)+'d').innerHTML = t.steps[i][1];
+  }
+  document.getElementById('factBox').innerHTML = t.fact;
+  document.getElementById('tryTitle').textContent = t.tryTitle;
+  document.getElementById('trySubtitle').textContent = t.trySubtitle;
+  document.getElementById('tryFire').textContent = t.tryFire;
+  document.getElementById('tryReset').textContent = t.tryReset;
+  document.getElementById('catalystLabel').textContent = t.catalystLabel;
+}
+
+document.getElementById('langToggle').addEventListener('click', () => {
+  LANG = LANG === 'en' ? 'te' : 'en';
+  applyStaticText();
+  if (window.__etpRefresh) window.__etpRefresh();
+  if (window.__tryRefresh) window.__tryRefresh();
+});
+applyStaticText();
+
 (function(){
   const canvas = document.getElementById('scene');
   const ctx = canvas.getContext('2d');
@@ -242,20 +357,14 @@
   const bodyTopY = 190, bodyBotY = 380, bodyHalfW = 62;
   const trayY = 400, trayHalfW = 170, trayHalfH = 26;
 
-  // ---------- timeline ----------
-  const SCENES = [
-    { t:0,  dur:4, mode:'intro', banner:'🧴 THE SETUP', bannerClass:'info',
-      caption: 'This bottle has hydrogen peroxide, a squirt of dish soap, and food coloring for a splash of color.' },
-    { t:4,  dur:4, mode:'guess', banner:'❓ WHAT WILL HAPPEN?', bannerClass:'guess',
-      caption: 'We\'re about to drop in a pinch of dry yeast — a <b>catalyst</b>. What do you think will happen?' },
-    { t:8,  dur:2.2, mode:'drop', banner:'❓ WHAT WILL HAPPEN?', bannerClass:'guess',
-      caption: 'In it goes...' },
-    { t:10.2, dur:9, mode:'eruption', banner:'🎉 REACTION TIME!', bannerClass:'react',
-      caption: '💥 The yeast breaks the peroxide apart into water and oxygen gas — the soap traps it all into a huge foam eruption!' },
-    { t:19.2, dur:6, mode:'settle', banner:'🔬 WHY DID THAT HAPPEN?', bannerClass:'info',
-      caption: 'The yeast is a <b>catalyst</b> — it speeds up the reaction but comes out unchanged. This reaction also releases heat, so the bottle feels warm!' },
-    { t:25.2, dur:5, mode:'settle', banner:'🔬 WHY DID THAT HAPPEN?', bannerClass:'info',
-      caption: '🧪 Peroxide (H₂O₂) → Water + Oxygen, sped up by the catalyst. Soap just traps the oxygen bubbles so we can SEE it happen!' },
+  // ---------- timeline (non-translated meta; text comes from tr().scenes) ----------
+  const SCENE_META = [
+    { t:0,  dur:4, mode:'intro', bannerClass:'info' },
+    { t:4,  dur:4, mode:'guess', bannerClass:'guess' },
+    { t:8,  dur:2.2, mode:'drop', bannerClass:'guess' },
+    { t:10.2, dur:9, mode:'eruption', bannerClass:'react' },
+    { t:19.2, dur:6, mode:'settle', bannerClass:'info' },
+    { t:25.2, dur:5, mode:'settle', bannerClass:'info' },
   ];
   const totalDur = 30.2;
 
@@ -263,6 +372,7 @@
   let playing = false;
   let lastTs = null;
   let speedMult = 1;
+  let captionOverride = 'initial';
 
   // foam state
   let foamHeight = 0;      // column height above neck
@@ -271,7 +381,7 @@
   let catalystY = neckTopY - 40;
 
   function currentSceneIndex(t){
-    for(let i=SCENES.length-1;i>=0;i--) if(t>=SCENES[i].t) return i;
+    for(let i=SCENE_META.length-1;i>=0;i--) if(t>=SCENE_META[i].t) return i;
     return 0;
   }
 
@@ -444,32 +554,34 @@
     ctx.fillStyle = '#04060f'; ctx.fillRect(0,0,W,H);
 
     const idx = currentSceneIndex(t);
-    const scene = SCENES[idx];
-    bannerEl.textContent = scene.banner;
-    bannerEl.className = 'banner ' + scene.bannerClass;
-    captionEl.innerHTML = scene.caption;
+    const meta = SCENE_META[idx];
+    const sceneText = tr().scenes[idx];
+    const cv = tr().canvas;
+    bannerEl.textContent = sceneText[0];
+    bannerEl.className = 'banner ' + meta.bannerClass;
+    if(captionOverride === null) captionEl.innerHTML = sceneText[1];
 
     drawTray();
 
-    if(scene.mode === 'intro'){
+    if(meta.mode === 'intro'){
       drawBottle(0.55);
-      drawLabelBox(bottleCX-100, 220, 'H₂O₂ + soap');
-      drawLabelBox(bottleCX+100, 220, '+ food color');
+      drawLabelBox(bottleCX-100, 220, cv.h2o2Soap);
+      drawLabelBox(bottleCX+100, 220, cv.foodColor);
     }
-    else if(scene.mode === 'guess'){
+    else if(meta.mode === 'guess'){
       drawBottle(0.55);
       const bob = Math.sin(t*3)*4;
       drawCatalystSpoon(neckTopY-40+bob, 0);
-      drawLabelBox(bottleCX, 60, 'YEAST — the catalyst?');
+      drawLabelBox(bottleCX, 60, cv.yeastCatalyst);
     }
-    else if(scene.mode === 'drop'){
-      const local = t - scene.t;
+    else if(meta.mode === 'drop'){
+      const local = t - meta.t;
       const dropY = neckTopY - 40 + local*80;
       drawBottle(0.55);
       if(dropY < neckBotY+20) drawCatalystSpoon(dropY, 0);
     }
-    else if(scene.mode === 'eruption'){
-      const local = t - scene.t;
+    else if(meta.mode === 'eruption'){
+      const local = t - meta.t;
       const growPhase = Math.min(1, local/3);
       foamHeight = growPhase*growPhase*(3-2*growPhase) * 210;
       const overflowStart = 1.8;
@@ -479,11 +591,11 @@
       drawFoamColumn(foamHeight, t);
       drawSteamWisps(Math.min(1, local/2), t);
     }
-    else if(scene.mode === 'settle'){
+    else if(meta.mode === 'settle'){
       drawBottle(0.85);
       drawTrayFoam(1, t*0.3);
       drawFoamColumn(150 + Math.sin(t*1.5)*6, t*0.4);
-      drawLabelBox(bottleCX, 70, 'H₂O₂ --catalyst--> H₂O + O₂');
+      drawLabelBox(bottleCX, 70, cv.reactionEquation);
     }
 
     const pct = Math.min(100, (t/totalDur)*100);
@@ -498,20 +610,25 @@
     simTime += dt;
     if(simTime >= totalDur){
       simTime = totalDur;
+      captionOverride = null;
       render(simTime);
       pause();
-      captionEl.innerHTML = '🎬 The End! Press <b>Restart</b> to watch again.';
+      captionOverride = 'ended';
+      captionEl.innerHTML = tr().captionEnd;
       return;
     }
+    captionOverride = null;
     render(simTime);
     requestAnimationFrame(step);
   }
-  function play(){ if(playing) return; playing=true; lastTs=null; playBtn.textContent='⏸ Pause'; requestAnimationFrame(step); }
-  function pause(){ playing=false; playBtn.textContent='▶ Play'; }
+  function play(){ if(playing) return; playing=true; lastTs=null; captionOverride=null; playBtn.textContent=tr().pauseBtn; requestAnimationFrame(step); }
+  function pause(){ playing=false; playBtn.textContent=tr().playBtn; }
   function restart(){
     simTime = 0; foamHeight = 0; trayFoam = 0;
+    captionOverride = null;
     render(0);
-    captionEl.innerHTML = 'Press <b>Play</b> to start the show!';
+    captionOverride = 'initial';
+    captionEl.innerHTML = tr().captionInitial;
     progressBar.style.width = '0%';
     pause();
   }
@@ -520,10 +637,20 @@
   restartBtn.addEventListener('click', restart);
   slowBtn.addEventListener('click', () => {
     speedMult = speedMult===1 ? 0.35 : 1;
-    slowBtn.textContent = speedMult===1 ? '🐢 Slow Motion' : '🐇 Normal Speed';
+    slowBtn.textContent = speedMult===1 ? tr().slowBtn : tr().normalBtn;
   });
 
+  playBtn.textContent = tr().playBtn;
+  slowBtn.textContent = tr().slowBtn;
   render(0);
+
+  window.__etpRefresh = function(){
+    playBtn.textContent = playing ? tr().pauseBtn : tr().playBtn;
+    slowBtn.textContent = speedMult===1 ? tr().slowBtn : tr().normalBtn;
+    captionOverride === null ? render(simTime) : render(simTime);
+    if(captionOverride === 'initial') captionEl.innerHTML = tr().captionInitial;
+    else if(captionOverride === 'ended') captionEl.innerHTML = tr().captionEnd;
+  };
 })();
 
 // ---------- Try It Yourself: interactive eruption ----------
@@ -537,7 +664,6 @@
   const trayY = 316, trayHalfW = 130, trayHalfH = 20;
 
   let firing = false, t = 0, amount = 2, foamHeight = 0, trayFoam = 0, peakHeight = 0;
-  const amountLabels = {1:'Low', 2:'Medium', 3:'High'};
   const amountEl = document.getElementById('tryAmountLabel');
   const sliderEl = document.getElementById('tryAmount');
   const resultEl = document.getElementById('tryResult');
@@ -609,7 +735,7 @@
     }
 
     if(peakHeight > 0){
-      resultEl.textContent = `Foam height reached ${Math.round(peakHeight)}px — try a different catalyst amount!`;
+      resultEl.textContent = tr().tryResult(Math.round(peakHeight));
     }
   }
 
@@ -645,9 +771,17 @@
   });
   sliderEl.addEventListener('input', (e) => {
     amount = +e.target.value;
-    amountEl.textContent = amountLabels[amount];
+    amountEl.textContent = tr().amountLabels[amount];
   });
+
+  amountEl.textContent = tr().amountLabels[amount];
+
+  window.__tryRefresh = function(){
+    amountEl.textContent = tr().amountLabels[amount];
+    if(peakHeight > 0) resultEl.textContent = tr().tryResult(Math.round(peakHeight));
+  };
 })();
 </script>
 </body>
 </html>
+</content>

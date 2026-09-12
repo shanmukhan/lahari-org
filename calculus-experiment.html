@@ -9,7 +9,11 @@
   *{box-sizing:border-box;}
   body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
   .wrap{max-width:960px;margin:0 auto;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
   a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
   header{text-align:center;margin-bottom:20px;}
   h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
   header p{color:var(--dim);font-size:16px;margin:0;}
@@ -43,10 +47,13 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="category-math.html">&larr; Back to Math Made Simple</a>
+  <div class="topbar">
+    <a class="back" href="category-math.html" id="backLink">&larr; Back to Math Made Simple</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
   <header>
-    <h1>➗ Calculus, Explained Simply</h1>
-    <p>Two big ideas — the slope of a curve, and the area under it — used everywhere from rockets to your phone's GPS.</p>
+    <h1 id="pageTitle">➗ Calculus, Explained Simply</h1>
+    <p id="pageSubtitle">Two big ideas — the slope of a curve, and the area under it — used everywhere from rockets to your phone's GPS.</p>
   </header>
 
   <div class="player">
@@ -61,24 +68,24 @@
   </div>
 
   <div class="steps">
-    <div class="step-card"><div class="num">1</div><h3>📈 A curvy graph</h3>
-      <p>Imagine a graph showing a car's distance traveled over time — its curve isn't a straight line, it speeds up and slows down.</p></div>
-    <div class="step-card"><div class="num">2</div><h3>📐 Slope = speed (derivative)</h3>
-      <p>At any instant, the STEEPNESS of that curve tells you the car's speed right then — that steepness is called a <b>derivative</b>.</p></div>
-    <div class="step-card"><div class="num">3</div><h3>🧱 Area = total distance (integral)</h3>
-      <p>Flip it around: if you know the car's speed at every moment, adding up tiny slices of area under that speed curve gives you the total distance — that's an <b>integral</b>.</p></div>
-    <div class="step-card"><div class="num">4</div><h3>🔄 Two sides of the same coin</h3>
-      <p>Derivatives measure "how fast is it changing right now." Integrals measure "how much built up over time." They undo each other!</p></div>
+    <div class="step-card"><div class="num">1</div><h3 id="s1t">📈 A curvy graph</h3>
+      <p id="s1d">Imagine a graph showing a car's distance traveled over time — its curve isn't a straight line, it speeds up and slows down.</p></div>
+    <div class="step-card"><div class="num">2</div><h3 id="s2t">📐 Slope = speed (derivative)</h3>
+      <p id="s2d">At any instant, the STEEPNESS of that curve tells you the car's speed right then — that steepness is called a <b>derivative</b>.</p></div>
+    <div class="step-card"><div class="num">3</div><h3 id="s3t">🧱 Area = total distance (integral)</h3>
+      <p id="s3d">Flip it around: if you know the car's speed at every moment, adding up tiny slices of area under that speed curve gives you the total distance — that's an <b>integral</b>.</p></div>
+    <div class="step-card"><div class="num">4</div><h3 id="s4t">🔄 Two sides of the same coin</h3>
+      <p id="s4d">Derivatives measure "how fast is it changing right now." Integrals measure "how much built up over time." They undo each other!</p></div>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> Calculus is everywhere in real life: it's how engineers calculate a rocket's exact fuel needs,
     how doctors model how fast a drug spreads in your blood, and how your phone's GPS predicts your position between satellite signals.
     It's the mathematics of <b>things that change</b>.
   </div>
 
-  <div class="try-title">🧪 Now try it yourself</div>
-  <p class="try-subtitle">Drag along the curve and see the slope (speed) at that exact point.</p>
+  <div class="try-title" id="tryTitle">🧪 Now try it yourself</div>
+  <p class="try-subtitle" id="trySubtitle">Drag along the curve and see the slope (speed) at that exact point.</p>
   <div class="try-card">
     <canvas id="tryScene" width="600" height="300"></canvas>
     <div class="try-controls">
@@ -89,21 +96,128 @@
 </div>
 
 <script>
+// ---------- shared translation layer ----------
+const T = {
+  en: {
+    langToggle: 'తెలుగు',
+    backLink: '&larr; Back to Math Made Simple',
+    pageTitle: '➗ Calculus, Explained Simply',
+    pageSubtitle: 'Two big ideas — the slope of a curve, and the area under it — used everywhere from rockets to your phone\'s GPS.',
+    playBtn: '▶ Play', pauseBtn: '⏸ Pause', restartBtn: '⟲ Restart',
+    captionInitial: 'Press <b>Play</b> to start!',
+    captionEnd: '🎬 The End! Press <b>Restart</b> to watch again.',
+    steps: [
+      ['📈 A curvy graph','Imagine a graph showing a car\'s distance traveled over time — its curve isn\'t a straight line, it speeds up and slows down.'],
+      ['📐 Slope = speed (derivative)','At any instant, the STEEPNESS of that curve tells you the car\'s speed right then — that steepness is called a <b>derivative</b>.'],
+      ['🧱 Area = total distance (integral)','Flip it around: if you know the car\'s speed at every moment, adding up tiny slices of area under that speed curve gives you the total distance — that\'s an <b>integral</b>.'],
+      ['🔄 Two sides of the same coin','Derivatives measure "how fast is it changing right now." Integrals measure "how much built up over time." They undo each other!'],
+    ],
+    fact: '🤯 <b>Mind-blowing part:</b> Calculus is everywhere in real life: it\'s how engineers calculate a rocket\'s exact fuel needs, how doctors model how fast a drug spreads in your blood, and how your phone\'s GPS predicts your position between satellite signals. It\'s the mathematics of <b>things that change</b>.',
+    tryTitle: '🧪 Now try it yourself',
+    trySubtitle: 'Drag along the curve and see the slope (speed) at that exact point.',
+    tryResultDefault: 'Drag to see how the slope (steepness) changes along the curve.',
+    scenes: [
+      ['📈 STEP 1: A CURVY GRAPH','This curve shows a car\'s distance over time — not a straight line, since the car speeds up and slows down.'],
+      ['📐 STEP 2: SLOPE = SPEED','At any point, how STEEP the curve is tells you the car\'s speed at that instant — that steepness is the <b>derivative</b>.'],
+      ['🧱 STEP 3: AREA = TOTAL DISTANCE','Now picture a speed-vs-time graph instead. Adding up thin slices of area underneath gives the total distance — that\'s the <b>integral</b>.'],
+      ['🔄 STEP 4: TWO SIDES OF ONE COIN','Derivatives ask "how fast changing right now?" Integrals ask "how much built up over time?" — they\'re opposite operations!'],
+    ],
+    canvas: {
+      distanceTime: 'distance traveled vs. time',
+      slopeHere: 'slope here = speed right now',
+      speedTimeArea: 'speed vs. time — shaded area = total distance',
+      derivativeIntegral: 'derivative ↔ integral: opposite operations',
+      slopeSpeed: 'slope → speed',
+      areaDistance: 'area → distance',
+      axisTime: 'time →',
+      axisDistance: 'distance',
+      trySlopeLabel: (slope)=>'slope ≈ '+slope.toFixed(2),
+    },
+    speedWordSlow: 'slow (car just starting or stopping)',
+    speedWordMedium: 'medium speed',
+    speedWordFast: 'fast (steepest part)',
+    tryResult: (slope,speedWord)=>'At this point, the slope is '+slope.toFixed(2)+' — that means the car is going '+speedWord+'.',
+  },
+  te: {
+    langToggle: 'English',
+    backLink: '&larr; గణితం సులభంగాకి తిరిగి',
+    pageTitle: '➗ కలన గణితం, సులభంగా',
+    pageSubtitle: 'రెండు పెద్ద ఆలోచనలు — వక్రరేఖ వాలు, మరియు దాని కింద ఉన్న వైశాల్యం — రాకెట్ల నుండి మీ ఫోన్ GPS వరకు ప్రతిచోటా వాడతారు.',
+    playBtn: '▶ ప్లే', pauseBtn: '⏸ పాజ్', restartBtn: '⟲ మళ్ళీ మొదలు',
+    captionInitial: 'ప్రారంభించడానికి <b>ప్లే</b> నొక్కండి!',
+    captionEnd: '🎬 ముగింపు! మళ్ళీ చూడటానికి <b>మళ్ళీ మొదలు</b> నొక్కండి.',
+    steps: [
+      ['📈 వంపు తిరిగిన గ్రాఫ్','ఒక కారు ప్రయాణించిన దూరాన్ని కాలంతో చూపే గ్రాఫ్‌ను ఊహించుకోండి — దాని వక్రరేఖ సరళరేఖ కాదు, కారు వేగం పెరుగుతుంది మరియు తగ్గుతుంది.'],
+      ['📐 వాలు = వేగం (అవకలనం)','ఏ క్షణంలోనైనా, ఆ వక్రరేఖ యొక్క ఏటవాలు ఆ క్షణంలో కారు వేగాన్ని తెలియజేస్తుంది — ఆ ఏటవాలునే <b>అవకలనం</b> అంటారు.'],
+      ['🧱 వైశాల్యం = మొత్తం దూరం (సమాకలనం)','దీన్ని తిరగేసి చూడండి: కారు వేగం ప్రతి క్షణంలో తెలిస్తే, ఆ వేగం వక్రరేఖ కింద ఉన్న చిన్న చిన్న వైశాల్య ముక్కలను కూడితే మొత్తం దూరం వస్తుంది — దీన్నే <b>సమాకలనం</b> అంటారు.'],
+      ['🔄 ఒకే నాణేనికి రెండు వైపులు','అవకలనం "ఇప్పుడు ఎంత వేగంగా మారుతోంది" అని కొలుస్తుంది. సమాకలనం "కాలంతో ఎంత పోగుపడింది" అని కొలుస్తుంది. ఇవి ఒకదానికొకటి వ్యతిరేకం!'],
+    ],
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> కలన గణితం నిజ జీవితంలో ప్రతిచోటా ఉంది: ఇంజనీర్లు రాకెట్‌కు ఖచ్చితంగా ఎంత ఇంధనం కావాలో లెక్కించేది దీని ద్వారానే, డాక్టర్లు మందు మీ రక్తంలో ఎంత వేగంగా వ్యాపిస్తుందో మోడల్ చేసేది దీని ద్వారానే, మరియు మీ ఫోన్ GPS ఉపగ్రహ సంకేతాల మధ్య మీ స్థానాన్ని అంచనా వేసేది కూడా దీని ద్వారానే. ఇది <b>మారే విషయాల</b> గణితశాస్త్రం.',
+    tryTitle: '🧪 ఇప్పుడు మీరే ప్రయత్నించండి',
+    trySubtitle: 'వక్రరేఖ వెంట లాగి, ఆ ఖచ్చితమైన బిందువు వద్ద వాలు (వేగం) చూడండి.',
+    tryResultDefault: 'వక్రరేఖ వెంట వాలు (ఏటవాలు) ఎలా మారుతుందో చూడటానికి లాగండి.',
+    scenes: [
+      ['📈 దశ 1: వంపు తిరిగిన గ్రాఫ్','ఈ వక్రరేఖ కారు దూరాన్ని కాలంతో చూపిస్తుంది — ఇది సరళరేఖ కాదు, ఎందుకంటే కారు వేగం పెరుగుతుంది మరియు తగ్గుతుంది.'],
+      ['📐 దశ 2: వాలు = వేగం','ఏ బిందువు వద్దనైనా, వక్రరేఖ ఎంత ఏటవాలుగా ఉందో అది ఆ క్షణంలో కారు వేగాన్ని తెలియజేస్తుంది — ఆ ఏటవాలునే <b>అవకలనం</b> అంటారు.'],
+      ['🧱 దశ 3: వైశాల్యం = మొత్తం దూరం','ఇప్పుడు వేగం-కాలం గ్రాఫ్‌ను ఊహించుకోండి. దాని కింద ఉన్న సన్నని వైశాల్య ముక్కలను కూడితే మొత్తం దూరం వస్తుంది — దీన్నే <b>సమాకలనం</b> అంటారు.'],
+      ['🔄 దశ 4: ఒకే నాణేనికి రెండు వైపులు','అవకలనం "ఇప్పుడు ఎంత వేగంగా మారుతోంది?" అని అడుగుతుంది. సమాకలనం "కాలంతో ఎంత పోగుపడింది?" అని అడుగుతుంది — ఇవి వ్యతిరేక ప్రక్రియలు!'],
+    ],
+    canvas: {
+      distanceTime: 'కాలంతో పాటు ప్రయాణించిన దూరం',
+      slopeHere: 'ఇక్కడ వాలు = ప్రస్తుత వేగం',
+      speedTimeArea: 'వేగం Vs కాలం — నీడ వేసిన వైశాల్యం = మొత్తం దూరం',
+      derivativeIntegral: 'అవకలనం ↔ సమాకలనం: వ్యతిరేక ప్రక్రియలు',
+      slopeSpeed: 'వాలు → వేగం',
+      areaDistance: 'వైశాల్యం → దూరం',
+      axisTime: 'కాలం →',
+      axisDistance: 'దూరం',
+      trySlopeLabel: (slope)=>'వాలు ≈ '+slope.toFixed(2),
+    },
+    speedWordSlow: 'నెమ్మది (కారు ఇప్పుడే మొదలవుతోంది లేదా ఆగుతోంది)',
+    speedWordMedium: 'మధ్యస్థ వేగం',
+    speedWordFast: 'వేగంగా (అత్యంత ఏటవాలు భాగం)',
+    tryResult: (slope,speedWord)=>'ఈ బిందువు వద్ద, వాలు '+slope.toFixed(2)+' — అంటే కారు '+speedWord+' వెళ్తోంది.',
+  }
+};
+let LANG = 'en';
+function tr(){ return T[LANG]; }
+
+function applyStaticText(){
+  const t = tr();
+  document.documentElement.lang = LANG;
+  document.getElementById('langToggle').textContent = t.langToggle;
+  document.getElementById('backLink').innerHTML = t.backLink;
+  document.getElementById('pageTitle').textContent = t.pageTitle;
+  document.getElementById('pageSubtitle').textContent = t.pageSubtitle;
+  document.getElementById('restartBtn').textContent = t.restartBtn;
+  for(let i=0;i<4;i++){
+    document.getElementById('s'+(i+1)+'t').innerHTML = t.steps[i][0];
+    document.getElementById('s'+(i+1)+'d').innerHTML = t.steps[i][1];
+  }
+  document.getElementById('factBox').innerHTML = t.fact;
+  document.getElementById('tryTitle').textContent = t.tryTitle;
+  document.getElementById('trySubtitle').textContent = t.trySubtitle;
+}
+
+document.getElementById('langToggle').addEventListener('click', () => {
+  LANG = LANG === 'en' ? 'te' : 'en';
+  applyStaticText();
+  if (window.__calcRefresh) window.__calcRefresh();
+  if (window.__tryRefresh) window.__tryRefresh();
+});
+applyStaticText();
+
 (function(){
   const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
   const W=canvas.width, H=canvas.height;
   const captionEl=document.getElementById('caption'), bannerEl=document.getElementById('banner'), progressBar=document.getElementById('progressBar');
   const playBtn=document.getElementById('playBtn'), restartBtn=document.getElementById('restartBtn');
 
-  const SCENES=[
-    {t:0,dur:6,banner:'📈 STEP 1: A CURVY GRAPH',caption:'This curve shows a car\'s distance over time — not a straight line, since the car speeds up and slows down.'},
-    {t:6,dur:8,banner:'📐 STEP 2: SLOPE = SPEED',caption:'At any point, how STEEP the curve is tells you the car\'s speed at that instant — that steepness is the <b>derivative</b>.'},
-    {t:14,dur:8,banner:'🧱 STEP 3: AREA = TOTAL DISTANCE',caption:'Now picture a speed-vs-time graph instead. Adding up thin slices of area underneath gives the total distance — that\'s the <b>integral</b>.'},
-    {t:22,dur:7,banner:'🔄 STEP 4: TWO SIDES OF ONE COIN',caption:'Derivatives ask "how fast changing right now?" Integrals ask "how much built up over time?" — they\'re opposite operations!'},
-  ];
+  const STARTS=[0,6,14,22];
+  const DURS=[6,8,8,7];
   const totalDur=29;
-  let simTime=0, playing=false, lastTs=null;
-  function currentScene(t){ for(let i=SCENES.length-1;i>=0;i--) if(t>=SCENES[i].t) return i; return 0; }
+  let simTime=0, playing=false, lastTs=null, captionOverride='initial';
+  function currentScene(t){ for(let i=STARTS.length-1;i>=0;i--) if(t>=STARTS[i]) return i; return 0; }
   function label(x,y,text,color){
     ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
     const tw=ctx.measureText(text).width;
@@ -120,8 +234,8 @@
     ctx.beginPath(); ctx.moveTo(gx0,gy0); ctx.lineTo(gx0,gy1-20); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(gx0,gy0); ctx.lineTo(gx1+20,gy0); ctx.stroke();
     ctx.fillStyle='#9aa4cc'; ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
-    ctx.fillText('time →',gx1,gy0+30);
-    ctx.save(); ctx.translate(gx0-40,gy1+30); ctx.rotate(-Math.PI/2); ctx.fillText('distance',0,0); ctx.restore();
+    ctx.fillText(tr().canvas.axisTime,gx1,gy0+30);
+    ctx.save(); ctx.translate(gx0-40,gy1+30); ctx.rotate(-Math.PI/2); ctx.fillText(tr().canvas.axisDistance,0,0); ctx.restore();
   }
   function drawCurve(){
     ctx.strokeStyle='#4fd3ff'; ctx.lineWidth=3;
@@ -134,7 +248,7 @@
   }
   function drawScene0(local){
     drawAxes(); drawCurve();
-    label(W/2,50,'distance traveled vs. time','#8fd2ff');
+    label(W/2,50,tr().canvas.distanceTime,'#8fd2ff');
   }
   function drawScene1(local){
     drawAxes(); drawCurve();
@@ -147,7 +261,7 @@
     ctx.strokeStyle='#ffd23f'; ctx.lineWidth=3;
     ctx.beginPath(); ctx.moveTo(px-len,py-slope*(-len)); ctx.lineTo(px+len,py-slope*(len)); ctx.stroke();
     ctx.fillStyle='#ff9d9d'; ctx.beginPath(); ctx.arc(px,py,6,0,Math.PI*2); ctx.fill();
-    label(px,py-40,'slope here = speed right now','#ffd23f');
+    label(px,py-40,tr().canvas.slopeHere,'#ffd23f');
   }
   function drawScene2(local){
     drawAxes();
@@ -169,21 +283,21 @@
       ctx.lineTo(px,py);
     }
     ctx.lineTo(fillX,gy0); ctx.closePath(); ctx.fill();
-    label(W/2,50,'speed vs. time — shaded area = total distance','#6dffb0');
+    label(W/2,50,tr().canvas.speedTimeArea,'#6dffb0');
   }
   function drawScene3(local){
     drawAxes(); drawCurve();
-    label(W/2,50,'derivative ↔ integral: opposite operations','#eef2ff');
+    label(W/2,50,tr().canvas.derivativeIntegral,'#eef2ff');
     ctx.strokeStyle='rgba(255,255,255,.2)'; ctx.setLineDash([5,5]);
     ctx.beginPath(); ctx.moveTo(W/2,gy1-20); ctx.lineTo(W/2,gy0); ctx.stroke(); ctx.setLineDash([]);
-    label(W/2-150,H-30,'slope → speed','#ffd23f');
-    label(W/2+150,H-30,'area → distance','#6dffb0');
+    label(W/2-150,H-30,tr().canvas.slopeSpeed,'#ffd23f');
+    label(W/2+150,H-30,tr().canvas.areaDistance,'#6dffb0');
   }
 
   function render(t){
     ctx.clearRect(0,0,W,H); ctx.fillStyle='#04060f'; ctx.fillRect(0,0,W,H);
-    const idx=currentScene(t), scene=SCENES[idx], local=t-scene.t;
-    bannerEl.textContent=scene.banner; captionEl.innerHTML=scene.caption;
+    const idx=currentScene(t), scene=tr().scenes[idx], local=t-STARTS[idx];
+    bannerEl.textContent=scene[0]; captionEl.innerHTML=scene[1];
     if(idx===0) drawScene0(local);
     else if(idx===1) drawScene1(local);
     else if(idx===2) drawScene2(local);
@@ -196,15 +310,24 @@
     const dt=Math.min(0.05,(ts-lastTs)/1000); lastTs=ts;
     simTime+=dt;
     if(simTime>=totalDur){ simTime=totalDur; render(simTime); pause();
-      captionEl.innerHTML='🎬 The End! Press <b>Restart</b> to watch again.'; return; }
+      captionOverride='ended'; captionEl.innerHTML=tr().captionEnd; return; }
+    captionOverride=null;
     render(simTime); requestAnimationFrame(step);
   }
-  function play(){ if(playing) return; playing=true; lastTs=null; playBtn.textContent='⏸ Pause'; requestAnimationFrame(step); }
-  function pause(){ playing=false; playBtn.textContent='▶ Play'; }
-  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionEl.innerHTML='Press <b>Play</b> to start!'; }
+  function play(){ if(playing) return; playing=true; lastTs=null; captionOverride=null; playBtn.textContent=tr().pauseBtn; requestAnimationFrame(step); }
+  function pause(){ playing=false; playBtn.textContent=tr().playBtn; }
+  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionOverride='initial'; captionEl.innerHTML=tr().captionInitial; }
   playBtn.addEventListener('click',()=>playing?pause():play());
   restartBtn.addEventListener('click',restart);
+  playBtn.textContent=tr().playBtn;
   render(0);
+
+  window.__calcRefresh = function(){
+    playBtn.textContent = playing ? tr().pauseBtn : tr().playBtn;
+    render(simTime);
+    if(captionOverride==='initial') captionEl.innerHTML=tr().captionInitial;
+    else if(captionOverride==='ended') captionEl.innerHTML=tr().captionEnd;
+  };
 })();
 
 (function(){
@@ -213,9 +336,20 @@
   const gx0=70,gx1=530,gy0=250,gy1=50;
   const slider=document.getElementById('posSlider');
   const resultEl=document.getElementById('tryResult');
+  let lastResult=null;
   function curveY(px){
     const xn=(px-gx0)/(gx1-gx0);
     return gy0-(gy0-gy1)*(xn*xn*(3-2*xn));
+  }
+  function updateResultText(){
+    const t=tr();
+    if(lastResult===null){
+      resultEl.textContent = t.tryResultDefault;
+      return;
+    }
+    const slope=lastResult;
+    const speedWord = slope<0.3 ? t.speedWordSlow : slope<1 ? t.speedWordMedium : t.speedWordFast;
+    resultEl.textContent = t.tryResult(slope,speedWord);
   }
   function draw(){
     c.clearRect(0,0,w,h); c.fillStyle='#04060f'; c.fillRect(0,0,w,h);
@@ -236,12 +370,16 @@
     c.beginPath(); c.moveTo(px-len,py-slope*(-len)); c.lineTo(px+len,py-slope*(len)); c.stroke();
     c.fillStyle='#ff9d9d'; c.beginPath(); c.arc(px,py,7,0,Math.PI*2); c.fill();
     c.fillStyle='#eef2ff'; c.font='700 14px Segoe UI'; c.textAlign='center';
-    c.fillText('slope ≈ '+slope.toFixed(2), w/2, h-15);
-    const speedWord = slope<0.3 ? 'slow (car just starting or stopping)' : slope<1 ? 'medium speed' : 'fast (steepest part)';
-    resultEl.textContent = 'At this point, the slope is '+slope.toFixed(2)+' — that means the car is going '+speedWord+'.';
+    c.fillText(tr().canvas.trySlopeLabel(slope), w/2, h-15);
+    lastResult=slope;
+    updateResultText();
   }
   slider.addEventListener('input',draw);
   draw();
+
+  window.__tryRefresh = function(){
+    draw();
+  };
 })();
 </script>
 </body>

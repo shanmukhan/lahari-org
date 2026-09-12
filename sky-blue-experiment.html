@@ -9,7 +9,11 @@
   *{box-sizing:border-box;}
   body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
   .wrap{max-width:960px;margin:0 auto;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
   a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
   header{text-align:center;margin-bottom:20px;}
   h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
   header p{color:var(--dim);font-size:16px;margin:0;}
@@ -43,10 +47,13 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="category-physics.html">&larr; Back to Physics in Action</a>
+  <div class="topbar">
+    <a class="back" href="category-physics.html" id="backLink">&larr; Back to Physics in Action</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
   <header>
-    <h1>🌤️ Why the Sky Is Blue</h1>
-    <p>And why sunsets turn fiery orange and red — it's the same trick, seen from two different angles.</p>
+    <h1 id="pageTitle">🌤️ Why the Sky Is Blue</h1>
+    <p id="pageSubtitle">And why sunsets turn fiery orange and red — it's the same trick, seen from two different angles.</p>
   </header>
 
   <div class="player">
@@ -61,23 +68,23 @@
   </div>
 
   <div class="steps">
-    <div class="step-card"><div class="num">1</div><h3>☀️ Sunlight hits our air</h3>
-      <p>Sunlight is a mix of all colors. It travels through Earth's atmosphere, full of tiny gas molecules.</p></div>
-    <div class="step-card"><div class="num">2</div><h3>💙 Blue light scatters most</h3>
-      <p>Blue light has shorter, "choppier" waves, so it bounces off those tiny molecules far more than red or yellow light does.</p></div>
-    <div class="step-card"><div class="num">3</div><h3>🌍 Scattered blue fills the sky</h3>
-      <p>That bounced-around blue light comes at your eyes from every direction overhead — so the whole sky looks blue!</p></div>
-    <div class="step-card"><div class="num">4</div><h3>🌅 Sunsets flip the trick</h3>
-      <p>At sunset, sunlight travels through much more air sideways — nearly all the blue scatters away before it reaches you, leaving mostly orange and red.</p></div>
+    <div class="step-card"><div class="num">1</div><h3 id="s1t">☀️ Sunlight hits our air</h3>
+      <p id="s1d">Sunlight is a mix of all colors. It travels through Earth's atmosphere, full of tiny gas molecules.</p></div>
+    <div class="step-card"><div class="num">2</div><h3 id="s2t">💙 Blue light scatters most</h3>
+      <p id="s2d">Blue light has shorter, "choppier" waves, so it bounces off those tiny molecules far more than red or yellow light does.</p></div>
+    <div class="step-card"><div class="num">3</div><h3 id="s3t">🌍 Scattered blue fills the sky</h3>
+      <p id="s3d">That bounced-around blue light comes at your eyes from every direction overhead — so the whole sky looks blue!</p></div>
+    <div class="step-card"><div class="num">4</div><h3 id="s4t">🌅 Sunsets flip the trick</h3>
+      <p id="s4d">At sunset, sunlight travels through much more air sideways — nearly all the blue scatters away before it reaches you, leaving mostly orange and red.</p></div>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> Violet light scatters even more than blue! But our eyes are much less sensitive to violet,
     and sunlight has less of it — so the sky reads as blue to us, not purple.
   </div>
 
-  <div class="try-title">🧪 Now try it yourself</div>
-  <p class="try-subtitle">Drag the sun toward the horizon and watch how much sky-colored air the light has to pass through.</p>
+  <div class="try-title" id="tryTitle">🧪 Now try it yourself</div>
+  <p class="try-subtitle" id="trySubtitle">Drag the sun toward the horizon and watch how much sky-colored air the light has to pass through.</p>
   <div class="try-card">
     <canvas id="tryScene" width="600" height="300"></canvas>
     <div class="try-controls">
@@ -89,21 +96,115 @@
 </div>
 
 <script>
+const T = {
+  en: {
+    langToggle: 'తెలుగు', backLink: '&larr; Back to Physics in Action',
+    pageTitle: '🌤️ Why the Sky Is Blue',
+    pageSubtitle: 'And why sunsets turn fiery orange and red — it\'s the same trick, seen from two different angles.',
+    playBtn: '▶ Play', pauseBtn: '⏸ Pause', restartBtn: '⟲ Restart',
+    captionInitial: 'Press <b>Play</b> to start!',
+    captionEnd: '🎬 The End! Press <b>Restart</b> to watch again.',
+    steps: [
+      ['☀️ Sunlight hits our air','Sunlight is a mix of all colors. It travels through Earth\'s atmosphere, full of tiny gas molecules.'],
+      ['💙 Blue light scatters most','Blue light has shorter, "choppier" waves, so it bounces off those tiny molecules far more than red or yellow light does.'],
+      ['🌍 Scattered blue fills the sky','That bounced-around blue light comes at your eyes from every direction overhead — so the whole sky looks blue!'],
+      ['🌅 Sunsets flip the trick','At sunset, sunlight travels through much more air sideways — nearly all the blue scatters away before it reaches you, leaving mostly orange and red.'],
+    ],
+    fact: '🤯 <b>Mind-blowing part:</b> Violet light scatters even more than blue! But our eyes are much less sensitive to violet, and sunlight has less of it — so the sky reads as blue to us, not purple.',
+    tryTitle: '🧪 Now try it yourself',
+    trySubtitle: 'Drag the sun toward the horizon and watch how much sky-colored air the light has to pass through.',
+    tryReset: '↻ Reset',
+    tryResultDefault: 'Sun high overhead: light passes through a thin slice of air — sky looks blue.',
+    tryResultMid: 'Sun lower: light travels through more air — sky starts warming toward orange.',
+    tryResultHigh: 'Sun near the horizon: light crosses a huge amount of air — almost all blue scatters away, leaving red and orange.',
+    scenes: [
+      ['☀️ STEP 1: SUNLIGHT ENTERS THE AIR','Sunlight — a mix of every color — travels down through Earth\'s atmosphere, full of countless tiny gas molecules.'],
+      ['💙 STEP 2: BLUE BOUNCES MOST','Blue light\'s short, tight waves bounce off those tiny molecules far more easily than red or yellow light\'s longer waves.'],
+      ['🌍 STEP 3: BLUE COMES FROM EVERYWHERE','That scattered blue light bounces around and reaches your eyes from every direction in the sky — that\'s why the <b>whole</b> sky looks blue!'],
+      ['🌅 STEP 4: SUNSETS FLIP IT','At sunset, light travels sideways through much <b>more</b> air. Almost all the blue scatters away before reaching you — leaving warm oranges and reds.'],
+    ],
+    canvas: {
+      sunlightEnters: 'sunlight (all colors) enters the atmosphere',
+      redThrough: 'red passes mostly straight through',
+      blueScatters: 'blue light scatters in every direction!',
+      blueEverywhere: 'blue light reaches your eyes from every part of the sky',
+      sunsetPath: 'sideways through lots of air — blue scatters away, red & orange remain',
+      pathLength: (px)=>'air path length: '+px+'px',
+    },
+  },
+  te: {
+    langToggle: 'English', backLink: '&larr; ఫిజిక్స్ ఇన్ యాక్షన్ కి తిరిగి',
+    pageTitle: '🌤️ ఆకాశం నీలంగా ఎందుకు ఉంటుంది',
+    pageSubtitle: 'సూర్యాస్తమయాలు మండుతున్న నారింజ, ఎరుపు రంగులోకి ఎందుకు మారతాయో కూడా చూద్దాం — ఇది అదే ట్రిక్, రెండు వేర్వేరు కోణాల నుండి చూసినది.',
+    playBtn: '▶ ప్లే', pauseBtn: '⏸ పాజ్', restartBtn: '⟲ మళ్ళీ మొదలు',
+    captionInitial: 'ప్రారంభించడానికి <b>ప్లే</b> నొక్కండి!',
+    captionEnd: '🎬 ముగింపు! మళ్ళీ చూడటానికి <b>మళ్ళీ మొదలు</b> నొక్కండి.',
+    steps: [
+      ['☀️ సూర్యకాంతి మన గాలిని తాకుతుంది','సూర్యకాంతి అన్ని రంగుల మిశ్రమం. ఇది భూమి వాతావరణం గుండా ప్రయాణిస్తుంది, ఇందులో చిన్న చిన్న వాయు అణువులు నిండి ఉంటాయి.'],
+      ['💙 నీలి కాంతి అత్యధికంగా చెదురుతుంది','నీలి కాంతికి చిన్నవి, "కదిలే" తరంగాలు ఉంటాయి, కాబట్టి అది ఎరుపు లేదా పసుపు కాంతి కంటే ఆ చిన్న అణువుల నుండి చాలా ఎక్కువగా తిరిగి చెదిరిపోతుంది.'],
+      ['🌍 చెదిరిన నీలి రంగు ఆకాశాన్ని నింపుతుంది','ఆ చెదిరిన నీలి కాంతి మీ తలపైన అన్ని దిశల నుండి మీ కళ్ళకు చేరుతుంది — అందుకే ఆకాశం మొత్తం నీలిరంగులో కనిపిస్తుంది!'],
+      ['🌅 సూర్యాస్తమయం ట్రిక్‌ను తలకిందులు చేస్తుంది','సూర్యాస్తమయం వేళ, సూర్యకాంతి పక్కగా చాలా ఎక్కువ గాలి గుండా ప్రయాణిస్తుంది — అది మీకు చేరకముందే దాదాపు నీలి రంగు అంతా చెదిరిపోతుంది, ఎక్కువగా నారింజ మరియు ఎరుపు రంగులు మిగులుతాయి.'],
+    ],
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> ఊదా రంగు కాంతి నీలం కంటే కూడా ఎక్కువగా చెదురుతుంది! కానీ మన కళ్ళు ఊదా రంగుకు చాలా తక్కువ సున్నితంగా ఉంటాయి, సూర్యకాంతిలో దాని పరిమాణం కూడా తక్కువే — అందుకే ఆకాశం ఊదాగా కాకుండా నీలంగా కనిపిస్తుంది.',
+    tryTitle: '🧪 ఇప్పుడు మీరే ప్రయత్నించండి',
+    trySubtitle: 'సూర్యుడిని హోరిజోన్ వైపుకు లాగి, కాంతి ఎంత గాలి గుండా ప్రయాణించాలో గమనించండి.',
+    tryReset: '↻ రీసెట్',
+    tryResultDefault: 'సూర్యుడు నెత్తిపైన ఉన్నప్పుడు: కాంతి గాలిలో సన్నని పొర గుండా వెళుతుంది — ఆకాశం నీలంగా కనిపిస్తుంది.',
+    tryResultMid: 'సూర్యుడు కిందికి వచ్చినప్పుడు: కాంతి ఎక్కువ గాలి గుండా ప్రయాణిస్తుంది — ఆకాశం నారింజ వైపు మారడం మొదలవుతుంది.',
+    tryResultHigh: 'సూర్యుడు హోరిజోన్‌కు దగ్గరగా ఉన్నప్పుడు: కాంతి చాలా ఎక్కువ గాలి గుండా ప్రయాణిస్తుంది — దాదాపు నీలిరంగు అంతా చెదిరిపోయి, ఎరుపు, నారింజ రంగులు మిగులుతాయి.',
+    scenes: [
+      ['☀️ దశ 1: సూర్యకాంతి గాలిలోకి ప్రవేశిస్తుంది','సూర్యకాంతి — అన్ని రంగుల మిశ్రమం — లెక్కలేనన్ని చిన్న వాయు అణువులతో నిండిన భూమి వాతావరణం గుండా కిందికి ప్రయాణిస్తుంది.'],
+      ['💙 దశ 2: నీలిరంగు అత్యధికంగా చెదురుతుంది','నీలి కాంతి యొక్క చిన్న, గట్టి తరంగాలు ఎరుపు లేదా పసుపు కాంతి యొక్క పొడవైన తరంగాల కంటే ఆ చిన్న అణువుల నుండి చాలా సులభంగా చెదిరిపోతాయి.'],
+      ['🌍 దశ 3: నీలిరంగు అన్నివైపుల నుండి వస్తుంది','ఆ చెదిరిన నీలి కాంతి చుట్టూ తిరుగుతూ ఆకాశంలోని అన్ని దిశల నుండి మీ కళ్ళకు చేరుతుంది — అందుకే ఆకాశం <b>మొత్తం</b> నీలిరంగులో కనిపిస్తుంది!'],
+      ['🌅 దశ 4: సూర్యాస్తమయం దీన్ని తారుమారు చేస్తుంది','సూర్యాస్తమయం వేళ, కాంతి పక్కగా చాలా <b>ఎక్కువ</b> గాలి గుండా ప్రయాణిస్తుంది. అది మీకు చేరకముందే దాదాపు నీలిరంగు అంతా చెదిరిపోతుంది — వెచ్చని నారింజ, ఎరుపు రంగులు మిగులుతాయి.'],
+    ],
+    canvas: {
+      sunlightEnters: 'సూర్యకాంతి (అన్ని రంగులు) వాతావరణంలోకి ప్రవేశిస్తుంది',
+      redThrough: 'ఎరుపు రంగు ఎక్కువగా నేరుగా దాటిపోతుంది',
+      blueScatters: 'నీలి కాంతి అన్ని దిశల్లోకి చెదురుతుంది!',
+      blueEverywhere: 'నీలి కాంతి ఆకాశంలోని ప్రతి భాగం నుండి మీ కళ్ళకు చేరుతుంది',
+      sunsetPath: 'పక్కగా చాలా గాలి గుండా — నీలిరంగు చెదిరిపోతుంది, ఎరుపు & నారింజ మిగులుతాయి',
+      pathLength: (px)=>'గాలి మార్గం పొడవు: '+px+'px',
+    },
+  }
+};
+let LANG='en';
+function tr(){ return T[LANG]; }
+function applyStaticText(){
+  const t=tr();
+  document.documentElement.lang=LANG;
+  document.getElementById('langToggle').textContent=t.langToggle;
+  document.getElementById('backLink').innerHTML=t.backLink;
+  document.getElementById('pageTitle').textContent=t.pageTitle;
+  document.getElementById('pageSubtitle').textContent=t.pageSubtitle;
+  document.getElementById('restartBtn').textContent=t.restartBtn;
+  for(let i=0;i<4;i++){
+    document.getElementById('s'+(i+1)+'t').textContent=t.steps[i][0];
+    document.getElementById('s'+(i+1)+'d').innerHTML=t.steps[i][1];
+  }
+  document.getElementById('factBox').innerHTML=t.fact;
+  document.getElementById('tryTitle').textContent=t.tryTitle;
+  document.getElementById('trySubtitle').textContent=t.trySubtitle;
+  document.getElementById('tryReset').textContent=t.tryReset;
+}
+document.getElementById('langToggle').addEventListener('click',()=>{
+  LANG = LANG==='en' ? 'te' : 'en';
+  applyStaticText();
+  if(window.__skyRefresh) window.__skyRefresh();
+  if(window.__tryRefresh) window.__tryRefresh();
+});
+applyStaticText();
+
 (function(){
   const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
   const W=canvas.width, H=canvas.height;
   const captionEl=document.getElementById('caption'), bannerEl=document.getElementById('banner'), progressBar=document.getElementById('progressBar');
   const playBtn=document.getElementById('playBtn'), restartBtn=document.getElementById('restartBtn');
 
-  const SCENES=[
-    {t:0,dur:6,banner:'☀️ STEP 1: SUNLIGHT ENTERS THE AIR',caption:'Sunlight — a mix of every color — travels down through Earth\'s atmosphere, full of countless tiny gas molecules.'},
-    {t:6,dur:7,banner:'💙 STEP 2: BLUE BOUNCES MOST',caption:'Blue light\'s short, tight waves bounce off those tiny molecules far more easily than red or yellow light\'s longer waves.'},
-    {t:13,dur:7,banner:'🌍 STEP 3: BLUE COMES FROM EVERYWHERE',caption:'That scattered blue light bounces around and reaches your eyes from every direction in the sky — that\'s why the WHOLE sky looks blue!'},
-    {t:20,dur:8,banner:'🌅 STEP 4: SUNSETS FLIP IT',caption:'At sunset, light travels sideways through much MORE air. Almost all the blue scatters away before reaching you — leaving warm oranges and reds.'},
-  ];
+  const starts=[0,6,13,20];
   const totalDur=28;
-  let simTime=0, playing=false, lastTs=null;
-  function currentScene(t){ for(let i=SCENES.length-1;i>=0;i--) if(t>=SCENES[i].t) return i; return 0; }
+  let simTime=0, playing=false, lastTs=null, captionOverride='initial';
+  function currentScene(t){ for(let i=starts.length-1;i>=0;i--) if(t>=starts[i]) return i; return 0; }
   function label(x,y,text,color){
     ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
     const tw=ctx.measureText(text).width;
@@ -126,14 +227,14 @@
       ctx.beginPath(); ctx.moveTo(80,80); ctx.lineTo(120+local*100,y0+local*60); ctx.stroke();
     });
     molecules(local);
-    label(W/2,H-30,'sunlight (all colors) enters the atmosphere','#eef2ff');
+    label(W/2,H-30,tr().canvas.sunlightEnters,'#eef2ff');
   }
   function drawScatterBlue(local){
     molecules(local);
     const cx=450,cy=230;
     ctx.strokeStyle='#ff4d4d'; ctx.lineWidth=3;
     ctx.beginPath(); ctx.moveTo(cx-300,cy); ctx.lineTo(cx+300,cy); ctx.stroke();
-    label(cx+310,cy,'red passes mostly straight through','#ff8f8f');
+    label(cx+310,cy,tr().canvas.redThrough,'#ff8f8f');
 
     const bounce=Math.min(1,local/5);
     ctx.strokeStyle='#4dc3ff'; ctx.lineWidth=3;
@@ -148,7 +249,7 @@
         ctx.stroke();
       });
     }
-    label(cx-100,cy-90,'blue light scatters in every direction!','#8fd2ff');
+    label(cx-100,cy-90,tr().canvas.blueScatters,'#8fd2ff');
   }
   function drawFullSky(local){
     const g=ctx.createLinearGradient(0,0,0,H);
@@ -160,7 +261,7 @@
       ctx.fillStyle='rgba(255,255,255,'+(0.15+0.1*Math.sin(local+i))+')';
       ctx.beginPath(); ctx.arc((i*67+local*5)%W,(i*41)%(H*0.7),2,0,Math.PI*2); ctx.fill();
     }
-    label(W/2,40,'blue light reaches your eyes from EVERY part of the sky','#fff');
+    label(W/2,40,tr().canvas.blueEverywhere,'#fff');
   }
   function drawSunset(local){
     const horizonY=H*0.75;
@@ -177,13 +278,13 @@
     ctx.fillStyle='#ffd23f'; ctx.beginPath(); ctx.arc(sunX,sunY,35,0,Math.PI*2); ctx.fill();
     ctx.strokeStyle='rgba(255,255,255,.3)'; ctx.lineWidth=2;
     ctx.beginPath(); ctx.moveTo(sunX,sunY); ctx.lineTo(120,horizonY-10); ctx.stroke();
-    label(W/2,40,'sideways through lots of air — blue scatters away, red & orange remain','#ffcf6b');
+    label(W/2,40,tr().canvas.sunsetPath,'#ffcf6b');
   }
 
   function render(t){
     ctx.clearRect(0,0,W,H); ctx.fillStyle='#04060f'; ctx.fillRect(0,0,W,H);
-    const idx=currentScene(t), scene=SCENES[idx], local=t-scene.t;
-    bannerEl.textContent=scene.banner; captionEl.innerHTML=scene.caption;
+    const idx=currentScene(t), scene=tr().scenes[idx], local=t-starts[idx];
+    bannerEl.textContent=scene[0]; captionEl.innerHTML=scene[1];
     if(idx===0) drawEnter(local);
     else if(idx===1) drawScatterBlue(local);
     else if(idx===2) drawFullSky(local);
@@ -196,15 +297,24 @@
     const dt=Math.min(0.05,(ts-lastTs)/1000); lastTs=ts;
     simTime+=dt;
     if(simTime>=totalDur){ simTime=totalDur; render(simTime); pause();
-      captionEl.innerHTML='🎬 The End! Press <b>Restart</b> to watch again.'; return; }
+      captionOverride='ended'; captionEl.innerHTML=tr().captionEnd; return; }
+    captionOverride=null;
     render(simTime); requestAnimationFrame(step);
   }
-  function play(){ if(playing) return; playing=true; lastTs=null; playBtn.textContent='⏸ Pause'; requestAnimationFrame(step); }
-  function pause(){ playing=false; playBtn.textContent='▶ Play'; }
-  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionEl.innerHTML='Press <b>Play</b> to start!'; }
+  function play(){ if(playing) return; playing=true; lastTs=null; captionOverride=null; playBtn.textContent=tr().pauseBtn; requestAnimationFrame(step); }
+  function pause(){ playing=false; playBtn.textContent=tr().playBtn; }
+  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionOverride='initial'; captionEl.innerHTML=tr().captionInitial; }
   playBtn.addEventListener('click',()=>playing?pause():play());
   restartBtn.addEventListener('click',restart);
+  playBtn.textContent=tr().playBtn;
   render(0);
+
+  window.__skyRefresh=function(){
+    playBtn.textContent = playing ? tr().pauseBtn : tr().playBtn;
+    render(simTime);
+    if(captionOverride==='initial') captionEl.innerHTML=tr().captionInitial;
+    else if(captionOverride==='ended') captionEl.innerHTML=tr().captionEnd;
+  };
 })();
 
 (function(){
@@ -213,6 +323,14 @@
   const slider=document.getElementById('sunSlider');
   const resultEl=document.getElementById('tryResult');
   const horizonY=h*0.78;
+  let lastPathLen=null;
+  let lastResult='default';
+  function updateResultText(){
+    const t=tr();
+    if(lastResult==='mid') resultEl.textContent=t.tryResultMid;
+    else if(lastResult==='high') resultEl.textContent=t.tryResultHigh;
+    else resultEl.textContent=t.tryResultDefault;
+  }
   function draw(){
     const v=(+slider.value)/100;
     const sunY=30+v*(horizonY-70);
@@ -226,20 +344,21 @@
     c.strokeStyle='rgba(255,255,255,.35)'; c.lineWidth=2;
     c.beginPath(); c.moveTo(sunX,sunY); c.lineTo(80,horizonY-10); c.stroke();
     const pathLen=Math.hypot(sunX-80, sunY-(horizonY-10));
+    lastPathLen=Math.round(pathLen);
     c.fillStyle='#eef2ff'; c.font='700 13px Segoe UI'; c.textAlign='center';
-    c.fillText('air path length: '+Math.round(pathLen)+'px', w/2, h-14);
+    c.fillText(tr().canvas.pathLength(lastPathLen), w/2, h-14);
   }
   slider.addEventListener('input',()=>{
     draw();
     const v=+slider.value;
-    resultEl.textContent = v<20
-      ? 'Sun high overhead: light passes through a thin slice of air — sky looks blue.'
-      : v<70
-      ? 'Sun lower: light travels through more air — sky starts warming toward orange.'
-      : 'Sun near the horizon: light crosses a huge amount of air — almost all blue scatters away, leaving red and orange.';
+    lastResult = v<20 ? 'default' : v<70 ? 'mid' : 'high';
+    updateResultText();
   });
-  document.getElementById('tryReset').addEventListener('click',()=>{ slider.value=0; draw(); resultEl.textContent='Sun high overhead: light passes through a thin slice of air — sky looks blue.'; });
+  document.getElementById('tryReset').addEventListener('click',()=>{ slider.value=0; draw(); lastResult='default'; updateResultText(); });
+  updateResultText();
   draw();
+
+  window.__tryRefresh=function(){ updateResultText(); draw(); };
 })();
 </script>
 </body>

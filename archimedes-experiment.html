@@ -9,7 +9,11 @@
   *{box-sizing:border-box;}
   body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
   .wrap{max-width:960px;margin:0 auto;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
   a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
   header{text-align:center;margin-bottom:20px;}
   h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
   header p{color:var(--dim);font-size:16px;margin:0;}
@@ -43,10 +47,13 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="category-physics.html">&larr; Back to Physics in Action</a>
+  <div class="topbar">
+    <a class="back" href="category-physics.html" id="backLink">&larr; Back to Physics in Action</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
   <header>
-    <h1>🛁 Archimedes' Principle</h1>
-    <p>Why do massive steel ships float, but a tiny steel coin sinks? It's all about how much water gets pushed aside.</p>
+    <h1 id="pageTitle">🛁 Archimedes' Principle</h1>
+    <p id="pageSubtitle">Why do massive steel ships float, but a tiny steel coin sinks? It's all about how much water gets pushed aside.</p>
   </header>
 
   <div class="player">
@@ -61,24 +68,24 @@
   </div>
 
   <div class="steps">
-    <div class="step-card"><div class="num">1</div><h3>🛁 Legend: the bathtub moment</h3>
-      <p>Archimedes noticed that when he got into a full bath, water spilled over — the amount that spilled matched his body's volume!</p></div>
-    <div class="step-card"><div class="num">2</div><h3>⬆️ Water pushes back</h3>
-      <p>Any object placed in water pushes water out of the way — and that displaced water pushes back up on the object with a force.</p></div>
-    <div class="step-card"><div class="num">3</div><h3>⚖️ Weigh the displaced water</h3>
-      <p>That upward push (called <b>buoyancy</b>) exactly equals the WEIGHT of the water that got pushed aside — no more, no less.</p></div>
-    <div class="step-card"><div class="num">4</div><h3>🚢 Float or sink?</h3>
-      <p>If that push is bigger than the object's own weight, it floats. If it's smaller, it sinks — that's why a ship's wide, hollow shape lets it float, but a solid lump of the same steel sinks!</p></div>
+    <div class="step-card"><div class="num">1</div><h3 id="s1t">🛁 Legend: the bathtub moment</h3>
+      <p id="s1d">Archimedes noticed that when he got into a full bath, water spilled over — the amount that spilled matched his body's volume!</p></div>
+    <div class="step-card"><div class="num">2</div><h3 id="s2t">⬆️ Water pushes back</h3>
+      <p id="s2d">Any object placed in water pushes water out of the way — and that displaced water pushes back up on the object with a force.</p></div>
+    <div class="step-card"><div class="num">3</div><h3 id="s3t">⚖️ Weigh the displaced water</h3>
+      <p id="s3d">That upward push (called <b>buoyancy</b>) exactly equals the WEIGHT of the water that got pushed aside — no more, no less.</p></div>
+    <div class="step-card"><div class="num">4</div><h3 id="s4t">🚢 Float or sink?</h3>
+      <p id="s4d">If that push is bigger than the object's own weight, it floats. If it's smaller, it sinks — that's why a ship's wide, hollow shape lets it float, but a solid lump of the same steel sinks!</p></div>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> A massive steel cargo ship floats because its hollow shape displaces a HUGE amount of water —
     more than enough to equal its own weight. Squash that same steel into a solid block, and it displaces far less water than its
     weight — straight to the bottom!
   </div>
 
-  <div class="try-title">🧪 Now try it yourself</div>
-  <p class="try-subtitle">Drop different shapes into the water and see which ones float.</p>
+  <div class="try-title" id="tryTitle">🧪 Now try it yourself</div>
+  <p class="try-subtitle" id="trySubtitle">Drop different shapes into the water and see which ones float.</p>
   <div class="try-card">
     <canvas id="tryScene" width="600" height="300"></canvas>
     <div class="try-controls">
@@ -91,21 +98,121 @@
 </div>
 
 <script>
+const T = {
+  en: {
+    langToggle: 'తెలుగు', backLink: '&larr; Back to Physics in Action',
+    pageTitle: '🛁 Archimedes\' Principle',
+    pageSubtitle: 'Why do massive steel ships float, but a tiny steel coin sinks? It\'s all about how much water gets pushed aside.',
+    playBtn: '▶ Play', pauseBtn: '⏸ Pause', restartBtn: '⟲ Restart',
+    captionInitial: 'Press <b>Play</b> to start!',
+    captionEnd: '🎬 The End! Press <b>Restart</b> to watch again.',
+    steps: [
+      ['🛁 Legend: the bathtub moment','Archimedes noticed that when he got into a full bath, water spilled over — the amount that spilled matched his body\'s volume!'],
+      ['⬆️ Water pushes back','Any object placed in water pushes water out of the way — and that displaced water pushes back up on the object with a force.'],
+      ['⚖️ Weigh the displaced water','That upward push (called <b>buoyancy</b>) exactly equals the WEIGHT of the water that got pushed aside — no more, no less.'],
+      ['🚢 Float or sink?','If that push is bigger than the object\'s own weight, it floats. If it\'s smaller, it sinks — that\'s why a ship\'s wide, hollow shape lets it float, but a solid lump of the same steel sinks!'],
+    ],
+    fact: '🤯 <b>Mind-blowing part:</b> A massive steel cargo ship floats because its hollow shape displaces a HUGE amount of water — more than enough to equal its own weight. Squash that same steel into a solid block, and it displaces far less water than its weight — straight to the bottom!',
+    tryTitle: '🧪 Now try it yourself',
+    trySubtitle: 'Drop different shapes into the water and see which ones float.',
+    shapeBtns: {ball:'⚫ Steel ball', boat:'🛶 Steel boat shape', wood:'🪵 Wood block'},
+    shapeResult: {
+      ball:'The solid steel ball displaces little water — it sinks.',
+      boat:'The hollow boat shape displaces lots of water — it floats!',
+      wood:'Wood is less dense than water, so it displaces enough to float easily.'
+    },
+    scenes: [
+      ['🛁 STEP 1: THE BATHTUB MOMENT','Legend says Archimedes noticed that stepping into a full bath made water spill over — matching his body\'s exact volume!'],
+      ['⬆️ STEP 2: WATER PUSHES BACK','Any object in water shoves water out of the way — and that displaced water pushes back up on the object.'],
+      ['⚖️ STEP 3: WEIGH THE DISPLACED WATER','That upward push, called <b>buoyancy</b>, exactly equals the WEIGHT of the water pushed aside.'],
+      ['🚢 STEP 4: FLOAT OR SINK?','Push bigger than the object\'s weight → it floats. Push smaller → it sinks. That\'s why a hollow ship floats but a solid lump sinks!'],
+    ],
+    canvas: {
+      waterSpills: 'water spills — it matched his body\'s volume!',
+      pushBack: 'displaced water pushes back UP on the object',
+      weightDisplaced: 'weight of displaced water',
+      buoyantForce: '= buoyant force',
+      sinks: 'small displaced water < weight → SINKS',
+      floats: 'hollow shape displaces more water → FLOATS',
+    },
+  },
+  te: {
+    langToggle: 'English', backLink: '&larr; ఫిజిక్స్ ఇన్ యాక్షన్ కి తిరిగి',
+    pageTitle: '🛁 ఆర్కిమెడిస్ సూత్రం',
+    pageSubtitle: 'భారీ ఉక్కు నౌకలు ఎందుకు తేలుతాయి, కానీ చిన్న ఉక్కు నాణెం ఎందుకు మునిగిపోతుంది? ఇది ఎంత నీరు పక్కకు తోసివేయబడుతుందనే దానిపై ఆధారపడి ఉంటుంది.',
+    playBtn: '▶ ప్లే', pauseBtn: '⏸ పాజ్', restartBtn: '⟲ మళ్ళీ మొదలు',
+    captionInitial: 'ప్రారంభించడానికి <b>ప్లే</b> నొక్కండి!',
+    captionEnd: '🎬 ముగింపు! మళ్ళీ చూడటానికి <b>మళ్ళీ మొదలు</b> నొక్కండి.',
+    steps: [
+      ['🛁 కథ: స్నానపు తొట్టె క్షణం','ఆర్కిమెడిస్ నిండుగా ఉన్న స్నానపు తొట్టెలోకి దిగినప్పుడు నీరు బయటకు పొర్లిపోవడం గమనించాడు — పొర్లిపోయిన నీటి పరిమాణం అతని శరీర ఘనపరిమాణానికి సరిగ్గా సరిపోయింది!'],
+      ['⬆️ నీరు వెనక్కి తోస్తుంది','నీటిలో ఉంచిన ఏ వస్తువైనా నీటిని పక్కకు తోస్తుంది — ఆ తోసివేయబడిన నీరు వస్తువుపై పైకి ఒక శక్తితో వెనక్కి తోస్తుంది.'],
+      ['⚖️ తోసివేయబడిన నీటిని తూచండి','ఆ పైకి తోసే శక్తిని (దీన్ని <b>ఉత్ప్లావకత</b> అంటారు) పక్కకు తోసివేయబడిన నీటి బరువుతో సరిగ్గా సమానంగా ఉంటుంది — ఎక్కువ కాదు, తక్కువ కాదు.'],
+      ['🚢 తేలుతుందా మునుగుతుందా?','ఆ తోసే శక్తి వస్తువు సొంత బరువు కంటే ఎక్కువగా ఉంటే, అది తేలుతుంది. తక్కువగా ఉంటే, అది మునిగిపోతుంది — అందుకే నౌక వెడల్పైన, బోలు ఆకారం దాన్ని తేలేలా చేస్తుంది, కానీ అదే ఉక్కుతో చేసిన ఘనమైన ముద్ద మునిగిపోతుంది!'],
+    ],
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> ఒక భారీ ఉక్కు సరుకు రవాణా నౌక తేలుతుంది ఎందుకంటే దాని బోలు ఆకారం చాలా ఎక్కువ నీటిని తోసివేస్తుంది — దాని సొంత బరువుకు సమానం కావడానికి సరిపడేంత కంటే ఎక్కువ. అదే ఉక్కును ఘనమైన దిమ్మగా అదిమితే, అది దాని బరువు కంటే చాలా తక్కువ నీటిని తోసివేస్తుంది — నేరుగా అడుగుకు వెళ్ళిపోతుంది!',
+    tryTitle: '🧪 ఇప్పుడు మీరే ప్రయత్నించండి',
+    trySubtitle: 'వేర్వేరు ఆకారాలను నీటిలో వేసి ఏవి తేలుతాయో చూడండి.',
+    shapeBtns: {ball:'⚫ ఉక్కు బంతి', boat:'🛶 ఉక్కు పడవ ఆకారం', wood:'🪵 చెక్క దిమ్మ'},
+    shapeResult: {
+      ball:'ఘనమైన ఉక్కు బంతి కొద్దిగానే నీటిని తోసివేస్తుంది — అది మునిగిపోతుంది.',
+      boat:'బోలు పడవ ఆకారం చాలా నీటిని తోసివేస్తుంది — అది తేలుతుంది!',
+      wood:'చెక్క నీటి కంటే తక్కువ సాంద్రత కలిగి ఉంటుంది, కాబట్టి అది తేలికగా తేలేంత నీటిని తోసివేస్తుంది.'
+    },
+    scenes: [
+      ['🛁 దశ 1: స్నానపు తొట్టె క్షణం','ఆర్కిమెడిస్ నిండుగా ఉన్న స్నానంలోకి దిగినప్పుడు నీరు బయటకు పొర్లిపోవడం గమనించాడని కథనం — అతని శరీర ఖచ్చితమైన ఘనపరిమాణానికి సరిపోయేలా!'],
+      ['⬆️ దశ 2: నీరు వెనక్కి తోస్తుంది','నీటిలో ఉన్న ఏ వస్తువైనా నీటిని పక్కకు తోస్తుంది — ఆ తోసివేయబడిన నీరు వస్తువుపై పైకి వెనక్కి తోస్తుంది.'],
+      ['⚖️ దశ 3: తోసివేయబడిన నీటిని తూచండి','ఆ పైకి తోసే శక్తిని <b>ఉత్ప్లావకత</b> అంటారు, ఇది పక్కకు తోసివేయబడిన నీటి బరువుతో సరిగ్గా సమానం.'],
+      ['🚢 దశ 4: తేలుతుందా మునుగుతుందా?','తోసే శక్తి వస్తువు బరువు కంటే ఎక్కువైతే → అది తేలుతుంది. తక్కువైతే → అది మునిగిపోతుంది. అందుకే బోలు నౌక తేలుతుంది కానీ ఘనమైన ముద్ద మునుగుతుంది!'],
+    ],
+    canvas: {
+      waterSpills: 'నీరు పొర్లిపోయింది — అది అతని శరీర ఘనపరిమాణానికి సరిపోయింది!',
+      pushBack: 'తోసివేయబడిన నీరు వస్తువుపై పైకి వెనక్కి తోస్తుంది',
+      weightDisplaced: 'తోసివేయబడిన నీటి బరువు',
+      buoyantForce: '= ఉత్ప్లావక శక్తి',
+      sinks: 'తక్కువ తోసివేయబడిన నీరు < బరువు → మునుగుతుంది',
+      floats: 'బోలు ఆకారం ఎక్కువ నీటిని తోసివేస్తుంది → తేలుతుంది',
+    },
+  }
+};
+let LANG='en';
+function tr(){ return T[LANG]; }
+function applyStaticText(){
+  const t=tr();
+  document.documentElement.lang=LANG;
+  document.getElementById('langToggle').textContent=t.langToggle;
+  document.getElementById('backLink').innerHTML=t.backLink;
+  document.getElementById('pageTitle').textContent=t.pageTitle;
+  document.getElementById('pageSubtitle').textContent=t.pageSubtitle;
+  document.getElementById('restartBtn').textContent=t.restartBtn;
+  for(let i=0;i<4;i++){
+    document.getElementById('s'+(i+1)+'t').textContent=t.steps[i][0];
+    document.getElementById('s'+(i+1)+'d').innerHTML=t.steps[i][1];
+  }
+  document.getElementById('factBox').innerHTML=t.fact;
+  document.getElementById('tryTitle').textContent=t.tryTitle;
+  document.getElementById('trySubtitle').textContent=t.trySubtitle;
+  document.getElementById('ballBtn').textContent=t.shapeBtns.ball;
+  document.getElementById('boatBtn').textContent=t.shapeBtns.boat;
+  document.getElementById('woodBtn').textContent=t.shapeBtns.wood;
+}
+document.getElementById('langToggle').addEventListener('click',()=>{
+  LANG = LANG==='en' ? 'te' : 'en';
+  applyStaticText();
+  if(window.__archRefresh) window.__archRefresh();
+  if(window.__tryRefresh) window.__tryRefresh();
+});
+applyStaticText();
+
 (function(){
   const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
   const W=canvas.width, H=canvas.height;
   const captionEl=document.getElementById('caption'), bannerEl=document.getElementById('banner'), progressBar=document.getElementById('progressBar');
   const playBtn=document.getElementById('playBtn'), restartBtn=document.getElementById('restartBtn');
 
-  const SCENES=[
-    {t:0,dur:6,banner:'🛁 STEP 1: THE BATHTUB MOMENT',caption:'Legend says Archimedes noticed that stepping into a full bath made water spill over — matching his body\'s exact volume!'},
-    {t:6,dur:7,banner:'⬆️ STEP 2: WATER PUSHES BACK',caption:'Any object in water shoves water out of the way — and that displaced water pushes back up on the object.'},
-    {t:13,dur:8,banner:'⚖️ STEP 3: WEIGH THE DISPLACED WATER',caption:'That upward push, called <b>buoyancy</b>, exactly equals the WEIGHT of the water pushed aside.'},
-    {t:21,dur:8,banner:'🚢 STEP 4: FLOAT OR SINK?',caption:'Push bigger than the object\'s weight → it floats. Push smaller → it sinks. That\'s why a hollow ship floats but a solid lump sinks!'},
-  ];
+  const starts=[0,6,13,21];
   const totalDur=29;
-  let simTime=0, playing=false, lastTs=null;
-  function currentScene(t){ for(let i=SCENES.length-1;i>=0;i--) if(t>=SCENES[i].t) return i; return 0; }
+  let simTime=0, playing=false, lastTs=null, captionOverride='initial';
+  function currentScene(t){ for(let i=starts.length-1;i>=0;i--) if(t>=starts[i]) return i; return 0; }
   function label(x,y,text,color){
     ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
     const tw=ctx.measureText(text).width;
@@ -128,7 +235,7 @@
         if(dropProg>1) continue;
         ctx.fillStyle='#4fd3ff'; ctx.beginPath(); ctx.arc(300+i*10,120-dropProg*60,3,0,Math.PI*2); ctx.fill();
       }
-      label(W/2,80,'water spills — it matched his body\'s volume!','#8fd2ff');
+      label(W/2,80,tr().canvas.waterSpills,'#8fd2ff');
     }
   }
   function drawScene1(local){
@@ -139,13 +246,13 @@
     for(let a=-1;a<=1;a+=0.5){
       ctx.beginPath(); ctx.moveTo(W/2+Math.cos(a+Math.PI/2)*50,285); ctx.lineTo(W/2+Math.cos(a+Math.PI/2)*50,340); ctx.stroke();
     }
-    label(W/2,H-30,'displaced water pushes back UP on the object','#6dffb0');
+    label(W/2,H-30,tr().canvas.pushBack,'#6dffb0');
   }
   function drawScene2(local){
     drawTub(220);
     ctx.fillStyle='#7a7f9e'; ctx.beginPath(); ctx.arc(W/2,240,45,0,Math.PI*2); ctx.fill();
-    label(W/2-160,150,'weight of displaced water','#8fd2ff');
-    label(W/2+160,150,'= buoyant force','#6dffb0');
+    label(W/2-160,150,tr().canvas.weightDisplaced,'#8fd2ff');
+    label(W/2+160,150,tr().canvas.buoyantForce,'#6dffb0');
     ctx.strokeStyle='rgba(255,255,255,.3)'; ctx.setLineDash([4,4]);
     ctx.beginPath(); ctx.moveTo(W/2-160,170); ctx.lineTo(W/2,220); ctx.moveTo(W/2+160,170); ctx.lineTo(W/2,220); ctx.stroke();
     ctx.setLineDash([]);
@@ -157,19 +264,19 @@
       // sinking ball
       const y=240+Math.min(1,cyc/3)*90;
       ctx.fillStyle='#7a7f9e'; ctx.beginPath(); ctx.arc(W/2,y,35,0,Math.PI*2); ctx.fill();
-      label(W/2,H-30,'small displaced water < weight → SINKS','#ff9d9d');
+      label(W/2,H-30,tr().canvas.sinks,'#ff9d9d');
     } else {
       const bob=Math.sin((cyc-4)*2)*3;
       ctx.fillStyle='#7a7f9e';
       ctx.beginPath(); ctx.moveTo(W/2-70,220+bob); ctx.lineTo(W/2+70,220+bob); ctx.lineTo(W/2+50,260+bob); ctx.lineTo(W/2-50,260+bob); ctx.closePath(); ctx.fill();
-      label(W/2,H-30,'hollow shape displaces more water → FLOATS','#6dffb0');
+      label(W/2,H-30,tr().canvas.floats,'#6dffb0');
     }
   }
 
   function render(t){
     ctx.clearRect(0,0,W,H); ctx.fillStyle='#04060f'; ctx.fillRect(0,0,W,H);
-    const idx=currentScene(t), scene=SCENES[idx], local=t-scene.t;
-    bannerEl.textContent=scene.banner; captionEl.innerHTML=scene.caption;
+    const idx=currentScene(t), scene=tr().scenes[idx], local=t-starts[idx];
+    bannerEl.textContent=scene[0]; captionEl.innerHTML=scene[1];
     if(idx===0) drawScene0(local);
     else if(idx===1) drawScene1(local);
     else if(idx===2) drawScene2(local);
@@ -182,15 +289,24 @@
     const dt=Math.min(0.05,(ts-lastTs)/1000); lastTs=ts;
     simTime+=dt;
     if(simTime>=totalDur){ simTime=totalDur; render(simTime); pause();
-      captionEl.innerHTML='🎬 The End! Press <b>Restart</b> to watch again.'; return; }
+      captionOverride='ended'; captionEl.innerHTML=tr().captionEnd; return; }
+    captionOverride=null;
     render(simTime); requestAnimationFrame(step);
   }
-  function play(){ if(playing) return; playing=true; lastTs=null; playBtn.textContent='⏸ Pause'; requestAnimationFrame(step); }
-  function pause(){ playing=false; playBtn.textContent='▶ Play'; }
-  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionEl.innerHTML='Press <b>Play</b> to start!'; }
+  function play(){ if(playing) return; playing=true; lastTs=null; captionOverride=null; playBtn.textContent=tr().pauseBtn; requestAnimationFrame(step); }
+  function pause(){ playing=false; playBtn.textContent=tr().playBtn; }
+  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionOverride='initial'; captionEl.innerHTML=tr().captionInitial; }
   playBtn.addEventListener('click',()=>playing?pause():play());
   restartBtn.addEventListener('click',restart);
+  playBtn.textContent=tr().playBtn;
   render(0);
+
+  window.__archRefresh=function(){
+    playBtn.textContent = playing ? tr().pauseBtn : tr().playBtn;
+    render(simTime);
+    if(captionOverride==='initial') captionEl.innerHTML=tr().captionInitial;
+    else if(captionOverride==='ended') captionEl.innerHTML=tr().captionEnd;
+  };
 })();
 
 (function(){
@@ -199,11 +315,12 @@
   let shape='ball', y=60, vy=0, settled=false;
   const resultEl=document.getElementById('tryResult');
   const waterY=140;
-  const SHAPES={
-    ball:{floats:false,text:'The solid steel ball displaces little water — it sinks.'},
-    boat:{floats:true,text:'The hollow boat shape displaces lots of water — it floats!'},
-    wood:{floats:true,text:'Wood is less dense than water, so it displaces enough to float easily.'}
-  };
+  const FLOATS={ball:false,boat:true,wood:true};
+
+  function updateResultText(){
+    resultEl.textContent = tr().shapeResult[shape];
+  }
+
   function draw(){
     c.clearRect(0,0,w,h); c.fillStyle='#04060f'; c.fillRect(0,0,w,h);
     c.strokeStyle='#c7c9d9'; c.lineWidth=3;
@@ -221,9 +338,9 @@
   function loop(){
     if(!settled){
       vy+=0.6; y+=vy;
-      const floatY = SHAPES[shape].floats ? waterY+10 : 220;
+      const floatY = FLOATS[shape] ? waterY+10 : 220;
       if(y>=floatY){ y=floatY; vy=0; settled=true; }
-    } else if(SHAPES[shape].floats){
+    } else if(FLOATS[shape]){
       y=waterY+10+Math.sin(Date.now()/400)*3;
     }
     draw();
@@ -233,12 +350,15 @@
     shape=s; y=60; vy=0; settled=false;
     document.querySelectorAll('.try-controls button').forEach(b=>b.classList.remove('on'));
     btn.classList.add('on');
-    resultEl.textContent=SHAPES[s].text;
+    updateResultText();
   }
   document.getElementById('ballBtn').addEventListener('click',e=>setShape('ball',e.target));
   document.getElementById('boatBtn').addEventListener('click',e=>setShape('boat',e.target));
   document.getElementById('woodBtn').addEventListener('click',e=>setShape('wood',e.target));
+  updateResultText();
   draw(); requestAnimationFrame(loop);
+
+  window.__tryRefresh=function(){ updateResultText(); draw(); };
 })();
 </script>
 </body>
