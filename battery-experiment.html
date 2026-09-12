@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How a Battery Works</title>
+<style>
+  :root{--bg:#0b1020;--panel:#121830;--accent:#ffd23f;--accent2:#4fd3ff;--text:#eef2ff;--dim:#9aa4cc;}
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
+  .wrap{max-width:960px;margin:0 auto;}
+  a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  header{text-align:center;margin-bottom:20px;}
+  h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  header p{color:var(--dim);font-size:16px;margin:0;}
+  .player{background:#000;border-radius:16px;padding:10px;box-shadow:0 10px 40px rgba(0,0,0,.5),0 0 0 1px #222 inset;}
+  .progress-track{height:8px;background:#1c2340;border-radius:6px;overflow:hidden;margin-bottom:8px;}
+  .progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--accent2),var(--accent));transition:width .05s linear;}
+  canvas{display:block;width:100%;height:auto;background:#04060f;border-radius:10px;}
+  .banner-wrap{text-align:center;}
+  .banner{display:inline-block;margin:8px auto 0;padding:8px 22px;border-radius:999px;font-weight:800;color:#06180f;background:var(--accent2);}
+  .caption{margin-top:6px;background:#000c;border:1px solid #2a3568;border-radius:10px;padding:14px 18px;min-height:56px;font-size:clamp(16px,2.6vw,20px);line-height:1.4;text-align:center;}
+  .caption b{color:var(--accent);}
+  .controls{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:12px;flex-wrap:wrap;}
+  button{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;padding:10px 20px;font-size:15px;cursor:pointer;transition:transform .1s,background .2s;}
+  button:hover{background:#1c2450;transform:translateY(-1px);}
+  button.primary{background:linear-gradient(90deg,var(--accent2),#2f9fe0);color:#03101f;font-weight:700;border:none;}
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:26px;}
+  .step-card{background:var(--panel);border:1px solid #262f5c;border-radius:14px;padding:16px;}
+  .step-card .num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#16151a;font-weight:800;margin-bottom:8px;}
+  .step-card h3{margin:4px 0 6px;font-size:16px;}
+  .step-card p{margin:0;color:var(--dim);font-size:13px;line-height:1.45;}
+  .fact{margin-top:26px;background:linear-gradient(135deg,#1a2140,#0e1330);border:1px solid #2a3568;border-radius:14px;padding:18px 20px;text-align:center;font-size:16px;}
+  .fact b{color:var(--accent2);}
+  .try-title{text-align:center;font-size:clamp(20px,3.4vw,26px);font-weight:800;margin:34px 0 4px;}
+  .try-subtitle{text-align:center;color:var(--dim);margin:0 0 16px;}
+  .try-card{background:var(--panel);border:1px solid #262f5c;border-radius:14px;padding:14px;max-width:640px;margin:0 auto;}
+  .try-card canvas{display:block;width:100%;height:auto;background:#04060f;border-radius:10px;}
+  .try-controls{display:flex;gap:10px;margin-top:12px;justify-content:center;flex-wrap:wrap;align-items:center;}
+  .try-card button{padding:8px 16px;font-size:14px;}
+  .try-result{margin-top:8px;text-align:center;color:var(--dim);font-size:13px;min-height:18px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="category-tech.html">&larr; Back to Everyday Tech</a>
+  <header>
+    <h1>🔋 How a Battery Works</h1>
+    <p>A battery is a tiny chemical factory that pushes electrons through your gadget to make them run.</p>
+  </header>
+
+  <div class="player">
+    <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+    <canvas id="scene" width="900" height="460"></canvas>
+    <div class="banner-wrap"><span class="banner" id="banner">STEP 1</span></div>
+    <div class="caption" id="caption">Press <b>Play</b> to start!</div>
+  </div>
+  <div class="controls">
+    <button class="primary" id="playBtn">▶ Play</button>
+    <button id="restartBtn">⟲ Restart</button>
+  </div>
+
+  <div class="steps">
+    <div class="step-card"><div class="num">1</div><h3>⚗️ Two different metals</h3>
+      <p>A battery has two different chemical materials at each end — one that "wants" to give away electrons, one that "wants" to take them.</p></div>
+    <div class="step-card"><div class="num">2</div><h3>🧪 Chemistry builds pressure</h3>
+      <p>A chemical reaction inside piles up extra electrons on the negative end (−), building up electrical "pressure," called voltage.</p></div>
+    <div class="step-card"><div class="num">3</div><h3>🔌 Complete the circuit</h3>
+      <p>Connect a wire (through a bulb, motor, or phone) from − to +, and those extra electrons finally have a path to flow through.</p></div>
+    <div class="step-card"><div class="num">4</div><h3>💡 Flowing electrons do work</h3>
+      <p>As electrons flow through your device, they light bulbs, spin motors, or power a chip — then keep going until the chemicals run out.</p></div>
+  </div>
+
+  <div class="fact">
+    🤯 <b>Mind-blowing part:</b> A battery never actually "runs out" of electrons — it runs out of usable
+    <b>chemistry</b>. Once the chemical reaction can't push electrons uphill anymore, the flow stops even though the metal is all still there.
+  </div>
+
+  <div class="try-title">🧪 Now try it yourself</div>
+  <p class="try-subtitle">Close the circuit and watch electrons flow from − to +, lighting the bulb.</p>
+  <div class="try-card">
+    <canvas id="tryScene" width="560" height="280"></canvas>
+    <div class="try-controls">
+      <button class="primary" id="toggleCircuit">🔌 Close the Circuit</button>
+      <button id="tryReset">↻ Reset</button>
+    </div>
+    <div class="try-result" id="tryResult">Circuit open — no path for electrons yet. The bulb stays dark.</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  const captionEl=document.getElementById('caption'), bannerEl=document.getElementById('banner'), progressBar=document.getElementById('progressBar');
+  const playBtn=document.getElementById('playBtn'), restartBtn=document.getElementById('restartBtn');
+
+  const SCENES=[
+    {t:0,dur:6,banner:'⚗️ STEP 1: TWO DIFFERENT MATERIALS',caption:'Inside a battery are two different materials — one end (−) is happy to give up electrons, the other end (+) wants to receive them.'},
+    {t:6,dur:7,banner:'🧪 STEP 2: CHEMISTRY BUILDS PRESSURE',caption:'A chemical reaction pushes electrons to pile up at the negative end, building electrical "pressure" — we call it <b>voltage</b>.'},
+    {t:13,dur:6,banner:'🔌 STEP 3: NO PATH = NO FLOW',caption:'With no wire connecting the ends, those piled-up electrons have nowhere to go. The battery just waits, fully charged.'},
+    {t:19,dur:9,banner:'💡 STEP 4: CLOSE THE LOOP',caption:'Connect a wire (through a bulb or motor) from − to +, and electrons finally flow through it — powering your device until the chemicals run low!'},
+  ];
+  const totalDur=28;
+  let simTime=0, playing=false, lastTs=null;
+  function currentScene(t){ for(let i=SCENES.length-1;i>=0;i--) if(t>=SCENES[i].t) return i; return 0; }
+  function label(x,y,text,color){
+    ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
+    const tw=ctx.measureText(text).width;
+    ctx.fillStyle='rgba(4,6,15,0.75)'; ctx.fillRect(x-tw/2-8,y-16,tw+16,22);
+    ctx.fillStyle=color||'#9fc1de'; ctx.fillText(text,x,y);
+  }
+  function drawBattery(negLabel,posLabel){
+    const bx=W/2-90, by=H/2-50, bw=180, bh=100;
+    ctx.fillStyle='#2c3560'; ctx.fillRect(bx,by,bw,bh);
+    ctx.strokeStyle='#0b1020'; ctx.lineWidth=3; ctx.strokeRect(bx,by,bw,bh);
+    ctx.fillStyle='#3f7fe0'; ctx.fillRect(bx,by,bw/2,bh);
+    ctx.fillStyle='#e14b4b'; ctx.fillRect(bx+bw/2,by,bw/2,bh);
+    ctx.fillStyle='#fff'; ctx.font='800 26px Segoe UI'; ctx.textAlign='center';
+    ctx.fillText('−',bx+bw*0.25,by+bh/2+9);
+    ctx.fillText('+',bx+bw*0.75,by+bh/2+9);
+    label(bx+bw*0.25,by-14,negLabel||'gives up electrons','#8fd2ff');
+    label(bx+bw*0.75,by-14,posLabel||'wants electrons','#ff9d9d');
+  }
+  function drawElectronsPiling(local){
+    drawBattery();
+    const count=Math.min(14,Math.floor(local*2.4));
+    for(let i=0;i<count;i++){
+      const x=W/2-90+15+((i*13)%50);
+      const y=H/2-30+((i*23)%70);
+      ctx.fillStyle='#4fd3ff'; ctx.beginPath(); ctx.arc(x,y,6,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#0b1020'; ctx.font='700 8px Segoe UI'; ctx.fillText('−',x,y+3);
+    }
+    label(W/2,H/2+90,'electrons piling up on the negative end','#8fd2ff');
+  }
+  function drawWaiting(local){
+    drawBattery('extra electrons waiting','no path yet');
+    for(let i=0;i<14;i++){
+      const x=W/2-90+15+((i*13)%50);
+      const y=H/2-30+((i*23)%70);
+      ctx.fillStyle='#4fd3ff'; ctx.beginPath(); ctx.arc(x,y,6,0,Math.PI*2); ctx.fill();
+    }
+    ctx.strokeStyle='rgba(255,255,255,.2)'; ctx.setLineDash([6,6]); ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(W/2-90,H/2+70); ctx.lineTo(W/2-90,H/2+140); ctx.lineTo(W/2+90,H/2+140); ctx.lineTo(W/2+90,H/2+70); ctx.stroke();
+    ctx.setLineDash([]);
+    label(W/2,H/2+170,'no wire connected — nothing can flow','#9aa4cc');
+  }
+  function drawCircuit(local){
+    drawBattery();
+    const y1=H/2+50, y2=H/2+150, x1=W/2-90, x2=W/2+90;
+    ctx.strokeStyle='#c7c9d9'; ctx.lineWidth=4;
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x1,y2); ctx.lineTo(x2,y2); ctx.lineTo(x2,y1); ctx.stroke();
+    const bulbX=W/2, bulbY=y2;
+    const glow=Math.min(1,local/2);
+    const g=ctx.createRadialGradient(bulbX,bulbY,2,bulbX,bulbY,40*glow+10);
+    g.addColorStop(0,'#fff6c8'); g.addColorStop(1,'rgba(255,210,63,0)');
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(bulbX,bulbY,40*glow+10,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle=glow>0.3?'#ffe9a8':'#4a4a55'; ctx.beginPath(); ctx.arc(bulbX,bulbY,18,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='#0b1020'; ctx.lineWidth=2; ctx.stroke();
+    // moving electrons around loop
+    const perim=2*(x2-x1)+2*(y2-y1);
+    for(let i=0;i<8;i++){
+      const d=((local*80)+i*(perim/8))%perim;
+      let ex,ey;
+      const segA=y2-y1, segB=x2-x1;
+      if(d<segA){ ex=x1; ey=y1+d; }
+      else if(d<segA+segB){ ex=x1+(d-segA); ey=y2; }
+      else if(d<segA+segB+segA){ ex=x2; ey=y2-(d-segA-segB); }
+      else { ex=x2-(d-segA-segB-segA); ey=y1; }
+      ctx.fillStyle='#4fd3ff'; ctx.beginPath(); ctx.arc(ex,ey,5,0,Math.PI*2); ctx.fill();
+    }
+    label(W/2,y1-10,'electrons flow − → through the bulb → back to +','#eef2ff');
+  }
+
+  function render(t){
+    ctx.clearRect(0,0,W,H); ctx.fillStyle='#04060f'; ctx.fillRect(0,0,W,H);
+    const idx=currentScene(t), scene=SCENES[idx], local=t-scene.t;
+    bannerEl.textContent=scene.banner; captionEl.innerHTML=scene.caption;
+    if(idx===0) drawBattery();
+    else if(idx===1) drawElectronsPiling(local);
+    else if(idx===2) drawWaiting(local);
+    else drawCircuit(local);
+    progressBar.style.width=Math.min(100,(t/totalDur)*100)+'%';
+  }
+  function step(ts){
+    if(!playing) return;
+    if(lastTs===null) lastTs=ts;
+    const dt=Math.min(0.05,(ts-lastTs)/1000); lastTs=ts;
+    simTime+=dt;
+    if(simTime>=totalDur){ simTime=totalDur; render(simTime); pause();
+      captionEl.innerHTML='🎬 The End! Press <b>Restart</b> to watch again.'; return; }
+    render(simTime); requestAnimationFrame(step);
+  }
+  function play(){ if(playing) return; playing=true; lastTs=null; playBtn.textContent='⏸ Pause'; requestAnimationFrame(step); }
+  function pause(){ playing=false; playBtn.textContent='▶ Play'; }
+  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionEl.innerHTML='Press <b>Play</b> to start!'; }
+  playBtn.addEventListener('click',()=>playing?pause():play());
+  restartBtn.addEventListener('click',restart);
+  render(0);
+})();
+
+(function(){
+  const cv=document.getElementById('tryScene'), c=cv.getContext('2d');
+  const w=cv.width,h=cv.height;
+  let closed=false, t=0;
+  const resultEl=document.getElementById('tryResult');
+  function draw(){
+    c.clearRect(0,0,w,h); c.fillStyle='#04060f'; c.fillRect(0,0,w,h);
+    const bx=w/2-70, by=40, bw=140, bh=70;
+    c.fillStyle='#3f7fe0'; c.fillRect(bx,by,bw/2,bh);
+    c.fillStyle='#e14b4b'; c.fillRect(bx+bw/2,by,bw/2,bh);
+    c.strokeStyle='#0b1020'; c.lineWidth=2; c.strokeRect(bx,by,bw,bh);
+    c.fillStyle='#fff'; c.font='800 20px Segoe UI'; c.textAlign='center';
+    c.fillText('−',bx+bw*0.25,by+bh/2+7); c.fillText('+',bx+bw*0.75,by+bh/2+7);
+
+    const x1=bx, x2=bx+bw, y1=by+bh+20, y2=by+bh+120;
+    c.strokeStyle=closed?'#c7c9d9':'rgba(199,201,217,.35)'; c.lineWidth=4;
+    c.beginPath(); c.moveTo(x1,y1); c.lineTo(x1,y2); c.lineTo(x2,y2); c.lineTo(x2,y1);
+    if(!closed){ c.moveTo(x2,y1); } else { c.lineTo(x2,y1); }
+    c.stroke();
+
+    const bulbX=w/2, bulbY=y2;
+    const glow=closed?1:0;
+    if(glow){
+      const g=c.createRadialGradient(bulbX,bulbY,2,bulbX,bulbY,40);
+      g.addColorStop(0,'#fff6c8'); g.addColorStop(1,'rgba(255,210,63,0)');
+      c.fillStyle=g; c.beginPath(); c.arc(bulbX,bulbY,40,0,Math.PI*2); c.fill();
+    }
+    c.fillStyle=closed?'#ffe9a8':'#4a4a55'; c.beginPath(); c.arc(bulbX,bulbY,16,0,Math.PI*2); c.fill();
+    c.strokeStyle='#0b1020'; c.lineWidth=2; c.stroke();
+
+    if(closed){
+      const perim=2*(x2-x1)+2*(y2-y1);
+      for(let i=0;i<6;i++){
+        const d=((t*90)+i*(perim/6))%perim;
+        let ex,ey;
+        const segA=y2-y1, segB=x2-x1;
+        if(d<segA){ ex=x1; ey=y1+d; }
+        else if(d<segA+segB){ ex=x1+(d-segA); ey=y2; }
+        else if(d<segA+segB+segA){ ex=x2; ey=y2-(d-segA-segB); }
+        else { ex=x2-(d-segA-segB-segA); ey=y1; }
+        c.fillStyle='#4fd3ff'; c.beginPath(); c.arc(ex,ey,4,0,Math.PI*2); c.fill();
+      }
+    }
+  }
+  function loop(){ t+=0.03; if(closed) draw(); requestAnimationFrame(loop); }
+  document.getElementById('toggleCircuit').addEventListener('click',(e)=>{
+    closed=!closed;
+    e.target.textContent = closed ? '🔌 Open the Circuit' : '🔌 Close the Circuit';
+    resultEl.textContent = closed
+      ? 'Circuit closed — electrons flow from − through the bulb to + and light it up!'
+      : 'Circuit open — no path for electrons yet. The bulb stays dark.';
+    draw();
+  });
+  document.getElementById('tryReset').addEventListener('click',()=>{
+    closed=false; document.getElementById('toggleCircuit').textContent='🔌 Close the Circuit';
+    resultEl.textContent='Circuit open — no path for electrons yet. The bulb stays dark.';
+    draw();
+  });
+  draw(); requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

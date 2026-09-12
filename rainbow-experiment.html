@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Rainbows Form</title>
+<style>
+  :root{--bg:#0b1020;--panel:#121830;--accent:#ffd23f;--accent2:#4fd3ff;--text:#eef2ff;--dim:#9aa4cc;}
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
+  .wrap{max-width:960px;margin:0 auto;}
+  a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  header{text-align:center;margin-bottom:20px;}
+  h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  header p{color:var(--dim);font-size:16px;margin:0;}
+  .player{background:#000;border-radius:16px;padding:10px;box-shadow:0 10px 40px rgba(0,0,0,.5),0 0 0 1px #222 inset;}
+  .progress-track{height:8px;background:#1c2340;border-radius:6px;overflow:hidden;margin-bottom:8px;}
+  .progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--accent2),var(--accent));transition:width .05s linear;}
+  canvas{display:block;width:100%;height:auto;background:#04060f;border-radius:10px;}
+  .banner-wrap{text-align:center;}
+  .banner{display:inline-block;margin:8px auto 0;padding:8px 22px;border-radius:999px;font-weight:800;color:#06180f;background:var(--accent2);}
+  .caption{margin-top:6px;background:#000c;border:1px solid #2a3568;border-radius:10px;padding:14px 18px;min-height:56px;font-size:clamp(16px,2.6vw,20px);line-height:1.4;text-align:center;}
+  .caption b{color:var(--accent);}
+  .controls{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:12px;flex-wrap:wrap;}
+  button{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;padding:10px 20px;font-size:15px;cursor:pointer;transition:transform .1s,background .2s;}
+  button:hover{background:#1c2450;transform:translateY(-1px);}
+  button.primary{background:linear-gradient(90deg,var(--accent2),#2f9fe0);color:#03101f;font-weight:700;border:none;}
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:26px;}
+  .step-card{background:var(--panel);border:1px solid #262f5c;border-radius:14px;padding:16px;}
+  .step-card .num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#16151a;font-weight:800;margin-bottom:8px;}
+  .step-card h3{margin:4px 0 6px;font-size:16px;}
+  .step-card p{margin:0;color:var(--dim);font-size:13px;line-height:1.45;}
+  .fact{margin-top:26px;background:linear-gradient(135deg,#1a2140,#0e1330);border:1px solid #2a3568;border-radius:14px;padding:18px 20px;text-align:center;font-size:16px;}
+  .fact b{color:var(--accent2);}
+  .try-title{text-align:center;font-size:clamp(20px,3.4vw,26px);font-weight:800;margin:34px 0 4px;}
+  .try-subtitle{text-align:center;color:var(--dim);margin:0 0 16px;}
+  .try-card{background:var(--panel);border:1px solid #262f5c;border-radius:14px;padding:14px;max-width:640px;margin:0 auto;}
+  .try-card canvas{display:block;width:100%;height:auto;background:#04060f;border-radius:10px;}
+  .try-controls{display:flex;gap:10px;margin-top:12px;justify-content:center;flex-wrap:wrap;align-items:center;}
+  input[type=range]{width:220px;accent-color:var(--accent2);}
+  .try-result{margin-top:8px;text-align:center;color:var(--dim);font-size:13px;min-height:36px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="category-physics.html">&larr; Back to Physics in Action</a>
+  <header>
+    <h1>🌈 How Rainbows Form</h1>
+    <p>White sunlight secretly contains every color. Raindrops are what split it apart for you to see.</p>
+  </header>
+
+  <div class="player">
+    <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+    <canvas id="scene" width="900" height="460"></canvas>
+    <div class="banner-wrap"><span class="banner" id="banner">STEP 1</span></div>
+    <div class="caption" id="caption">Press <b>Play</b> to start!</div>
+  </div>
+  <div class="controls">
+    <button class="primary" id="playBtn">▶ Play</button>
+    <button id="restartBtn">⟲ Restart</button>
+  </div>
+
+  <div class="steps">
+    <div class="step-card"><div class="num">1</div><h3>☀️ Sunlight looks white</h3>
+      <p>Sunlight looks white or yellow, but it's secretly a mix of every color of light blended together.</p></div>
+    <div class="step-card"><div class="num">2</div><h3>💧 A raindrop bends light</h3>
+      <p>When light enters a round raindrop, it slows down and bends — and each color bends by a slightly different amount.</p></div>
+    <div class="step-card"><div class="num">3</div><h3>🪞 It bounces off the back</h3>
+      <p>The light reflects off the inside back wall of the raindrop, like a tiny curved mirror, and heads back out.</p></div>
+    <div class="step-card"><div class="num">4</div><h3>🌈 Colors fan out separately</h3>
+      <p>As it exits, each color bends again by a different amount, so the colors spread apart into a band — red on the outside, violet on the inside.</p></div>
+  </div>
+
+  <div class="fact">
+    🤯 <b>Mind-blowing part:</b> No two people ever see the exact same rainbow! Each person's eyes catch light from a
+    slightly different set of raindrops, so the rainbow you see is a personal one, made just for where you're standing.
+  </div>
+
+  <div class="try-title">🧪 Now try it yourself</div>
+  <p class="try-subtitle">Drag the slider to change how much each color bends, and watch the rainbow spread apart.</p>
+  <div class="try-card">
+    <canvas id="tryScene" width="600" height="300"></canvas>
+    <div class="try-controls">
+      <input type="range" id="bendSlider" min="0" max="100" value="0">
+      <button id="tryReset">↻ Reset</button>
+    </div>
+    <div class="try-result" id="tryResult">Slide to 0: all colors travel together as "white" light.</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  const captionEl=document.getElementById('caption'), bannerEl=document.getElementById('banner'), progressBar=document.getElementById('progressBar');
+  const playBtn=document.getElementById('playBtn'), restartBtn=document.getElementById('restartBtn');
+
+  const COLORS=['#ff4d4d','#ff9d4d','#ffe14d','#7dff4d','#4dc3ff','#7a4dff'];
+
+  const SCENES=[
+    {t:0,dur:6,banner:'☀️ STEP 1: WHITE LIGHT IS A MIX',caption:'Sunlight looks white, but it\'s secretly made of <b>every color</b> traveling together, all bent by the same tiny amount.'},
+    {t:6,dur:7,banner:'💧 STEP 2: ENTERING A RAINDROP',caption:'When this light hits a round raindrop, it slows down and <b>bends</b>. Each color bends by a slightly different angle!'},
+    {t:13,dur:6,banner:'🪞 STEP 3: BOUNCING OFF THE BACK',caption:'Inside the raindrop, the light hits the back wall and <b>reflects</b>, like bouncing off a curved mirror.'},
+    {t:19,dur:8,banner:'🌈 STEP 4: COLORS FAN OUT',caption:'As the light exits, it bends again — and now the colors have spread far enough apart to see as a <b>rainbow band</b>!'},
+  ];
+  const totalDur=27;
+  let simTime=0, playing=false, lastTs=null;
+  function currentScene(t){ for(let i=SCENES.length-1;i>=0;i--) if(t>=SCENES[i].t) return i; return 0; }
+  function label(x,y,text,color){
+    ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
+    const tw=ctx.measureText(text).width;
+    ctx.fillStyle='rgba(4,6,15,0.75)'; ctx.fillRect(x-tw/2-8,y-16,tw+16,22);
+    ctx.fillStyle=color||'#9fc1de'; ctx.fillText(text,x,y);
+  }
+
+  function drawWhiteBeam(local){
+    const y=H/2;
+    ctx.strokeStyle='#fff'; ctx.lineWidth=6;
+    ctx.beginPath(); ctx.moveTo(60,y); ctx.lineTo(60+local*90,y); ctx.stroke();
+    label(W/2,60,'sunlight looks white — but it hides every color inside','#eef2ff');
+    ctx.fillStyle='#ffd23f'; ctx.beginPath(); ctx.arc(40,y,20,0,Math.PI*2); ctx.fill();
+  }
+  function drawDropEnter(local){
+    const dropX=520, dropY=H/2, r=90;
+    ctx.strokeStyle='rgba(120,180,255,.4)'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(dropX,dropY,r,0,Math.PI*2); ctx.stroke();
+    label(dropX,dropY-r-20,'a round raindrop','#8fd2ff');
+    const bx=60+Math.min(1,local/2)*(dropX-r-60);
+    ctx.strokeStyle='#fff'; ctx.lineWidth=5;
+    ctx.beginPath(); ctx.moveTo(60,dropY); ctx.lineTo(bx,dropY); ctx.stroke();
+    if(local>2){
+      const inside=Math.min(1,(local-2)/4);
+      COLORS.forEach((c,i)=>{
+        const spread=(i-2.5)*6*inside;
+        ctx.strokeStyle=c; ctx.lineWidth=3;
+        ctx.beginPath(); ctx.moveTo(dropX-r,dropY); ctx.lineTo(dropX-r+inside*60,dropY+spread); ctx.stroke();
+      });
+      label(dropX,dropY+r+30,'each color bends a different amount','#eef2ff');
+    }
+  }
+  function drawBounce(local){
+    const dropX=450, dropY=H/2, r=100;
+    ctx.strokeStyle='rgba(120,180,255,.4)'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(dropX,dropY,r,0,Math.PI*2); ctx.stroke();
+    const prog=Math.min(1,local/3);
+    COLORS.forEach((c,i)=>{
+      const spread=(i-2.5)*7;
+      const backX=dropX+r*0.55, backY=dropY+spread*1.2;
+      ctx.strokeStyle=c; ctx.lineWidth=3;
+      ctx.beginPath(); ctx.moveTo(dropX-r,dropY); ctx.lineTo(dropX-r+prog*(backX-(dropX-r)),dropY+prog*spread); ctx.stroke();
+    });
+    if(local>3){
+      const back=Math.min(1,(local-3)/3);
+      COLORS.forEach((c,i)=>{
+        const spread=(i-2.5)*7;
+        const backX=dropX+r*0.55, backY=dropY+spread*1.2;
+        const outX=dropX-r*0.3, outY=dropY-spread*1.6;
+        ctx.strokeStyle=c; ctx.lineWidth=3;
+        ctx.beginPath(); ctx.moveTo(backX,backY); ctx.lineTo(backX+back*(outX-backX),backY+back*(outY-backY)); ctx.stroke();
+      });
+    }
+    label(dropX,dropY+r+30,'light bounces off the back wall, like a mirror','#eef2ff');
+  }
+  function drawFanOut(local){
+    const dropX=300, dropY=H/2, r=70;
+    ctx.strokeStyle='rgba(120,180,255,.4)'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(dropX,dropY,r,0,Math.PI*2); ctx.stroke();
+    const ex=dropX-r*0.4, ey=dropY;
+    const spreadAmt=Math.min(1,local/4);
+    COLORS.forEach((c,i)=>{
+      const ang=(i-2.5)*0.11*spreadAmt - 0.35;
+      ctx.strokeStyle=c; ctx.lineWidth=4;
+      ctx.beginPath();
+      ctx.moveTo(ex,ey);
+      ctx.lineTo(ex+Math.cos(ang)*420, ey+Math.sin(ang)*420*3);
+      ctx.stroke();
+    });
+    label(W/2,60,'the colors have spread far enough apart to see!','#eef2ff');
+    label(W/2,H-30,'red bends least (outside) · violet bends most (inside)','#9aa4cc');
+  }
+
+  function render(t){
+    ctx.clearRect(0,0,W,H); ctx.fillStyle='#04060f'; ctx.fillRect(0,0,W,H);
+    for(let i=0;i<40;i++){ ctx.fillStyle='rgba(255,255,255,'+(0.06+0.2*((i*37)%10)/10)+')'; ctx.fillRect((i*53)%W,(i*97)%H,2,2); }
+    const idx=currentScene(t), scene=SCENES[idx], local=t-scene.t;
+    bannerEl.textContent=scene.banner; captionEl.innerHTML=scene.caption;
+    if(idx===0) drawWhiteBeam(local);
+    else if(idx===1) drawDropEnter(local);
+    else if(idx===2) drawBounce(local);
+    else drawFanOut(local);
+    progressBar.style.width=Math.min(100,(t/totalDur)*100)+'%';
+  }
+  function step(ts){
+    if(!playing) return;
+    if(lastTs===null) lastTs=ts;
+    const dt=Math.min(0.05,(ts-lastTs)/1000); lastTs=ts;
+    simTime+=dt;
+    if(simTime>=totalDur){ simTime=totalDur; render(simTime); pause();
+      captionEl.innerHTML='🎬 The End! Press <b>Restart</b> to watch again.'; return; }
+    render(simTime); requestAnimationFrame(step);
+  }
+  function play(){ if(playing) return; playing=true; lastTs=null; playBtn.textContent='⏸ Pause'; requestAnimationFrame(step); }
+  function pause(){ playing=false; playBtn.textContent='▶ Play'; }
+  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionEl.innerHTML='Press <b>Play</b> to start!'; }
+  playBtn.addEventListener('click',()=>playing?pause():play());
+  restartBtn.addEventListener('click',restart);
+  render(0);
+})();
+
+(function(){
+  const cv=document.getElementById('tryScene'), c=cv.getContext('2d');
+  const w=cv.width,h=cv.height;
+  const slider=document.getElementById('bendSlider');
+  const resultEl=document.getElementById('tryResult');
+  const COLORS=['#ff4d4d','#ff9d4d','#ffe14d','#7dff4d','#4dc3ff','#7a4dff'];
+  function draw(){
+    c.clearRect(0,0,w,h); c.fillStyle='#04060f'; c.fillRect(0,0,w,h);
+    const spread=(+slider.value)/100;
+    const originX=60, originY=h/2;
+    if(spread<0.03){
+      c.strokeStyle='#fff'; c.lineWidth=6;
+      c.beginPath(); c.moveTo(originX,originY); c.lineTo(w-60,originY); c.stroke();
+    } else {
+      COLORS.forEach((col,i)=>{
+        const ang=(i-2.5)*0.09*spread;
+        c.strokeStyle=col; c.lineWidth=5;
+        c.beginPath();
+        c.moveTo(originX,originY);
+        c.lineTo(originX+(w-120), originY+Math.tan(ang)*(w-120));
+        c.stroke();
+      });
+    }
+    c.fillStyle='#ffd23f'; c.beginPath(); c.arc(originX-15,originY,16,0,Math.PI*2); c.fill();
+  }
+  slider.addEventListener('input',()=>{
+    draw();
+    const v=+slider.value;
+    resultEl.textContent = v<3
+      ? 'At 0, every color travels at exactly the same angle — it just looks like plain white light.'
+      : 'At '+v+'%, the colors bend by different amounts and spread into a clear rainbow fan!';
+  });
+  document.getElementById('tryReset').addEventListener('click',()=>{ slider.value=0; draw(); resultEl.textContent='Slide to 0: all colors travel together as "white" light.'; });
+  draw();
+})();
+</script>
+</body>
+</html>
