@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Periodic Trends</title>
+<style>
+  :root{--bg:#0b1020;--panel:#121830;--accent:#ffd23f;--accent2:#4fd3ff;--text:#eef2ff;--dim:#9aa4cc;}
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
+  .wrap{max-width:960px;margin:0 auto;}
+  a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  header{text-align:center;margin-bottom:20px;}
+  h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  header p{color:var(--dim);font-size:16px;margin:0;}
+  .player{background:#000;border-radius:16px;padding:10px;box-shadow:0 10px 40px rgba(0,0,0,.5),0 0 0 1px #222 inset;}
+  .progress-track{height:8px;background:#1c2340;border-radius:6px;overflow:hidden;margin-bottom:8px;}
+  .progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--accent2),var(--accent));transition:width .05s linear;}
+  canvas{display:block;width:100%;height:auto;background:#04060f;border-radius:10px;}
+  .banner-wrap{text-align:center;}
+  .banner{display:inline-block;margin:8px auto 0;padding:8px 22px;border-radius:999px;font-weight:800;color:#06180f;background:var(--accent2);}
+  .caption{margin-top:6px;background:#000c;border:1px solid #2a3568;border-radius:10px;padding:14px 18px;min-height:56px;font-size:clamp(16px,2.6vw,20px);line-height:1.4;text-align:center;}
+  .caption b{color:var(--accent);}
+  .controls{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:12px;flex-wrap:wrap;}
+  button{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;padding:10px 20px;font-size:15px;cursor:pointer;transition:transform .1s,background .2s;}
+  button:hover{background:#1c2450;transform:translateY(-1px);}
+  button.primary{background:linear-gradient(90deg,var(--accent2),#2f9fe0);color:#03101f;font-weight:700;border:none;}
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:26px;}
+  .step-card{background:var(--panel);border:1px solid #262f5c;border-radius:14px;padding:16px;}
+  .step-card .num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#16151a;font-weight:800;margin-bottom:8px;}
+  .step-card h3{margin:4px 0 6px;font-size:16px;}
+  .step-card p{margin:0;color:var(--dim);font-size:13px;line-height:1.45;}
+  .fact{margin-top:26px;background:linear-gradient(135deg,#1a2140,#0e1330);border:1px solid #2a3568;border-radius:14px;padding:18px 20px;text-align:center;font-size:16px;}
+  .fact b{color:var(--accent2);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="category-atoms.html">&larr; Back to Atoms & Matter</a>
+  <header>
+    <h1>📊 Periodic Trends</h1>
+    <p>The periodic table isn't just a list — its layout hides patterns you can read at a glance.</p>
+  </header>
+
+  <div class="player">
+    <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+    <canvas id="scene" width="900" height="460"></canvas>
+    <div class="banner-wrap"><span class="banner" id="banner">STEP 1</span></div>
+    <div class="caption" id="caption">Press <b>Play</b> to start!</div>
+  </div>
+  <div class="controls">
+    <button class="primary" id="playBtn">▶ Play</button>
+    <button id="restartBtn">⟲ Restart</button>
+  </div>
+
+  <div class="steps">
+    <div class="step-card"><div class="num">1</div><h3>⚛️ Atomic size shrinks left-to-right</h3>
+      <p>Moving left to right across a row, atoms get SMALLER — each extra proton pulls the electron cloud in tighter.</p></div>
+    <div class="step-card"><div class="num">2</div><h3>📏 Atomic size grows top-to-bottom</h3>
+      <p>Moving down a column, atoms get BIGGER — each row adds a whole new electron shell further out.</p></div>
+    <div class="step-card"><div class="num">3</div><h3>🧲 Electronegativity grows left-to-right</h3>
+      <p>Elements on the right (like oxygen, fluorine) pull electrons toward themselves strongly — that pulling power is called electronegativity.</p></div>
+    <div class="step-card"><div class="num">4</div><h3>↘️ The strongest pullers are top-right</h3>
+      <p>Combine both trends: the smallest, most electron-hungry atoms cluster in the top-right corner — fluorine is the single most electronegative element.</p></div>
+  </div>
+
+  <div class="fact">
+    🤯 <b>Mind-blowing part:</b> These trends aren't random — they come straight from physics. More protons pull electrons in tighter
+    (shrinking atoms), while more electron shells push the "edge" farther out (growing atoms). Once you see the pattern, you can
+    predict properties of an element you've never even studied, just from its position on the table!
+  </div>
+</div>
+
+<script>
+(function(){
+  const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  const captionEl=document.getElementById('caption'), bannerEl=document.getElementById('banner'), progressBar=document.getElementById('progressBar');
+  const playBtn=document.getElementById('playBtn'), restartBtn=document.getElementById('restartBtn');
+
+  const SCENES=[
+    {t:0,dur:7,banner:'⚛️ STEP 1: SIZE SHRINKS LEFT TO RIGHT',caption:'Across a row, each element has one more proton pulling the same electron shell in tighter — atoms get SMALLER.'},
+    {t:7,dur:7,banner:'📏 STEP 2: SIZE GROWS TOP TO BOTTOM',caption:'Down a column, each row adds a whole new electron shell farther from the nucleus — atoms get BIGGER.'},
+    {t:14,dur:7,banner:'🧲 STEP 3: ELECTRONEGATIVITY RISES RIGHTWARD',caption:'Elements toward the right (like O, F) pull electrons toward themselves strongly — this pulling power is called <b>electronegativity</b>.'},
+    {t:21,dur:8,banner:'↘️ STEP 4: STRONGEST PULLERS: TOP-RIGHT',caption:'Small size + strong pull combine — the most electron-hungry elements cluster in the <b>top-right corner</b> of the table.'},
+  ];
+  const totalDur=29;
+  let simTime=0, playing=false, lastTs=null;
+  function currentScene(t){ for(let i=SCENES.length-1;i>=0;i--) if(t>=SCENES[i].t) return i; return 0; }
+  function label(x,y,text,color){
+    ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
+    const tw=ctx.measureText(text).width;
+    ctx.fillStyle='rgba(4,6,15,0.75)'; ctx.fillRect(x-tw/2-8,y-16,tw+16,22);
+    ctx.fillStyle=color||'#9fc1de'; ctx.fillText(text,x,y);
+  }
+  const cols=6, rows=4;
+  const gx0=200, gy0=100, cellW=90, cellH=70;
+  function cellCenter(c,r){ return [gx0+c*cellW+cellW/2, gy0+r*cellH+cellH/2]; }
+  function drawGridBase(){
+    ctx.strokeStyle='rgba(255,255,255,.15)'; ctx.lineWidth=1;
+    for(let c=0;c<=cols;c++){ ctx.beginPath(); ctx.moveTo(gx0+c*cellW,gy0); ctx.lineTo(gx0+c*cellW,gy0+rows*cellH); ctx.stroke(); }
+    for(let r=0;r<=rows;r++){ ctx.beginPath(); ctx.moveTo(gx0,gy0+r*cellH); ctx.lineTo(gx0+cols*cellW,gy0+r*cellH); ctx.stroke(); }
+  }
+  function drawScene0(local){
+    drawGridBase();
+    for(let c=0;c<cols;c++){
+      const [cx,cy]=cellCenter(c,1);
+      const size=32-c*3.5;
+      ctx.fillStyle='#4fd3ff'; ctx.globalAlpha=0.7; ctx.beginPath(); ctx.arc(cx,cy,size,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1;
+    }
+    ctx.strokeStyle='#ffd23f'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(gx0+20,gy0+1*cellH+cellH/2); ctx.lineTo(gx0+cols*cellW-20,gy0+1*cellH+cellH/2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(gx0+cols*cellW-40,gy0+1*cellH+cellH/2-10); ctx.lineTo(gx0+cols*cellW-20,gy0+1*cellH+cellH/2); ctx.lineTo(gx0+cols*cellW-40,gy0+1*cellH+cellH/2+10); ctx.stroke();
+    label(W/2,60,'atoms get SMALLER moving right','#4fd3ff');
+  }
+  function drawScene1(local){
+    drawGridBase();
+    for(let r=0;r<rows;r++){
+      const [cx,cy]=cellCenter(1,r);
+      const size=14+r*6;
+      ctx.fillStyle='#6dffb0'; ctx.globalAlpha=0.7; ctx.beginPath(); ctx.arc(cx,cy,size,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1;
+    }
+    ctx.strokeStyle='#ffd23f'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(gx0+1*cellW+cellW/2,gy0+15); ctx.lineTo(gx0+1*cellW+cellW/2,gy0+rows*cellH-15); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(gx0+1*cellW+cellW/2-10,gy0+rows*cellH-35); ctx.lineTo(gx0+1*cellW+cellW/2,gy0+rows*cellH-15); ctx.lineTo(gx0+1*cellW+cellW/2+10,gy0+rows*cellH-35); ctx.stroke();
+    label(W/2,60,'atoms get BIGGER moving down','#6dffb0');
+  }
+  function drawScene2(local){
+    drawGridBase();
+    for(let c=0;c<cols;c++){
+      const [cx,cy]=cellCenter(c,1);
+      const strength=c/(cols-1);
+      ctx.fillStyle=`rgba(255,157,93,${0.2+strength*0.7})`;
+      ctx.beginPath(); ctx.arc(cx,cy,24,0,Math.PI*2); ctx.fill();
+      if(strength>0.5){
+        const pulse=Math.sin(local*4)*3;
+        ctx.strokeStyle='#ff9d5a'; ctx.lineWidth=2;
+        ctx.beginPath(); ctx.arc(cx,cy,24+8+pulse,0,Math.PI*2); ctx.stroke();
+      }
+    }
+    label(W/2,60,'electron-pulling power increases rightward','#ff9d5a');
+  }
+  function drawScene3(local){
+    drawGridBase();
+    for(let c=0;c<cols;c++){
+      for(let r=0;r<rows;r++){
+        const [cx,cy]=cellCenter(c,r);
+        const strength=(c/(cols-1))*(1-r/(rows-1));
+        ctx.fillStyle=`rgba(255,210,63,${0.15+strength*0.6})`;
+        ctx.beginPath(); ctx.arc(cx,cy,18+strength*10,0,Math.PI*2); ctx.fill();
+      }
+    }
+    const [fx,fy]=cellCenter(cols-1,0);
+    ctx.strokeStyle='#ffd23f'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.arc(fx,fy,32,0,Math.PI*2); ctx.stroke();
+    label(fx,fy-50,'F (fluorine): most electronegative!','#ffd23f');
+    label(W/2,H-30,'top-right = smallest + strongest pull','#eef2ff');
+  }
+
+  function render(t){
+    ctx.clearRect(0,0,W,H); ctx.fillStyle='#04060f'; ctx.fillRect(0,0,W,H);
+    const idx=currentScene(t), scene=SCENES[idx], local=t-scene.t;
+    bannerEl.textContent=scene.banner; captionEl.innerHTML=scene.caption;
+    if(idx===0) drawScene0(local);
+    else if(idx===1) drawScene1(local);
+    else if(idx===2) drawScene2(local);
+    else drawScene3(local);
+    progressBar.style.width=Math.min(100,(t/totalDur)*100)+'%';
+  }
+  function step(ts){
+    if(!playing) return;
+    if(lastTs===null) lastTs=ts;
+    const dt=Math.min(0.05,(ts-lastTs)/1000); lastTs=ts;
+    simTime+=dt;
+    if(simTime>=totalDur){ simTime=totalDur; render(simTime); pause();
+      captionEl.innerHTML='🎬 The End! Press <b>Restart</b> to watch again.'; return; }
+    render(simTime); requestAnimationFrame(step);
+  }
+  function play(){ if(playing) return; playing=true; lastTs=null; playBtn.textContent='⏸ Pause'; requestAnimationFrame(step); }
+  function pause(){ playing=false; playBtn.textContent='▶ Play'; }
+  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionEl.innerHTML='Press <b>Play</b> to start!'; }
+  playBtn.addEventListener('click',()=>playing?pause():play());
+  restartBtn.addEventListener('click',restart);
+  render(0);
+})();
+</script>
+</body>
+</html>

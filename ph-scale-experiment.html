@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The pH Scale — Acids & Bases</title>
+<style>
+  :root{--bg:#0b1020;--panel:#121830;--accent:#ffd23f;--accent2:#4fd3ff;--text:#eef2ff;--dim:#9aa4cc;}
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
+  .wrap{max-width:960px;margin:0 auto;}
+  a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  header{text-align:center;margin-bottom:20px;}
+  h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  header p{color:var(--dim);font-size:16px;margin:0;}
+  .player{background:#000;border-radius:16px;padding:10px;box-shadow:0 10px 40px rgba(0,0,0,.5),0 0 0 1px #222 inset;}
+  canvas{display:block;width:100%;height:auto;background:#04060f;border-radius:10px;}
+  .caption{margin-top:6px;background:#000c;border:1px solid #2a3568;border-radius:10px;padding:14px 18px;min-height:56px;font-size:clamp(16px,2.6vw,20px);line-height:1.4;text-align:center;}
+  .caption b{color:var(--accent);}
+  .controls{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:12px;flex-wrap:wrap;}
+  input[type=range]{width:70%;accent-color:var(--accent2);}
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:26px;}
+  .step-card{background:var(--panel);border:1px solid #262f5c;border-radius:14px;padding:16px;}
+  .step-card .num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#16151a;font-weight:800;margin-bottom:8px;}
+  .step-card h3{margin:4px 0 6px;font-size:16px;}
+  .step-card p{margin:0;color:var(--dim);font-size:13px;line-height:1.45;}
+  .fact{margin-top:26px;background:linear-gradient(135deg,#1a2140,#0e1330);border:1px solid #2a3568;border-radius:14px;padding:18px 20px;text-align:center;font-size:16px;}
+  .fact b{color:var(--accent2);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="category-atoms.html">&larr; Back to Atoms & Matter</a>
+  <header>
+    <h1>🧪 The pH Scale — Acids & Bases</h1>
+    <p>Lemon juice, soap, and pure water are all different in one key way: how many free hydrogen ions they contain.</p>
+  </header>
+
+  <div class="player">
+    <canvas id="scene" width="900" height="400"></canvas>
+    <div class="caption" id="caption">Drag the slider to explore the pH scale.</div>
+  </div>
+  <div class="controls">
+    <input type="range" id="phSlider" min="0" max="14" step="0.5" value="7">
+  </div>
+
+  <div class="steps">
+    <div class="step-card"><div class="num">1</div><h3>💧 It's about H⁺ ions</h3>
+      <p>pH measures how many free hydrogen ions (H⁺) are floating in a liquid — more H⁺ means more acidic.</p></div>
+    <div class="step-card"><div class="num">2</div><h3>📏 A scale from 0 to 14</h3>
+      <p>0 is extremely acidic, 14 is extremely basic (alkaline), and 7 — like pure water — is neutral, right in the middle.</p></div>
+    <div class="step-card"><div class="num">3</div><h3>🍋 Acids taste sour, react with metal</h3>
+      <p>Acids (low pH) taste sour and can dissolve certain metals — lemon juice, vinegar, and stomach acid are all acidic.</p></div>
+    <div class="step-card"><div class="num">4</div><h3>🧼 Bases feel slippery, taste bitter</h3>
+      <p>Bases (high pH) often feel slippery and taste bitter — soap, baking soda, and bleach are all basic.</p></div>
+  </div>
+
+  <div class="fact">
+    🤯 <b>Mind-blowing part:</b> The pH scale is <b>logarithmic</b> — each whole number is 10 times more acidic or basic than the
+    next. That means pH 4 (like orange juice) is 1,000 times more acidic than pH 7 (neutral water), not just "3 more"!
+  </div>
+</div>
+
+<script>
+(function(){
+  const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  const captionEl=document.getElementById('caption');
+  const slider=document.getElementById('phSlider');
+
+  const ITEMS=[
+    {ph:0,name:'Battery acid',desc:'extremely acidic — corrosive!'},
+    {ph:2,name:'Lemon juice',desc:'very acidic, sour'},
+    {ph:2.5,name:'Vinegar',desc:'acidic, sour'},
+    {ph:4,name:'Orange juice',desc:'mildly acidic'},
+    {ph:6,name:'Milk',desc:'slightly acidic'},
+    {ph:7,name:'Pure water',desc:'perfectly neutral'},
+    {ph:8,name:'Sea water',desc:'mildly basic'},
+    {ph:9,name:'Baking soda',desc:'basic, slightly bitter'},
+    {ph:11,name:'Ammonia',desc:'strongly basic'},
+    {ph:13,name:'Bleach',desc:'very basic, slippery'},
+    {ph:14,name:'Drain cleaner',desc:'extremely basic — corrosive!'},
+  ];
+  function closest(ph){
+    let best=ITEMS[0], bd=999;
+    ITEMS.forEach(it=>{ const d=Math.abs(it.ph-ph); if(d<bd){bd=d;best=it;} });
+    return best;
+  }
+  function colorForPh(ph){
+    const t=ph/14;
+    if(t<0.5){
+      const u=t/0.5;
+      return `rgb(${255},${Math.round(80+u*140)},${Math.round(60+u*40)})`;
+    } else {
+      const u=(t-0.5)/0.5;
+      return `rgb(${Math.round(255-u*200)},${Math.round(220-u*60)},${Math.round(100+u*155)})`;
+    }
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H); ctx.fillStyle='#04060f'; ctx.fillRect(0,0,W,H);
+    const barX=60,barY=150,barW=W-120,barH=50;
+    for(let i=0;i<=140;i++){
+      const ph=i/10;
+      ctx.fillStyle=colorForPh(ph);
+      ctx.fillRect(barX+i*(barW/140),barY,barW/140+1,barH);
+    }
+    ctx.strokeStyle='#0b1020'; ctx.lineWidth=2; ctx.strokeRect(barX,barY,barW,barH);
+    for(let i=0;i<=14;i+=2){
+      const x=barX+(i/14)*barW;
+      ctx.strokeStyle='rgba(0,0,0,.4)'; ctx.beginPath(); ctx.moveTo(x,barY); ctx.lineTo(x,barY+barH); ctx.stroke();
+      ctx.fillStyle='#eef2ff'; ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
+      ctx.fillText(i,x,barY+barH+22);
+    }
+    ctx.fillStyle='#ff9d5a'; ctx.font='700 13px Segoe UI'; ctx.fillText('ACIDIC',barX+40,barY-14);
+    ctx.fillStyle='#9dc4ff'; ctx.fillText('BASIC',barX+barW-40,barY-14);
+    ctx.fillStyle='#eef2ff'; ctx.fillText('NEUTRAL',barX+barW/2,barY-14);
+
+    const ph=+slider.value;
+    const px=barX+(ph/14)*barW;
+    ctx.fillStyle='#ffd23f'; ctx.beginPath(); ctx.moveTo(px,barY-8); ctx.lineTo(px-10,barY-24); ctx.lineTo(px+10,barY-24); ctx.closePath(); ctx.fill();
+
+    const item=closest(ph);
+    ctx.fillStyle='#eef2ff'; ctx.font='800 22px Segoe UI'; ctx.textAlign='center';
+    ctx.fillText('pH '+ph+' — like '+item.name, W/2, 280);
+    ctx.font='15px Segoe UI'; ctx.fillStyle='#9aa4cc';
+    ctx.fillText(item.desc, W/2, 310);
+
+    captionEl.innerHTML = ph<7 ? '<b>Acidic</b>: lots of free H⁺ ions.' : ph>7 ? '<b>Basic</b>: few free H⁺ ions.' : '<b>Neutral</b>: balanced, like pure water.';
+  }
+  slider.addEventListener('input',draw);
+  draw();
+})();
+</script>
+</body>
+</html>
