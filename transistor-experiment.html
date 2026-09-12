@@ -9,7 +9,11 @@
   *{box-sizing:border-box;}
   body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
   .wrap{max-width:960px;margin:0 auto;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
   a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
   header{text-align:center;margin-bottom:20px;}
   h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
   header p{color:var(--dim);font-size:16px;margin:0;}
@@ -43,10 +47,13 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="category-tech.html">&larr; Back to Everyday Tech</a>
+  <div class="topbar">
+    <a class="back" href="category-tech.html" id="backLink">&larr; Back to Everyday Tech</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
   <header>
-    <h1>🔀 How a Transistor Works Inside</h1>
-    <p>The tiny switch that everything digital is built from — billions of them are working inside your phone right now.</p>
+    <h1 id="pageTitle">🔀 How a Transistor Works Inside</h1>
+    <p id="pageSubtitle">The tiny switch that everything digital is built from — billions of them are working inside your phone right now.</p>
   </header>
 
   <div class="player">
@@ -61,24 +68,24 @@
   </div>
 
   <div class="steps">
-    <div class="step-card"><div class="num">1</div><h3>🥪 Three layers of silicon</h3>
-      <p>A transistor has three silicon regions: source, gate, and drain — sandwiched together in a tiny chip.</p></div>
-    <div class="step-card"><div class="num">2</div><h3>🚧 Normally, current can't cross</h3>
-      <p>Without any signal, the middle region blocks current from flowing between the two outer regions — it acts like an open switch.</p></div>
-    <div class="step-card"><div class="num">3</div><h3>⚡ A small voltage on the gate...</h3>
-      <p>Apply a small voltage to the "gate," and it creates a thin conducting channel through the middle region.</p></div>
-    <div class="step-card"><div class="num">4</div><h3>✅ ...lets a bigger current flow</h3>
-      <p>That channel lets a much bigger current flow from source to drain — a tiny signal switching a much larger current on and off!</p></div>
+    <div class="step-card"><div class="num">1</div><h3 id="s1t">🥪 Three layers of silicon</h3>
+      <p id="s1d">A transistor has three silicon regions: source, gate, and drain — sandwiched together in a tiny chip.</p></div>
+    <div class="step-card"><div class="num">2</div><h3 id="s2t">🚧 Normally, current can't cross</h3>
+      <p id="s2d">Without any signal, the middle region blocks current from flowing between the two outer regions — it acts like an open switch.</p></div>
+    <div class="step-card"><div class="num">3</div><h3 id="s3t">⚡ A small voltage on the gate...</h3>
+      <p id="s3d">Apply a small voltage to the "gate," and it creates a thin conducting channel through the middle region.</p></div>
+    <div class="step-card"><div class="num">4</div><h3 id="s4t">✅ ...lets a bigger current flow</h3>
+      <p id="s4d">That channel lets a much bigger current flow from source to drain — a tiny signal switching a much larger current on and off!</p></div>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> A modern phone chip can contain over <b>15 billion</b> transistors, each one smaller than a virus,
     switching on and off billions of times per second. Every calculation your phone makes — every tap, every photo — is just
     unimaginable numbers of these tiny switches flipping on and off in patterns.
   </div>
 
-  <div class="try-title">🧪 Now try it yourself</div>
-  <p class="try-subtitle">Turn up the gate voltage and watch the channel open, letting current flow.</p>
+  <div class="try-title" id="tryTitle">🧪 Now try it yourself</div>
+  <p class="try-subtitle" id="trySubtitle">Turn up the gate voltage and watch the channel open, letting current flow.</p>
   <div class="try-card">
     <canvas id="tryScene" width="600" height="280"></canvas>
     <div class="try-controls">
@@ -89,21 +96,114 @@
 </div>
 
 <script>
+const T = {
+  en: {
+    langToggle: 'తెలుగు', backLink: '&larr; Back to Everyday Tech',
+    pageTitle: '🔀 How a Transistor Works Inside',
+    pageSubtitle: 'The tiny switch that everything digital is built from — billions of them are working inside your phone right now.',
+    playBtn: '▶ Play', pauseBtn: '⏸ Pause', restartBtn: '⟲ Restart',
+    captionInitial: 'Press <b>Play</b> to start!',
+    captionEnd: '🎬 The End! Press <b>Restart</b> to watch again.',
+    steps: [
+      ['🥪 Three layers of silicon','A transistor has three silicon regions: source, gate, and drain — sandwiched together in a tiny chip.'],
+      ['🚧 Normally, current can\'t cross','Without any signal, the middle region blocks current from flowing between the two outer regions — it acts like an open switch.'],
+      ['⚡ A small voltage on the gate...','Apply a small voltage to the "gate," and it creates a thin conducting channel through the middle region.'],
+      ['✅ ...lets a bigger current flow','That channel lets a much bigger current flow from source to drain — a tiny signal switching a much larger current on and off!'],
+    ],
+    fact: '🤯 <b>Mind-blowing part:</b> A modern phone chip can contain over <b>15 billion</b> transistors, each one smaller than a virus, switching on and off billions of times per second. Every calculation your phone makes — every tap, every photo — is just unimaginable numbers of these tiny switches flipping on and off in patterns.',
+    tryTitle: '🧪 Now try it yourself',
+    trySubtitle: 'Turn up the gate voltage and watch the channel open, letting current flow.',
+    tryResultZero: 'Gate voltage = 0: no channel, no current flows.',
+    tryResultPartial: 'A thin channel is starting to form — a little current can trickle through.',
+    tryResultFull: 'Channel fully open — current flows freely from source to drain!',
+    scenes: [
+      ['🥪 STEP 1: THREE LAYERS OF SILICON','A transistor has three regions: <b>source</b>, <b>gate</b>, and <b>drain</b> — tiny sandwiched sections of treated silicon.'],
+      ['🚧 STEP 2: NORMALLY BLOCKED','With no signal on the gate, current can\'t cross the middle region — the switch is effectively OFF.'],
+      ['⚡ STEP 3: A VOLTAGE OPENS A CHANNEL','Apply a small voltage to the gate, and it creates a thin conducting <b>channel</b> right underneath it.'],
+      ['✅ STEP 4: CURRENT FLOWS THROUGH','That channel lets a much BIGGER current flow from source to drain — a tiny signal controlling a much larger one!'],
+    ],
+    canvas: {
+      source: 'SOURCE', drain: 'DRAIN', gate: 'GATE',
+      pTypeBody: 'P-type body',
+      threeRegions: 'three regions, sandwiched in silicon',
+      blockedOff: 'no channel — current is blocked (OFF)',
+      opensChannel: 'gate voltage opens a thin channel',
+      flowsOn: 'current flows freely from source to drain (ON)',
+      gateVoltageLabel: (v)=>'gate voltage: '+v+'%',
+    },
+  },
+  te: {
+    langToggle: 'English', backLink: '&larr; నిత్యజీవిత టెక్నాలజీకి తిరిగి',
+    pageTitle: '🔀 ట్రాన్సిస్టర్ లోపల ఎలా పనిచేస్తుంది',
+    pageSubtitle: 'ప్రతి డిజిటల్ వస్తువు దీని నుండే తయారవుతుంది — మీ ఫోన్ లోపల ఇప్పుడు కోట్లాదిగా ఇవి పనిచేస్తున్నాయి.',
+    playBtn: '▶ ప్లే', pauseBtn: '⏸ పాజ్', restartBtn: '⟲ మళ్ళీ మొదలు',
+    captionInitial: 'ప్రారంభించడానికి <b>ప్లే</b> నొక్కండి!',
+    captionEnd: '🎬 ముగింపు! మళ్ళీ చూడటానికి <b>మళ్ళీ మొదలు</b> నొక్కండి.',
+    steps: [
+      ['🥪 సిలికాన్ మూడు పొరలు','ఒక ట్రాన్సిస్టర్‌కు మూడు సిలికాన్ ప్రాంతాలు ఉంటాయి: సోర్స్, గేట్, డ్రెయిన్ — ఒక చిన్న చిప్‌లో పొరలుగా అమర్చబడతాయి.'],
+      ['🚧 సాధారణంగా, కరెంట్ దాటలేదు','ఏ సంకేతం లేకుండా, మధ్య ప్రాంతం రెండు బయటి ప్రాంతాల మధ్య కరెంట్ ప్రవహించకుండా అడ్డుకుంటుంది — ఇది తెరిచిన స్విచ్‌లా పనిచేస్తుంది.'],
+      ['⚡ గేట్‌పై చిన్న వోల్టేజ్...','గేట్‌కు కొంచెం వోల్టేజ్ ఇస్తే, అది మధ్య ప్రాంతం గుండా ఒక సన్నని ప్రసరణ మార్గాన్ని సృష్టిస్తుంది.'],
+      ['✅ ...పెద్ద కరెంట్‌ను ప్రవహించనిస్తుంది','ఆ మార్గం సోర్స్ నుండి డ్రెయిన్‌కు చాలా పెద్ద కరెంట్‌ను ప్రవహించనిస్తుంది — ఒక చిన్న సంకేతం చాలా పెద్ద కరెంట్‌ను ఆన్, ఆఫ్ చేస్తుంది!'],
+    ],
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> ఆధునిక ఫోన్ చిప్‌లో <b>1500 కోట్ల</b> కంటే ఎక్కువ ట్రాన్సిస్టర్‌లు ఉండవచ్చు, ప్రతి ఒక్కటి వైరస్ కంటే చిన్నది, సెకనుకు కోట్లాది సార్లు ఆన్, ఆఫ్ అవుతుంది. మీ ఫోన్ చేసే ప్రతి గణన — ప్రతి తాకిడి, ప్రతి ఫోటో — ఈ చిన్న స్విచ్‌లు నమూనాలలో ఆన్, ఆఫ్ అవుతూ చేసేదే, ఊహించలేనంత సంఖ్యలో.',
+    tryTitle: '🧪 ఇప్పుడు మీరే ప్రయత్నించండి',
+    trySubtitle: 'గేట్ వోల్టేజ్‌ను పెంచండి, మార్గం తెరుచుకుని కరెంట్ ప్రవహించడం చూడండి.',
+    tryResultZero: 'గేట్ వోల్టేజ్ = 0: మార్గం లేదు, కరెంట్ ప్రవహించదు.',
+    tryResultPartial: 'ఒక సన్నని మార్గం ఏర్పడటం మొదలవుతోంది — కొద్దిగా కరెంట్ ప్రవహించగలదు.',
+    tryResultFull: 'మార్గం పూర్తిగా తెరుచుకుంది — కరెంట్ సోర్స్ నుండి డ్రెయిన్‌కు స్వేచ్ఛగా ప్రవహిస్తుంది!',
+    scenes: [
+      ['🥪 దశ 1: సిలికాన్ మూడు పొరలు','ఒక ట్రాన్సిస్టర్‌కు మూడు ప్రాంతాలు ఉంటాయి: <b>సోర్స్</b>, <b>గేట్</b>, <b>డ్రెయిన్</b> — చికిత్స చేసిన సిలికాన్ యొక్క చిన్న పొరలు.'],
+      ['🚧 దశ 2: సాధారణంగా అడ్డుకోబడింది','గేట్‌పై సంకేతం లేకుండా, కరెంట్ మధ్య ప్రాంతాన్ని దాటలేదు — స్విచ్ నిజంగా ఆఫ్‌లో ఉంటుంది.'],
+      ['⚡ దశ 3: ఒక వోల్టేజ్ మార్గాన్ని తెరుస్తుంది','గేట్‌కు కొంచెం వోల్టేజ్ ఇస్తే, అది దాని కిందే ఒక సన్నని ప్రసరణ <b>మార్గాన్ని</b> సృష్టిస్తుంది.'],
+      ['✅ దశ 4: కరెంట్ ప్రవహిస్తుంది','ఆ మార్గం సోర్స్ నుండి డ్రెయిన్‌కు చాలా పెద్ద కరెంట్‌ను ప్రవహించనిస్తుంది — ఒక చిన్న సంకేతం చాలా పెద్దదాన్ని నియంత్రిస్తుంది!'],
+    ],
+    canvas: {
+      source: 'సోర్స్', drain: 'డ్రెయిన్', gate: 'గేట్',
+      pTypeBody: 'P-రకం బాడీ',
+      threeRegions: 'మూడు ప్రాంతాలు, సిలికాన్‌లో పొరలుగా అమర్చబడ్డాయి',
+      blockedOff: 'మార్గం లేదు — కరెంట్ అడ్డుకోబడింది (ఆఫ్)',
+      opensChannel: 'గేట్ వోల్టేజ్ ఒక సన్నని మార్గాన్ని తెరుస్తుంది',
+      flowsOn: 'కరెంట్ సోర్స్ నుండి డ్రెయిన్‌కు స్వేచ్ఛగా ప్రవహిస్తుంది (ఆన్)',
+      gateVoltageLabel: (v)=>'గేట్ వోల్టేజ్: '+v+'%',
+    },
+  }
+};
+let LANG='en';
+function tr(){ return T[LANG]; }
+function applyStaticText(){
+  const t=tr();
+  document.documentElement.lang=LANG;
+  document.getElementById('langToggle').textContent=t.langToggle;
+  document.getElementById('backLink').innerHTML=t.backLink;
+  document.getElementById('pageTitle').textContent=t.pageTitle;
+  document.getElementById('pageSubtitle').textContent=t.pageSubtitle;
+  document.getElementById('restartBtn').textContent=t.restartBtn;
+  for(let i=0;i<4;i++){
+    document.getElementById('s'+(i+1)+'t').textContent=t.steps[i][0];
+    document.getElementById('s'+(i+1)+'d').textContent=t.steps[i][1];
+  }
+  document.getElementById('factBox').innerHTML=t.fact;
+  document.getElementById('tryTitle').textContent=t.tryTitle;
+  document.getElementById('trySubtitle').textContent=t.trySubtitle;
+}
+document.getElementById('langToggle').addEventListener('click',()=>{
+  LANG = LANG==='en' ? 'te' : 'en';
+  applyStaticText();
+  if(window.__transistorRefresh) window.__transistorRefresh();
+  if(window.__tryRefresh) window.__tryRefresh();
+});
+applyStaticText();
+
 (function(){
   const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
   const W=canvas.width, H=canvas.height;
   const captionEl=document.getElementById('caption'), bannerEl=document.getElementById('banner'), progressBar=document.getElementById('progressBar');
   const playBtn=document.getElementById('playBtn'), restartBtn=document.getElementById('restartBtn');
 
-  const SCENES=[
-    {t:0,dur:6,banner:'🥪 STEP 1: THREE LAYERS OF SILICON',caption:'A transistor has three regions: <b>source</b>, <b>gate</b>, and <b>drain</b> — tiny sandwiched sections of treated silicon.'},
-    {t:6,dur:6,banner:'🚧 STEP 2: NORMALLY BLOCKED',caption:'With no signal on the gate, current can\'t cross the middle region — the switch is effectively OFF.'},
-    {t:12,dur:8,banner:'⚡ STEP 3: A VOLTAGE OPENS A CHANNEL',caption:'Apply a small voltage to the gate, and it creates a thin conducting <b>channel</b> right underneath it.'},
-    {t:20,dur:9,banner:'✅ STEP 4: CURRENT FLOWS THROUGH',caption:'That channel lets a much BIGGER current flow from source to drain — a tiny signal controlling a much larger one!'},
-  ];
+  const starts=[0,6,12,20];
   const totalDur=29;
-  let simTime=0, playing=false, lastTs=null;
-  function currentScene(t){ for(let i=SCENES.length-1;i>=0;i--) if(t>=SCENES[i].t) return i; return 0; }
+  let simTime=0, playing=false, lastTs=null, captionOverride='initial';
+  function currentScene(t){ for(let i=starts.length-1;i>=0;i--) if(t>=starts[i]) return i; return 0; }
   function label(x,y,text,color){
     ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
     const tw=ctx.measureText(text).width;
@@ -117,13 +217,13 @@
     ctx.fillStyle='#3f7fe0'; ctx.fillRect(bx+20,by+15,90,70);
     ctx.fillRect(bx+bw-110,by+15,90,70);
     ctx.strokeRect(bx+20,by+15,90,70); ctx.strokeRect(bx+bw-110,by+15,90,70);
-    label(bx+65,by-14,'SOURCE','#8fd2ff');
-    label(bx+bw-65,by-14,'DRAIN','#8fd2ff');
-    label(W/2,by+bh+30,'P-type body','#ff9d9d');
+    label(bx+65,by-14,tr().canvas.source,'#8fd2ff');
+    label(bx+bw-65,by-14,tr().canvas.drain,'#8fd2ff');
+    label(W/2,by+bh+30,tr().canvas.pTypeBody,'#ff9d9d');
     // gate on top
     ctx.fillStyle='#c7c9d9'; ctx.fillRect(W/2-60,by-30,120,15);
     ctx.strokeStyle='#0b1020'; ctx.lineWidth=2; ctx.strokeRect(W/2-60,by-30,120,15);
-    label(W/2,by-40,'GATE','#eef2ff');
+    label(W/2,by-40,tr().canvas.gate,'#eef2ff');
     if(channelOpen>0){
       ctx.fillStyle='rgba(79,211,255,'+(0.3+0.4*channelOpen)+')';
       ctx.fillRect(bx+90,by+15,bw-180,70*channelOpen);
@@ -132,18 +232,18 @@
   }
   function drawScene0(local){
     drawBody(0);
-    label(W/2,60,'three regions, sandwiched in silicon','#eef2ff');
+    label(W/2,60,tr().canvas.threeRegions,'#eef2ff');
   }
   function drawScene1(local){
     const {bx,by,bw,bh}=drawBody(0);
     ctx.strokeStyle='rgba(255,80,80,.6)'; ctx.lineWidth=2; ctx.setLineDash([5,5]);
     ctx.beginPath(); ctx.moveTo(bx+110,by+50); ctx.lineTo(bx+bw-110,by+50); ctx.stroke(); ctx.setLineDash([]);
-    label(W/2,60,'no channel — current is blocked (OFF)','#ff9d9d');
+    label(W/2,60,tr().canvas.blockedOff,'#ff9d9d');
   }
   function drawScene2(local){
     const open=Math.min(1,local/5);
     drawBody(open);
-    label(W/2,60,'gate voltage opens a thin channel','#ffd23f');
+    label(W/2,60,tr().canvas.opensChannel,'#ffd23f');
   }
   function drawScene3(local){
     const {bx,by,bw}=drawBody(1);
@@ -152,13 +252,13 @@
       const x=bx+110+flow;
       ctx.fillStyle='#ffd23f'; ctx.beginPath(); ctx.arc(x,by+50,5,0,Math.PI*2); ctx.fill();
     }
-    label(W/2,60,'current flows freely from source to drain (ON)','#6dffb0');
+    label(W/2,60,tr().canvas.flowsOn,'#6dffb0');
   }
 
   function render(t){
     ctx.clearRect(0,0,W,H); ctx.fillStyle='#04060f'; ctx.fillRect(0,0,W,H);
-    const idx=currentScene(t), scene=SCENES[idx], local=t-scene.t;
-    bannerEl.textContent=scene.banner; captionEl.innerHTML=scene.caption;
+    const idx=currentScene(t), scene=tr().scenes[idx], local=t-starts[idx];
+    bannerEl.textContent=scene[0]; captionEl.innerHTML=scene[1];
     if(idx===0) drawScene0(local);
     else if(idx===1) drawScene1(local);
     else if(idx===2) drawScene2(local);
@@ -171,15 +271,23 @@
     const dt=Math.min(0.05,(ts-lastTs)/1000); lastTs=ts;
     simTime+=dt;
     if(simTime>=totalDur){ simTime=totalDur; render(simTime); pause();
-      captionEl.innerHTML='🎬 The End! Press <b>Restart</b> to watch again.'; return; }
+      captionOverride='ended'; captionEl.innerHTML=tr().captionEnd; return; }
+    captionOverride=null;
     render(simTime); requestAnimationFrame(step);
   }
-  function play(){ if(playing) return; playing=true; lastTs=null; playBtn.textContent='⏸ Pause'; requestAnimationFrame(step); }
-  function pause(){ playing=false; playBtn.textContent='▶ Play'; }
-  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionEl.innerHTML='Press <b>Play</b> to start!'; }
+  function play(){ if(playing) return; playing=true; lastTs=null; captionOverride=null; playBtn.textContent=tr().pauseBtn; requestAnimationFrame(step); }
+  function pause(){ playing=false; playBtn.textContent=tr().playBtn; }
+  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionOverride='initial'; captionEl.innerHTML=tr().captionInitial; }
   playBtn.addEventListener('click',()=>playing?pause():play());
   restartBtn.addEventListener('click',restart);
   render(0);
+
+  window.__transistorRefresh=function(){
+    playBtn.textContent = playing ? tr().pauseBtn : tr().playBtn;
+    render(simTime);
+    if(captionOverride==='initial') captionEl.innerHTML=tr().captionInitial;
+    else if(captionOverride==='ended') captionEl.innerHTML=tr().captionEnd;
+  };
 })();
 
 (function(){
@@ -188,6 +296,11 @@
   const slider=document.getElementById('gateSlider');
   const resultEl=document.getElementById('tryResult');
   let t=0;
+  let lastResult='zero';
+  function updateResultText(){
+    const tt=tr();
+    resultEl.textContent = lastResult==='zero' ? tt.tryResultZero : lastResult==='partial' ? tt.tryResultPartial : tt.tryResultFull;
+  }
   function draw(){
     c.clearRect(0,0,w,h); c.fillStyle='#04060f'; c.fillRect(0,0,w,h);
     const bx=w/2-160,by=h/2-30,bw=320,bh=80;
@@ -209,19 +322,19 @@
       }
     }
     c.fillStyle='#eef2ff'; c.font='700 13px Segoe UI'; c.textAlign='center';
-    c.fillText('gate voltage: '+slider.value+'%', w/2, h-20);
+    c.fillText(tr().canvas.gateVoltageLabel(slider.value), w/2, h-20);
   }
   function loop(){ t+=0.05; draw(); requestAnimationFrame(loop); }
   slider.addEventListener('input',()=>{
     draw();
     const v=+slider.value;
-    resultEl.textContent = v<10
-      ? 'Gate voltage = 0: no channel, no current flows.'
-      : v<50
-      ? 'A thin channel is starting to form — a little current can trickle through.'
-      : 'Channel fully open — current flows freely from source to drain!';
+    lastResult = v<10 ? 'zero' : v<50 ? 'partial' : 'full';
+    updateResultText();
   });
+  updateResultText();
   draw(); requestAnimationFrame(loop);
+
+  window.__tryRefresh=function(){ updateResultText(); draw(); };
 })();
 </script>
 </body>

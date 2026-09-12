@@ -9,7 +9,11 @@
   *{box-sizing:border-box;}
   body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
   .wrap{max-width:960px;margin:0 auto;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
   a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
   header{text-align:center;margin-bottom:20px;}
   h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
   header p{color:var(--dim);font-size:16px;margin:0;}
@@ -32,10 +36,13 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="category-tech.html">&larr; Back to Everyday Tech</a>
+  <div class="topbar">
+    <a class="back" href="category-tech.html" id="backLink">&larr; Back to Everyday Tech</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
   <header>
-    <h1>🔋 Ohm's Law & Circuits</h1>
-    <p>Voltage, current, and resistance are all linked by one simple equation that runs every circuit you own.</p>
+    <h1 id="pageTitle">🔋 Ohm's Law & Circuits</h1>
+    <p id="pageSubtitle">Voltage, current, and resistance are all linked by one simple equation that runs every circuit you own.</p>
   </header>
 
   <div class="player">
@@ -43,22 +50,22 @@
     <div class="caption" id="caption">Adjust voltage and resistance and watch the current change.</div>
   </div>
   <div class="controls">
-    <div class="slider-group"><label>Voltage (V)</label><input type="range" id="voltSlider" min="1" max="12" value="6"></div>
-    <div class="slider-group"><label>Resistance (Ω)</label><input type="range" id="resSlider" min="1" max="20" value="4"></div>
+    <div class="slider-group"><label id="voltLabel">Voltage (V)</label><input type="range" id="voltSlider" min="1" max="12" value="6"></div>
+    <div class="slider-group"><label id="resLabel">Resistance (Ω)</label><input type="range" id="resSlider" min="1" max="20" value="4"></div>
   </div>
 
   <div class="steps">
-    <div class="step-card"><div class="num">1</div><h3>🔋 Voltage: the push</h3>
-      <p>Voltage is the "electrical pressure" pushing electrons through a circuit — more voltage means a stronger push.</p></div>
-    <div class="step-card"><div class="num">2</div><h3>🚧 Resistance: the friction</h3>
-      <p>Resistance is how much a material fights the flow of electrons — thin wires and certain materials resist more than others.</p></div>
-    <div class="step-card"><div class="num">3</div><h3>➗ Current = Voltage ÷ Resistance</h3>
-      <p><b>Ohm's Law</b>: I = V/R. More push (voltage) makes more current; more friction (resistance) makes less current.</p></div>
-    <div class="step-card"><div class="num">4</div><h3>💡 Every circuit obeys this</h3>
-      <p>From a flashlight to a supercomputer, every simple circuit follows this same relationship between voltage, current, and resistance.</p></div>
+    <div class="step-card"><div class="num">1</div><h3 id="s1t">🔋 Voltage: the push</h3>
+      <p id="s1d">Voltage is the "electrical pressure" pushing electrons through a circuit — more voltage means a stronger push.</p></div>
+    <div class="step-card"><div class="num">2</div><h3 id="s2t">🚧 Resistance: the friction</h3>
+      <p id="s2d">Resistance is how much a material fights the flow of electrons — thin wires and certain materials resist more than others.</p></div>
+    <div class="step-card"><div class="num">3</div><h3 id="s3t">➗ Current = Voltage ÷ Resistance</h3>
+      <p id="s3d"><b>Ohm's Law</b>: I = V/R. More push (voltage) makes more current; more friction (resistance) makes less current.</p></div>
+    <div class="step-card"><div class="num">4</div><h3 id="s4t">💡 Every circuit obeys this</h3>
+      <p id="s4d">From a flashlight to a supercomputer, every simple circuit follows this same relationship between voltage, current, and resistance.</p></div>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> This is exactly why a wall socket (high voltage) can be dangerous through your body (low resistance,
     since you're full of salty water) but a 9-volt battery touched to your tongue just tingles — the resistance and voltage together
     determine how much current actually flows through you, and current is what matters for a shock.
@@ -66,18 +73,92 @@
 </div>
 
 <script>
+const T = {
+  en: {
+    langToggle: 'తెలుగు', backLink: '&larr; Back to Everyday Tech',
+    pageTitle: '🔋 Ohm\'s Law & Circuits',
+    pageSubtitle: 'Voltage, current, and resistance are all linked by one simple equation that runs every circuit you own.',
+    captionDefault: 'Adjust voltage and resistance and watch the current change.',
+    voltLabel: 'Voltage (V)', resLabel: 'Resistance (Ω)',
+    steps: [
+      ['🔋 Voltage: the push','Voltage is the "electrical pressure" pushing electrons through a circuit — more voltage means a stronger push.'],
+      ['🚧 Resistance: the friction','Resistance is how much a material fights the flow of electrons — thin wires and certain materials resist more than others.'],
+      ['➗ Current = Voltage ÷ Resistance','<b>Ohm\'s Law</b>: I = V/R. More push (voltage) makes more current; more friction (resistance) makes less current.'],
+      ['💡 Every circuit obeys this','From a flashlight to a supercomputer, every simple circuit follows this same relationship between voltage, current, and resistance.'],
+    ],
+    fact: '🤯 <b>Mind-blowing part:</b> This is exactly why a wall socket (high voltage) can be dangerous through your body (low resistance, since you\'re full of salty water) but a 9-volt battery touched to your tongue just tingles — the resistance and voltage together determine how much current actually flows through you, and current is what matters for a shock.',
+    captionLow: 'Low current — weak push or strong resistance.',
+    captionMed: 'Moderate current flowing through the circuit.',
+    captionHigh: 'Strong current — big push and/or low resistance!',
+    canvas: {
+      resistorLabel: (R)=>'resistor: '+R+'Ω',
+      equation: (V,R,I)=>'I = V / R = '+V+' / '+R+' = '+I+' A',
+    },
+  },
+  te: {
+    langToggle: 'English', backLink: '&larr; నిత్యజీవిత టెక్నాలజీకి తిరిగి',
+    pageTitle: '🔋 ఓమ్స్ లా & సర్క్యూట్‌లు',
+    pageSubtitle: 'వోల్టేజ్, కరెంట్, రెసిస్టెన్స్ — ఇవన్నీ మీ ప్రతి సర్క్యూట్‌ను నడిపించే ఒకే సాధారణ సమీకరణంతో ముడిపడి ఉంటాయి.',
+    captionDefault: 'వోల్టేజ్, రెసిస్టెన్స్‌లను సర్దుబాటు చేసి కరెంట్ ఎలా మారుతుందో చూడండి.',
+    voltLabel: 'వోల్టేజ్ (V)', resLabel: 'రెసిస్టెన్స్ (Ω)',
+    steps: [
+      ['🔋 వోల్టేజ్: నెట్టుడు','వోల్టేజ్ అనేది సర్క్యూట్ గుండా ఎలక్ట్రాన్లను నెట్టే "విద్యుత్ ఒత్తిడి" — ఎక్కువ వోల్టేజ్ అంటే బలమైన నెట్టుడు.'],
+      ['🚧 రెసిస్టెన్స్: ఘర్షణ','రెసిస్టెన్స్ అంటే ఒక పదార్థం ఎలక్ట్రాన్ల ప్రవాహాన్ని ఎంత అడ్డుకుంటుందో అనేది — సన్నని తీగలు, కొన్ని పదార్థాలు ఇతరుల కంటే ఎక్కువగా అడ్డుకుంటాయి.'],
+      ['➗ కరెంట్ = వోల్టేజ్ ÷ రెసిస్టెన్స్','<b>ఓమ్స్ లా</b>: I = V/R. ఎక్కువ నెట్టుడు (వోల్టేజ్) ఎక్కువ కరెంట్‌ను ఇస్తుంది; ఎక్కువ ఘర్షణ (రెసిస్టెన్స్) తక్కువ కరెంట్‌ను ఇస్తుంది.'],
+      ['💡 ప్రతి సర్క్యూట్ దీన్నే పాటిస్తుంది','ఫ్లాష్‌లైట్ నుండి సూపర్‌కంప్యూటర్ వరకు, ప్రతి సాధారణ సర్క్యూట్ వోల్టేజ్, కరెంట్, రెసిస్టెన్స్ మధ్య ఇదే సంబంధాన్ని పాటిస్తుంది.'],
+    ],
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> గోడ సాకెట్ (అధిక వోల్టేజ్) మీ శరీరం (తక్కువ రెసిస్టెన్స్, ఎందుకంటే మీరు ఉప్పు నీటితో నిండి ఉన్నారు) గుండా ప్రమాదకరంగా ఉండగలగడానికి కారణం ఇదే — కానీ నాలుకపై తాకిన 9-వోల్ట్ బ్యాటరీ కేవలం జివ్వుమని అనిపిస్తుంది — రెసిస్టెన్స్, వోల్టేజ్ కలిసి మీ గుండా ఎంత కరెంట్ ప్రవహిస్తుందో నిర్ణయిస్తాయి, షాక్‌కు కరెంటే ముఖ్యం.',
+    captionLow: 'తక్కువ కరెంట్ — బలహీనమైన నెట్టుడు లేదా బలమైన రెసిస్టెన్స్.',
+    captionMed: 'సర్క్యూట్ గుండా మధ్యస్థ కరెంట్ ప్రవహిస్తోంది.',
+    captionHigh: 'బలమైన కరెంట్ — పెద్ద నెట్టుడు మరియు/లేదా తక్కువ రెసిస్టెన్స్!',
+    canvas: {
+      resistorLabel: (R)=>'రెసిస్టర్: '+R+'Ω',
+      equation: (V,R,I)=>'I = V / R = '+V+' / '+R+' = '+I+' A',
+    },
+  }
+};
+let LANG='en';
+function tr(){ return T[LANG]; }
+function applyStaticText(){
+  const t=tr();
+  document.documentElement.lang=LANG;
+  document.getElementById('langToggle').textContent=t.langToggle;
+  document.getElementById('backLink').innerHTML=t.backLink;
+  document.getElementById('pageTitle').textContent=t.pageTitle;
+  document.getElementById('pageSubtitle').textContent=t.pageSubtitle;
+  document.getElementById('voltLabel').textContent=t.voltLabel;
+  document.getElementById('resLabel').textContent=t.resLabel;
+  for(let i=0;i<4;i++){
+    document.getElementById('s'+(i+1)+'t').textContent=t.steps[i][0];
+    document.getElementById('s'+(i+1)+'d').innerHTML=t.steps[i][1];
+  }
+  document.getElementById('factBox').innerHTML=t.fact;
+}
+document.getElementById('langToggle').addEventListener('click',()=>{
+  LANG = LANG==='en' ? 'te' : 'en';
+  applyStaticText();
+  if(window.__ohmsRefresh) window.__ohmsRefresh();
+});
+applyStaticText();
+
 (function(){
   const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
   const W=canvas.width, H=canvas.height;
   const captionEl=document.getElementById('caption');
   const voltSlider=document.getElementById('voltSlider'), resSlider=document.getElementById('resSlider');
   let t=0;
+  let lastLevel=null;
 
   function label(x,y,text,color){
     ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
     const tw=ctx.measureText(text).width;
     ctx.fillStyle='rgba(4,6,15,0.75)'; ctx.fillRect(x-tw/2-8,y-16,tw+16,22);
     ctx.fillStyle=color||'#9fc1de'; ctx.fillText(text,x,y);
+  }
+  function updateCaptionText(){
+    const t=tr();
+    if(lastLevel===null){ captionEl.textContent=t.captionDefault; return; }
+    captionEl.innerHTML = lastLevel==='low' ? t.captionLow : lastLevel==='med' ? t.captionMed : t.captionHigh;
   }
   function draw(){
     ctx.clearRect(0,0,W,H); ctx.fillStyle='#04060f'; ctx.fillRect(0,0,W,H);
@@ -105,7 +186,7 @@
       ctx.lineTo(x,y);
     }
     ctx.stroke();
-    label((rx0+rx1)/2,ry-30,'resistor: '+R+'Ω','#ff9d5a');
+    label((rx0+rx1)/2,ry-30,tr().canvas.resistorLabel(R),'#ff9d5a');
 
     // y-offset of the zigzag at a given x, matching the resistor drawn above
     function resistorOffset(x){
@@ -133,16 +214,17 @@
     }
 
     ctx.fillStyle='#eef2ff'; ctx.font='800 20px Segoe UI'; ctx.textAlign='center';
-    ctx.fillText('I = V / R = '+V+' / '+R+' = '+I.toFixed(2)+' A', W/2, y2+60);
+    ctx.fillText(tr().canvas.equation(V,R,I.toFixed(2)), W/2, y2+60);
 
-    captionEl.innerHTML = I<0.5 ? 'Low current — weak push or strong resistance.' :
-      I<3 ? 'Moderate current flowing through the circuit.' :
-      'Strong current — big push and/or low resistance!';
+    lastLevel = I<0.5 ? 'low' : I<3 ? 'med' : 'high';
+    updateCaptionText();
   }
   function loop(){ t+=0.03; draw(); requestAnimationFrame(loop); }
   voltSlider.addEventListener('input',draw);
   resSlider.addEventListener('input',draw);
   draw(); requestAnimationFrame(loop);
+
+  window.__ohmsRefresh=function(){ draw(); };
 })();
 </script>
 </body>

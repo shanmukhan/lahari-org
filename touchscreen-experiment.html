@@ -9,7 +9,11 @@
   *{box-sizing:border-box;}
   body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
   .wrap{max-width:960px;margin:0 auto;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
   a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
   header{text-align:center;margin-bottom:20px;}
   h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
   header p{color:var(--dim);font-size:16px;margin:0;}
@@ -41,10 +45,13 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="category-tech.html">&larr; Back to Everyday Tech</a>
+  <div class="topbar">
+    <a class="back" href="category-tech.html" id="backLink">&larr; Back to Everyday Tech</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
   <header>
-    <h1>📱 How Touchscreens Work</h1>
-    <p>Your finger doesn't press a button — it steals a tiny bit of electric charge, and the screen notices exactly where.</p>
+    <h1 id="pageTitle">📱 How Touchscreens Work</h1>
+    <p id="pageSubtitle">Your finger doesn't press a button — it steals a tiny bit of electric charge, and the screen notices exactly where.</p>
   </header>
 
   <div class="player">
@@ -59,23 +66,23 @@
   </div>
 
   <div class="steps">
-    <div class="step-card"><div class="num">1</div><h3>⚡ A charged grid</h3>
-      <p>Under the glass is a see-through grid of wires, constantly holding a tiny, even electric charge across the whole screen.</p></div>
-    <div class="step-card"><div class="num">2</div><h3>👆 Your finger conducts electricity</h3>
-      <p>Your body is full of water and salts, which conduct electricity — you're basically a walking conductor.</p></div>
-    <div class="step-card"><div class="num">3</div><h3>📉 Touching steals a little charge</h3>
-      <p>When your finger touches the glass, it draws off a tiny bit of charge right at that spot, changing the grid there.</p></div>
-    <div class="step-card"><div class="num">4</div><h3>📍 The chip calculates the spot</h3>
-      <p>A tiny chip constantly measures the charge at every point on the grid, instantly figuring out exactly where you touched.</p></div>
+    <div class="step-card"><div class="num">1</div><h3 id="s1t">⚡ A charged grid</h3>
+      <p id="s1d">Under the glass is a see-through grid of wires, constantly holding a tiny, even electric charge across the whole screen.</p></div>
+    <div class="step-card"><div class="num">2</div><h3 id="s2t">👆 Your finger conducts electricity</h3>
+      <p id="s2d">Your body is full of water and salts, which conduct electricity — you're basically a walking conductor.</p></div>
+    <div class="step-card"><div class="num">3</div><h3 id="s3t">📉 Touching steals a little charge</h3>
+      <p id="s3d">When your finger touches the glass, it draws off a tiny bit of charge right at that spot, changing the grid there.</p></div>
+    <div class="step-card"><div class="num">4</div><h3 id="s4t">📍 The chip calculates the spot</h3>
+      <p id="s4d">A tiny chip constantly measures the charge at every point on the grid, instantly figuring out exactly where you touched.</p></div>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> This is exactly why touchscreens usually don't work with gloves on — thick fabric keeps your
     finger's charge from reaching the glass at all. But a pencil eraser (also non-conductive) doesn't work either — while some special gloves are woven with conductive thread just for this reason!
   </div>
 
-  <div class="try-title">🧪 Now try it yourself</div>
-  <p class="try-subtitle">Tap anywhere on the mini touchscreen below and watch the grid react.</p>
+  <div class="try-title" id="tryTitle">🧪 Now try it yourself</div>
+  <p class="try-subtitle" id="trySubtitle">Tap anywhere on the mini touchscreen below and watch the grid react.</p>
   <div class="try-card">
     <canvas id="tryScene" width="500" height="280"></canvas>
     <div class="try-result" id="tryResult">Tap the screen to see the charge grid respond!</div>
@@ -83,21 +90,106 @@
 </div>
 
 <script>
+const T = {
+  en: {
+    langToggle: 'తెలుగు', backLink: '&larr; Back to Everyday Tech',
+    pageTitle: '📱 How Touchscreens Work',
+    pageSubtitle: 'Your finger doesn\'t press a button — it steals a tiny bit of electric charge, and the screen notices exactly where.',
+    playBtn: '▶ Play', pauseBtn: '⏸ Pause', restartBtn: '⟲ Restart',
+    captionInitial: 'Press <b>Play</b> to start!',
+    captionEnd: '🎬 The End! Press <b>Restart</b> to watch again.',
+    steps: [
+      ['⚡ A charged grid','Under the glass is a see-through grid of wires, constantly holding a tiny, even electric charge across the whole screen.'],
+      ['👆 Your finger conducts electricity','Your body is full of water and salts, which conduct electricity — you\'re basically a walking conductor.'],
+      ['📉 Touching steals a little charge','When your finger touches the glass, it draws off a tiny bit of charge right at that spot, changing the grid there.'],
+      ['📍 The chip calculates the spot','A tiny chip constantly measures the charge at every point on the grid, instantly figuring out exactly where you touched.'],
+    ],
+    fact: '🤯 <b>Mind-blowing part:</b> This is exactly why touchscreens usually don\'t work with gloves on — thick fabric keeps your finger\'s charge from reaching the glass at all. But a pencil eraser (also non-conductive) doesn\'t work either — while some special gloves are woven with conductive thread just for this reason!',
+    tryTitle: '🧪 Now try it yourself',
+    trySubtitle: 'Tap anywhere on the mini touchscreen below and watch the grid react.',
+    tryResultDefault: 'Tap the screen to see the charge grid respond!',
+    tryResultTouch: (x,y)=>'Touched at ('+x+', '+y+') — the grid\'s charge dips right there!',
+    scenes: [
+      ['⚡ STEP 1: A CHARGED GRID','Underneath the glass is an invisible grid of wires, holding a small, steady electric charge everywhere.'],
+      ['👆 STEP 2: YOUR FINGER CONDUCTS','Your body is full of water and salts, which conduct electricity — your finger can carry a charge too.'],
+      ['📉 STEP 3: TOUCHING STEALS CHARGE','The instant your finger touches the glass, it draws off a tiny bit of charge right at that exact spot.'],
+      ['📍 STEP 4: THE CHIP FINDS THE SPOT','A tiny chip constantly scans the whole grid and instantly calculates exactly where the charge dropped — that\'s your touch point!'],
+    ],
+    canvas: {
+      gridLabel: 'a fine grid of wires under the glass, evenly charged',
+      fingerLabel: 'your finger can carry a charge too',
+      dropLabel: 'charge drops right at the touch point',
+      pinpointLabel: 'chip pinpoints the exact touch location!',
+    },
+  },
+  te: {
+    langToggle: 'English', backLink: '&larr; నిత్యజీవిత టెక్నాలజీకి తిరిగి',
+    pageTitle: '📱 టచ్‌స్క్రీన్‌లు ఎలా పనిచేస్తాయి',
+    pageSubtitle: 'మీ వేలు ఒక బటన్‌ను నొక్కదు — అది కొద్దిగా విద్యుత్ ఆవేశాన్ని దొంగిలిస్తుంది, స్క్రీన్ సరిగ్గా ఎక్కడో గుర్తిస్తుంది.',
+    playBtn: '▶ ప్లే', pauseBtn: '⏸ పాజ్', restartBtn: '⟲ మళ్ళీ మొదలు',
+    captionInitial: 'ప్రారంభించడానికి <b>ప్లే</b> నొక్కండి!',
+    captionEnd: '🎬 ముగింపు! మళ్ళీ చూడటానికి <b>మళ్ళీ మొదలు</b> నొక్కండి.',
+    steps: [
+      ['⚡ ఆవేశం గల గ్రిడ్','గాజు కింద తీగల పారదర్శక గ్రిడ్ ఉంటుంది, ఇది స్క్రీన్ మొత్తం మీద నిరంతరం ఒక చిన్న, సమాన విద్యుత్ ఆవేశాన్ని కలిగి ఉంటుంది.'],
+      ['👆 మీ వేలు విద్యుత్తును ప్రసరింపజేస్తుంది','మీ శరీరం నీరు, లవణాలతో నిండి ఉంటుంది, ఇవి విద్యుత్తును ప్రసరింపజేస్తాయి — మీరు నడిచే ఒక వాహకం లాంటివారు.'],
+      ['📉 తాకడం కొద్దిగా ఆవేశాన్ని దొంగిలిస్తుంది','మీ వేలు గాజును తాకినప్పుడు, అది సరిగ్గా ఆ ప్రదేశంలో కొద్దిగా ఆవేశాన్ని తీసుకుంటుంది, అక్కడ గ్రిడ్‌ను మారుస్తుంది.'],
+      ['📍 చిప్ ప్రదేశాన్ని లెక్కిస్తుంది','ఒక చిన్న చిప్ గ్రిడ్‌లోని ప్రతి బిందువు వద్ద ఆవేశాన్ని నిరంతరం కొలుస్తూ, మీరు ఎక్కడ తాకారో తక్షణమే లెక్కిస్తుంది.'],
+    ],
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> చేతి తొడుగులు (గ్లవుజులు) వేసుకుని టచ్‌స్క్రీన్లు సాధారణంగా పనిచేయకపోవడానికి కారణం ఇదే — మందపాటి బట్ట మీ వేలి ఆవేశాన్ని గాజు వరకు చేరనివ్వదు. పెన్సిల్ ఎరేజర్ (అది కూడా వాహకం కాదు) కూడా పనిచేయదు — కానీ కొన్ని ప్రత్యేక గ్లవుజులు ఈ కారణం కోసమే వాహక దారంతో నేయబడతాయి!',
+    tryTitle: '🧪 ఇప్పుడు మీరే ప్రయత్నించండి',
+    trySubtitle: 'కింద ఉన్న చిన్న టచ్‌స్క్రీన్‌పై ఎక్కడైనా తాకి గ్రిడ్ ఎలా స్పందిస్తుందో చూడండి.',
+    tryResultDefault: 'గ్రిడ్ ఎలా స్పందిస్తుందో చూడటానికి స్క్రీన్‌ను తాకండి!',
+    tryResultTouch: (x,y)=>'('+x+', '+y+') వద్ద తాకారు — సరిగ్గా అక్కడ గ్రిడ్ ఆవేశం తగ్గుతుంది!',
+    scenes: [
+      ['⚡ దశ 1: ఆవేశం గల గ్రిడ్','గాజు కింద తీగల అదృశ్య గ్రిడ్ ఉంది, ఇది ప్రతిచోటా ఒక చిన్న, స్థిరమైన విద్యుత్ ఆవేశాన్ని కలిగి ఉంటుంది.'],
+      ['👆 దశ 2: మీ వేలు ప్రసరింపజేస్తుంది','మీ శరీరం నీరు, లవణాలతో నిండి ఉంటుంది, ఇవి విద్యుత్తును ప్రసరింపజేస్తాయి — మీ వేలు కూడా ఆవేశాన్ని మోయగలదు.'],
+      ['📉 దశ 3: తాకడం ఆవేశాన్ని దొంగిలిస్తుంది','మీ వేలు గాజును తాకిన వెంటనే, అది సరిగ్గా ఆ ప్రదేశంలో కొద్దిగా ఆవేశాన్ని తీసుకుంటుంది.'],
+      ['📍 దశ 4: చిప్ ప్రదేశాన్ని కనుగొంటుంది','ఒక చిన్న చిప్ మొత్తం గ్రిడ్‌ను నిరంతరం స్కాన్ చేసి, ఆవేశం ఎక్కడ తగ్గిందో తక్షణమే లెక్కిస్తుంది — అదే మీ తాకిన ప్రదేశం!'],
+    ],
+    canvas: {
+      gridLabel: 'గాజు కింద సూక్ష్మమైన తీగల గ్రిడ్, సమానంగా ఆవేశితమైనది',
+      fingerLabel: 'మీ వేలు కూడా ఆవేశాన్ని మోయగలదు',
+      dropLabel: 'తాకిన ప్రదేశంలో ఆవేశం తగ్గుతుంది',
+      pinpointLabel: 'చిప్ సరైన తాకిన ప్రదేశాన్ని కచ్చితంగా గుర్తిస్తుంది!',
+    },
+  }
+};
+let LANG='en';
+function tr(){ return T[LANG]; }
+function applyStaticText(){
+  const t=tr();
+  document.documentElement.lang=LANG;
+  document.getElementById('langToggle').textContent=t.langToggle;
+  document.getElementById('backLink').innerHTML=t.backLink;
+  document.getElementById('pageTitle').textContent=t.pageTitle;
+  document.getElementById('pageSubtitle').textContent=t.pageSubtitle;
+  document.getElementById('restartBtn').textContent=t.restartBtn;
+  for(let i=0;i<4;i++){
+    document.getElementById('s'+(i+1)+'t').textContent=t.steps[i][0];
+    document.getElementById('s'+(i+1)+'d').textContent=t.steps[i][1];
+  }
+  document.getElementById('factBox').innerHTML=t.fact;
+  document.getElementById('tryTitle').textContent=t.tryTitle;
+  document.getElementById('trySubtitle').textContent=t.trySubtitle;
+}
+document.getElementById('langToggle').addEventListener('click',()=>{
+  LANG = LANG==='en' ? 'te' : 'en';
+  applyStaticText();
+  if(window.__touchRefresh) window.__touchRefresh();
+  if(window.__tryRefresh) window.__tryRefresh();
+});
+applyStaticText();
+
 (function(){
   const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
   const W=canvas.width, H=canvas.height;
   const captionEl=document.getElementById('caption'), bannerEl=document.getElementById('banner'), progressBar=document.getElementById('progressBar');
   const playBtn=document.getElementById('playBtn'), restartBtn=document.getElementById('restartBtn');
 
-  const SCENES=[
-    {t:0,dur:6,banner:'⚡ STEP 1: A CHARGED GRID',caption:'Underneath the glass is an invisible grid of wires, holding a small, steady electric charge everywhere.'},
-    {t:6,dur:6,banner:'👆 STEP 2: YOUR FINGER CONDUCTS',caption:'Your body is full of water and salts, which conduct electricity — your finger can carry a charge too.'},
-    {t:12,dur:7,banner:'📉 STEP 3: TOUCHING STEALS CHARGE',caption:'The instant your finger touches the glass, it draws off a tiny bit of charge right at that exact spot.'},
-    {t:19,dur:8,banner:'📍 STEP 4: THE CHIP FINDS THE SPOT',caption:'A tiny chip constantly scans the whole grid and instantly calculates exactly where the charge dropped — that\'s your touch point!'},
-  ];
+  const starts=[0,6,12,19];
   const totalDur=27;
-  let simTime=0, playing=false, lastTs=null;
-  function currentScene(t){ for(let i=SCENES.length-1;i>=0;i--) if(t>=SCENES[i].t) return i; return 0; }
+  let simTime=0, playing=false, lastTs=null, captionOverride='initial';
+  function currentScene(t){ for(let i=starts.length-1;i>=0;i--) if(t>=starts[i]) return i; return 0; }
   function label(x,y,text,color){
     ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
     const tw=ctx.measureText(text).width;
@@ -127,32 +219,32 @@
   }
   function drawScene0(local){
     drawGrid();
-    label(W/2,70,'a fine grid of wires under the glass, evenly charged','#ffd23f');
+    label(W/2,70,tr().canvas.gridLabel,'#ffd23f');
   }
   function drawScene1(local){
     drawGrid();
     const fx=W/2, fy=60+Math.sin(local*2)*8;
     ctx.font='60px Segoe UI'; ctx.textAlign='center'; ctx.fillText('👆',fx,fy+50);
-    label(fx,fy+80,'your finger can carry a charge too','#6dffb0');
+    label(fx,fy+80,tr().canvas.fingerLabel,'#6dffb0');
   }
   function drawScene2(local){
     const dropAmt=Math.min(1,local/2);
     drawGrid(W/2,H/2-40,dropAmt);
     ctx.font='60px Segoe UI'; ctx.textAlign='center'; ctx.fillText('👆',W/2,H/2-40+50);
-    label(W/2,H-40,'charge drops right at the touch point','#ff9d9d');
+    label(W/2,H-40,tr().canvas.dropLabel,'#ff9d9d');
   }
   function drawScene3(local){
     drawGrid(W/2,H/2-40,1);
     ctx.font='60px Segoe UI'; ctx.textAlign='center'; ctx.fillText('👆',W/2,H/2-40+50);
     ctx.strokeStyle='#6dffb0'; ctx.lineWidth=2;
     ctx.beginPath(); ctx.arc(W/2,H/2-40,40+Math.sin(local*6)*6,0,Math.PI*2); ctx.stroke();
-    label(W/2,H-40,'chip pinpoints the exact touch location!','#6dffb0');
+    label(W/2,H-40,tr().canvas.pinpointLabel,'#6dffb0');
   }
 
   function render(t){
     ctx.clearRect(0,0,W,H); ctx.fillStyle='#04060f'; ctx.fillRect(0,0,W,H);
-    const idx=currentScene(t), scene=SCENES[idx], local=t-scene.t;
-    bannerEl.textContent=scene.banner; captionEl.innerHTML=scene.caption;
+    const idx=currentScene(t), scene=tr().scenes[idx], local=t-starts[idx];
+    bannerEl.textContent=scene[0]; captionEl.innerHTML=scene[1];
     if(idx===0) drawScene0(local);
     else if(idx===1) drawScene1(local);
     else if(idx===2) drawScene2(local);
@@ -165,15 +257,23 @@
     const dt=Math.min(0.05,(ts-lastTs)/1000); lastTs=ts;
     simTime+=dt;
     if(simTime>=totalDur){ simTime=totalDur; render(simTime); pause();
-      captionEl.innerHTML='🎬 The End! Press <b>Restart</b> to watch again.'; return; }
+      captionOverride='ended'; captionEl.innerHTML=tr().captionEnd; return; }
+    captionOverride=null;
     render(simTime); requestAnimationFrame(step);
   }
-  function play(){ if(playing) return; playing=true; lastTs=null; playBtn.textContent='⏸ Pause'; requestAnimationFrame(step); }
-  function pause(){ playing=false; playBtn.textContent='▶ Play'; }
-  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionEl.innerHTML='Press <b>Play</b> to start!'; }
+  function play(){ if(playing) return; playing=true; lastTs=null; captionOverride=null; playBtn.textContent=tr().pauseBtn; requestAnimationFrame(step); }
+  function pause(){ playing=false; playBtn.textContent=tr().playBtn; }
+  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionOverride='initial'; captionEl.innerHTML=tr().captionInitial; }
   playBtn.addEventListener('click',()=>playing?pause():play());
   restartBtn.addEventListener('click',restart);
   render(0);
+
+  window.__touchRefresh=function(){
+    playBtn.textContent = playing ? tr().pauseBtn : tr().playBtn;
+    render(simTime);
+    if(captionOverride==='initial') captionEl.innerHTML=tr().captionInitial;
+    else if(captionOverride==='ended') captionEl.innerHTML=tr().captionEnd;
+  };
 })();
 
 (function(){
@@ -181,6 +281,12 @@
   const w=cv.width,h=cv.height;
   const resultEl=document.getElementById('tryResult');
   let touch=null, t=0;
+  let lastResult=null;
+  function updateResultText(){
+    const tt=tr();
+    if(lastResult) resultEl.textContent=tt.tryResultTouch(lastResult.x,lastResult.y);
+    else resultEl.textContent=tt.tryResultDefault;
+  }
   function draw(){
     c.clearRect(0,0,w,h); c.fillStyle='#04060f'; c.fillRect(0,0,w,h);
     const step=30;
@@ -207,11 +313,15 @@
     const rect=cv.getBoundingClientRect();
     const cx=(e.clientX||e.touches[0].clientX)-rect.left, cy=(e.clientY||e.touches[0].clientY)-rect.top;
     touch={x:cx*(w/rect.width),y:cy*(h/rect.height)};
-    resultEl.textContent='Touched at ('+Math.round(touch.x)+', '+Math.round(touch.y)+') — the grid\'s charge dips right there!';
+    lastResult={x:Math.round(touch.x),y:Math.round(touch.y)};
+    updateResultText();
     draw();
   }
   cv.addEventListener('click',handleTap);
+  updateResultText();
   draw(); requestAnimationFrame(loop);
+
+  window.__tryRefresh=function(){ updateResultText(); draw(); };
 })();
 </script>
 </body>
