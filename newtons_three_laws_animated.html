@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Newton's Three Laws — Animated for Kids</title>
+<style>
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:#07111f;color:#eef6ff;
+    font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif
+  }
+  .wrap{max-width:1250px;margin:auto;padding:24px}
+  a.back{color:#4d94f2;text-decoration:none;font-weight:700}
+  .hero{text-align:center;padding:8px 10px 20px}
+  h1{margin:0 0 7px;font-size:clamp(32px,5vw,54px)}
+  .subtitle{max-width:850px;margin:auto;color:#b9cbe0;font-size:18px;line-height:1.5}
+  .stage,.law{
+    background:#020914;border:1px solid #213957;border-radius:22px;overflow:hidden;
+    box-shadow:0 18px 60px rgba(0,0,0,.3)
+  }
+  canvas{display:block;width:100%;height:auto}
+  .caption{
+    padding:15px 20px;background:rgba(4,13,25,.9);
+    color:#dbe9f7;text-align:center;font-size:18px;line-height:1.5
+  }
+  .controls{display:flex;gap:10px;flex-wrap:wrap;padding:15px 3px}
+  button{
+    border:1px solid #345273;background:#10243a;color:#f4f8fc;
+    border-radius:12px;padding:10px 15px;font-size:15px;cursor:pointer
+  }
+  button:hover{background:#17324e}
+  button.primary{background:#1c6ee8;border-color:#4d94f2}
+  .laws{display:grid;grid-template-columns:1fr;gap:18px;margin-top:8px}
+  .law{padding:18px;background:#0b1b2d}
+  .law-head{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .badge{
+    background:#173a5d;color:#8fd2ff;border-radius:999px;
+    padding:5px 9px;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.7px
+  }
+  .law h2{margin:0;font-size:25px}
+  .law > p{color:#bfd0df;line-height:1.55;margin:8px 0 14px}
+  .mini{border:1px solid #1e3852;border-radius:15px;overflow:hidden;background:#020914}
+  .formula{
+    margin:12px 0;padding:12px 15px;background:#08192a;border-radius:12px;
+    border-left:4px solid #4ca3ff;font-size:20px
+  }
+  .examples{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .example{background:#102a43;border-radius:12px;padding:12px;color:#dceafa;line-height:1.45}
+  .big-idea{
+    margin-top:18px;padding:20px;text-align:center;border-radius:18px;
+    background:linear-gradient(135deg,#102a48,#0b192b);border:1px solid #315477
+  }
+  .big-idea strong{color:#73c6ff}
+  @media(max-width:800px){
+    .examples{grid-template-columns:1fr}
+  }
+
+  .question{
+    margin:12px 0;
+    padding:14px 16px;
+    border:1px solid #3c5872;
+    border-radius:13px;
+    background:#0d2338;
+    font-size:18px;
+    line-height:1.5
+  }
+  .question span{
+    display:block;
+    margin-top:4px;
+    color:#8fb0ca;
+    font-size:14px
+  }
+  .step{
+    display:inline-block;
+    margin-left:8px;
+    padding:4px 8px;
+    border-radius:8px;
+    background:#173a5d;
+    color:#9fd6ff;
+    font-size:12px;
+    font-weight:800
+  }
+
+
+  .law-statement{
+    margin:12px 0 10px;padding:16px 18px;border-radius:15px;
+    background:linear-gradient(135deg,#122e49,#0c1c2d);
+    border:1px solid #376181
+  }
+  .law-name{font-size:12px;font-weight:900;letter-spacing:1px;color:#79c8ff;margin-bottom:7px}
+  .law-text{font-size:21px;line-height:1.48;color:#f0f7ff}
+  .law-kid{margin-top:9px;padding-top:9px;border-top:1px solid rgba(160,200,235,.16);color:#b9d6ed;font-size:16px;line-height:1.45}
+  .lead-in{color:#d5e4f1!important;font-size:16px!important}
+  .question{border:1px solid #6b5730!important;background:#261d0c!important}
+  .question span{color:#d4be91!important}
+  .formula{border-left-color:#69d18b!important}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="category-physics.html">&larr; Back to Physics in Action</a>
+  <section class="hero">
+    <h1>🚀 Newton's Three Laws of Motion</h1>
+    <p class="subtitle">
+      Why does a football stop? Why does a bicycle speed up when you push harder?
+      And why does a rocket move upward? Let's <b>watch the answers happen</b>.
+    </p>
+  </section>
+
+  <div class="stage">
+    <canvas id="intro" width="1200" height="500"></canvas>
+    <div class="caption" id="introCaption">
+      Let's discover Newton's laws through three questions.
+      Press <b>Start Lesson</b> and watch each answer unfold slowly.
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="primary" id="startLesson">▶ Start Lesson</button>
+    <button id="pauseLesson">⏸ Pause</button>
+    <button id="resetLesson">↻ Reset</button>
+  </div>
+
+  <section class="laws">
+    <article class="law">
+      <div class="law-head">
+        <span class="badge">Law 1</span>
+        <h2>Newton's First Law: Inertia</h2>
+      </div>
+      <div class="law-statement">
+        <div class="law-name">📖 THE LAW</div>
+        <div class="law-text">
+          An object at rest stays at rest, and an object in motion keeps moving
+          in a straight line at the same speed — <b>unless an unbalanced force acts on it.</b>
+        </div>
+        <div class="law-kid">🧠 Kid version: <b>Things don't change their motion by themselves.</b></div>
+      </div>
+      <p class="lead-in">
+        First, let's see what that sentence actually means. Then we'll try it in the real world.
+      </p>
+      <div class="mini"><canvas id="law1" width="1120" height="400"></canvas></div>
+      <div class="question">
+        ❓ <b>NOW THE PUZZLE:</b> “If a moving object keeps moving, why does my toy car stop?”
+        <span>Don't answer yet. Watch what forces are acting on it.</span>
+      </div>
+      <div class="formula">✅ <b>ANSWER:</b> The law is not broken. <b>Friction is an unbalanced force</b> that slows the car. On a nearly frictionless surface, it would keep moving much longer.</div>
+      <div class="examples">
+        <div class="example">🚌 <b>Bus example:</b> When a bus suddenly stops, your body tends to keep moving forward.</div>
+        <div class="example">📚 <b>Tablecloth example:</b> A quick pull can move the cloth while objects tend to stay where they were.</div>
+      </div>
+      <div class="controls">
+        <button id="law1Run" class="primary">▶ Ask & Answer: Law 1</button>
+      </div>
+    </article>
+
+    <article class="law">
+      <div class="law-head">
+        <span class="badge">Law 2</span>
+        <h2>Newton's Second Law: F = m × a</h2>
+      </div>
+      <div class="law-statement">
+        <div class="law-name">📖 THE LAW</div>
+        <div class="law-text"><b>Acceleration depends on force and mass.</b> More force gives more acceleration; more mass makes the same force produce less acceleration.</div>
+        <div class="law-kid">🧠 Kid version: <b>Push harder → speed changes faster. Make it heavier → speed changes slower.</b></div>
+      </div>
+      <p class="lead-in">
+        Now let's turn the formula into something you can actually see.
+      </p>
+      <div class="mini"><canvas id="law2" width="1120" height="420"></canvas></div>
+      <div class="question">
+        ❓ <b>NOW THE PUZZLE:</b> “If I push two things with the same force, why don't they move the same way?”
+        <span>Think about pushing an empty cart and a loaded cart.</span>
+      </div>
+      <div class="formula">✅ <b>ANSWER:</b> Because mass matters. The same force produces <b>more acceleration in the lighter object</b> and less acceleration in the heavier one.</div>
+      <div class="examples">
+        <div class="example">🛒 <b>Shopping cart:</b> An empty cart accelerates more easily than a full cart with the same push.</div>
+        <div class="example">⚽ <b>Football:</b> A gentle kick changes its speed a little; a strong kick changes it much more.</div>
+      </div>
+      <div class="controls">
+        <button id="law2Run" class="primary">▶ Ask & Answer: Law 2</button>
+      </div>
+    </article>
+
+    <article class="law">
+      <div class="law-head">
+        <span class="badge">Law 3</span>
+        <h2>Newton's Third Law: Action & Reaction</h2>
+      </div>
+      <div class="law-statement">
+        <div class="law-name">📖 THE LAW</div>
+        <div class="law-text"><b>Whenever one object pushes another, the second pushes back with an equal force in the opposite direction.</b></div>
+        <div class="law-kid">🧠 Kid version: <b>Every push gets a push back.</b></div>
+      </div>
+      <p class="lead-in">
+        The forces are equal, but they act on <b>different objects</b>. Let's make that visible.
+      </p>
+      <div class="mini"><canvas id="law3" width="1120" height="420"></canvas></div>
+      <div class="question">
+        ❓ <b>NOW THE PUZZLE:</b> “If the forces are equal and opposite, why does the rocket move at all?”
+        <span>This sounds like the two forces should cancel. Do they?</span>
+      </div>
+      <div class="formula">✅ <b>ANSWER:</b> They do not cancel because they act on <b>different objects</b>: the rocket pushes the gas, and the gas pushes the rocket.</div>
+      <div class="examples">
+        <div class="example">🚀 <b>Rocket:</b> Gas is pushed downward; the rocket is pushed upward.</div>
+        <div class="example">🏊 <b>Swimming:</b> You push water backward; the water pushes you forward.</div>
+      </div>
+      <div class="controls">
+        <button id="law3Run" class="primary">▶ Ask & Answer: Law 3</button>
+      </div>
+    </article>
+  </section>
+
+  <div class="big-idea">
+    <div style="font-size:24px;font-weight:800;margin-bottom:8px">🎯 Remember them like this</div>
+    <div style="font-size:19px;line-height:1.55">
+      <strong>1:</strong> Motion does not change by itself.<br>
+      <strong>2:</strong> More force causes more acceleration — but mass matters.<br>
+      <strong>3:</strong> Forces always come in opposite pairs.
+    </div>
+  </div>
+</div>
+
+<script>
+function rr(ctx,x,y,w,h,r){
+  ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill();
+}
+function arrow(ctx,x1,y1,x2,y2,label='',color='#73c6ff'){
+  const a=Math.atan2(y2-y1,x2-x1);
+  ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=5;
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-14*Math.cos(a-.5),y2-14*Math.sin(a-.5));
+  ctx.lineTo(x2-14*Math.cos(a+.5),y2-14*Math.sin(a+.5));
+  ctx.closePath();ctx.fill();
+  if(label){ctx.font='700 15px system-ui';ctx.textAlign='center';ctx.fillText(label,(x1+x2)/2,(y1+y2)/2-10);}
+}
+
+const intro=document.getElementById('intro'), ix=intro.getContext('2d');
+let introRunning=false,introT=0;
+
+function drawIntro(){
+  if(introRunning) introT++;
+
+  ix.clearRect(0,0,1200,500);
+  ix.fillStyle='#020914';
+  ix.fillRect(0,0,1200,500);
+
+  ix.font='800 25px system-ui';
+  ix.textAlign='center';
+  ix.fillStyle='#eaf5ff';
+  ix.fillText('THREE LAWS OF MOTION',600,42);
+
+  const boxes=[190,600,1010];
+  const titles=['LAW 1','LAW 2','LAW 3'];
+
+  boxes.forEach((x,i)=>{
+    ix.fillStyle='#10253c';
+    rr(ix,x-160,75,320,365,20);
+
+    // ---------- STATIC LAW TEXT ----------
+    ix.fillStyle='#9fc1de';
+    ix.font='800 18px system-ui';
+    ix.fillText(titles[i],x,108);
+
+    ix.font='700 15px system-ui';
+    ix.fillStyle='#ffffff';
+
+    if(i===0){
+      ix.fillText('An object stays at rest,',x,145);
+      ix.fillText('or keeps moving,',x,168);
+      ix.fillStyle='#73c6ff';
+      ix.fillText('unless a net force changes it.',x,191);
+    }
+    if(i===1){
+      ix.fillText('Acceleration depends',x,145);
+      ix.fillText('on force and mass.',x,168);
+      ix.fillStyle='#73c6ff';
+      ix.fillText('F = m × a',x,191);
+    }
+    if(i===2){
+      ix.fillText('Every action force has',x,145);
+      ix.fillText('an equal and opposite',x,168);
+      ix.fillStyle='#73c6ff';
+      ix.fillText('reaction force.',x,191);
+    }
+
+    // Divider keeps text and visual areas completely separate.
+    ix.strokeStyle='rgba(160,200,235,.18)';
+    ix.lineWidth=1;
+    ix.beginPath();
+    ix.moveTo(x-125,215);
+    ix.lineTo(x+125,215);
+    ix.stroke();
+
+    // ---------- VISUAL AREA ----------
+    if(i===0){
+      // Simple motion visual — no question and no friction yet.
+      ix.fillStyle='#26394d';
+      ix.fillRect(x-125,335,x+125-(x-125),8);
+
+      const px=x-100+Math.min(190,Math.max(0,introT*.35));
+      ix.fillStyle='#ffd45a';
+      ix.beginPath();
+      ix.arc(px,315,17,0,Math.PI*2);
+      ix.fill();
+
+      arrow(ix,x-70,255,x+55,255,'SAME MOTION','#73c6ff');
+
+      ix.fillStyle='#a9c4da';
+      ix.font='600 13px system-ui';
+      ix.fillText('No net force → motion stays the same',x,382);
+    }
+
+    if(i===1){
+      // Two clearly separated carts in a compact visual area.
+      ix.fillStyle='#26394d';
+      ix.fillRect(x-125,275,250,7);
+      ix.fillRect(x-125,355,250,7);
+
+      const move=Math.min(80,Math.max(0,(introT-10)*.28));
+
+      // Light cart
+      const lx=x-112+move;
+      ix.fillStyle='#2d79b3';
+      rr(ix,lx,245,58,28,7);
+      ix.fillStyle='#fff';
+      ix.font='800 10px system-ui';
+      ix.fillText('LIGHT',lx+29,263);
+
+      // Heavy cart
+      const hx=x-112+move*.42;
+      ix.fillStyle='#69727d';
+      rr(ix,hx,325,78,28,7);
+      ix.fillStyle='#fff';
+      ix.font='800 10px system-ui';
+      ix.fillText('HEAVY',hx+39,343);
+
+      arrow(ix,x-120,225,x-78,225,'SAME FORCE','#ffcf5a');
+
+      ix.fillStyle='#a9c4da';
+      ix.font='600 13px system-ui';
+      ix.fillText('Lighter mass → greater acceleration',x,382);
+    }
+
+    if(i===2){
+      // Static, clean action/reaction visual. No rocket movement in overview.
+      // Rocket
+      const ry=304;
+      ix.fillStyle='#eef5fb';
+      ix.beginPath();
+      ix.moveTo(x,245);
+      ix.lineTo(x-17,285);
+      ix.lineTo(x+17,285);
+      ix.closePath();
+      ix.fill();
+
+      // Exhaust
+      ix.fillStyle='#ff9f43';
+      ix.beginPath();
+      ix.moveTo(x-12,286);
+      ix.lineTo(x,318);
+      ix.lineTo(x+12,286);
+      ix.closePath();
+      ix.fill();
+
+      // Separate arrows with labels outside the rocket.
+      arrow(ix,x-105,275,x-105,330,'GAS DOWN','#ff8b5d');
+      arrow(ix,x+105,325,x+105,255,'ROCKET UP','#73c6ff');
+
+      ix.fillStyle='#a9c4da';
+      ix.font='600 13px system-ui';
+      ix.fillText('Equal forces • opposite directions',x,382);
+    }
+  });
+
+  requestAnimationFrame(drawIntro);
+}
+drawIntro();
+
+document.getElementById('startLesson').onclick=()=>{
+  introRunning=true;
+  introT=0;
+  document.getElementById('introCaption').innerHTML =
+    '<b>First learn the three laws.</b> The detailed sections below will then show a real-world puzzle and explain it.';
+};
+
+document.getElementById('pauseLesson').onclick=()=>{
+  introRunning=false;
+  document.getElementById('introCaption').innerHTML =
+    '<b>Paused:</b> The overview shows the laws first. Explore each law below for the puzzle and answer.';
+};
+
+document.getElementById('resetLesson').onclick=()=>{
+  introRunning=false;
+  introT=0;
+  document.getElementById('introCaption').innerHTML =
+    'First learn the three laws. Then explore the real-world puzzles that make them easier to understand.';
+};
+
+/* LAW 1 */
+(function(){
+  const cv=document.getElementById('law1'),c=cv.getContext('2d');
+  let run=false,t=0;
+  function draw(){
+    if(run)t++;
+    c.clearRect(0,0,1120,400); c.fillStyle='#020914'; c.fillRect(0,0,1120,400);
+
+    c.font='800 20px system-ui'; c.textAlign='center'; c.fillStyle='#eaf5ff';
+    c.fillText('NEWTON’S FIRST LAW — INERTIA',560,30);
+
+    // PHASE 1: Teach the law visually.
+    c.fillStyle='#26394d'; c.fillRect(70,115,980,10);
+    const lawX=145+Math.min(740,t*.55);
+    c.fillStyle='rgba(115,198,255,.13)'; c.fillRect(145,112,740,6);
+    c.fillStyle='#ffd45a'; c.beginPath(); c.arc(lawX,100,24,0,Math.PI*2); c.fill();
+
+    c.font='700 16px system-ui'; c.fillStyle='#dcecff';
+    c.fillText('NO UNBALANCED FORCE',560,70);
+    arrow(c,300,160,510,160,'SAME SPEED • STRAIGHT LINE','#73c6ff');
+
+    if(t<125){
+      c.font='800 18px system-ui'; c.fillStyle='#9ee6b2';
+      c.fillText('LAW: An object keeps its state of motion unless a net force changes it.',560,195);
+      c.font='600 15px system-ui'; c.fillStyle='#a9c4da';
+      c.fillText('Rest stays rest • motion stays motion',560,225);
+    }
+
+    // PHASE 2: Real-world puzzle.
+    c.fillStyle='#26394d'; c.fillRect(70,310,980,12);
+    const carT=Math.max(0,t-125);
+    const carX=110+Math.min(530,carT*1.02);
+    c.fillStyle='#ffd45a'; c.beginPath(); c.arc(carX,292,24,0,Math.PI*2); c.fill();
+
+    if(t>=125 && t<225){
+      c.fillStyle='#dcecff'; c.font='800 17px system-ui';
+      c.fillText('NOW THE PUZZLE: “Why does this toy car stop?”',560,255);
+    } else if(t>=225 && t<335){
+      arrow(c,carX+72,258,carX+10,258,'FRICTION','#ff8b5d');
+      c.fillStyle='#ffb48a'; c.font='700 17px system-ui';
+      c.fillText('Friction acts opposite to the motion.',560,255);
+    } else if(t>=335) {
+      arrow(c,carX+65,258,carX+8,258,'FRICTION','#ff8b5d');
+      c.fillStyle='#9ee6b2'; c.font='800 17px system-ui';
+      c.fillText('ANSWER: The law still works — friction is the unbalanced force.',560,255);
+      c.font='600 15px system-ui'; c.fillStyle='#a9c4da';
+      c.fillText('With almost no friction, the car would keep moving much longer.',560,365);
+    }
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+  document.getElementById('law1Run').onclick=()=>{run=true;t=0;};
+})();
+
+
+/* LAW 2 */
+(function(){
+  const cv=document.getElementById('law2'),c=cv.getContext('2d');
+  let run=false,t=0;
+
+  function cart(x,y,w,label,mass){
+    // Wheels
+    c.fillStyle='#111c29';
+    c.beginPath();c.arc(x+20,y+62,11,0,Math.PI*2);c.fill();
+    c.beginPath();c.arc(x+w-20,y+62,11,0,Math.PI*2);c.fill();
+
+    // Body
+    c.fillStyle=mass===2?'#2d79b3':'#65707d';
+    c.beginPath();c.roundRect(x,y,w,55,10);c.fill();
+
+    // Centered label inside body.
+    c.fillStyle='#f4f8fc';
+    c.font='800 15px system-ui';
+    c.textAlign='center';
+    c.fillText(label,x+w/2,y+33);
+
+    // Mass label below.
+    c.fillStyle='#a9c4da';
+    c.font='600 14px system-ui';
+    c.fillText(`mass = ${mass}`,x+w/2,y+91);
+  }
+
+  function draw(){
+    if(run)t++;
+    c.clearRect(0,0,1120,420);
+    c.fillStyle='#020914';
+    c.fillRect(0,0,1120,420);
+
+    // Safe header area.
+    c.font='800 20px system-ui';
+    c.textAlign='center';
+    c.fillStyle='#eaf5ff';
+    c.fillText('FIRST, SEE THE LAW',560,30);
+
+    c.font='800 22px system-ui';
+    c.fillStyle='#73c6ff';
+    c.fillText('F = m × a',560,62);
+
+    c.font='600 15px system-ui';
+    c.fillStyle='#b7ccdd';
+    c.fillText('More force → more acceleration     |     More mass → less acceleration (same force)',560,90);
+
+    // Ground / lanes.
+    c.fillStyle='#26394d';
+    c.fillRect(70,185,980,8);
+    c.fillRect(70,335,980,8);
+
+    // Two clearly separated lanes.
+    const elapsed=Math.min(180,Math.max(0,t-65));
+    const lightX=125 + elapsed*1.55;
+    const heavyX=125 + elapsed*.62;
+
+    cart(lightX,125,155,'LIGHT CART',2);
+    cart(heavyX,275,185,'HEAVY CART',6);
+
+    // Push arrows live at left and never cross the carts/text.
+    arrow(c,78,152,125,152,'SAME PUSH','#ffcf5a');
+    arrow(c,78,302,125,302,'SAME PUSH','#ffcf5a');
+
+    if(t<65){
+      c.fillStyle='#dcecff';
+      c.font='700 17px system-ui';
+      c.fillText('Both carts are ready.',560,382);
+    } else if(t<165){
+      c.fillStyle='#c9d9e8';
+      c.font='700 17px system-ui';
+      c.fillText('Same force. Watch how their speeds change.',560,382);
+    } else {
+      // Final state: calm, uncluttered, with concise conclusion.
+      c.fillStyle='#9ee6b2';
+      c.font='800 18px system-ui';
+      c.fillText('RESULT: The light cart accelerates more.',560,382);
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+  document.getElementById('law2Run').onclick=()=>{run=true;t=0;};
+})();
+
+/* LAW 3 */
+(function(){
+  const cv=document.getElementById('law3'),c=cv.getContext('2d');
+  let run=false,t=0;
+
+  function draw(){
+    if(run)t++;
+
+    c.clearRect(0,0,1120,420);
+    c.fillStyle='#020914';
+    c.fillRect(0,0,1120,420);
+
+    // Safe header area.
+    c.font='800 20px system-ui';
+    c.textAlign='center';
+    c.fillStyle='#eaf5ff';
+    c.fillText('FIRST, SEE THE LAW',560,30);
+
+    c.font='800 21px system-ui';
+    c.fillStyle='#73c6ff';
+    c.fillText('EVERY ACTION FORCE HAS AN EQUAL AND OPPOSITE REACTION FORCE',560,62);
+
+    c.font='600 15px system-ui';
+    c.fillStyle='#b7ccdd';
+    c.fillText('The forces are equal, but they act on DIFFERENT OBJECTS.',560,90);
+
+    // Slow rocket movement.
+    const rise=run ? Math.min(75,Math.max(0,(t-40)*.20)) : 0;
+    const rocketY=265-rise;
+
+    // Rocket body.
+    c.fillStyle='#edf4fa';
+    c.beginPath();
+    c.moveTo(560,rocketY-58);
+    c.quadraticCurveTo(535,rocketY-18,540,rocketY+25);
+    c.lineTo(580,rocketY+25);
+    c.quadraticCurveTo(585,rocketY-18,560,rocketY-58);
+    c.closePath();
+    c.fill();
+
+    c.fillStyle='#2d75c7';
+    c.beginPath();
+    c.arc(560,rocketY-10,8,0,Math.PI*2);
+    c.fill();
+
+    c.fillStyle='#ff9f43';
+    c.beginPath();
+    c.moveTo(545,rocketY+22);
+    c.lineTo(560,rocketY+66);
+    c.lineTo(575,rocketY+22);
+    c.closePath();
+    c.fill();
+
+    // Gas puffs below.
+    for(let i=0;i<6;i++){
+      const gy=rocketY+70+i*14+((t*0.8+i*8)%8);
+      c.fillStyle=`rgba(255,159,67,${.38-i*.045})`;
+      c.beginPath();
+      c.arc(560,gy,10+i*1.4,0,Math.PI*2);
+      c.fill();
+    }
+
+    // Force arrows are placed far apart, horizontally offset, so they never overlap text/rocket.
+    arrow(c,430,rocketY+10,430,rocketY+95,'ACTION: ROCKET PUSHES GAS DOWN','#ff8b5d');
+    arrow(c,690,rocketY+10,690,rocketY-95,'REACTION: GAS PUSHES ROCKET UP','#73c6ff');
+
+    // Object labels.
+    c.font='800 15px system-ui';
+    c.fillStyle='#f2f7fb';
+    c.fillText('OBJECT A: ROCKET',560,360);
+    c.fillStyle='#ffb47e';
+    c.fillText('OBJECT B: GAS',560,382);
+
+    if(t<80){
+      c.fillStyle='#dcecff';
+      c.font='700 17px system-ui';
+      c.fillText('One object pushes. The other object pushes back.',560,120);
+    } else {
+      c.fillStyle='#9ee6b2';
+      c.font='800 18px system-ui';
+      c.fillText('RESULT: Rocket and gas feel opposite forces.',560,120);
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+  document.getElementById('law3Run').onclick=()=>{run=true;t=0;};
+})();
+
+/* start buttons for independent sections: each animation runs slowly after its button is pressed */
+/* start buttons for independent sections: each animation runs slowly after its button is pressed */
+/* start buttons for independent sections: each animation runs slowly after its button is pressed */
+/* start buttons for independent sections: make sure animation is always visible */
+</script>
+</body>
+</html>
