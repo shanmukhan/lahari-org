@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C. V. Raman — Nobel Laureate in Physics</title>
+<style>
+  :root{--bg:#0b1020;--panel:#121830;--accent:#ffd23f;--accent2:#4fd3ff;--text:#eef2ff;--dim:#9aa4cc;}
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
+  .wrap{max-width:900px;margin:0 auto;}
+  a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  .hero{text-align:center;margin:20px 0;}
+  canvas#portrait{display:block;margin:0 auto;border-radius:50%;background:#04060f;box-shadow:0 10px 40px rgba(0,0,0,.5);}
+  .portrait-note{color:var(--dim);font-size:12px;margin-top:10px;}
+  h1{font-size:clamp(26px,5vw,42px);margin:18px 0 4px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .era{color:var(--accent);font-weight:800;font-size:14px;letter-spacing:.06em;text-transform:uppercase;}
+  .tagline{color:var(--dim);font-size:16px;max-width:600px;margin:8px auto 0;}
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:34px;}
+  .step-card{background:var(--panel);border:1px solid #262f5c;border-radius:14px;padding:18px;}
+  .step-card h3{margin:0 0 8px;font-size:17px;color:var(--accent2);}
+  .step-card p{margin:0;color:var(--dim);font-size:14px;line-height:1.55;}
+  .fact{margin-top:30px;background:linear-gradient(135deg,#1a2140,#0e1330);border:1px solid #2a3568;border-radius:14px;padding:20px 22px;text-align:center;font-size:16px;}
+  .fact b{color:var(--accent2);}
+  .today{margin-top:24px;background:var(--panel);border:1px solid #262f5c;border-radius:14px;padding:20px 22px;}
+  .today h3{margin:0 0 8px;color:var(--accent);font-size:16px;}
+  .today p{margin:0;color:var(--dim);font-size:14px;line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="category-indian-scientists.html">&larr; Back to Indian Scientists</a>
+
+  <div class="hero">
+    <canvas id="portrait" width="240" height="240"></canvas>
+    <p class="portrait-note">🎨 Illustrative portrait — not a photograph</p>
+    <div class="era">1888–1970 · Tiruchirappalli &amp; Bangalore, India</div>
+    <h1>C. V. Raman</h1>
+    <p class="tagline">Discovered that light changes color ever so slightly when it bounces off molecules — a
+      finding that earned India its first Nobel Prize in the sciences.</p>
+  </div>
+
+  <div class="steps">
+    <div class="step-card">
+      <h3>🌊 A question about the sea</h3>
+      <p>On a ship voyage in 1921, Raman wondered why the deep blue Mediterranean Sea was so blue — was it just
+        reflecting the sky, as scientists assumed, or something else? That question led him toward his discovery.</p>
+    </div>
+    <div class="step-card">
+      <h3>🔬 The Raman Effect</h3>
+      <p>In 1928, he showed that when light passes through a substance, a tiny fraction of it scatters at a
+        <b>different wavelength</b> — shifted by the exact vibration pattern of the molecules it bounced off.</p>
+    </div>
+    <div class="step-card">
+      <h3>🏅 Nobel Prize, 1930</h3>
+      <p>He won the Nobel Prize in Physics in 1930 for this discovery — becoming the first Asian and the first
+        person of color to win a Nobel Prize in any science.</p>
+    </div>
+    <div class="step-card">
+      <h3>🔍 Reading molecules by their light</h3>
+      <p>Because each molecule scatters light in its own unique way, the "Raman spectrum" acts like a fingerprint —
+        letting scientists identify exactly what substance they're looking at, without touching it.</p>
+    </div>
+  </div>
+
+  <div class="today">
+    <h3>🧪 A concrete example</h3>
+    <p>Raman spectroscopy is now used to detect counterfeit medicines, identify unknown chemicals at crime scenes,
+      check the authenticity of gemstones, and was even used by NASA's Mars rovers to analyze rock samples millions
+      of miles away — all built on Raman's original 1928 discovery.</p>
+  </div>
+
+  <div class="fact">
+    🤯 <b>Mind-blowing part:</b> Raman made his discovery using astonishingly simple equipment — mostly sunlight, a
+    prism, and some basic lenses and filters he built himself. No giant laboratory, no expensive machines — just
+    careful observation and a good question about why the sea looked blue.
+  </div>
+</div>
+
+<script>
+(function(){
+  const c=document.getElementById('portrait'), ctx=c.getContext('2d');
+  const W=c.width,H=c.height;
+  let t=0;
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    const g=ctx.createRadialGradient(W/2,H/2,10,W/2,H/2,W/2);
+    g.addColorStop(0,'#2a123a'); g.addColorStop(1,'#05070f');
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    // light rays through a prism motif
+    for(let i=0;i<5;i++){
+      const a=-0.5+i*0.25+Math.sin(t)*0.02;
+      const colors=['#ff4d4d','#ffd23f','#6dffb0','#4fd3ff','#a06dff'];
+      ctx.strokeStyle=colors[i]; ctx.globalAlpha=0.5; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(W/2,H/2); ctx.lineTo(W/2+Math.cos(a)*100,H/2+Math.sin(a)*100); ctx.stroke();
+      ctx.globalAlpha=1;
+    }
+    ctx.strokeStyle='rgba(160,109,255,'+(0.25+0.15*Math.sin(t*2))+')'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.arc(W/2,H/2,W/2-6,0,Math.PI*2); ctx.stroke();
+    const cx=W/2, cy=H/2+10;
+    ctx.fillStyle='#1c1c22';
+    ctx.beginPath(); ctx.moveTo(cx-65,H+10); ctx.quadraticCurveTo(cx,cy+42,cx+65,H+10); ctx.lineTo(cx-65,H+10); ctx.fill();
+    ctx.fillStyle='#f2f2f2';
+    ctx.fillRect(cx-16,cy+28,32,26);
+    ctx.fillStyle='#1c1c22';
+    ctx.beginPath(); ctx.moveTo(cx-16,cy+30); ctx.lineTo(cx-6,cy+40); ctx.lineTo(cx-16,cy+50); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(cx+16,cy+30); ctx.lineTo(cx+6,cy+40); ctx.lineTo(cx+16,cy+50); ctx.fill();
+    ctx.fillStyle='#7a5230'; ctx.beginPath(); ctx.arc(cx,cy,48,0,Math.PI*2); ctx.fill();
+    // simple combed hair
+    ctx.fillStyle='#1a1410';
+    ctx.beginPath(); ctx.arc(cx,cy-16,45,Math.PI*1.15,Math.PI*1.85); ctx.fill();
+    ctx.fillStyle='#2a1f14';
+    ctx.beginPath(); ctx.ellipse(cx-16,cy-2,4,6,0,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(cx+16,cy-2,4,6,0,0,Math.PI*2); ctx.fill();
+    const bx=W-40, by=40;
+    ctx.fillStyle='#121830'; ctx.beginPath(); ctx.arc(bx,by,22,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='#a06dff'; ctx.lineWidth=2; ctx.stroke();
+    ctx.font='20px Segoe UI'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('🔬',bx,by+1);
+  }
+  function loop(){ t+=0.02; draw(); requestAnimationFrame(loop); }
+  draw(); requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

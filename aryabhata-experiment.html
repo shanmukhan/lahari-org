@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aryabhata — Astronomer & Mathematician</title>
+<style>
+  :root{--bg:#0b1020;--panel:#121830;--accent:#ffd23f;--accent2:#4fd3ff;--text:#eef2ff;--dim:#9aa4cc;}
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
+  .wrap{max-width:900px;margin:0 auto;}
+  a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  .hero{text-align:center;margin:20px 0;}
+  canvas#portrait{display:block;margin:0 auto;border-radius:50%;background:#04060f;box-shadow:0 10px 40px rgba(0,0,0,.5);}
+  .portrait-note{color:var(--dim);font-size:12px;margin-top:10px;}
+  h1{font-size:clamp(26px,5vw,42px);margin:18px 0 4px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .era{color:var(--accent);font-weight:800;font-size:14px;letter-spacing:.06em;text-transform:uppercase;}
+  .tagline{color:var(--dim);font-size:16px;max-width:600px;margin:8px auto 0;}
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:34px;}
+  .step-card{background:var(--panel);border:1px solid #262f5c;border-radius:14px;padding:18px;}
+  .step-card h3{margin:0 0 8px;font-size:17px;color:var(--accent2);}
+  .step-card p{margin:0;color:var(--dim);font-size:14px;line-height:1.55;}
+  .fact{margin-top:30px;background:linear-gradient(135deg,#1a2140,#0e1330);border:1px solid #2a3568;border-radius:14px;padding:20px 22px;text-align:center;font-size:16px;}
+  .fact b{color:var(--accent2);}
+  .today{margin-top:24px;background:var(--panel);border:1px solid #262f5c;border-radius:14px;padding:20px 22px;}
+  .today h3{margin:0 0 8px;color:var(--accent);font-size:16px;}
+  .today p{margin:0;color:var(--dim);font-size:14px;line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="category-indian-scientists.html">&larr; Back to Indian Scientists</a>
+
+  <div class="hero">
+    <canvas id="portrait" width="240" height="240"></canvas>
+    <p class="portrait-note">🎨 Illustrative portrait — no photograph exists from this era</p>
+    <div class="era">476–550 CE · Kusumapura (near modern Patna), India</div>
+    <h1>Aryabhata</h1>
+    <p class="tagline">A mathematician-astronomer who figured out Earth spins on its axis, calculated pi with
+      startling precision, and explained eclipses correctly — over a thousand years before telescopes existed.</p>
+  </div>
+
+  <div class="steps">
+    <div class="step-card">
+      <h3>📘 His book, the Aryabhatiya</h3>
+      <p>At just 23 years old, he wrote the <b>Aryabhatiya</b> — a compact text covering mathematics and astronomy,
+        written so densely in verse that scholars are still unpacking all of its methods today.</p>
+    </div>
+    <div class="step-card">
+      <h3>🌍 Earth actually spins</h3>
+      <p>While most of the ancient world believed the sky rotated around a still Earth, Aryabhata proposed that
+        Earth itself rotates on its axis — correctly explaining why the stars appear to move across the night sky.</p>
+    </div>
+    <div class="step-card">
+      <h3>🥧 A remarkably precise pi</h3>
+      <p>He calculated the value of pi as approximately <b>3.1416</b> — accurate to four decimal places — and even
+        noted that it was an approximation, not an exact value, showing real mathematical insight.</p>
+    </div>
+    <div class="step-card">
+      <h3>🌘 Explaining eclipses correctly</h3>
+      <p>Instead of blaming eclipses on mythical creatures swallowing the Sun or Moon, he correctly explained them
+        as the shadows of Earth and the Moon falling on each other — real astronomy, not folklore.</p>
+    </div>
+  </div>
+
+  <div class="today">
+    <h3>🛰️ A concrete example</h3>
+    <p>India's first satellite, launched in 1975, was named <b>"Aryabhata"</b> in his honor — a fitting tribute,
+      since satellite orbits are calculated using the same kind of precise mathematics and astronomy he pioneered.</p>
+  </div>
+
+  <div class="fact">
+    🤯 <b>Mind-blowing part:</b> Aryabhata also worked with place-value notation and the concept behind zero as a
+    placeholder — ideas that, passed through Indian and then Arabic mathematics, eventually became the number
+    system the entire world uses today.
+  </div>
+</div>
+
+<script>
+(function(){
+  const c=document.getElementById('portrait'), ctx=c.getContext('2d');
+  const W=c.width,H=c.height;
+  let t=0;
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    const g=ctx.createRadialGradient(W/2,H/2,10,W/2,H/2,W/2);
+    g.addColorStop(0,'#0c1a3a'); g.addColorStop(1,'#05070f');
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    // stars
+    for(let i=0;i<20;i++){
+      const a=i*2.9, r=90+((i*13)%20);
+      const x=W/2+Math.cos(a+t*0.1)*r, y=H/2+Math.sin(a+t*0.1)*r;
+      ctx.fillStyle='rgba(255,255,255,'+(0.3+0.4*Math.sin(t*3+i))+')';
+      ctx.beginPath(); ctx.arc(x,y,1.5,0,Math.PI*2); ctx.fill();
+    }
+    ctx.strokeStyle='rgba(79,211,255,'+(0.25+0.15*Math.sin(t*2))+')'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.arc(W/2,H/2,W/2-6,0,Math.PI*2); ctx.stroke();
+    const cx=W/2, cy=H/2+10;
+    ctx.fillStyle='#d8c39a';
+    ctx.beginPath(); ctx.moveTo(cx-70,H+10); ctx.quadraticCurveTo(cx,cy+40,cx+70,H+10); ctx.lineTo(cx-70,H+10); ctx.fill();
+    ctx.fillStyle='#3f7fe0';
+    ctx.beginPath(); ctx.moveTo(cx+70,H+10); ctx.quadraticCurveTo(cx+20,cy+45,cx,cy+70); ctx.lineTo(cx+70,H+10); ctx.fill();
+    ctx.fillStyle='#c68a5a'; ctx.beginPath(); ctx.arc(cx,cy,48,0,Math.PI*2); ctx.fill();
+    // headwear
+    ctx.fillStyle='#e0b23f';
+    ctx.beginPath(); ctx.ellipse(cx,cy-38,42,22,0,Math.PI,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#3a2c1e';
+    ctx.beginPath(); ctx.ellipse(cx,cy+38,28,24,0,0,Math.PI); ctx.fill();
+    ctx.fillStyle='#2a1f14';
+    ctx.beginPath(); ctx.ellipse(cx-16,cy-4,4,6,0,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(cx+16,cy-4,4,6,0,0,Math.PI*2); ctx.fill();
+    const bx=W-40, by=40;
+    ctx.fillStyle='#121830'; ctx.beginPath(); ctx.arc(bx,by,22,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='#4fd3ff'; ctx.lineWidth=2; ctx.stroke();
+    ctx.font='20px Segoe UI'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('🌌',bx,by+1);
+  }
+  function loop(){ t+=0.02; draw(); requestAnimationFrame(loop); }
+  draw(); requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

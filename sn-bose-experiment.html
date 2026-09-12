@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Satyendra Nath Bose — Namesake of the Boson</title>
+<style>
+  :root{--bg:#0b1020;--panel:#121830;--accent:#ffd23f;--accent2:#4fd3ff;--text:#eef2ff;--dim:#9aa4cc;}
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
+  .wrap{max-width:900px;margin:0 auto;}
+  a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  .hero{text-align:center;margin:20px 0;}
+  canvas#portrait{display:block;margin:0 auto;border-radius:50%;background:#04060f;box-shadow:0 10px 40px rgba(0,0,0,.5);}
+  .portrait-note{color:var(--dim);font-size:12px;margin-top:10px;}
+  h1{font-size:clamp(26px,5vw,42px);margin:18px 0 4px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .era{color:var(--accent);font-weight:800;font-size:14px;letter-spacing:.06em;text-transform:uppercase;}
+  .tagline{color:var(--dim);font-size:16px;max-width:600px;margin:8px auto 0;}
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:34px;}
+  .step-card{background:var(--panel);border:1px solid #262f5c;border-radius:14px;padding:18px;}
+  .step-card h3{margin:0 0 8px;font-size:17px;color:var(--accent2);}
+  .step-card p{margin:0;color:var(--dim);font-size:14px;line-height:1.55;}
+  .fact{margin-top:30px;background:linear-gradient(135deg,#1a2140,#0e1330);border:1px solid #2a3568;border-radius:14px;padding:20px 22px;text-align:center;font-size:16px;}
+  .fact b{color:var(--accent2);}
+  .today{margin-top:24px;background:var(--panel);border:1px solid #262f5c;border-radius:14px;padding:20px 22px;}
+  .today h3{margin:0 0 8px;color:var(--accent);font-size:16px;}
+  .today p{margin:0;color:var(--dim);font-size:14px;line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="category-indian-scientists.html">&larr; Back to Indian Scientists</a>
+
+  <div class="hero">
+    <canvas id="portrait" width="240" height="240"></canvas>
+    <p class="portrait-note">🎨 Illustrative portrait — not a photograph</p>
+    <div class="era">1894–1974 · Kolkata, India</div>
+    <h1>Satyendra Nath Bose</h1>
+    <p class="tagline">A physicist whose one bold letter to Einstein reshaped how we understand particles —
+      an entire category of particles, "bosons," now carries his name.</p>
+  </div>
+
+  <div class="steps">
+    <div class="step-card">
+      <h3>✉️ A paper Einstein translated himself</h3>
+      <p>In 1924, Bose sent Einstein a short paper with a new way of counting how light particles (photons) behave.
+        Einstein was so impressed he personally translated it into German and had it published.</p>
+    </div>
+    <div class="step-card">
+      <h3>🎲 A new kind of counting</h3>
+      <p>Bose realized that certain particles are so perfectly identical that swapping any two of them changes
+        NOTHING — a subtle idea that needed a whole new kind of statistics to describe correctly.</p>
+    </div>
+    <div class="step-card">
+      <h3>⚛️ Bose-Einstein statistics</h3>
+      <p>Bose and Einstein together built out this idea into what's now called <b>Bose-Einstein statistics</b> —
+        the mathematical rules that describe how particles like photons behave in large groups.</p>
+    </div>
+    <div class="step-card">
+      <h3>🏷️ Particles named after him</h3>
+      <p>Physicists later named this whole category of particles "bosons" in his honor — including photons,
+        gluons, and the famous Higgs boson, discovered at the Large Hadron Collider in 2012.</p>
+    </div>
+  </div>
+
+  <div class="today">
+    <h3>🥶 A concrete example</h3>
+    <p>Cool a group of bosonic atoms down to almost absolute zero, and they can merge into a single strange state
+      of matter called a <b>Bose-Einstein condensate</b> — first created in a lab in 1995, confirming an idea Bose
+      and Einstein had predicted seven decades earlier.</p>
+  </div>
+
+  <div class="fact">
+    🤯 <b>Mind-blowing part:</b> The famous <b>Higgs boson</b> — the particle that gives other particles their mass,
+    discovered in 2012 after a decades-long search — carries "boson" as part of its very name, a permanent tribute
+    to a physicist most people have never heard of.
+  </div>
+</div>
+
+<script>
+(function(){
+  const c=document.getElementById('portrait'), ctx=c.getContext('2d');
+  const W=c.width,H=c.height;
+  let t=0;
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    const g=ctx.createRadialGradient(W/2,H/2,10,W/2,H/2,W/2);
+    g.addColorStop(0,'#0a2a2a'); g.addColorStop(1,'#05070f');
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    // orbiting particles
+    for(let i=0;i<6;i++){
+      const a=i*(Math.PI*2/6)+t*0.6;
+      const x=W/2+Math.cos(a)*100, y=W/2+Math.sin(a)*100*0.5;
+      ctx.fillStyle='rgba(79,211,255,.6)'; ctx.beginPath(); ctx.arc(x,y,4,0,Math.PI*2); ctx.fill();
+    }
+    ctx.strokeStyle='rgba(79,211,255,'+(0.25+0.15*Math.sin(t*2))+')'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.arc(W/2,H/2,W/2-6,0,Math.PI*2); ctx.stroke();
+    const cx=W/2, cy=H/2+10;
+    ctx.fillStyle='#1c2450';
+    ctx.beginPath(); ctx.moveTo(cx-65,H+10); ctx.quadraticCurveTo(cx,cy+42,cx+65,H+10); ctx.lineTo(cx-65,H+10); ctx.fill();
+    ctx.fillStyle='#eef2ff';
+    ctx.fillRect(cx-14,cy+28,28,26);
+    ctx.strokeStyle='#1c2450'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(cx-14,cy+30); ctx.lineTo(cx,cy+42); ctx.lineTo(cx+14,cy+30); ctx.stroke();
+    ctx.fillStyle='#8a6248'; ctx.beginPath(); ctx.arc(cx,cy,48,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#1a1410';
+    ctx.beginPath(); ctx.arc(cx,cy-18,45,Math.PI*1.1,Math.PI*1.9); ctx.fill();
+    ctx.fillStyle='#2a1f14';
+    ctx.beginPath(); ctx.ellipse(cx-16,cy-2,4,6,0,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(cx+16,cy-2,4,6,0,0,Math.PI*2); ctx.fill();
+    // round glasses
+    ctx.strokeStyle='#0b1020'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(cx-16,cy-2,11,0,Math.PI*2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx+16,cy-2,11,0,Math.PI*2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx-5,cy-2); ctx.lineTo(cx+5,cy-2); ctx.stroke();
+    const bx=W-40, by=40;
+    ctx.fillStyle='#121830'; ctx.beginPath(); ctx.arc(bx,by,22,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='#4fd3ff'; ctx.lineWidth=2; ctx.stroke();
+    ctx.font='20px Segoe UI'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('⚛️',bx,by+1);
+  }
+  function loop(){ t+=0.02; draw(); requestAnimationFrame(loop); }
+  draw(); requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

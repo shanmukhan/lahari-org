@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Srinivasa Ramanujan — Self-Taught Genius</title>
+<style>
+  :root{--bg:#0b1020;--panel:#121830;--accent:#ffd23f;--accent2:#4fd3ff;--text:#eef2ff;--dim:#9aa4cc;}
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
+  .wrap{max-width:900px;margin:0 auto;}
+  a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  .hero{text-align:center;margin:20px 0;}
+  canvas#portrait{display:block;margin:0 auto;border-radius:50%;background:#04060f;box-shadow:0 10px 40px rgba(0,0,0,.5);}
+  .portrait-note{color:var(--dim);font-size:12px;margin-top:10px;}
+  h1{font-size:clamp(26px,5vw,42px);margin:18px 0 4px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .era{color:var(--accent);font-weight:800;font-size:14px;letter-spacing:.06em;text-transform:uppercase;}
+  .tagline{color:var(--dim);font-size:16px;max-width:600px;margin:8px auto 0;}
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:34px;}
+  .step-card{background:var(--panel);border:1px solid #262f5c;border-radius:14px;padding:18px;}
+  .step-card h3{margin:0 0 8px;font-size:17px;color:var(--accent2);}
+  .step-card p{margin:0;color:var(--dim);font-size:14px;line-height:1.55;}
+  .fact{margin-top:30px;background:linear-gradient(135deg,#1a2140,#0e1330);border:1px solid #2a3568;border-radius:14px;padding:20px 22px;text-align:center;font-size:16px;}
+  .fact b{color:var(--accent2);}
+  .today{margin-top:24px;background:var(--panel);border:1px solid #262f5c;border-radius:14px;padding:20px 22px;}
+  .today h3{margin:0 0 8px;color:var(--accent);font-size:16px;}
+  .today p{margin:0;color:var(--dim);font-size:14px;line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="category-indian-scientists.html">&larr; Back to Indian Scientists</a>
+
+  <div class="hero">
+    <canvas id="portrait" width="240" height="240"></canvas>
+    <p class="portrait-note">🎨 Illustrative portrait, styled after his era — not a photograph</p>
+    <div class="era">1887–1920 · Erode, India &amp; Cambridge, England</div>
+    <h1>Srinivasa Ramanujan</h1>
+    <p class="tagline">A largely self-taught mathematician who filled notebooks with original formulas — many of which
+      mathematicians and physicists are still finding new uses for, over a century later.</p>
+  </div>
+
+  <div class="steps">
+    <div class="step-card">
+      <h3>📓 Teaching himself from one book</h3>
+      <p>With almost no formal training, Ramanujan taught himself advanced mathematics from a single textbook of
+        results, then went far beyond it — rediscovering known theorems and inventing entirely new ones on his own.</p>
+    </div>
+    <div class="step-card">
+      <h3>✉️ A letter that changed everything</h3>
+      <p>In 1913, he mailed pages of his original formulas to the Cambridge mathematician G. H. Hardy, who
+        recognized their brilliance instantly and invited him to England to collaborate.</p>
+    </div>
+    <div class="step-card">
+      <h3>➗ Thousands of original results</h3>
+      <p>He produced nearly <b>3,900 results</b> — identities, infinite series, and continued fractions — many
+        without formal proofs, simply because he seemed to sense they were true.</p>
+    </div>
+    <div class="step-card">
+      <h3>📒 The "Lost Notebook"</h3>
+      <p>A notebook of his found decades after his death (called the "Lost Notebook") is still being studied by
+        mathematicians today, revealing formulas connected to modern physics and string theory.</p>
+    </div>
+  </div>
+
+  <div class="today">
+    <h3>🧮 A concrete example</h3>
+    <p>Ramanujan's formulas for calculating pi converge on the correct answer astonishingly fast — modern computer
+      programs that calculate pi to trillions of digits often use techniques directly built on his 1914 series.</p>
+  </div>
+
+  <div class="fact">
+    🤯 <b>Mind-blowing part:</b> Ramanujan once described a taxicab numbered <b>1729</b> as "very interesting" —
+    it's the smallest number expressible as the sum of two cubes in two different ways
+    (1³ + 12³ and 9³ + 10³). Mathematicians now call numbers like it "taxicab numbers" in his honor.
+  </div>
+</div>
+
+<script>
+(function(){
+  const c=document.getElementById('portrait'), ctx=c.getContext('2d');
+  const W=c.width,H=c.height;
+  let t=0;
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    const g=ctx.createRadialGradient(W/2,H/2,10,W/2,H/2,W/2);
+    g.addColorStop(0,'#0e2a24'); g.addColorStop(1,'#05070f');
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    // floating equation symbols
+    const syms=['∑','∞','π','1/x'];
+    syms.forEach((s,i)=>{
+      const a=i*(Math.PI*2/syms.length)+t*0.3;
+      const x=W/2+Math.cos(a)*95, y=H/2+Math.sin(a)*95;
+      ctx.fillStyle='rgba(109,255,176,.5)'; ctx.font='14px Segoe UI'; ctx.textAlign='center';
+      ctx.fillText(s,x,y);
+    });
+    ctx.strokeStyle='rgba(109,255,176,'+(0.25+0.15*Math.sin(t*2))+')'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.arc(W/2,H/2,W/2-6,0,Math.PI*2); ctx.stroke();
+    const cx=W/2, cy=H/2+10;
+    ctx.fillStyle='#1c2450';
+    ctx.beginPath(); ctx.moveTo(cx-65,H+10); ctx.quadraticCurveTo(cx,cy+42,cx+65,H+10); ctx.lineTo(cx-65,H+10); ctx.fill();
+    ctx.fillStyle='#eef2ff';
+    ctx.beginPath(); ctx.moveTo(cx-14,cy+30); ctx.lineTo(cx+14,cy+30); ctx.lineTo(cx+10,cy+55); ctx.lineTo(cx-10,cy+55); ctx.closePath(); ctx.fill();
+    ctx.fillStyle='#8a6248'; ctx.beginPath(); ctx.arc(cx,cy,48,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#1a1410';
+    ctx.beginPath(); ctx.arc(cx,cy-18,45,Math.PI*1.1,Math.PI*1.9); ctx.fill();
+    ctx.fillStyle='#2a1f14';
+    ctx.beginPath(); ctx.ellipse(cx-16,cy-2,4,6,0,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(cx+16,cy-2,4,6,0,0,Math.PI*2); ctx.fill();
+    const bx=W-40, by=40;
+    ctx.fillStyle='#121830'; ctx.beginPath(); ctx.arc(bx,by,22,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='#6dffb0'; ctx.lineWidth=2; ctx.stroke();
+    ctx.font='20px Segoe UI'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('➗',bx,by+1);
+  }
+  function loop(){ t+=0.02; draw(); requestAnimationFrame(loop); }
+  draw(); requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
