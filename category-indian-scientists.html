@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="description" content="Life Science — biology and the living world. More experiments coming soon." />
-<title>Life Science — Science Lab</title>
+<meta name="description" content="Indian Scientists — the people and discoveries that shaped world science, from ancient surgery to modern physics." />
+<title>Indian Scientists — Science Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -48,6 +48,7 @@
   h1 { font-family: "Space Grotesk", Inter, sans-serif; font-size: clamp(1.5rem, 3.6vw, 2.1rem);
     margin: 0 0 6px; letter-spacing: -.03em; }
   header.hero p { color: var(--muted); max-width: 620px; margin: 0 auto; font-size: .95rem; }
+  .note { text-align: center; color: var(--muted); font-size: .78rem; margin: 6px 0 0; }
   .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; padding: 16px 0 60px; }
   .card {
     display: block; padding: 22px; border-radius: 20px; background: var(--surface);
@@ -56,7 +57,8 @@
   .card:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: 0 16px 34px -14px rgba(52,211,153,.35); }
   .card .icon { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 12px;
     background: rgba(255,255,255,.06); font-size: 1.5rem; margin-bottom: 14px; }
-  .card h3 { margin: 0 0 6px; font-size: 1.08rem; color: var(--text); }
+  .card h3 { margin: 0 0 4px; font-size: 1.08rem; color: var(--text); }
+  .card .era { display: block; color: var(--accent-3); font-size: .74rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; letter-spacing: .04em; }
   .card p { margin: 0; color: var(--muted); font-size: .88rem; line-height: 1.5; }
   .tag { display: inline-block; margin-top: 12px; font-size: .74rem; color: var(--accent);
     font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
@@ -81,13 +83,14 @@
 
 <header class="hero">
   <div class="container">
-    <h1>🧬 Life Science</h1>
-    <p>Biology and the living world.</p>
+    <h1>🇮🇳 Indian Scientists</h1>
+    <p>From ancient surgery to the mathematics behind particle physics — the people and discoveries that shaped world science.</p>
   </div>
 </header>
 
 <div class="container">
   <div class="grid" id="grid"></div>
+  <p class="note">🎨 Portraits are illustrative stylized artwork, not photographs — especially for ancient figures, no photographic record exists.</p>
 </div>
 
 <footer>
@@ -98,12 +101,12 @@
 document.getElementById('year').textContent = new Date().getFullYear();
 
 const TOPICS = [
-  {href:'photosynthesis-experiment.html', icon:'🌱', title:'How Photosynthesis Works', desc:'Plants build their own food out of sunlight, air, and water.'},
-  {href:'vaccine-experiment.html', icon:'💉', title:'How Vaccines Work', desc:'A safe preview of a germ, so your immune system is ready for the real thing.'},
-  {href:'dna-experiment.html', icon:'🧬', title:'What Is DNA?', desc:'The twisted ladder of instructions packed inside nearly every cell in your body.'},
-  {href:'cell-division-experiment.html', icon:'🔬', title:'Cell Division: Mitosis & Meiosis', desc:'How one cell splits into identical copies, or into sperm/egg cells with half the DNA.'},
-  {href:'human-eye-experiment.html', icon:'👁️', title:'How Your Eye Works', desc:'A built-in camera — pupil, lens, retina, and a brain that flips the image right-side up.'},
-  {href:'dna-replication-experiment.html', icon:'🧬', title:'How DNA Copies Itself', desc:'The unzip-and-rebuild process every cell performs before it divides.'},
+  {href:'sushruta-experiment.html', icon:'🔪', era:'~600 BCE', title:'Sushruta', desc:'The "Father of Surgery" — described over 300 procedures, pioneered plastic and cataract surgery.'},
+  {href:'aryabhata-experiment.html', icon:'🌌', era:'476–550 CE', title:'Aryabhata', desc:'Explained Earth\'s rotation, calculated pi, and worked with place-value and zero centuries early.'},
+  {href:'ramanujan-experiment.html', icon:'➗', era:'1887–1920', title:'Srinivasa Ramanujan', desc:'A self-taught genius whose notebooks of formulas are still fueling discoveries today.'},
+  {href:'cv-raman-experiment.html', icon:'🔬', era:'1888–1970', title:'C. V. Raman', desc:'Discovered how scattered light reveals molecular structure — India\'s first Nobel Prize in science.'},
+  {href:'sn-bose-experiment.html', icon:'⚛️', era:'1894–1974', title:'Satyendra Nath Bose', desc:'Co-created the statistics behind bosons — particles like the Higgs boson are named after him.'},
+  {href:'homi-bhabha-experiment.html', icon:'☢️', era:'1909–1966', title:'Homi J. Bhabha', desc:'Founded India\'s nuclear research institutions and led its atomic energy program.'},
 ];
 
 const grid = document.getElementById('grid');
@@ -111,7 +114,7 @@ TOPICS.forEach(t => {
   const a = document.createElement('a');
   a.className = 'card';
   a.href = t.href;
-  a.innerHTML = `<div class="icon">${t.icon}</div><h3>${t.title}</h3><p>${t.desc}</p><span class="tag">Open experiment →</span>`;
+  a.innerHTML = `<div class="icon">${t.icon}</div><span class="era">${t.era}</span><h3>${t.title}</h3><p>${t.desc}</p><span class="tag">Read their story →</span>`;
   grid.appendChild(a);
 });
 </script>

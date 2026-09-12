@@ -107,6 +107,16 @@
     ctx.stroke();
     label((rx0+rx1)/2,ry-30,'resistor: '+R+'Ω','#ff9d5a');
 
+    // y-offset of the zigzag at a given x, matching the resistor drawn above
+    function resistorOffset(x){
+      if(x<rx0 || x>rx1) return 0;
+      const segLen=(rx1-rx0)/teeth;
+      const i=(x-rx0)/segLen;
+      const i0=Math.floor(i), i1=Math.min(teeth,i0+1), frac=i-i0;
+      const yAt=k=>(k%2===0?0:(k%4===1?-15:15));
+      return yAt(i0)+(yAt(i1)-yAt(i0))*frac;
+    }
+
     // current dots flow speed proportional to I
     const speed=Math.min(4,I)*40;
     const perim=2*(x2-x1)+2*(y2-y1);
@@ -115,7 +125,7 @@
       const d=((t*speed)+i*(perim/n))%perim;
       let ex,ey;
       const segTop=x2-x1, segSide=y2-y1;
-      if(d<segTop){ ex=x1+d; ey=y1; }
+      if(d<segTop){ ex=x1+d; ey=y1+resistorOffset(ex); }
       else if(d<segTop+segSide){ ex=x2; ey=y1+(d-segTop); }
       else if(d<segTop*2+segSide){ ex=x2-(d-segTop-segSide); ey=y2; }
       else { ex=x1; ey=y2-(d-segTop*2-segSide); }
