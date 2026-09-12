@@ -44,6 +44,11 @@
   .nav-cta { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px;
     border-radius: 999px; border: 1px solid var(--line-strong); color: var(--text) !important;
     font-size: .82rem; font-weight: 600; }
+  .lang-toggle { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px;
+    border-radius: 999px; border: 1px solid var(--line-strong); background: transparent;
+    color: var(--text); font-size: .82rem; font-weight: 600; font-family: inherit;
+    cursor: pointer; transition: border-color .2s ease, background .2s ease; }
+  .lang-toggle:hover { border-color: var(--accent); background: rgba(52,211,153,.10); }
   header.hero { padding: 22px 0 10px; text-align: center; }
   h1 { font-family: "Space Grotesk", Inter, sans-serif; font-size: clamp(1.5rem, 3.6vw, 2.1rem);
     margin: 0 0 6px; letter-spacing: -.03em; }
@@ -72,17 +77,18 @@
   <div class="container nav-inner">
     <a class="brand" href="index.html"><span class="brand-mark"></span>Shanmukhan</a>
     <div class="nav-links">
-      <a href="index.html">&larr; Science Lab</a>
-      <a href="play.html">Play</a>
-      <a class="nav-cta" href="https://shanmukhan.com/" target="_blank" rel="noopener">See my products →</a>
+      <a href="index.html" id="navHome">&larr; Science Lab</a>
+      <a href="play.html" id="navPlay">Play</a>
+      <a class="nav-cta" href="https://shanmukhan.com/" target="_blank" rel="noopener" id="navCta">See my products →</a>
+      <button class="lang-toggle" id="langToggle">తెలుగు</button>
     </div>
   </div>
 </nav>
 
 <header class="hero">
   <div class="container">
-    <h1>🌌 Space & Universe</h1>
-    <p>Gravity, eclipses, day and night, zooming out to the galaxy, and the story of the Big Bang.</p>
+    <h1 id="heroTitle">🌌 Space & Universe</h1>
+    <p id="heroDesc">Gravity, eclipses, day and night, zooming out to the galaxy, and the story of the Big Bang.</p>
   </div>
 </header>
 
@@ -91,31 +97,98 @@
 </div>
 
 <footer>
-  <div class="container">© <span id="year"></span> Shanmukhan · Hosted at home on a Raspberry Pi · <a href="index.html">Back to Science Lab</a></div>
+  <div class="container">© <span id="year"></span> <span id="footerText">Shanmukhan · Hosted at home on a Raspberry Pi · </span><a href="index.html" id="footerBackLink">Back to Science Lab</a></div>
 </footer>
 
 <script>
 document.getElementById('year').textContent = new Date().getFullYear();
 
+let LANG = 'en';
+
+const T = {
+  en: {
+    navHome: '← Science Lab',
+    navPlay: 'Play',
+    navCta: 'See my products →',
+    heroTitle: '🌌 Space & Universe',
+    heroDesc: 'Gravity, eclipses, day and night, zooming out to the galaxy, and the story of the Big Bang.',
+    footerText: 'Shanmukhan · Hosted at home on a Raspberry Pi · ',
+    footerBackLink: 'Back to Science Lab',
+    openExperiment: 'Open experiment →',
+  },
+  te: {
+    navHome: '← సైన్స్ ల్యాబ్',
+    navPlay: 'ఆటలు',
+    navCta: 'నా ఉత్పత్తులు చూడండి →',
+    heroTitle: '🌌 అంతరిక్షం & విశ్వం',
+    heroDesc: 'గురుత్వాకర్షణ, గ్రహణాలు, పగలు-రాత్రి, గెలాక్సీ వరకు జూమ్ అవుట్ చేయడం, మరియు బిగ్ బ్యాంగ్ కథ.',
+    footerText: 'శన్ముఖన్ · ఇంటి వద్ద Raspberry Pi పై హోస్ట్ చేయబడింది · ',
+    footerBackLink: 'సైన్స్ ల్యాబ్‌కు తిరిగి వెళ్ళండి',
+    openExperiment: 'ప్రయోగం తెరవండి →',
+  }
+};
+
+function tr() { return T[LANG]; }
+
 const TOPICS = [
-  {href:'gravity-experiment.html', icon:'🪐', title:'How Gravity Works', desc:'Why things fall — and why you would weigh so much less on the Moon.'},
-  {href:'eclipse-experiment.html', icon:'🌘', title:'Solar & Lunar Eclipses', desc:'Why the Sun and Moon sometimes disappear, and what lines up to cause it.'},
-  {href:'day-night-experiment.html', icon:'🌗', title:'Day, Night & Earth\'s Spin', desc:'How Earth\'s spin makes day and night, and its orbit makes a year.'},
-  {href:'cosmic-zoom-experiment.html', icon:'🔭', title:'Zooming to the Galaxy', desc:'Zoom out step by step from Earth\'s surface to the observable universe.'},
-  {href:'big-bang-experiment.html', icon:'💥', title:'The Big Bang Story', desc:'13.8 billion years of history, from a single point to galaxies full of stars.'},
-  {href:'black-hole-experiment.html', icon:'🕳️', title:'What Is a Black Hole?', desc:'Where gravity is so strong not even light can escape — how one forms.'},
-  {href:'tides-experiment.html', icon:'🌊', title:'What Causes Tides', desc:'The Moon\'s gravity tugs on Earth\'s oceans — why beaches flood and drain daily.'},
-  {href:'seasons-experiment.html', icon:'🍂', title:'Why We Have Seasons', desc:'It\'s not distance from the Sun — it\'s Earth\'s 23.5° tilt.'},
+  {href:'gravity-experiment.html', icon:'🪐',
+    title:{en:'How Gravity Works', te:'గురుత్వాకర్షణ ఎలా పనిచేస్తుంది'},
+    desc:{en:'Why things fall — and why you would weigh so much less on the Moon.', te:'వస్తువులు ఎందుకు కిందపడతాయి — చంద్రుని మీద మీ బరువు ఎందుకు చాలా తక్కువగా ఉంటుంది.'}},
+  {href:'eclipse-experiment.html', icon:'🌘',
+    title:{en:'Solar & Lunar Eclipses', te:'సూర్య & చంద్ర గ్రహణాలు'},
+    desc:{en:'Why the Sun and Moon sometimes disappear, and what lines up to cause it.', te:'సూర్యుడు, చంద్రుడు కొన్నిసార్లు ఎందుకు మాయమవుతారు, దీనికి కారణమయ్యే అమరిక ఏమిటి.'}},
+  {href:'day-night-experiment.html', icon:'🌗',
+    title:{en:"Day, Night & Earth's Spin", te:'పగలు, రాత్రి & భూమి భ్రమణం'},
+    desc:{en:"How Earth's spin makes day and night, and its orbit makes a year.", te:'భూమి తన చుట్టూ తిరగడం వల్ల పగలు-రాత్రి ఎలా ఏర్పడతాయి, సూర్యుని చుట్టూ తిరగడం వల్ల సంవత్సరం ఎలా ఏర్పడుతుంది.'}},
+  {href:'cosmic-zoom-experiment.html', icon:'🔭',
+    title:{en:'Zooming to the Galaxy', te:'గెలాక్సీ వరకు జూమ్ చేయడం'},
+    desc:{en:"Zoom out step by step from Earth's surface to the observable universe.", te:'భూమి ఉపరితలం నుండి కనిపించే విశ్వం వరకు అంచెలంచెలుగా జూమ్ అవుట్ చేయండి.'}},
+  {href:'big-bang-experiment.html', icon:'💥',
+    title:{en:'The Big Bang Story', te:'బిగ్ బ్యాంగ్ కథ'},
+    desc:{en:'13.8 billion years of history, from a single point to galaxies full of stars.', te:'13.8 బిలియన్ సంవత్సరాల చరిత్ర — ఒక్క బిందువు నుండి నక్షత్రాలతో నిండిన గెలాక్సీల వరకు.'}},
+  {href:'black-hole-experiment.html', icon:'🕳️',
+    title:{en:'What Is a Black Hole?', te:'కృష్ణ బిలం అంటే ఏమిటి?'},
+    desc:{en:'Where gravity is so strong not even light can escape — how one forms.', te:'గురుత్వాకర్షణ ఎంత బలంగా ఉంటుందంటే కాంతి కూడా తప్పించుకోలేదు — ఇది ఎలా ఏర్పడుతుంది.'}},
+  {href:'tides-experiment.html', icon:'🌊',
+    title:{en:'What Causes Tides', te:'ఆటుపోట్లకు కారణం ఏమిటి'},
+    desc:{en:"The Moon's gravity tugs on Earth's oceans — why beaches flood and drain daily.", te:'చంద్రుని గురుత్వాకర్షణ భూమి సముద్రాలను లాగుతుంది — తీరాలు ప్రతిరోజూ ఎందుకు మునిగి, ఎందుకు తగ్గుతాయి.'}},
+  {href:'seasons-experiment.html', icon:'🍂',
+    title:{en:'Why We Have Seasons', te:'ఋతువులు ఎందుకు వస్తాయి'},
+    desc:{en:"It's not distance from the Sun — it's Earth's 23.5° tilt.", te:'ఇది సూర్యుని నుండి దూరం వల్ల కాదు — భూమి 23.5° వంపు వల్ల.'}},
 ];
 
 const grid = document.getElementById('grid');
-TOPICS.forEach(t => {
-  const a = document.createElement('a');
-  a.className = 'card';
-  a.href = t.href;
-  a.innerHTML = `<div class="icon">${t.icon}</div><h3>${t.title}</h3><p>${t.desc}</p><span class="tag">Open experiment →</span>`;
-  grid.appendChild(a);
+
+function renderGrid() {
+  grid.innerHTML = '';
+  TOPICS.forEach(t => {
+    const a = document.createElement('a');
+    a.className = 'card';
+    a.href = t.href;
+    a.innerHTML = `<div class="icon">${t.icon}</div><h3>${t.title[LANG]}</h3><p>${t.desc[LANG]}</p><span class="tag">${tr().openExperiment}</span>`;
+    grid.appendChild(a);
+  });
+}
+
+function applyStaticText() {
+  const t = tr();
+  document.getElementById('navHome').textContent = t.navHome;
+  document.getElementById('navPlay').textContent = t.navPlay;
+  document.getElementById('navCta').textContent = t.navCta;
+  document.getElementById('heroTitle').textContent = t.heroTitle;
+  document.getElementById('heroDesc').textContent = t.heroDesc;
+  document.getElementById('footerText').textContent = t.footerText;
+  document.getElementById('footerBackLink').textContent = t.footerBackLink;
+  document.getElementById('langToggle').textContent = LANG === 'en' ? 'తెలుగు' : 'English';
+  renderGrid();
+}
+
+document.getElementById('langToggle').addEventListener('click', () => {
+  LANG = LANG === 'en' ? 'te' : 'en';
+  applyStaticText();
 });
+
+applyStaticText();
 </script>
 </body>
 </html>

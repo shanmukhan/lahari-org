@@ -44,6 +44,11 @@
   .nav-cta { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px;
     border-radius: 999px; border: 1px solid var(--line-strong); color: var(--text) !important;
     font-size: .82rem; font-weight: 600; }
+  .lang-toggle { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px;
+    border-radius: 999px; border: 1px solid var(--line-strong); background: transparent;
+    color: var(--text); font-size: .82rem; font-weight: 600; font-family: inherit;
+    cursor: pointer; transition: border-color .2s ease, background .2s ease; }
+  .lang-toggle:hover { border-color: var(--accent); background: rgba(52,211,153,.10); }
   header.hero { padding: 22px 0 10px; text-align: center; }
   h1 { font-family: "Space Grotesk", Inter, sans-serif; font-size: clamp(1.5rem, 3.6vw, 2.1rem);
     margin: 0 0 6px; letter-spacing: -.03em; }
@@ -72,17 +77,18 @@
   <div class="container nav-inner">
     <a class="brand" href="index.html"><span class="brand-mark"></span>Shanmukhan</a>
     <div class="nav-links">
-      <a href="index.html">&larr; Science Lab</a>
-      <a href="play.html">Play</a>
-      <a class="nav-cta" href="https://shanmukhan.com/" target="_blank" rel="noopener">See my products →</a>
+      <a href="index.html" id="navHome">&larr; Science Lab</a>
+      <a href="play.html" id="navPlay">Play</a>
+      <a class="nav-cta" href="https://shanmukhan.com/" target="_blank" rel="noopener" id="navCta">See my products →</a>
+      <button class="lang-toggle" id="langToggle">తెలుగు</button>
     </div>
   </div>
 </nav>
 
 <header class="hero">
   <div class="container">
-    <h1>🌀 Physics in Action</h1>
-    <p>The mind-bending stuff: tiny vibrating strings, why light's speed breaks the rules, and time itself slowing down.</p>
+    <h1 id="heroTitle">🌀 Physics in Action</h1>
+    <p id="heroDesc">The mind-bending stuff: tiny vibrating strings, why light's speed breaks the rules, and time itself slowing down.</p>
   </div>
 </header>
 
@@ -91,37 +97,116 @@
 </div>
 
 <footer>
-  <div class="container">© <span id="year"></span> Shanmukhan · Hosted at home on a Raspberry Pi · <a href="index.html">Back to Science Lab</a></div>
+  <div class="container">© <span id="year"></span> <span id="footerText">Shanmukhan · Hosted at home on a Raspberry Pi · </span><a href="index.html" id="footerBackLink">Back to Science Lab</a></div>
 </footer>
 
 <script>
 document.getElementById('year').textContent = new Date().getFullYear();
 
+let LANG = 'en';
+
+const T = {
+  en: {
+    navHome: '← Science Lab',
+    navPlay: 'Play',
+    navCta: 'See my products →',
+    heroTitle: '🌀 Physics in Action',
+    heroDesc: "The mind-bending stuff: tiny vibrating strings, why light's speed breaks the rules, and time itself slowing down.",
+    footerText: 'Shanmukhan · Hosted at home on a Raspberry Pi · ',
+    footerBackLink: 'Back to Science Lab',
+    openExperiment: 'Open experiment →',
+  },
+  te: {
+    navHome: '← సైన్స్ ల్యాబ్',
+    navPlay: 'ఆటలు',
+    navCta: 'నా ఉత్పత్తులు చూడండి →',
+    heroTitle: '🌀 చలనశీలంలో భౌతికశాస్త్రం',
+    heroDesc: 'మెదడుకు పదును పెట్టే విషయాలు: సూక్ష్మంగా కంపించే తీగలు, కాంతి వేగం నియమాలను ఎందుకు ఛేదిస్తుంది, మరియు కాలం స్వయంగా నెమ్మదించడం.',
+    footerText: 'శన్ముఖన్ · ఇంటి వద్ద Raspberry Pi పై హోస్ట్ చేయబడింది · ',
+    footerBackLink: 'సైన్స్ ల్యాబ్‌కు తిరిగి వెళ్ళండి',
+    openExperiment: 'ప్రయోగం తెరవండి →',
+  }
+};
+
+function tr() { return T[LANG]; }
+
 const TOPICS = [
-  {href:'string-theory-experiment.html', icon:'🎻', title:'String Theory, Simply', desc:'What if every particle is really a tiny vibrating string, like a guitar string?'},
-  {href:'special-relativity-experiment.html', icon:'🚀', title:'Special Relativity', desc:'Why light\'s constant speed forces space and time to bend instead.'},
-  {href:'time-dilation-experiment.html', icon:'⏳', title:'Time Slows Down at Speed', desc:'The light-clock thought experiment behind the famous twin paradox.'},
-  {href:'rainbow-experiment.html', icon:'🌈', title:'How Rainbows Form', desc:'White sunlight secretly contains every color — raindrops split it apart.'},
-  {href:'sky-blue-experiment.html', icon:'🌤️', title:'Why the Sky Is Blue', desc:'Why blue light scatters everywhere overhead, and sunsets turn red.'},
-  {href:'double-slit-experiment.html', icon:'🎯', title:'The Double-Slit Experiment', desc:'Light plays a trick on us — the famous experiment behind quantum weirdness.'},
-  {href:'rocket-experiment.html', icon:'🚀', title:'How Rockets Work', desc:'No wings, no wheels — just Newton\'s third law blasting gas one way and the rocket the other.'},
-  {href:'newtons_three_laws_animated.html', icon:'🏈', title:'Newton\'s Three Laws of Motion', desc:'Why footballs stop, bicycles speed up, and rockets move — all three laws, animated.'},
-  {href:'sound-experiment.html', icon:'🔊', title:'How Sound Travels', desc:'A wave of squeezing and stretching air, passed from molecule to molecule.'},
-  {href:'archimedes-experiment.html', icon:'🛁', title:'Archimedes\' Principle', desc:'Why massive ships float but a tiny coin sinks — it\'s about displaced water.'},
-  {href:'heat-vs-temperature-experiment.html', icon:'🌡️', title:'Heat vs Temperature', desc:'A cup of tea and a swimming pool can share a temperature but hold wildly different heat.'},
-  {href:'electromagnetic-induction-experiment.html', icon:'⚡', title:'Electromagnetic Induction', desc:'Move a magnet near a wire and electricity appears — how generators work.'},
-  {href:'refraction-experiment.html', icon:'🔍', title:'Refraction & Lenses', desc:'Light bends in glass — shape it right and you\'ve built a magnifying glass.'},
-  {href:'doppler-experiment.html', icon:'🚨', title:'The Doppler Effect', desc:'Why an ambulance siren sounds higher approaching, lower as it passes.'},
+  {href:'string-theory-experiment.html', icon:'🎻',
+    title:{en:'String Theory, Simply', te:'స్ట్రింగ్ థియరీ, సులభంగా'},
+    desc:{en:'What if every particle is really a tiny vibrating string, like a guitar string?', te:'ప్రతి కణం నిజానికి గిటార్ తీగలా కంపించే ఒక సూక్ష్మమైన తీగ అయితే?'}},
+  {href:'special-relativity-experiment.html', icon:'🚀',
+    title:{en:'Special Relativity', te:'ప్రత్యేక సాపేక్షతా సిద్ధాంతం'},
+    desc:{en:"Why light's constant speed forces space and time to bend instead.", te:'కాంతి వేగం స్థిరంగా ఉండటం వల్ల స్థలం మరియు కాలం ఎందుకు వంగుతాయి.'}},
+  {href:'time-dilation-experiment.html', icon:'⏳',
+    title:{en:'Time Slows Down at Speed', te:'వేగంతో కాలం నెమ్మదిస్తుంది'},
+    desc:{en:'The light-clock thought experiment behind the famous twin paradox.', te:'ప్రసిద్ధ జంట వైరుధ్యం (twin paradox) వెనుక ఉన్న కాంతి-గడియారం ఆలోచనా ప్రయోగం.'}},
+  {href:'rainbow-experiment.html', icon:'🌈',
+    title:{en:'How Rainbows Form', te:'హరివిల్లులు ఎలా ఏర్పడతాయి'},
+    desc:{en:'White sunlight secretly contains every color — raindrops split it apart.', te:'తెల్లని సూర్యకాంతిలో అన్ని రంగులు దాగి ఉంటాయి — వర్షపు బిందువులు వాటిని వేరు చేస్తాయి.'}},
+  {href:'sky-blue-experiment.html', icon:'🌤️',
+    title:{en:'Why the Sky Is Blue', te:'ఆకాశం నీలంగా ఎందుకు ఉంటుంది'},
+    desc:{en:'Why blue light scatters everywhere overhead, and sunsets turn red.', te:'నీలి కాంతి ఆకాశమంతా ఎందుకు చెదరిపోతుంది, సూర్యాస్తమయాలు ఎరుపుగా ఎందుకు మారతాయి.'}},
+  {href:'double-slit-experiment.html', icon:'🎯',
+    title:{en:'The Double-Slit Experiment', te:'డబుల్-స్లిట్ ప్రయోగం'},
+    desc:{en:'Light plays a trick on us — the famous experiment behind quantum weirdness.', te:'కాంతి మనతో ఒక ఆట ఆడుతుంది — క్వాంటం విచిత్రాల వెనుక ఉన్న ప్రసిద్ధ ప్రయోగం.'}},
+  {href:'rocket-experiment.html', icon:'🚀',
+    title:{en:'How Rockets Work', te:'రాకెట్లు ఎలా పనిచేస్తాయి'},
+    desc:{en:"No wings, no wheels — just Newton's third law blasting gas one way and the rocket the other.", te:'రెక్కలు లేవు, చక్రాలు లేవు — న్యూటన్ మూడవ నియమం ప్రకారం వాయువును ఒక వైపు, రాకెట్‌ను మరో వైపు నెడుతుంది.'}},
+  {href:'newtons_three_laws_animated.html', icon:'🏈',
+    title:{en:"Newton's Three Laws of Motion", te:'న్యూటన్ చలన నియమాలు మూడు'},
+    desc:{en:'Why footballs stop, bicycles speed up, and rockets move — all three laws, animated.', te:'ఫుట్‌బాల్ ఎందుకు ఆగుతుంది, సైకిల్ ఎందుకు వేగం పుంజుకుంటుంది, రాకెట్ ఎందుకు కదులుతుంది — మూడు నియమాలు, యానిమేషన్‌తో.'}},
+  {href:'sound-experiment.html', icon:'🔊',
+    title:{en:'How Sound Travels', te:'ధ్వని ఎలా ప్రయాణిస్తుంది'},
+    desc:{en:'A wave of squeezing and stretching air, passed from molecule to molecule.', te:'గాలిని నొక్కుతూ, సాగదీస్తూ అణువు నుండి అణువుకు వెళ్లే ఒక తరంగం.'}},
+  {href:'archimedes-experiment.html', icon:'🛁',
+    title:{en:"Archimedes' Principle", te:'ఆర్కిమెడీస్ సూత్రం'},
+    desc:{en:"Why massive ships float but a tiny coin sinks — it's about displaced water.", te:'భారీ ఓడలు ఎందుకు తేలుతాయో, చిన్న నాణెం ఎందుకు మునిగిపోతుందో — తొలగించిన నీటి గురించే ఇది.'}},
+  {href:'heat-vs-temperature-experiment.html', icon:'🌡️',
+    title:{en:'Heat vs Temperature', te:'ఉష్ణం vs ఉష్ణోగ్రత'},
+    desc:{en:'A cup of tea and a swimming pool can share a temperature but hold wildly different heat.', te:'ఒక కప్పు టీ మరియు ఈత కొలను ఒకే ఉష్ణోగ్రతను కలిగి ఉన్నా, వాటిలో ఉష్ణం చాలా భిన్నంగా ఉంటుంది.'}},
+  {href:'electromagnetic-induction-experiment.html', icon:'⚡',
+    title:{en:'Electromagnetic Induction', te:'విద్యుదయస్కాంత ప్రేరణ'},
+    desc:{en:'Move a magnet near a wire and electricity appears — how generators work.', te:'ఒక తీగ దగ్గర అయస్కాంతాన్ని కదిలిస్తే విద్యుత్ ఉత్పన్నమవుతుంది — జనరేటర్లు ఇలా పనిచేస్తాయి.'}},
+  {href:'refraction-experiment.html', icon:'🔍',
+    title:{en:'Refraction & Lenses', te:'వక్రీభవనం & కటకాలు'},
+    desc:{en:"Light bends in glass — shape it right and you've built a magnifying glass.", te:'గాజులో కాంతి వంగుతుంది — సరైన ఆకారం ఇస్తే భూతద్దం తయారవుతుంది.'}},
+  {href:'doppler-experiment.html', icon:'🚨',
+    title:{en:'The Doppler Effect', te:'డాప్లర్ ప్రభావం'},
+    desc:{en:'Why an ambulance siren sounds higher approaching, lower as it passes.', te:'అంబులెన్స్ సైరన్ దగ్గరవుతున్నప్పుడు ఎక్కువ పిచ్‌లోనూ, దాటిపోయాక తక్కువ పిచ్‌లోనూ ఎందుకు వినిపిస్తుంది.'}},
 ];
 
 const grid = document.getElementById('grid');
-TOPICS.forEach(t => {
-  const a = document.createElement('a');
-  a.className = 'card';
-  a.href = t.href;
-  a.innerHTML = `<div class="icon">${t.icon}</div><h3>${t.title}</h3><p>${t.desc}</p><span class="tag">Open experiment →</span>`;
-  grid.appendChild(a);
+
+function renderGrid() {
+  grid.innerHTML = '';
+  TOPICS.forEach(t => {
+    const a = document.createElement('a');
+    a.className = 'card';
+    a.href = t.href;
+    a.innerHTML = `<div class="icon">${t.icon}</div><h3>${t.title[LANG]}</h3><p>${t.desc[LANG]}</p><span class="tag">${tr().openExperiment}</span>`;
+    grid.appendChild(a);
+  });
+}
+
+function applyStaticText() {
+  const t = tr();
+  document.getElementById('navHome').textContent = t.navHome;
+  document.getElementById('navPlay').textContent = t.navPlay;
+  document.getElementById('navCta').textContent = t.navCta;
+  document.getElementById('heroTitle').textContent = t.heroTitle;
+  document.getElementById('heroDesc').textContent = t.heroDesc;
+  document.getElementById('footerText').textContent = t.footerText;
+  document.getElementById('footerBackLink').textContent = t.footerBackLink;
+  document.getElementById('langToggle').textContent = LANG === 'en' ? 'తెలుగు' : 'English';
+  renderGrid();
+}
+
+document.getElementById('langToggle').addEventListener('click', () => {
+  LANG = LANG === 'en' ? 'te' : 'en';
+  applyStaticText();
 });
+
+applyStaticText();
 </script>
 </body>
 </html>

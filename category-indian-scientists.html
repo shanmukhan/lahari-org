@@ -44,6 +44,11 @@
   .nav-cta { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px;
     border-radius: 999px; border: 1px solid var(--line-strong); color: var(--text) !important;
     font-size: .82rem; font-weight: 600; }
+  .lang-toggle { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px;
+    border-radius: 999px; border: 1px solid var(--line-strong); background: transparent;
+    color: var(--text); font-size: .82rem; font-weight: 600; font-family: inherit;
+    cursor: pointer; transition: border-color .2s ease, background .2s ease; }
+  .lang-toggle:hover { border-color: var(--accent); background: rgba(52,211,153,.10); }
   header.hero { padding: 22px 0 10px; text-align: center; }
   h1 { font-family: "Space Grotesk", Inter, sans-serif; font-size: clamp(1.5rem, 3.6vw, 2.1rem);
     margin: 0 0 6px; letter-spacing: -.03em; }
@@ -74,49 +79,116 @@
   <div class="container nav-inner">
     <a class="brand" href="index.html"><span class="brand-mark"></span>Shanmukhan</a>
     <div class="nav-links">
-      <a href="index.html">&larr; Science Lab</a>
-      <a href="play.html">Play</a>
-      <a class="nav-cta" href="https://shanmukhan.com/" target="_blank" rel="noopener">See my products →</a>
+      <a href="index.html" id="navHome">&larr; Science Lab</a>
+      <a href="play.html" id="navPlay">Play</a>
+      <a class="nav-cta" href="https://shanmukhan.com/" target="_blank" rel="noopener" id="navCta">See my products →</a>
+      <button class="lang-toggle" id="langToggle">తెలుగు</button>
     </div>
   </div>
 </nav>
 
 <header class="hero">
   <div class="container">
-    <h1>🇮🇳 Indian Scientists</h1>
-    <p>From ancient surgery to the mathematics behind particle physics — the people and discoveries that shaped world science.</p>
+    <h1 id="heroTitle">🇮🇳 Indian Scientists</h1>
+    <p id="heroDesc">From ancient surgery to the mathematics behind particle physics — the people and discoveries that shaped world science.</p>
   </div>
 </header>
 
 <div class="container">
   <div class="grid" id="grid"></div>
-  <p class="note">🎨 Portraits are illustrative stylized artwork, not photographs — especially for ancient figures, no photographic record exists.</p>
+  <p class="note" id="noteText">🎨 Portraits are illustrative stylized artwork, not photographs — especially for ancient figures, no photographic record exists.</p>
 </div>
 
 <footer>
-  <div class="container">© <span id="year"></span> Shanmukhan · Hosted at home on a Raspberry Pi · <a href="index.html">Back to Science Lab</a></div>
+  <div class="container">© <span id="year"></span> <span id="footerText">Shanmukhan · Hosted at home on a Raspberry Pi · </span><a href="index.html" id="footerBackLink">Back to Science Lab</a></div>
 </footer>
 
 <script>
 document.getElementById('year').textContent = new Date().getFullYear();
 
+let LANG = 'en';
+
+const T = {
+  en: {
+    navHome: '← Science Lab',
+    navPlay: 'Play',
+    navCta: 'See my products →',
+    heroTitle: '🇮🇳 Indian Scientists',
+    heroDesc: 'From ancient surgery to the mathematics behind particle physics — the people and discoveries that shaped world science.',
+    noteText: '🎨 Portraits are illustrative stylized artwork, not photographs — especially for ancient figures, no photographic record exists.',
+    footerText: 'Shanmukhan · Hosted at home on a Raspberry Pi · ',
+    footerBackLink: 'Back to Science Lab',
+    readStory: 'Read their story →',
+  },
+  te: {
+    navHome: '← సైన్స్ ల్యాబ్',
+    navPlay: 'ఆటలు',
+    navCta: 'నా ఉత్పత్తులు చూడండి →',
+    heroTitle: '🇮🇳 భారతీయ శాస్త్రవేత్తలు',
+    heroDesc: 'ప్రాచీన శస్త్రచికిత్స నుండి కణ భౌతికశాస్త్రం వెనుక ఉన్న గణితం వరకు — ప్రపంచ సైన్స్‌ను తీర్చిదిద్దిన వ్యక్తులు, ఆవిష్కరణలు.',
+    noteText: '🎨 చిత్రపటాలు కళాత్మక శైలీకృత చిత్రాలు, ఛాయాచిత్రాలు కావు — ముఖ్యంగా ప్రాచీన వ్యక్తుల విషయంలో, ఛాయాచిత్ర ఆధారాలు లేవు.',
+    footerText: 'శన్ముఖన్ · ఇంటి వద్ద Raspberry Pi పై హోస్ట్ చేయబడింది · ',
+    footerBackLink: 'సైన్స్ ల్యాబ్‌కు తిరిగి వెళ్ళండి',
+    readStory: 'వారి కథ చదవండి →',
+  }
+};
+
+function tr() { return T[LANG]; }
+
 const TOPICS = [
-  {href:'sushruta-experiment.html', icon:'🔪', era:'~600 BCE', title:'Sushruta', desc:'The "Father of Surgery" — described over 300 procedures, pioneered plastic and cataract surgery.'},
-  {href:'aryabhata-experiment.html', icon:'🌌', era:'476–550 CE', title:'Aryabhata', desc:'Explained Earth\'s rotation, calculated pi, and worked with place-value and zero centuries early.'},
-  {href:'ramanujan-experiment.html', icon:'➗', era:'1887–1920', title:'Srinivasa Ramanujan', desc:'A self-taught genius whose notebooks of formulas are still fueling discoveries today.'},
-  {href:'cv-raman-experiment.html', icon:'🔬', era:'1888–1970', title:'C. V. Raman', desc:'Discovered how scattered light reveals molecular structure — India\'s first Nobel Prize in science.'},
-  {href:'sn-bose-experiment.html', icon:'⚛️', era:'1894–1974', title:'Satyendra Nath Bose', desc:'Co-created the statistics behind bosons — particles like the Higgs boson are named after him.'},
-  {href:'homi-bhabha-experiment.html', icon:'☢️', era:'1909–1966', title:'Homi J. Bhabha', desc:'Founded India\'s nuclear research institutions and led its atomic energy program.'},
+  {href:'sushruta-experiment.html', icon:'🔪', era:'~600 BCE',
+    title:{en:'Sushruta', te:'సుశ్రుతుడు'},
+    desc:{en:'The "Father of Surgery" — described over 300 procedures, pioneered plastic and cataract surgery.', te:'"శస్త్రచికిత్స పితామహుడు" — 300కు పైగా శస్త్రచికిత్సా విధానాలను వివరించాడు, ప్లాస్టిక్ మరియు కంటిశుక్ల శస్త్రచికిత్సలకు మార్గదర్శకుడు.'}},
+  {href:'aryabhata-experiment.html', icon:'🌌', era:'476–550 CE',
+    title:{en:'Aryabhata', te:'ఆర్యభట్ట'},
+    desc:{en:"Explained Earth's rotation, calculated pi, and worked with place-value and zero centuries early.", te:'భూమి భ్రమణాన్ని వివరించాడు, పై విలువను లెక్కించాడు, శతాబ్దాల ముందే స్థాన విలువ మరియు సున్నాతో పనిచేశాడు.'}},
+  {href:'ramanujan-experiment.html', icon:'➗', era:'1887–1920',
+    title:{en:'Srinivasa Ramanujan', te:'శ్రీనివాస రామానుజన్'},
+    desc:{en:'A self-taught genius whose notebooks of formulas are still fueling discoveries today.', te:'స్వయం-శిక్షితుడైన మేధావి — అతని సూత్రాల నోట్‌బుక్‌లు నేటికీ కొత్త ఆవిష్కరణలకు ఊతమిస్తున్నాయి.'}},
+  {href:'cv-raman-experiment.html', icon:'🔬', era:'1888–1970',
+    title:{en:'C. V. Raman', te:'సి. వి. రామన్'},
+    desc:{en:"Discovered how scattered light reveals molecular structure — India's first Nobel Prize in science.", te:'చెదరిన కాంతి అణు నిర్మాణాన్ని ఎలా వెల్లడిస్తుందో కనుగొన్నాడు — సైన్స్‌లో భారతదేశపు మొదటి నోబెల్ బహుమతి.'}},
+  {href:'sn-bose-experiment.html', icon:'⚛️', era:'1894–1974',
+    title:{en:'Satyendra Nath Bose', te:'సత్యేంద్ర నాథ్ బోస్'},
+    desc:{en:'Co-created the statistics behind bosons — particles like the Higgs boson are named after him.', te:'బోసాన్ల వెనుక ఉన్న గణాంక శాస్త్రాన్ని రూపొందించడంలో పాలుపంచుకున్నాడు — హిగ్స్ బోసాన్ వంటి కణాలకు అతని పేరు పెట్టారు.'}},
+  {href:'homi-bhabha-experiment.html', icon:'☢️', era:'1909–1966',
+    title:{en:'Homi J. Bhabha', te:'హోమీ జె. భాభా'},
+    desc:{en:"Founded India's nuclear research institutions and led its atomic energy program.", te:'భారతదేశ అణు పరిశోధనా సంస్థలను స్థాపించాడు, దాని అణుశక్తి కార్యక్రమానికి నాయకత్వం వహించాడు.'}},
 ];
 
 const grid = document.getElementById('grid');
-TOPICS.forEach(t => {
-  const a = document.createElement('a');
-  a.className = 'card';
-  a.href = t.href;
-  a.innerHTML = `<div class="icon">${t.icon}</div><span class="era">${t.era}</span><h3>${t.title}</h3><p>${t.desc}</p><span class="tag">Read their story →</span>`;
-  grid.appendChild(a);
+
+function renderGrid() {
+  grid.innerHTML = '';
+  TOPICS.forEach(t => {
+    const a = document.createElement('a');
+    a.className = 'card';
+    a.href = t.href;
+    a.innerHTML = `<div class="icon">${t.icon}</div><span class="era">${t.era}</span><h3>${t.title[LANG]}</h3><p>${t.desc[LANG]}</p><span class="tag">${tr().readStory}</span>`;
+    grid.appendChild(a);
+  });
+}
+
+function applyStaticText() {
+  const t = tr();
+  document.getElementById('navHome').textContent = t.navHome;
+  document.getElementById('navPlay').textContent = t.navPlay;
+  document.getElementById('navCta').textContent = t.navCta;
+  document.getElementById('heroTitle').textContent = t.heroTitle;
+  document.getElementById('heroDesc').textContent = t.heroDesc;
+  document.getElementById('noteText').textContent = t.noteText;
+  document.getElementById('footerText').textContent = t.footerText;
+  document.getElementById('footerBackLink').textContent = t.footerBackLink;
+  document.getElementById('langToggle').textContent = LANG === 'en' ? 'తెలుగు' : 'English';
+  renderGrid();
+}
+
+document.getElementById('langToggle').addEventListener('click', () => {
+  LANG = LANG === 'en' ? 'te' : 'en';
+  applyStaticText();
 });
+
+applyStaticText();
 </script>
 </body>
 </html>

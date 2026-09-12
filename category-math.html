@@ -44,6 +44,11 @@
   .nav-cta { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px;
     border-radius: 999px; border: 1px solid var(--line-strong); color: var(--text) !important;
     font-size: .82rem; font-weight: 600; }
+  .lang-toggle { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px;
+    border-radius: 999px; border: 1px solid var(--line-strong); background: transparent;
+    color: var(--text); font-size: .82rem; font-weight: 600; font-family: inherit;
+    cursor: pointer; transition: border-color .2s ease, background .2s ease; }
+  .lang-toggle:hover { border-color: var(--accent); background: rgba(52,211,153,.10); }
   header.hero { padding: 22px 0 10px; text-align: center; }
   h1 { font-family: "Space Grotesk", Inter, sans-serif; font-size: clamp(1.5rem, 3.6vw, 2.1rem);
     margin: 0 0 6px; letter-spacing: -.03em; }
@@ -77,17 +82,18 @@
   <div class="container nav-inner">
     <a class="brand" href="index.html"><span class="brand-mark"></span>Shanmukhan</a>
     <div class="nav-links">
-      <a href="index.html">&larr; Science Lab</a>
-      <a href="play.html">Play</a>
-      <a class="nav-cta" href="https://shanmukhan.com/" target="_blank" rel="noopener">See my products →</a>
+      <a href="index.html" id="navHome">&larr; Science Lab</a>
+      <a href="play.html" id="navPlay">Play</a>
+      <a class="nav-cta" href="https://shanmukhan.com/" target="_blank" rel="noopener" id="navCta">See my products →</a>
+      <button class="lang-toggle" id="langToggle">తెలుగు</button>
     </div>
   </div>
 </nav>
 
 <header class="hero">
   <div class="container">
-    <h1>➗ Math Made Simple</h1>
-    <p>The math ideas behind the science — calculus, probability, and more, explained visually.</p>
+    <h1 id="heroTitle">➗ Math Made Simple</h1>
+    <p id="heroDesc">The math ideas behind the science — calculus, probability, and more, explained visually.</p>
   </div>
 </header>
 
@@ -95,37 +101,103 @@
   <div class="grid" id="grid"></div>
   <div class="empty" id="emptyState" hidden>
     <div class="icon">📐</div>
-    <h2>Experiments coming soon</h2>
-    <p>Calculus, probability, and more are on the way — check back soon, or explore the other categories in the meantime.</p>
+    <h2 id="emptyH2">Experiments coming soon</h2>
+    <p id="emptyP">Calculus, probability, and more are on the way — check back soon, or explore the other categories in the meantime.</p>
   </div>
 </div>
 
 <footer>
-  <div class="container">© <span id="year"></span> Shanmukhan · Hosted at home on a Raspberry Pi · <a href="index.html">Back to Science Lab</a></div>
+  <div class="container">© <span id="year"></span> <span id="footerText">Shanmukhan · Hosted at home on a Raspberry Pi · </span><a href="index.html" id="footerBackLink">Back to Science Lab</a></div>
 </footer>
 
 <script>
 document.getElementById('year').textContent = new Date().getFullYear();
 
+let LANG = 'en';
+
+const T = {
+  en: {
+    navHome: '← Science Lab',
+    navPlay: 'Play',
+    navCta: 'See my products →',
+    heroTitle: '➗ Math Made Simple',
+    heroDesc: 'The math ideas behind the science — calculus, probability, and more, explained visually.',
+    emptyH2: 'Experiments coming soon',
+    emptyP: 'Calculus, probability, and more are on the way — check back soon, or explore the other categories in the meantime.',
+    footerText: 'Shanmukhan · Hosted at home on a Raspberry Pi · ',
+    footerBackLink: 'Back to Science Lab',
+    openExperiment: 'Open experiment →',
+  },
+  te: {
+    navHome: '← సైన్స్ ల్యాబ్',
+    navPlay: 'ఆటలు',
+    navCta: 'నా ఉత్పత్తులు చూడండి →',
+    heroTitle: '➗ సులభమైన గణితం',
+    heroDesc: 'సైన్స్ వెనుక ఉన్న గణిత ఆలోచనలు — కలన గణితం, సంభావ్యత, మరిన్ని — చిత్రాల ద్వారా వివరణ.',
+    emptyH2: 'ప్రయోగాలు త్వరలో వస్తున్నాయి',
+    emptyP: 'కలన గణితం, సంభావ్యత, మరిన్ని రాబోతున్నాయి — త్వరలో మళ్ళీ చూడండి, లేదా ఈలోగా ఇతర విభాగాలను అన్వేషించండి.',
+    footerText: 'శన్ముఖన్ · ఇంటి వద్ద Raspberry Pi పై హోస్ట్ చేయబడింది · ',
+    footerBackLink: 'సైన్స్ ల్యాబ్‌కు తిరిగి వెళ్ళండి',
+    openExperiment: 'ప్రయోగం తెరవండి →',
+  }
+};
+
+function tr() { return T[LANG]; }
+
 const TOPICS = [
-  {href:'calculus-experiment.html', icon:'➗', title:'Calculus, Explained Simply', desc:'The slope of a curve and the area under it — used everywhere from rockets to GPS.'},
-  {href:'derivatives-integrals-experiment.html', icon:'📉', title:'Derivatives & Integrals, Visualized', desc:'Position, velocity, and acceleration — chaining the slope-and-area trick.'},
-  {href:'probability-experiment.html', icon:'🎲', title:'Probability & Statistics Basics', desc:'Why a few coin flips look uneven, but a thousand settle toward 50/50.'},
+  {href:'calculus-experiment.html', icon:'➗',
+    title:{en:'Calculus, Explained Simply', te:'కలన గణితం, సులభంగా వివరణ'},
+    desc:{en:'The slope of a curve and the area under it — used everywhere from rockets to GPS.', te:'ఒక వక్రరేఖ వాలు మరియు దాని కింద వైశాల్యం — రాకెట్ల నుండి GPS వరకు ప్రతిచోటా వాడతారు.'}},
+  {href:'derivatives-integrals-experiment.html', icon:'📉',
+    title:{en:'Derivatives & Integrals, Visualized', te:'అవకలనాలు & సమాకలనాలు, చిత్రాలతో'},
+    desc:{en:'Position, velocity, and acceleration — chaining the slope-and-area trick.', te:'స్థానం, వేగం, త్వరణం — వాలు మరియు వైశాల్య ట్రిక్‌ను గొలుసుగా అనుసంధానించడం.'}},
+  {href:'probability-experiment.html', icon:'🎲',
+    title:{en:'Probability & Statistics Basics', te:'సంభావ్యత & గణాంకాల ప్రాథమికాలు'},
+    desc:{en:'Why a few coin flips look uneven, but a thousand settle toward 50/50.', te:'కొన్ని నాణెం విసిరిన్లు అసమానంగా కనిపించినా, వేయి విసిరిన్లు 50/50కి ఎందుకు చేరుకుంటాయి.'}},
 ];
 
 const grid = document.getElementById('grid');
-if (TOPICS.length === 0) {
-  grid.hidden = true;
-  document.getElementById('emptyState').hidden = false;
-} else {
-  TOPICS.forEach(t => {
-    const a = document.createElement('a');
-    a.className = 'card';
-    a.href = t.href;
-    a.innerHTML = `<div class="icon">${t.icon}</div><h3>${t.title}</h3><p>${t.desc}</p><span class="tag">Open experiment →</span>`;
-    grid.appendChild(a);
-  });
+
+function renderGrid() {
+  const t = tr();
+  if (TOPICS.length === 0) {
+    grid.hidden = true;
+    document.getElementById('emptyState').hidden = false;
+  } else {
+    grid.hidden = false;
+    document.getElementById('emptyState').hidden = true;
+    grid.innerHTML = '';
+    TOPICS.forEach(topic => {
+      const a = document.createElement('a');
+      a.className = 'card';
+      a.href = topic.href;
+      a.innerHTML = `<div class="icon">${topic.icon}</div><h3>${topic.title[LANG]}</h3><p>${topic.desc[LANG]}</p><span class="tag">${t.openExperiment}</span>`;
+      grid.appendChild(a);
+    });
+  }
 }
+
+function applyStaticText() {
+  const t = tr();
+  document.getElementById('navHome').textContent = t.navHome;
+  document.getElementById('navPlay').textContent = t.navPlay;
+  document.getElementById('navCta').textContent = t.navCta;
+  document.getElementById('heroTitle').textContent = t.heroTitle;
+  document.getElementById('heroDesc').textContent = t.heroDesc;
+  document.getElementById('emptyH2').textContent = t.emptyH2;
+  document.getElementById('emptyP').textContent = t.emptyP;
+  document.getElementById('footerText').textContent = t.footerText;
+  document.getElementById('footerBackLink').textContent = t.footerBackLink;
+  document.getElementById('langToggle').textContent = LANG === 'en' ? 'తెలుగు' : 'English';
+  renderGrid();
+}
+
+document.getElementById('langToggle').addEventListener('click', () => {
+  LANG = LANG === 'en' ? 'te' : 'en';
+  applyStaticText();
+});
+
+applyStaticText();
 </script>
 </body>
 </html>

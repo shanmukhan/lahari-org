@@ -44,6 +44,11 @@
   .nav-cta { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px;
     border-radius: 999px; border: 1px solid var(--line-strong); color: var(--text) !important;
     font-size: .82rem; font-weight: 600; }
+  .lang-toggle { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px;
+    border-radius: 999px; border: 1px solid var(--line-strong); background: transparent;
+    color: var(--text); font-size: .82rem; font-weight: 600; font-family: inherit;
+    cursor: pointer; transition: border-color .2s ease, background .2s ease; }
+  .lang-toggle:hover { border-color: var(--accent); background: rgba(52,211,153,.10); }
   header.hero { padding: 22px 0 10px; text-align: center; }
   h1 { font-family: "Space Grotesk", Inter, sans-serif; font-size: clamp(1.5rem, 3.6vw, 2.1rem);
     margin: 0 0 6px; letter-spacing: -.03em; }
@@ -72,17 +77,18 @@
   <div class="container nav-inner">
     <a class="brand" href="index.html"><span class="brand-mark"></span>Shanmukhan</a>
     <div class="nav-links">
-      <a href="index.html">&larr; Science Lab</a>
-      <a href="play.html">Play</a>
-      <a class="nav-cta" href="https://shanmukhan.com/" target="_blank" rel="noopener">See my products →</a>
+      <a href="index.html" id="navHome">&larr; Science Lab</a>
+      <a href="play.html" id="navPlay">Play</a>
+      <a class="nav-cta" href="https://shanmukhan.com/" target="_blank" rel="noopener" id="navCta">See my products →</a>
+      <button class="lang-toggle" id="langToggle">తెలుగు</button>
     </div>
   </div>
 </nav>
 
 <header class="hero">
   <div class="container">
-    <h1>⚛️ Atoms & Matter</h1>
-    <p>What's really inside an atom, how hydrogen and helium compare, and every element there is.</p>
+    <h1 id="heroTitle">⚛️ Atoms & Matter</h1>
+    <p id="heroDesc">What's really inside an atom, how hydrogen and helium compare, and every element there is.</p>
   </div>
 </header>
 
@@ -91,30 +97,95 @@
 </div>
 
 <footer>
-  <div class="container">© <span id="year"></span> Shanmukhan · Hosted at home on a Raspberry Pi · <a href="index.html">Back to Science Lab</a></div>
+  <div class="container">© <span id="year"></span> <span id="footerText">Shanmukhan · Hosted at home on a Raspberry Pi · </span><a href="index.html" id="footerBackLink">Back to Science Lab</a></div>
 </footer>
 
 <script>
 document.getElementById('year').textContent = new Date().getFullYear();
 
+let LANG = 'en';
+
+const T = {
+  en: {
+    navHome: '← Science Lab',
+    navPlay: 'Play',
+    navCta: 'See my products →',
+    heroTitle: '⚛️ Atoms & Matter',
+    heroDesc: "What's really inside an atom, how hydrogen and helium compare, and every element there is.",
+    footerText: 'Shanmukhan · Hosted at home on a Raspberry Pi · ',
+    footerBackLink: 'Back to Science Lab',
+    openExperiment: 'Open experiment →',
+  },
+  te: {
+    navHome: '← సైన్స్ ల్యాబ్',
+    navPlay: 'ఆటలు',
+    navCta: 'నా ఉత్పత్తులు చూడండి →',
+    heroTitle: '⚛️ పరమాణువులు & పదార్థం',
+    heroDesc: 'పరమాణువు లోపల నిజంగా ఏముందో, హైడ్రోజన్ మరియు హీలియం ఎలా పోలి ఉంటాయో, మరియు ఉన్న ప్రతి మూలకాన్ని తెలుసుకోండి.',
+    footerText: 'శన్ముఖన్ · ఇంటి వద్ద Raspberry Pi పై హోస్ట్ చేయబడింది · ',
+    footerBackLink: 'సైన్స్ ల్యాబ్‌కు తిరిగి వెళ్ళండి',
+    openExperiment: 'ప్రయోగం తెరవండి →',
+  }
+};
+
+function tr() { return T[LANG]; }
+
 const TOPICS = [
-  {href:'atom-dissection-experiment.html', icon:'🔬', title:'Dissecting an Atom', desc:'Click through the layers of an atom — electrons, nucleus, protons, quarks.'},
-  {href:'hydrogen-helium-experiment.html', icon:'🧪', title:'Hydrogen vs Helium', desc:'A side-by-side look inside the two simplest atoms in the universe.'},
-  {href:'periodic-table-experiment.html', icon:'🧬', title:'The Periodic Table', desc:'All 118 elements — tap any tile for atomic number, mass, and fun facts.'},
-  {href:'elephant-toothpaste-experiment.html', icon:'🧪', title:'Elephant Toothpaste', desc:'A catalyst, a fizz, and a giant foam explosion — chemistry in action.'},
-  {href:'states-of-matter-experiment.html', icon:'🧊', title:'States of Matter', desc:'Ice, water, and steam are the same substance — only molecule energy differs.'},
-  {href:'ph-scale-experiment.html', icon:'🧪', title:'The pH Scale — Acids & Bases', desc:'What makes lemon juice sour and soap slippery — measured on a scale of 0 to 14.'},
-  {href:'periodic-trends-experiment.html', icon:'📊', title:'Periodic Trends', desc:'Why atoms shrink rightward and grow downward across the periodic table.'},
+  {href:'atom-dissection-experiment.html', icon:'🔬',
+    title:{en:'Dissecting an Atom', te:'పరమాణువును విడదీయడం'},
+    desc:{en:'Click through the layers of an atom — electrons, nucleus, protons, quarks.', te:'పరమాణువు పొరల గుండా క్లిక్ చేయండి — ఎలక్ట్రాన్లు, కేంద్రకం, ప్రోటాన్లు, క్వార్క్‌లు.'}},
+  {href:'hydrogen-helium-experiment.html', icon:'🧪',
+    title:{en:'Hydrogen vs Helium', te:'హైడ్రోజన్ vs హీలియం'},
+    desc:{en:'A side-by-side look inside the two simplest atoms in the universe.', te:'విశ్వంలోని రెండు అతి సరళమైన పరమాణువుల లోపలి పోలిక.'}},
+  {href:'periodic-table-experiment.html', icon:'🧬',
+    title:{en:'The Periodic Table', te:'ఆవర్తన పట్టిక'},
+    desc:{en:'All 118 elements — tap any tile for atomic number, mass, and fun facts.', te:'అన్ని 118 మూలకాలు — పరమాణు సంఖ్య, ద్రవ్యరాశి, ఆసక్తికరమైన విషయాల కోసం ఏదైనా టైల్‌ను తాకండి.'}},
+  {href:'elephant-toothpaste-experiment.html', icon:'🧪',
+    title:{en:'Elephant Toothpaste', te:'ఏనుగు టూత్‌పేస్ట్'},
+    desc:{en:'A catalyst, a fizz, and a giant foam explosion — chemistry in action.', te:'ఒక ఉత్ప్రేరకం, బుడగలు, మరియు భారీ నురుగు పేలుడు — రసాయనశాస్త్రం చేతల్లో.'}},
+  {href:'states-of-matter-experiment.html', icon:'🧊',
+    title:{en:'States of Matter', te:'పదార్థ స్థితులు'},
+    desc:{en:'Ice, water, and steam are the same substance — only molecule energy differs.', te:'మంచు, నీరు, ఆవిరి ఒకే పదార్థం — అణువుల శక్తి మాత్రమే భిన్నంగా ఉంటుంది.'}},
+  {href:'ph-scale-experiment.html', icon:'🧪',
+    title:{en:'The pH Scale — Acids & Bases', te:'pH స్కేల్ — ఆమ్లాలు & క్షారాలు'},
+    desc:{en:'What makes lemon juice sour and soap slippery — measured on a scale of 0 to 14.', te:'నిమ్మరసం పులుపుగా, సబ్బు జారుడుగా ఎందుకు ఉంటాయి — 0 నుండి 14 స్కేల్‌పై కొలుస్తారు.'}},
+  {href:'periodic-trends-experiment.html', icon:'📊',
+    title:{en:'Periodic Trends', te:'ఆవర్తన ధోరణులు'},
+    desc:{en:'Why atoms shrink rightward and grow downward across the periodic table.', te:'ఆవర్తన పట్టికలో కుడివైపు పరమాణువులు ఎందుకు కుంచించుకుపోతాయో, కిందికి ఎందుకు పెరుగుతాయో.'}},
 ];
 
 const grid = document.getElementById('grid');
-TOPICS.forEach(t => {
-  const a = document.createElement('a');
-  a.className = 'card';
-  a.href = t.href;
-  a.innerHTML = `<div class="icon">${t.icon}</div><h3>${t.title}</h3><p>${t.desc}</p><span class="tag">Open experiment →</span>`;
-  grid.appendChild(a);
+
+function renderGrid() {
+  grid.innerHTML = '';
+  TOPICS.forEach(t => {
+    const a = document.createElement('a');
+    a.className = 'card';
+    a.href = t.href;
+    a.innerHTML = `<div class="icon">${t.icon}</div><h3>${t.title[LANG]}</h3><p>${t.desc[LANG]}</p><span class="tag">${tr().openExperiment}</span>`;
+    grid.appendChild(a);
+  });
+}
+
+function applyStaticText() {
+  const t = tr();
+  document.getElementById('navHome').textContent = t.navHome;
+  document.getElementById('navPlay').textContent = t.navPlay;
+  document.getElementById('navCta').textContent = t.navCta;
+  document.getElementById('heroTitle').textContent = t.heroTitle;
+  document.getElementById('heroDesc').textContent = t.heroDesc;
+  document.getElementById('footerText').textContent = t.footerText;
+  document.getElementById('footerBackLink').textContent = t.footerBackLink;
+  document.getElementById('langToggle').textContent = LANG === 'en' ? 'తెలుగు' : 'English';
+  renderGrid();
+}
+
+document.getElementById('langToggle').addEventListener('click', () => {
+  LANG = LANG === 'en' ? 'te' : 'en';
+  applyStaticText();
 });
+
+applyStaticText();
 </script>
 </body>
 </html>

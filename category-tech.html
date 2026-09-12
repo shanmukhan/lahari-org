@@ -44,6 +44,11 @@
   .nav-cta { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px;
     border-radius: 999px; border: 1px solid var(--line-strong); color: var(--text) !important;
     font-size: .82rem; font-weight: 600; }
+  .lang-toggle { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px;
+    border-radius: 999px; border: 1px solid var(--line-strong); background: transparent;
+    color: var(--text); font-size: .82rem; font-weight: 600; font-family: inherit;
+    cursor: pointer; transition: border-color .2s ease, background .2s ease; }
+  .lang-toggle:hover { border-color: var(--accent); background: rgba(52,211,153,.10); }
   header.hero { padding: 22px 0 10px; text-align: center; }
   h1 { font-family: "Space Grotesk", Inter, sans-serif; font-size: clamp(1.5rem, 3.6vw, 2.1rem);
     margin: 0 0 6px; letter-spacing: -.03em; }
@@ -72,17 +77,18 @@
   <div class="container nav-inner">
     <a class="brand" href="index.html"><span class="brand-mark"></span>Shanmukhan</a>
     <div class="nav-links">
-      <a href="index.html">&larr; Science Lab</a>
-      <a href="play.html">Play</a>
-      <a class="nav-cta" href="https://shanmukhan.com/" target="_blank" rel="noopener">See my products →</a>
+      <a href="index.html" id="navHome">&larr; Science Lab</a>
+      <a href="play.html" id="navPlay">Play</a>
+      <a class="nav-cta" href="https://shanmukhan.com/" target="_blank" rel="noopener" id="navCta">See my products →</a>
+      <button class="lang-toggle" id="langToggle">తెలుగు</button>
     </div>
   </div>
 </nav>
 
 <header class="hero">
   <div class="container">
-    <h1>🔧 Everyday Tech</h1>
-    <p>The machines and gadgets you use every day, pulled apart to show exactly how they work.</p>
+    <h1 id="heroTitle">🔧 Everyday Tech</h1>
+    <p id="heroDesc">The machines and gadgets you use every day, pulled apart to show exactly how they work.</p>
   </div>
 </header>
 
@@ -91,32 +97,101 @@
 </div>
 
 <footer>
-  <div class="container">© <span id="year"></span> Shanmukhan · Hosted at home on a Raspberry Pi · <a href="index.html">Back to Science Lab</a></div>
+  <div class="container">© <span id="year"></span> <span id="footerText">Shanmukhan · Hosted at home on a Raspberry Pi · </span><a href="index.html" id="footerBackLink">Back to Science Lab</a></div>
 </footer>
 
 <script>
 document.getElementById('year').textContent = new Date().getFullYear();
 
+let LANG = 'en';
+
+const T = {
+  en: {
+    navHome: '← Science Lab',
+    navPlay: 'Play',
+    navCta: 'See my products →',
+    heroTitle: '🔧 Everyday Tech',
+    heroDesc: 'The machines and gadgets you use every day, pulled apart to show exactly how they work.',
+    footerText: 'Shanmukhan · Hosted at home on a Raspberry Pi · ',
+    footerBackLink: 'Back to Science Lab',
+    openExperiment: 'Open experiment →',
+  },
+  te: {
+    navHome: '← సైన్స్ ల్యాబ్',
+    navPlay: 'ఆటలు',
+    navCta: 'నా ఉత్పత్తులు చూడండి →',
+    heroTitle: '🔧 నిత్యజీవిత సాంకేతికత',
+    heroDesc: 'మీరు ప్రతిరోజూ ఉపయోగించే యంత్రాలు, పరికరాలు — అవి సరిగ్గా ఎలా పనిచేస్తాయో విప్పి చూపిస్తాము.',
+    footerText: 'శన్ముఖన్ · ఇంటి వద్ద Raspberry Pi పై హోస్ట్ చేయబడింది · ',
+    footerBackLink: 'సైన్స్ ల్యాబ్‌కు తిరిగి వెళ్ళండి',
+    openExperiment: 'ప్రయోగం తెరవండి →',
+  }
+};
+
+function tr() { return T[LANG]; }
+
 const TOPICS = [
-  {href:'dc-motor-experiment.html', icon:'⚙️', title:'How a DC Motor Works', desc:'From magnets and electromagnets to a spinning coil and the commutator trick.'},
-  {href:'battery-experiment.html', icon:'🔋', title:'How a Battery Works', desc:'The tiny chemical factory that pushes electrons through your gadgets.'},
-  {href:'magnets-experiment.html', icon:'🧲', title:'How Magnets Actually Work', desc:'Every atom is a tiny magnet — a magnet is just billions of them lined up.'},
-  {href:'touchscreen-experiment.html', icon:'📱', title:'How Touchscreens Work', desc:'Your finger steals a tiny bit of charge, and the screen notices exactly where.'},
-  {href:'wifi-experiment.html', icon:'📶', title:'How Wi-Fi Works', desc:'Invisible radio waves carrying your data through the air, wall to wall.'},
-  {href:'airplane-experiment.html', icon:'✈️', title:'How Airplanes Fly', desc:'The curved wing shape and pressure difference that create lift.'},
-  {href:'diode-experiment.html', icon:'🔌', title:'How a Diode Works Inside', desc:'An electronic one-way street for current, built from two silicon halves.'},
-  {href:'transistor-experiment.html', icon:'🔀', title:'How a Transistor Works Inside', desc:'The tiny switch everything digital is built from — billions per chip.'},
-  {href:'ohms-law-experiment.html', icon:'🔋', title:'Ohm\'s Law & Circuits', desc:'Voltage, current, and resistance — the equation behind every circuit.'},
+  {href:'dc-motor-experiment.html', icon:'⚙️',
+    title:{en:'How a DC Motor Works', te:'DC మోటార్ ఎలా పనిచేస్తుంది'},
+    desc:{en:'From magnets and electromagnets to a spinning coil and the commutator trick.', te:'అయస్కాంతాలు, విద్యుదయస్కాంతాల నుండి తిరిగే కాయిల్ మరియు కమ్యుటేటర్ ట్రిక్ వరకు.'}},
+  {href:'battery-experiment.html', icon:'🔋',
+    title:{en:'How a Battery Works', te:'బ్యాటరీ ఎలా పనిచేస్తుంది'},
+    desc:{en:'The tiny chemical factory that pushes electrons through your gadgets.', te:'మీ పరికరాల గుండా ఎలక్ట్రాన్లను నెట్టే సూక్ష్మమైన రసాయన కర్మాగారం.'}},
+  {href:'magnets-experiment.html', icon:'🧲',
+    title:{en:'How Magnets Actually Work', te:'అయస్కాంతాలు నిజంగా ఎలా పనిచేస్తాయి'},
+    desc:{en:'Every atom is a tiny magnet — a magnet is just billions of them lined up.', te:'ప్రతి పరమాణువు ఒక చిన్న అయస్కాంతం — ఒక అయస్కాంతం అంటే బిలియన్ల కొద్దీ వాటి వరుసే.'}},
+  {href:'touchscreen-experiment.html', icon:'📱',
+    title:{en:'How Touchscreens Work', te:'టచ్‌స్క్రీన్‌లు ఎలా పనిచేస్తాయి'},
+    desc:{en:'Your finger steals a tiny bit of charge, and the screen notices exactly where.', te:'మీ వేలు కొంచెం చార్జ్‌ను తీసుకుంటుంది, స్క్రీన్ సరిగ్గా ఎక్కడో గమనిస్తుంది.'}},
+  {href:'wifi-experiment.html', icon:'📶',
+    title:{en:'How Wi-Fi Works', te:'Wi-Fi ఎలా పనిచేస్తుంది'},
+    desc:{en:'Invisible radio waves carrying your data through the air, wall to wall.', te:'కనిపించని రేడియో తరంగాలు గోడ నుండి గోడకు గాలిలో మీ డేటాను మోసుకెళ్తాయి.'}},
+  {href:'airplane-experiment.html', icon:'✈️',
+    title:{en:'How Airplanes Fly', te:'విమానాలు ఎలా ఎగురుతాయి'},
+    desc:{en:'The curved wing shape and pressure difference that create lift.', te:'రెక్క వంపు ఆకారం మరియు పీడన వ్యత్యాసం లిఫ్ట్‌ను సృష్టిస్తాయి.'}},
+  {href:'diode-experiment.html', icon:'🔌',
+    title:{en:'How a Diode Works Inside', te:'డయోడ్ లోపల ఎలా పనిచేస్తుంది'},
+    desc:{en:'An electronic one-way street for current, built from two silicon halves.', te:'రెండు సిలికాన్ భాగాలతో నిర్మించిన కరెంట్ కోసం ఎలక్ట్రానిక్ వన్-వే రహదారి.'}},
+  {href:'transistor-experiment.html', icon:'🔀',
+    title:{en:'How a Transistor Works Inside', te:'ట్రాన్సిస్టర్ లోపల ఎలా పనిచేస్తుంది'},
+    desc:{en:'The tiny switch everything digital is built from — billions per chip.', te:'ప్రతి డిజిటల్ పరికరం నిర్మించబడిన సూక్ష్మమైన స్విచ్ — ఒక్కో చిప్‌లో బిలియన్ల కొద్దీ.'}},
+  {href:'ohms-law-experiment.html', icon:'🔋',
+    title:{en:"Ohm's Law & Circuits", te:'ఓమ్ నియమం & సర్క్యూట్‌లు'},
+    desc:{en:'Voltage, current, and resistance — the equation behind every circuit.', te:'వోల్టేజ్, కరెంట్, రెసిస్టెన్స్ — ప్రతి సర్క్యూట్ వెనుక ఉన్న సమీకరణం.'}},
 ];
 
 const grid = document.getElementById('grid');
-TOPICS.forEach(t => {
-  const a = document.createElement('a');
-  a.className = 'card';
-  a.href = t.href;
-  a.innerHTML = `<div class="icon">${t.icon}</div><h3>${t.title}</h3><p>${t.desc}</p><span class="tag">Open experiment →</span>`;
-  grid.appendChild(a);
+
+function renderGrid() {
+  grid.innerHTML = '';
+  TOPICS.forEach(t => {
+    const a = document.createElement('a');
+    a.className = 'card';
+    a.href = t.href;
+    a.innerHTML = `<div class="icon">${t.icon}</div><h3>${t.title[LANG]}</h3><p>${t.desc[LANG]}</p><span class="tag">${tr().openExperiment}</span>`;
+    grid.appendChild(a);
+  });
+}
+
+function applyStaticText() {
+  const t = tr();
+  document.getElementById('navHome').textContent = t.navHome;
+  document.getElementById('navPlay').textContent = t.navPlay;
+  document.getElementById('navCta').textContent = t.navCta;
+  document.getElementById('heroTitle').textContent = t.heroTitle;
+  document.getElementById('heroDesc').textContent = t.heroDesc;
+  document.getElementById('footerText').textContent = t.footerText;
+  document.getElementById('footerBackLink').textContent = t.footerBackLink;
+  document.getElementById('langToggle').textContent = LANG === 'en' ? 'తెలుగు' : 'English';
+  renderGrid();
+}
+
+document.getElementById('langToggle').addEventListener('click', () => {
+  LANG = LANG === 'en' ? 'te' : 'en';
+  applyStaticText();
 });
+
+applyStaticText();
 </script>
 </body>
 </html>
