@@ -9,7 +9,11 @@
   *{box-sizing:border-box;}
   body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
   .wrap{max-width:960px;margin:0 auto;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
   a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
   header{text-align:center;margin-bottom:20px;}
   h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
   header p{color:var(--dim);font-size:16px;margin:0;}
@@ -43,10 +47,13 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="category-physics.html">&larr; Back to Physics in Action</a>
+  <div class="topbar">
+    <a class="back" href="category-physics.html" id="backLink">&larr; Back to Physics in Action</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
   <header>
-    <h1>🌈 How Rainbows Form</h1>
-    <p>White sunlight secretly contains every color. Raindrops are what split it apart for you to see.</p>
+    <h1 id="pageTitle">🌈 How Rainbows Form</h1>
+    <p id="pageSubtitle">White sunlight secretly contains every color. Raindrops are what split it apart for you to see.</p>
   </header>
 
   <div class="player">
@@ -61,23 +68,23 @@
   </div>
 
   <div class="steps">
-    <div class="step-card"><div class="num">1</div><h3>☀️ Sunlight looks white</h3>
-      <p>Sunlight looks white or yellow, but it's secretly a mix of every color of light blended together.</p></div>
-    <div class="step-card"><div class="num">2</div><h3>💧 A raindrop bends light</h3>
-      <p>When light enters a round raindrop, it slows down and bends — and each color bends by a slightly different amount.</p></div>
-    <div class="step-card"><div class="num">3</div><h3>🪞 It bounces off the back</h3>
-      <p>The light reflects off the inside back wall of the raindrop, like a tiny curved mirror, and heads back out.</p></div>
-    <div class="step-card"><div class="num">4</div><h3>🌈 Colors fan out separately</h3>
-      <p>As it exits, each color bends again by a different amount, so the colors spread apart into a band — red on the outside, violet on the inside.</p></div>
+    <div class="step-card"><div class="num">1</div><h3 id="s1t">☀️ Sunlight looks white</h3>
+      <p id="s1d">Sunlight looks white or yellow, but it's secretly a mix of every color of light blended together.</p></div>
+    <div class="step-card"><div class="num">2</div><h3 id="s2t">💧 A raindrop bends light</h3>
+      <p id="s2d">When light enters a round raindrop, it slows down and bends — and each color bends by a slightly different amount.</p></div>
+    <div class="step-card"><div class="num">3</div><h3 id="s3t">🪞 It bounces off the back</h3>
+      <p id="s3d">The light reflects off the inside back wall of the raindrop, like a tiny curved mirror, and heads back out.</p></div>
+    <div class="step-card"><div class="num">4</div><h3 id="s4t">🌈 Colors fan out separately</h3>
+      <p id="s4d">As it exits, each color bends again by a different amount, so the colors spread apart into a band — red on the outside, violet on the inside.</p></div>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> No two people ever see the exact same rainbow! Each person's eyes catch light from a
     slightly different set of raindrops, so the rainbow you see is a personal one, made just for where you're standing.
   </div>
 
-  <div class="try-title">🧪 Now try it yourself</div>
-  <p class="try-subtitle">Drag the slider to change how much each color bends, and watch the rainbow spread apart.</p>
+  <div class="try-title" id="tryTitle">🧪 Now try it yourself</div>
+  <p class="try-subtitle" id="trySubtitle">Drag the slider to change how much each color bends, and watch the rainbow spread apart.</p>
   <div class="try-card">
     <canvas id="tryScene" width="600" height="300"></canvas>
     <div class="try-controls">
@@ -89,6 +96,105 @@
 </div>
 
 <script>
+const T = {
+  en: {
+    langToggle: 'తెలుగు', backLink: '&larr; Back to Physics in Action',
+    pageTitle: '🌈 How Rainbows Form',
+    pageSubtitle: 'White sunlight secretly contains every color. Raindrops are what split it apart for you to see.',
+    playBtn: '▶ Play', pauseBtn: '⏸ Pause', restartBtn: '⟲ Restart',
+    captionInitial: 'Press <b>Play</b> to start!',
+    captionEnd: '🎬 The End! Press <b>Restart</b> to watch again.',
+    steps: [
+      ['☀️ Sunlight looks white','Sunlight looks white or yellow, but it\'s secretly a mix of every color of light blended together.'],
+      ['💧 A raindrop bends light','When light enters a round raindrop, it slows down and bends — and each color bends by a slightly different amount.'],
+      ['🪞 It bounces off the back','The light reflects off the inside back wall of the raindrop, like a tiny curved mirror, and heads back out.'],
+      ['🌈 Colors fan out separately','As it exits, each color bends again by a different amount, so the colors spread apart into a band — red on the outside, violet on the inside.'],
+    ],
+    fact: '🤯 <b>Mind-blowing part:</b> No two people ever see the exact same rainbow! Each person\'s eyes catch light from a slightly different set of raindrops, so the rainbow you see is a personal one, made just for where you\'re standing.',
+    tryTitle: '🧪 Now try it yourself',
+    trySubtitle: 'Drag the slider to change how much each color bends, and watch the rainbow spread apart.',
+    tryReset: '↻ Reset',
+    tryResultDefault: 'Slide to 0: all colors travel together as "white" light.',
+    tryResultZero: 'At 0, every color travels at exactly the same angle — it just looks like plain white light.',
+    tryResultGeneric: (v)=>'At '+v+'%, the colors bend by different amounts and spread into a clear rainbow fan!',
+    scenes: [
+      ['☀️ STEP 1: WHITE LIGHT IS A MIX','Sunlight looks white, but it\'s secretly made of <b>every color</b> traveling together, all bent by the same tiny amount.'],
+      ['💧 STEP 2: ENTERING A RAINDROP','When this light hits a round raindrop, it slows down and <b>bends</b>. Each color bends by a slightly different angle!'],
+      ['🪞 STEP 3: BOUNCING OFF THE BACK','Inside the raindrop, the light hits the back wall and <b>reflects</b>, like bouncing off a curved mirror.'],
+      ['🌈 STEP 4: COLORS FAN OUT','As the light exits, it bends again — and now the colors have spread far enough apart to see as a <b>rainbow band</b>!'],
+    ],
+    canvas: {
+      whiteLight: 'sunlight looks white — but it hides every color inside',
+      raindrop: 'a round raindrop',
+      colorsBend: 'each color bends a different amount',
+      bounceMirror: 'light bounces off the back wall, like a mirror',
+      spreadEnough: 'the colors have spread far enough apart to see!',
+      redViolet: 'red bends least (outside) · violet bends most (inside)',
+    },
+  },
+  te: {
+    langToggle: 'English', backLink: '&larr; ఫిజిక్స్ ఇన్ యాక్షన్ కి తిరిగి',
+    pageTitle: '🌈 ఇంద్రధనుస్సులు ఎలా ఏర్పడతాయి',
+    pageSubtitle: 'తెల్లని సూర్యకాంతిలో ప్రతి రంగు రహస్యంగా దాగి ఉంటుంది. వర్షపు బిందువులు దాన్ని విడగొట్టి మీకు కనిపించేలా చేస్తాయి.',
+    playBtn: '▶ ప్లే', pauseBtn: '⏸ పాజ్', restartBtn: '⟲ మళ్ళీ మొదలు',
+    captionInitial: 'ప్రారంభించడానికి <b>ప్లే</b> నొక్కండి!',
+    captionEnd: '🎬 ముగింపు! మళ్ళీ చూడటానికి <b>మళ్ళీ మొదలు</b> నొక్కండి.',
+    steps: [
+      ['☀️ సూర్యకాంతి తెల్లగా కనిపిస్తుంది','సూర్యకాంతి తెల్లగా లేదా పసుపు రంగులో కనిపిస్తుంది, కానీ అది రహస్యంగా అన్ని రంగుల కాంతి కలిసిన మిశ్రమం.'],
+      ['💧 వర్షపు బిందువు కాంతిని వంచుతుంది','కాంతి గుండ్రని వర్షపు బిందువులోకి ప్రవేశించినప్పుడు, అది నెమ్మదిస్తుంది మరియు వంగుతుంది — ప్రతి రంగు కొద్దిగా భిన్నమైన మొత్తంలో వంగుతుంది.'],
+      ['🪞 అది వెనుక భాగం నుండి తిరిగి వస్తుంది','కాంతి వర్షపు బిందువు లోపలి వెనుక గోడ నుండి, చిన్న వక్ర అద్దంలా, ప్రతిబింబించి తిరిగి బయటకు వెళుతుంది.'],
+      ['🌈 రంగులు విడివిడిగా వ్యాపిస్తాయి','అది బయటకు వచ్చేటప్పుడు, ప్రతి రంగు మళ్ళీ వేర్వేరు మొత్తంలో వంగుతుంది, కాబట్టి రంగులు ఒక పట్టీగా వ్యాపిస్తాయి — ఎరుపు బయట, ఊదా లోపల.'],
+    ],
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> ఇద్దరు వ్యక్తులు ఎప్పుడూ సరిగ్గా అదే ఇంద్రధనుస్సును చూడరు! ప్రతి వ్యక్తి కళ్ళు కొద్దిగా భిన్నమైన వర్షపు బిందువుల నుండి కాంతిని పట్టుకుంటాయి, కాబట్టి మీరు చూసే ఇంద్రధనుస్సు మీరు నిలబడిన స్థానానికి ప్రత్యేకంగా తయారైనది.',
+    tryTitle: '🧪 ఇప్పుడు మీరే ప్రయత్నించండి',
+    trySubtitle: 'ప్రతి రంగు ఎంత వంగుతుందో మార్చడానికి స్లయిడర్‌ను లాగండి, ఇంద్రధనుస్సు వ్యాపించడం చూడండి.',
+    tryReset: '↻ రీసెట్',
+    tryResultDefault: '0కి స్లైడ్ చేయండి: అన్ని రంగులు "తెల్లని" కాంతిగా కలిసి ప్రయాణిస్తాయి.',
+    tryResultZero: '0 వద్ద, ప్రతి రంగు సరిగ్గా అదే కోణంలో ప్రయాణిస్తుంది — ఇది కేవలం సాధారణ తెల్లని కాంతిలా కనిపిస్తుంది.',
+    tryResultGeneric: (v)=>v+'% వద్ద, రంగులు వేర్వేరు మొత్తాలలో వంగి స్పష్టమైన ఇంద్రధనుస్సు పంఖాగా వ్యాపిస్తాయి!',
+    scenes: [
+      ['☀️ దశ 1: తెల్లని కాంతి ఒక మిశ్రమం','సూర్యకాంతి తెల్లగా కనిపిస్తుంది, కానీ అది రహస్యంగా <b>అన్ని రంగుల</b>తో కలిసి, అన్నీ ఒకే చిన్న మొత్తంలో వంగి ప్రయాణిస్తుంది.'],
+      ['💧 దశ 2: వర్షపు బిందువులోకి ప్రవేశించడం','ఈ కాంతి గుండ్రని వర్షపు బిందువును తాకినప్పుడు, అది నెమ్మదిస్తుంది మరియు <b>వంగుతుంది</b>. ప్రతి రంగు కొద్దిగా భిన్నమైన కోణంలో వంగుతుంది!'],
+      ['🪞 దశ 3: వెనుక భాగం నుండి తిరిగి రావడం','వర్షపు బిందువు లోపల, కాంతి వెనుక గోడను తాకి <b>ప్రతిబింబిస్తుంది</b>, వక్ర అద్దం నుండి తిరిగి రావడం లాగా.'],
+      ['🌈 దశ 4: రంగులు వ్యాపిస్తాయి','కాంతి బయటకు వచ్చేటప్పుడు, అది మళ్ళీ వంగుతుంది — ఇప్పుడు రంగులు <b>ఇంద్రధనుస్సు పట్టీ</b>గా కనిపించేంతగా వేరుగా వ్యాపించాయి!'],
+    ],
+    canvas: {
+      whiteLight: 'సూర్యకాంతి తెల్లగా కనిపిస్తుంది — కానీ లోపల ప్రతి రంగు దాగి ఉంటుంది',
+      raindrop: 'గుండ్రని వర్షపు బిందువు',
+      colorsBend: 'ప్రతి రంగు వేర్వేరు మొత్తంలో వంగుతుంది',
+      bounceMirror: 'కాంతి వెనుక గోడ నుండి, అద్దంలా, తిరిగి వస్తుంది',
+      spreadEnough: 'రంగులు చూసేంతగా వేరుగా వ్యాపించాయి!',
+      redViolet: 'ఎరుపు అతి తక్కువ వంగుతుంది (బయట) · ఊదా అతి ఎక్కువ వంగుతుంది (లోపల)',
+    },
+  }
+};
+let LANG='en';
+function tr(){ return T[LANG]; }
+function applyStaticText(){
+  const t=tr();
+  document.documentElement.lang=LANG;
+  document.getElementById('langToggle').textContent=t.langToggle;
+  document.getElementById('backLink').innerHTML=t.backLink;
+  document.getElementById('pageTitle').textContent=t.pageTitle;
+  document.getElementById('pageSubtitle').textContent=t.pageSubtitle;
+  document.getElementById('restartBtn').textContent=t.restartBtn;
+  for(let i=0;i<4;i++){
+    document.getElementById('s'+(i+1)+'t').textContent=t.steps[i][0];
+    document.getElementById('s'+(i+1)+'d').innerHTML=t.steps[i][1];
+  }
+  document.getElementById('factBox').innerHTML=t.fact;
+  document.getElementById('tryTitle').textContent=t.tryTitle;
+  document.getElementById('trySubtitle').textContent=t.trySubtitle;
+  document.getElementById('tryReset').textContent=t.tryReset;
+}
+document.getElementById('langToggle').addEventListener('click',()=>{
+  LANG = LANG==='en' ? 'te' : 'en';
+  applyStaticText();
+  if(window.__rbRefresh) window.__rbRefresh();
+  if(window.__tryRefresh) window.__tryRefresh();
+});
+applyStaticText();
+
 (function(){
   const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
   const W=canvas.width, H=canvas.height;
@@ -97,15 +203,10 @@
 
   const COLORS=['#ff4d4d','#ff9d4d','#ffe14d','#7dff4d','#4dc3ff','#7a4dff'];
 
-  const SCENES=[
-    {t:0,dur:6,banner:'☀️ STEP 1: WHITE LIGHT IS A MIX',caption:'Sunlight looks white, but it\'s secretly made of <b>every color</b> traveling together, all bent by the same tiny amount.'},
-    {t:6,dur:7,banner:'💧 STEP 2: ENTERING A RAINDROP',caption:'When this light hits a round raindrop, it slows down and <b>bends</b>. Each color bends by a slightly different angle!'},
-    {t:13,dur:6,banner:'🪞 STEP 3: BOUNCING OFF THE BACK',caption:'Inside the raindrop, the light hits the back wall and <b>reflects</b>, like bouncing off a curved mirror.'},
-    {t:19,dur:8,banner:'🌈 STEP 4: COLORS FAN OUT',caption:'As the light exits, it bends again — and now the colors have spread far enough apart to see as a <b>rainbow band</b>!'},
-  ];
+  const starts=[0,6,13,19];
   const totalDur=27;
-  let simTime=0, playing=false, lastTs=null;
-  function currentScene(t){ for(let i=SCENES.length-1;i>=0;i--) if(t>=SCENES[i].t) return i; return 0; }
+  let simTime=0, playing=false, lastTs=null, captionOverride='initial';
+  function currentScene(t){ for(let i=starts.length-1;i>=0;i--) if(t>=starts[i]) return i; return 0; }
   function label(x,y,text,color){
     ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
     const tw=ctx.measureText(text).width;
@@ -117,14 +218,14 @@
     const y=H/2;
     ctx.strokeStyle='#fff'; ctx.lineWidth=6;
     ctx.beginPath(); ctx.moveTo(60,y); ctx.lineTo(60+local*90,y); ctx.stroke();
-    label(W/2,60,'sunlight looks white — but it hides every color inside','#eef2ff');
+    label(W/2,60,tr().canvas.whiteLight,'#eef2ff');
     ctx.fillStyle='#ffd23f'; ctx.beginPath(); ctx.arc(40,y,20,0,Math.PI*2); ctx.fill();
   }
   function drawDropEnter(local){
     const dropX=520, dropY=H/2, r=90;
     ctx.strokeStyle='rgba(120,180,255,.4)'; ctx.lineWidth=2;
     ctx.beginPath(); ctx.arc(dropX,dropY,r,0,Math.PI*2); ctx.stroke();
-    label(dropX,dropY-r-20,'a round raindrop','#8fd2ff');
+    label(dropX,dropY-r-20,tr().canvas.raindrop,'#8fd2ff');
     const bx=60+Math.min(1,local/2)*(dropX-r-60);
     ctx.strokeStyle='#fff'; ctx.lineWidth=5;
     ctx.beginPath(); ctx.moveTo(60,dropY); ctx.lineTo(bx,dropY); ctx.stroke();
@@ -135,7 +236,7 @@
         ctx.strokeStyle=c; ctx.lineWidth=3;
         ctx.beginPath(); ctx.moveTo(dropX-r,dropY); ctx.lineTo(dropX-r+inside*60,dropY+spread); ctx.stroke();
       });
-      label(dropX,dropY+r+30,'each color bends a different amount','#eef2ff');
+      label(dropX,dropY+r+30,tr().canvas.colorsBend,'#eef2ff');
     }
   }
   function drawBounce(local){
@@ -159,7 +260,7 @@
         ctx.beginPath(); ctx.moveTo(backX,backY); ctx.lineTo(backX+back*(outX-backX),backY+back*(outY-backY)); ctx.stroke();
       });
     }
-    label(dropX,dropY+r+30,'light bounces off the back wall, like a mirror','#eef2ff');
+    label(dropX,dropY+r+30,tr().canvas.bounceMirror,'#eef2ff');
   }
   function drawFanOut(local){
     const dropX=300, dropY=H/2, r=70;
@@ -175,15 +276,15 @@
       ctx.lineTo(ex+Math.cos(ang)*420, ey+Math.sin(ang)*420*3);
       ctx.stroke();
     });
-    label(W/2,60,'the colors have spread far enough apart to see!','#eef2ff');
-    label(W/2,H-30,'red bends least (outside) · violet bends most (inside)','#9aa4cc');
+    label(W/2,60,tr().canvas.spreadEnough,'#eef2ff');
+    label(W/2,H-30,tr().canvas.redViolet,'#9aa4cc');
   }
 
   function render(t){
     ctx.clearRect(0,0,W,H); ctx.fillStyle='#04060f'; ctx.fillRect(0,0,W,H);
     for(let i=0;i<40;i++){ ctx.fillStyle='rgba(255,255,255,'+(0.06+0.2*((i*37)%10)/10)+')'; ctx.fillRect((i*53)%W,(i*97)%H,2,2); }
-    const idx=currentScene(t), scene=SCENES[idx], local=t-scene.t;
-    bannerEl.textContent=scene.banner; captionEl.innerHTML=scene.caption;
+    const idx=currentScene(t), scene=tr().scenes[idx], local=t-starts[idx];
+    bannerEl.textContent=scene[0]; captionEl.innerHTML=scene[1];
     if(idx===0) drawWhiteBeam(local);
     else if(idx===1) drawDropEnter(local);
     else if(idx===2) drawBounce(local);
@@ -196,15 +297,24 @@
     const dt=Math.min(0.05,(ts-lastTs)/1000); lastTs=ts;
     simTime+=dt;
     if(simTime>=totalDur){ simTime=totalDur; render(simTime); pause();
-      captionEl.innerHTML='🎬 The End! Press <b>Restart</b> to watch again.'; return; }
+      captionOverride='ended'; captionEl.innerHTML=tr().captionEnd; return; }
+    captionOverride=null;
     render(simTime); requestAnimationFrame(step);
   }
-  function play(){ if(playing) return; playing=true; lastTs=null; playBtn.textContent='⏸ Pause'; requestAnimationFrame(step); }
-  function pause(){ playing=false; playBtn.textContent='▶ Play'; }
-  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionEl.innerHTML='Press <b>Play</b> to start!'; }
+  function play(){ if(playing) return; playing=true; lastTs=null; captionOverride=null; playBtn.textContent=tr().pauseBtn; requestAnimationFrame(step); }
+  function pause(){ playing=false; playBtn.textContent=tr().playBtn; }
+  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionOverride='initial'; captionEl.innerHTML=tr().captionInitial; }
   playBtn.addEventListener('click',()=>playing?pause():play());
   restartBtn.addEventListener('click',restart);
+  playBtn.textContent=tr().playBtn;
   render(0);
+
+  window.__rbRefresh=function(){
+    playBtn.textContent = playing ? tr().pauseBtn : tr().playBtn;
+    render(simTime);
+    if(captionOverride==='initial') captionEl.innerHTML=tr().captionInitial;
+    else if(captionOverride==='ended') captionEl.innerHTML=tr().captionEnd;
+  };
 })();
 
 (function(){
@@ -213,6 +323,13 @@
   const slider=document.getElementById('bendSlider');
   const resultEl=document.getElementById('tryResult');
   const COLORS=['#ff4d4d','#ff9d4d','#ffe14d','#7dff4d','#4dc3ff','#7a4dff'];
+  let lastResult='default';
+  function updateResultText(){
+    const t=tr();
+    if(lastResult==='zero') resultEl.textContent=t.tryResultZero;
+    else if(typeof lastResult==='number') resultEl.textContent=t.tryResultGeneric(lastResult);
+    else resultEl.textContent=t.tryResultDefault;
+  }
   function draw(){
     c.clearRect(0,0,w,h); c.fillStyle='#04060f'; c.fillRect(0,0,w,h);
     const spread=(+slider.value)/100;
@@ -235,12 +352,14 @@
   slider.addEventListener('input',()=>{
     draw();
     const v=+slider.value;
-    resultEl.textContent = v<3
-      ? 'At 0, every color travels at exactly the same angle — it just looks like plain white light.'
-      : 'At '+v+'%, the colors bend by different amounts and spread into a clear rainbow fan!';
+    lastResult = v<3 ? 'zero' : v;
+    updateResultText();
   });
-  document.getElementById('tryReset').addEventListener('click',()=>{ slider.value=0; draw(); resultEl.textContent='Slide to 0: all colors travel together as "white" light.'; });
+  document.getElementById('tryReset').addEventListener('click',()=>{ slider.value=0; draw(); lastResult='default'; updateResultText(); });
+  updateResultText();
   draw();
+
+  window.__tryRefresh=function(){ updateResultText(); draw(); };
 })();
 </script>
 </body>
