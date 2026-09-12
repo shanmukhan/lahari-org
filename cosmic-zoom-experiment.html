@@ -9,7 +9,11 @@
   *{box-sizing:border-box;}
   body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
   .wrap{max-width:960px;margin:0 auto;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
   a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
   header{text-align:center;margin-bottom:20px;}
   h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
   header p{color:var(--dim);font-size:16px;margin:0;}
@@ -31,10 +35,13 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="index.html">&larr; Back to lahari.org</a>
+  <div class="topbar">
+    <a class="back" href="index.html" id="backLink">&larr; Back to lahari.org</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
   <header>
-    <h1>🔭 Zooming Out to the Galaxy</h1>
-    <p>Start on Earth's surface. Keep zooming out. See how tiny our whole world really is.</p>
+    <h1 id="pageTitle">🔭 Zooming Out to the Galaxy</h1>
+    <p id="pageSubtitle">Start on Earth's surface. Keep zooming out. See how tiny our whole world really is.</p>
   </header>
 
   <div class="player">
@@ -50,7 +57,7 @@
     <button id="restartBtn">⟲ Restart</button>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> If the Sun were the size of a basketball, Earth would be a tiny peppercorn
     <b>30&nbsp;meters</b> away — and the nearest other star would be another basketball more than
     <b>7,000&nbsp;kilometers</b> away. Space is almost entirely empty!
@@ -58,130 +65,188 @@
 </div>
 
 <script>
+const T = {
+  en: {
+    langToggle: 'తెలుగు', backLink: '&larr; Back to lahari.org',
+    pageTitle: '🔭 Zooming Out to the Galaxy',
+    pageSubtitle: 'Start on Earth\'s surface. Keep zooming out. See how tiny our whole world really is.',
+    captionInitial: 'Press <b>Zoom Out</b> to begin the journey!',
+    zoomInBtn: '◀ Zoom In', zoomOutBtn: 'Zoom Out ▶', restartBtn: '⟲ Restart', endOfJourney: 'End of journey',
+    levelWord: 'Level', scaleWord: 'Scale',
+    fact: '🤯 <b>Mind-blowing part:</b> If the Sun were the size of a basketball, Earth would be a tiny peppercorn <b>30&nbsp;meters</b> away — and the nearest other star would be another basketball more than <b>7,000&nbsp;kilometers</b> away. Space is almost entirely empty!',
+    levels: [
+      {name:'You, standing on Earth', size:'about 1.7 meters tall', caption:'This is <b>you</b>, standing on the ground. Let\'s zoom out and see what surrounds you.'},
+      {name:'A city', size:'about 20 kilometers wide', caption:'Zoom out and your neighborhood is part of a whole <b>city</b>, full of streets and buildings.'},
+      {name:'Earth from space', size:'about 12,742 km across', caption:'Zoom out more and the whole city disappears into a tiny dot on the round <b>Earth</b>.'},
+      {name:'Earth + Moon + orbit', size:'Moon is about 384,000 km away', caption:'Zoom out further and we see Earth\'s only natural satellite — the <b>Moon</b> — circling around it.'},
+      {name:'The Solar System', size:'about 9 billion km across (to Neptune)', caption:'Zoom out and Earth is just one of <b>eight planets</b> circling our star, the Sun.'},
+      {name:'Our stellar neighborhood', size:'nearest star ~4.2 light-years away', caption:'Zoom out and the whole Solar System is a single point of light. Other <b>stars</b> are scattered around us, each maybe with their own planets.'},
+      {name:'The Milky Way galaxy', size:'about 100,000 light-years across, ~200-400 billion stars', caption:'Zoom WAY out and our star is just one of hundreds of <b>billions</b> in a giant spinning pinwheel of stars — our <b>galaxy</b>, the Milky Way.'},
+      {name:'The observable universe', size:'billions of galaxies, ~93 billion light-years across', caption:'Zoom out to the largest scale we know: the Milky Way is just <b>one galaxy</b> among hundreds of <b>billions</b> of galaxies scattered across the universe.'},
+    ],
+    canvas: {
+      ourSunTiny: 'our Sun (just one tiny star)',
+      spiralArm: 'our Sun is out on one of the spiral arms, far from the center',
+      smudge: 'each smudge here is an entire galaxy of billions of stars',
+    },
+  },
+  te: {
+    langToggle: 'English', backLink: '&larr; lahari.org కి తిరిగి',
+    pageTitle: '🔭 గెలాక్సీ వరకు జూమ్ అవుట్ చేయడం',
+    pageSubtitle: 'భూమి ఉపరితలంపై ప్రారంభించండి. జూమ్ అవుట్ చేస్తూ ఉండండి. మన మొత్తం ప్రపంచం నిజంగా ఎంత చిన్నదో చూడండి.',
+    captionInitial: 'ప్రయాణాన్ని ప్రారంభించడానికి <b>జూమ్ అవుట్</b> నొక్కండి!',
+    zoomInBtn: '◀ జూమ్ ఇన్', zoomOutBtn: 'జూమ్ అవుట్ ▶', restartBtn: '⟲ మళ్ళీ మొదలు', endOfJourney: 'ప్రయాణం ముగింపు',
+    levelWord: 'స్థాయి', scaleWord: 'స్కేల్',
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> సూర్యుడు బాస్కెట్‌బాల్ పరిమాణంలో ఉంటే, భూమి <b>30 మీటర్ల</b> దూరంలో ఉన్న ఒక చిన్న మిరియాల గింజ అవుతుంది — మరియు సమీప నక్షత్రం మరో బాస్కెట్‌బాల్ <b>7,000 కిలోమీటర్ల</b> కంటే ఎక్కువ దూరంలో ఉంటుంది. అంతరిక్షం దాదాపు పూర్తిగా ఖాళీగా ఉంటుంది!',
+    levels: [
+      {name:'మీరు, భూమిపై నిలబడి', size:'దాదాపు 1.7 మీటర్ల ఎత్తు', caption:'ఇది <b>మీరు</b>, నేలపై నిలబడి ఉన్నారు. జూమ్ అవుట్ చేసి మీ చుట్టూ ఏముందో చూద్దాం.'},
+      {name:'ఒక నగరం', size:'దాదాపు 20 కిలోమీటర్ల వెడల్పు', caption:'జూమ్ అవుట్ చేస్తే మీ పరిసర ప్రాంతం వీధులు మరియు భవనాలతో నిండిన మొత్తం <b>నగరంలో</b> భాగం.'},
+      {name:'అంతరిక్షం నుండి భూమి', size:'దాదాపు 12,742 కి.మీ వెడల్పు', caption:'మరింత జూమ్ అవుట్ చేస్తే మొత్తం నగరం గుండ్రని <b>భూమి</b>పై ఒక చిన్న చుక్కగా మాయమవుతుంది.'},
+      {name:'భూమి + చంద్రుడు + కక్ష్య', size:'చంద్రుడు దాదాపు 384,000 కి.మీ దూరంలో ఉన్నాడు', caption:'మరింత జూమ్ అవుట్ చేస్తే భూమి యొక్క ఏకైక సహజ ఉపగ్రహం — <b>చంద్రుడు</b> — దాని చుట్టూ తిరుగుతూ కనిపిస్తాడు.'},
+      {name:'సౌర వ్యవస్థ', size:'దాదాపు 900 కోట్ల కి.మీ వెడల్పు (నెప్ట్యూన్ వరకు)', caption:'జూమ్ అవుట్ చేస్తే భూమి మన నక్షత్రం సూర్యుడి చుట్టూ తిరిగే <b>ఎనిమిది గ్రహాలలో</b> ఒకటి మాత్రమే.'},
+      {name:'మన నక్షత్ర పరిసర ప్రాంతం', size:'సమీప నక్షత్రం ~4.2 కాంతి సంవత్సరాల దూరంలో', caption:'జూమ్ అవుట్ చేస్తే మొత్తం సౌర వ్యవస్థ ఒకే ఒక కాంతి బిందువు. ఇతర <b>నక్షత్రాలు</b> మన చుట్టూ చెల్లాచెదురుగా ఉన్నాయి, ఒక్కొక్కటి బహుశా వాటి స్వంత గ్రహాలతో.'},
+      {name:'పాలపుంత గెలాక్సీ', size:'దాదాపు 1,00,000 కాంతి సంవత్సరాల వెడల్పు, ~200-400 బిలియన్ నక్షత్రాలు', caption:'చాలా దూరం జూమ్ అవుట్ చేస్తే మన నక్షత్రం నక్షత్రాల భారీ తిరిగే పిన్‌వీల్‌లో వందల <b>బిలియన్లలో</b> ఒకటి మాత్రమే — మన <b>గెలాక్సీ</b>, పాలపుంత.'},
+      {name:'పరిశీలించదగిన విశ్వం', size:'బిలియన్ల గెలాక్సీలు, ~93 బిలియన్ కాంతి సంవత్సరాల వెడల్పు', caption:'మనకు తెలిసిన అతిపెద్ద స్థాయికి జూమ్ అవుట్ చేయండి: పాలపుంత విశ్వమంతా చెల్లాచెదురుగా ఉన్న వందల <b>బిలియన్ల</b> గెలాక్సీలలో <b>ఒక గెలాక్సీ</b> మాత్రమే.'},
+    ],
+    canvas: {
+      ourSunTiny: 'మన సూర్యుడు (కేవలం ఒక చిన్న నక్షత్రం)',
+      spiralArm: 'మన సూర్యుడు మురి చేతుల్లో ఒకదానిపై ఉన్నాడు, కేంద్రానికి దూరంగా',
+      smudge: 'ఇక్కడ ప్రతి మచ్చ బిలియన్ల నక్షత్రాలతో కూడిన ఒక మొత్తం గెలాక్సీ',
+    },
+  }
+};
+let LANG='en';
+function tr(){ return T[LANG]; }
+function applyStaticText(){
+  const t=tr();
+  document.documentElement.lang=LANG;
+  document.getElementById('langToggle').textContent=t.langToggle;
+  document.getElementById('backLink').innerHTML=t.backLink;
+  document.getElementById('pageTitle').textContent=t.pageTitle;
+  document.getElementById('pageSubtitle').textContent=t.pageSubtitle;
+  document.getElementById('factBox').innerHTML=t.fact;
+}
+document.getElementById('langToggle').addEventListener('click',()=>{
+  LANG = LANG==='en' ? 'te' : 'en';
+  applyStaticText();
+  if(window.__zoomRefresh) window.__zoomRefresh();
+});
+applyStaticText();
+
 (function(){
   const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
   const W=canvas.width, H=canvas.height;
   const captionEl=document.getElementById('caption'), scaleTag=document.getElementById('scaleTag'), trackBar=document.getElementById('trackBar');
   const prevBtn=document.getElementById('prevBtn'), nextBtn=document.getElementById('nextBtn'), restartBtn=document.getElementById('restartBtn');
 
-  const LEVELS=[
-    { name:'You, standing on Earth', size:'about 1.7 meters tall',
-      caption:'This is <b>you</b>, standing on the ground. Let\'s zoom out and see what surrounds you.',
-      draw:(t)=>{
-        ctx.fillStyle='#4a7c3a'; ctx.fillRect(0,H*0.75,W,H*0.25);
-        ctx.fillStyle='#87ceeb'; ctx.fillRect(0,0,W,H*0.75);
-        ctx.fillStyle='#ffd23f'; ctx.beginPath(); ctx.arc(W-100,110,60,0,Math.PI*2); ctx.fill();
-        ctx.fillStyle='#3a2a1a'; ctx.fillRect(W/2-6,H*0.75-90,12,90);
-        ctx.beginPath(); ctx.arc(W/2,H*0.75-100,16,0,Math.PI*2); ctx.fill();
-      }},
-    { name:'A city', size:'about 20 kilometers wide',
-      caption:'Zoom out and your neighborhood is part of a whole <b>city</b>, full of streets and buildings.',
-      draw:(t)=>{
-        ctx.fillStyle='#0e1330'; ctx.fillRect(0,0,W,H);
-        for(let i=0;i<40;i++){
-          const bw=20+((i*13)%30), bh=40+((i*47)%180);
-          ctx.fillStyle='#1c2450'; ctx.fillRect((i*23)%W, H-bh, bw, bh);
-          ctx.fillStyle='#ffd23f';
-          for(let wy=H-bh+10;wy<H-6;wy+=16) for(let wx=0;wx<bw-8;wx+=14) if((wx+wy+i)%3===0) ctx.fillRect((i*23)%W+wx+4,wy,4,6);
+  const DRAWERS=[
+    (t)=>{
+      ctx.fillStyle='#4a7c3a'; ctx.fillRect(0,H*0.75,W,H*0.25);
+      ctx.fillStyle='#87ceeb'; ctx.fillRect(0,0,W,H*0.75);
+      ctx.fillStyle='#ffd23f'; ctx.beginPath(); ctx.arc(W-100,110,60,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#3a2a1a'; ctx.fillRect(W/2-6,H*0.75-90,12,90);
+      ctx.beginPath(); ctx.arc(W/2,H*0.75-100,16,0,Math.PI*2); ctx.fill();
+    },
+    (t)=>{
+      ctx.fillStyle='#0e1330'; ctx.fillRect(0,0,W,H);
+      for(let i=0;i<40;i++){
+        const bw=20+((i*13)%30), bh=40+((i*47)%180);
+        ctx.fillStyle='#1c2450'; ctx.fillRect((i*23)%W, H-bh, bw, bh);
+        ctx.fillStyle='#ffd23f';
+        for(let wy=H-bh+10;wy<H-6;wy+=16) for(let wx=0;wx<bw-8;wx+=14) if((wx+wy+i)%3===0) ctx.fillRect((i*23)%W+wx+4,wy,4,6);
+      }
+    },
+    (t)=>{
+      const g=ctx.createRadialGradient(W/2-40,H/2-40,10,W/2,H/2,220);
+      g.addColorStop(0,'#7ec8ff'); g.addColorStop(1,'#1a3a7a');
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(W/2,H/2,220,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='rgba(90,180,110,.9)';
+      for(let i=0;i<6;i++){ ctx.beginPath(); ctx.ellipse(W/2+Math.cos(i*1.3)*100,H/2+Math.sin(i*1.3)*100,55,30,i,0,Math.PI*2); ctx.fill(); }
+    },
+    (t)=>{
+      const eg=ctx.createRadialGradient(W/2-8,H/2-8,4,W/2,H/2,55);
+      eg.addColorStop(0,'#7ec8ff'); eg.addColorStop(1,'#1a3a7a');
+      ctx.fillStyle=eg; ctx.beginPath(); ctx.arc(W/2,H/2,50,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle='rgba(255,255,255,.15)'; ctx.beginPath(); ctx.ellipse(W/2,H/2,220,90,0,0,Math.PI*2); ctx.stroke();
+      const a=t*0.6;
+      ctx.fillStyle='#c9c9c9'; ctx.beginPath(); ctx.arc(W/2+Math.cos(a)*220,H/2+Math.sin(a)*90,12,0,Math.PI*2); ctx.fill();
+    },
+    (t)=>{
+      const g=ctx.createRadialGradient(W/2,H/2,6,W/2,H/2,40);
+      g.addColorStop(0,'#fff6c8'); g.addColorStop(1,'#ffb43f');
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(W/2,H/2,36,0,Math.PI*2); ctx.fill();
+      const planets=[{r:70,c:'#b5a397',sz:4},{r:100,c:'#e8c27a',sz:6},{r:135,c:'#5da8ff',sz:6},{r:165,c:'#e08a5e',sz:5},{r:230,c:'#d4a373',sz:14},{r:280,c:'#e8d3a0',sz:12},{r:320,c:'#8fd2ff',sz:9},{r:360,c:'#4f6fdf',sz:9}];
+      planets.forEach((p,i)=>{
+        ctx.strokeStyle='rgba(255,255,255,.08)'; ctx.beginPath(); ctx.ellipse(W/2,H/2,p.r,p.r*0.42,0,0,Math.PI*2); ctx.stroke();
+        const a=t*(0.5-i*0.05)+i;
+        ctx.fillStyle=p.c; ctx.beginPath(); ctx.arc(W/2+Math.cos(a)*p.r,H/2+Math.sin(a)*p.r*0.42,p.sz,0,Math.PI*2); ctx.fill();
+      });
+    },
+    (t)=>{
+      for(let i=0;i<150;i++){
+        const x=(i*53+t*4)%W, y=(i*97)%H;
+        const s=(i%7===0)?2.6:1.2;
+        ctx.fillStyle=(i%13===0)?'#ffd23f':'rgba(255,255,255,.8)';
+        ctx.beginPath(); ctx.arc(x,y,s,0,Math.PI*2); ctx.fill();
+      }
+      ctx.fillStyle='#ffe9a8'; ctx.beginPath(); ctx.arc(W/2,H/2,4,0,Math.PI*2); ctx.fill();
+      ctx.font='700 13px Segoe UI'; ctx.fillStyle='#9aa4cc'; ctx.textAlign='center'; ctx.fillText(tr().canvas.ourSunTiny,W/2,H/2+24);
+    },
+    (t)=>{
+      ctx.save(); ctx.translate(W/2,H/2);
+      for(let arm=0;arm<4;arm++){
+        for(let i=0;i<220;i++){
+          const rr=8+i*1.5;
+          const ang=arm*(Math.PI/2)+i*0.12+t*0.05;
+          const x=Math.cos(ang)*rr, y=Math.sin(ang)*rr*0.4;
+          ctx.fillStyle=(i%9===0)?'#ffd23f':'rgba(180,210,255,.7)';
+          ctx.beginPath(); ctx.arc(x,y,1.4,0,Math.PI*2); ctx.fill();
         }
-      }},
-    { name:'Earth from space', size:'about 12,742 km across',
-      caption:'Zoom out more and the whole city disappears into a tiny dot on the round <b>Earth</b>.',
-      draw:(t)=>{
-        const g=ctx.createRadialGradient(W/2-40,H/2-40,10,W/2,H/2,220);
-        g.addColorStop(0,'#7ec8ff'); g.addColorStop(1,'#1a3a7a');
-        ctx.fillStyle=g; ctx.beginPath(); ctx.arc(W/2,H/2,220,0,Math.PI*2); ctx.fill();
-        ctx.fillStyle='rgba(90,180,110,.9)';
-        for(let i=0;i<6;i++){ ctx.beginPath(); ctx.ellipse(W/2+Math.cos(i*1.3)*100,H/2+Math.sin(i*1.3)*100,55,30,i,0,Math.PI*2); ctx.fill(); }
-      }},
-    { name:'Earth + Moon + orbit', size:'Moon is about 384,000 km away',
-      caption:'Zoom out further and we see Earth\'s only natural satellite — the <b>Moon</b> — circling around it.',
-      draw:(t)=>{
-        const eg=ctx.createRadialGradient(W/2-8,H/2-8,4,W/2,H/2,55);
-        eg.addColorStop(0,'#7ec8ff'); eg.addColorStop(1,'#1a3a7a');
-        ctx.fillStyle=eg; ctx.beginPath(); ctx.arc(W/2,H/2,50,0,Math.PI*2); ctx.fill();
-        ctx.strokeStyle='rgba(255,255,255,.15)'; ctx.beginPath(); ctx.ellipse(W/2,H/2,220,90,0,0,Math.PI*2); ctx.stroke();
-        const a=t*0.6;
-        ctx.fillStyle='#c9c9c9'; ctx.beginPath(); ctx.arc(W/2+Math.cos(a)*220,H/2+Math.sin(a)*90,12,0,Math.PI*2); ctx.fill();
-      }},
-    { name:'The Solar System', size:'about 9 billion km across (to Neptune)',
-      caption:'Zoom out and Earth is just one of <b>eight planets</b> circling our star, the Sun.',
-      draw:(t)=>{
-        const g=ctx.createRadialGradient(W/2,H/2,6,W/2,H/2,40);
-        g.addColorStop(0,'#fff6c8'); g.addColorStop(1,'#ffb43f');
-        ctx.fillStyle=g; ctx.beginPath(); ctx.arc(W/2,H/2,36,0,Math.PI*2); ctx.fill();
-        const planets=[{r:70,c:'#b5a397',sz:4},{r:100,c:'#e8c27a',sz:6},{r:135,c:'#5da8ff',sz:6},{r:165,c:'#e08a5e',sz:5},{r:230,c:'#d4a373',sz:14},{r:280,c:'#e8d3a0',sz:12},{r:320,c:'#8fd2ff',sz:9},{r:360,c:'#4f6fdf',sz:9}];
-        planets.forEach((p,i)=>{
-          ctx.strokeStyle='rgba(255,255,255,.08)'; ctx.beginPath(); ctx.ellipse(W/2,H/2,p.r,p.r*0.42,0,0,Math.PI*2); ctx.stroke();
-          const a=t*(0.5-i*0.05)+i;
-          ctx.fillStyle=p.c; ctx.beginPath(); ctx.arc(W/2+Math.cos(a)*p.r,H/2+Math.sin(a)*p.r*0.42,p.sz,0,Math.PI*2); ctx.fill();
-        });
-      }},
-    { name:'Our stellar neighborhood', size:'nearest star ~4.2 light-years away',
-      caption:'Zoom out and the whole Solar System is a single point of light. Other <b>stars</b> are scattered around us, each maybe with their own planets.',
-      draw:(t)=>{
-        for(let i=0;i<150;i++){
-          const x=(i*53+t*4)%W, y=(i*97)%H;
-          const s=(i%7===0)?2.6:1.2;
-          ctx.fillStyle=(i%13===0)?'#ffd23f':'rgba(255,255,255,.8)';
-          ctx.beginPath(); ctx.arc(x,y,s,0,Math.PI*2); ctx.fill();
-        }
-        ctx.fillStyle='#ffe9a8'; ctx.beginPath(); ctx.arc(W/2,H/2,4,0,Math.PI*2); ctx.fill();
-        ctx.font='700 13px Segoe UI'; ctx.fillStyle='#9aa4cc'; ctx.textAlign='center'; ctx.fillText('our Sun (just one tiny star)',W/2,H/2+24);
-      }},
-    { name:'The Milky Way galaxy', size:'about 100,000 light-years across, ~200-400 billion stars',
-      caption:'Zoom WAY out and our star is just one of hundreds of <b>billions</b> in a giant spinning pinwheel of stars — our <b>galaxy</b>, the Milky Way.',
-      draw:(t)=>{
-        ctx.save(); ctx.translate(W/2,H/2);
-        for(let arm=0;arm<4;arm++){
-          for(let i=0;i<220;i++){
-            const rr=8+i*1.5;
-            const ang=arm*(Math.PI/2)+i*0.12+t*0.05;
-            const x=Math.cos(ang)*rr, y=Math.sin(ang)*rr*0.4;
-            ctx.fillStyle=(i%9===0)?'#ffd23f':'rgba(180,210,255,.7)';
-            ctx.beginPath(); ctx.arc(x,y,1.4,0,Math.PI*2); ctx.fill();
-          }
-        }
-        ctx.fillStyle='#fff6c8'; ctx.beginPath(); ctx.arc(0,0,10,0,Math.PI*2); ctx.fill();
+      }
+      ctx.fillStyle='#fff6c8'; ctx.beginPath(); ctx.arc(0,0,10,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+      ctx.font='700 13px Segoe UI'; ctx.fillStyle='#8fd2ff'; ctx.textAlign='center';
+      ctx.fillText(tr().canvas.spiralArm, W/2, H-30);
+    },
+    (t)=>{
+      for(let i=0;i<90;i++){
+        const x=(i*61+t*2)%W, y=(i*83)%H;
+        ctx.save(); ctx.translate(x,y); ctx.rotate(i);
+        ctx.fillStyle='rgba(180,200,255,.5)';
+        ctx.beginPath(); ctx.ellipse(0,0,8,3,0,0,Math.PI*2); ctx.fill();
         ctx.restore();
-        ctx.font='700 13px Segoe UI'; ctx.fillStyle='#8fd2ff'; ctx.textAlign='center';
-        ctx.fillText('our Sun is out on one of the spiral arms, far from the center', W/2, H-30);
-      }},
-    { name:'The observable universe', size:'billions of galaxies, ~93 billion light-years across',
-      caption:'Zoom out to the largest scale we know: the Milky Way is just <b>one galaxy</b> among hundreds of <b>billions</b> of galaxies scattered across the universe.',
-      draw:(t)=>{
-        for(let i=0;i<90;i++){
-          const x=(i*61+t*2)%W, y=(i*83)%H;
-          ctx.save(); ctx.translate(x,y); ctx.rotate(i);
-          ctx.fillStyle='rgba(180,200,255,.5)';
-          ctx.beginPath(); ctx.ellipse(0,0,8,3,0,0,Math.PI*2); ctx.fill();
-          ctx.restore();
-        }
-        ctx.font='700 13px Segoe UI'; ctx.fillStyle='#9aa4cc'; ctx.textAlign='center';
-        ctx.fillText('each smudge here is an entire galaxy of billions of stars', W/2, H-30);
-      }},
+      }
+      ctx.font='700 13px Segoe UI'; ctx.fillStyle='#9aa4cc'; ctx.textAlign='center';
+      ctx.fillText(tr().canvas.smudge, W/2, H-30);
+    },
   ];
   let idx=0;
 
   function render(t){
     ctx.clearRect(0,0,W,H); ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
-    LEVELS[idx].draw(t);
-    scaleTag.textContent='Level '+(idx+1)+' / '+LEVELS.length+' — '+LEVELS[idx].name;
-    captionEl.innerHTML=LEVELS[idx].caption+'<br><span style="color:#9aa4cc;font-size:13px">Scale: '+LEVELS[idx].size+'</span>';
-    trackBar.style.width=((idx+1)/LEVELS.length*100)+'%';
+    DRAWERS[idx](t);
+    const level=tr().levels[idx];
+    scaleTag.textContent=tr().levelWord+' '+(idx+1)+' / '+DRAWERS.length+' — '+level.name;
+    captionEl.innerHTML=level.caption+'<br><span style="color:#9aa4cc;font-size:13px">'+tr().scaleWord+': '+level.size+'</span>';
+    trackBar.style.width=((idx+1)/DRAWERS.length*100)+'%';
     prevBtn.disabled = idx===0;
-    nextBtn.textContent = idx===LEVELS.length-1 ? 'End of journey' : 'Zoom Out ▶';
-    nextBtn.disabled = idx===LEVELS.length-1;
+    prevBtn.textContent = tr().zoomInBtn;
+    nextBtn.textContent = idx===DRAWERS.length-1 ? tr().endOfJourney : tr().zoomOutBtn;
+    nextBtn.disabled = idx===DRAWERS.length-1;
+    restartBtn.textContent = tr().restartBtn;
   }
 
   let animT=0;
   function loop(){ animT+=0.03; render(animT); requestAnimationFrame(loop); }
 
-  nextBtn.addEventListener('click',()=>{ if(idx<LEVELS.length-1) idx++; render(animT); });
+  nextBtn.addEventListener('click',()=>{ if(idx<DRAWERS.length-1) idx++; render(animT); });
   prevBtn.addEventListener('click',()=>{ if(idx>0) idx--; render(animT); });
   restartBtn.addEventListener('click',()=>{ idx=0; render(animT); });
 
+  render(animT);
   requestAnimationFrame(loop);
+
+  window.__zoomRefresh=function(){ render(animT); };
 })();
 </script>
 </body>
