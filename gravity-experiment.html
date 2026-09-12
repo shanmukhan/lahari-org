@@ -14,7 +14,11 @@
     background:radial-gradient(circle at top,#1b2450,#05070f 70%);
     color:var(--text);padding:20px 16px 60px;}
   .wrap{max-width:960px;margin:0 auto;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
   a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
   header{text-align:center;margin-bottom:20px;}
   h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;
     background:linear-gradient(90deg,var(--accent),var(--accent2));
@@ -58,10 +62,13 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="index.html">&larr; Back to lahari.org</a>
+  <div class="topbar">
+    <a class="back" href="index.html" id="backLink">&larr; Back to lahari.org</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
   <header>
-    <h1>🪐 How Gravity Works</h1>
-    <p>Why do things fall down? And why would you feel so much lighter on the Moon?</p>
+    <h1 id="pageTitle">🪐 How Gravity Works</h1>
+    <p id="pageSubtitle">Why do things fall down? And why would you feel so much lighter on the Moon?</p>
   </header>
 
   <div class="player">
@@ -76,25 +83,25 @@
     <button id="restartBtn">⟲ Restart</button>
   </div>
 
-  <div class="steps">
-    <div class="step-card"><div class="num">1</div><h3>🌍 Every mass pulls</h3>
-      <p>Anything with mass — you, a ball, a planet — pulls on everything else with mass. Bigger mass = bigger pull.</p></div>
-    <div class="step-card"><div class="num">2</div><h3>⬇️ Earth pulls hardest</h3>
-      <p>Earth is huge, so it pulls you down with a strong force. That's the "weight" you feel.</p></div>
-    <div class="step-card"><div class="num">3</div><h3>🌕 Smaller world, weaker pull</h3>
-      <p>The Moon has far less mass than Earth, so its gravity is only about 1/6th as strong.</p></div>
-    <div class="step-card"><div class="num">4</div><h3>🔴 Mars is in between</h3>
-      <p>Mars is bigger than the Moon but smaller than Earth, so its gravity pull sits in the middle — about 38% of Earth's.</p></div>
+  <div class="steps" id="stepsWrap">
+    <div class="step-card"><div class="num">1</div><h3 id="s1t">🌍 Every mass pulls</h3>
+      <p id="s1d">Anything with mass — you, a ball, a planet — pulls on everything else with mass. Bigger mass = bigger pull.</p></div>
+    <div class="step-card"><div class="num">2</div><h3 id="s2t">⬇️ Earth pulls hardest</h3>
+      <p id="s2d">Earth is huge, so it pulls you down with a strong force. That's the "weight" you feel.</p></div>
+    <div class="step-card"><div class="num">3</div><h3 id="s3t">🌕 Smaller world, weaker pull</h3>
+      <p id="s3d">The Moon has far less mass than Earth, so its gravity is only about 1/6th as strong.</p></div>
+    <div class="step-card"><div class="num">4</div><h3 id="s4t">🔴 Mars is in between</h3>
+      <p id="s4d">Mars is bigger than the Moon but smaller than Earth, so its gravity pull sits in the middle — about 38% of Earth's.</p></div>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> Your mass never changes — you're made of the same amount of "stuff" everywhere.
     But your <b>weight</b> changes, because weight is just how hard gravity pulls on your mass!
     A 60&nbsp;kg astronaut weighs like 60&nbsp;kg on Earth, but only like 10&nbsp;kg on the Moon.
   </div>
 
-  <div class="try-title">🧪 Now try it yourself</div>
-  <p class="try-subtitle">Pick a world, then drop the ball and watch how fast it falls — and how high the astronaut can jump!</p>
+  <div class="try-title" id="tryTitle">🧪 Now try it yourself</div>
+  <p class="try-subtitle" id="trySubtitle">Pick a world, then drop the ball and watch how fast it falls — and how high the astronaut can jump!</p>
   <div class="try-card">
     <div class="planet-pick" id="planetPick">
       <button class="on" data-p="earth">🌍 Earth</button>
@@ -112,23 +119,129 @@
 </div>
 
 <script>
+// ---------- shared translation layer ----------
+const T = {
+  en: {
+    langToggle: 'తెలుగు',
+    backLink: '&larr; Back to lahari.org',
+    pageTitle: '🪐 How Gravity Works',
+    pageSubtitle: 'Why do things fall down? And why would you feel so much lighter on the Moon?',
+    playBtn: '▶ Play', pauseBtn: '⏸ Pause', restartBtn: '⟲ Restart',
+    captionInitial: 'Press <b>Play</b> to start!',
+    captionEnd: '🎬 The End! Press <b>Restart</b> to watch again.',
+    steps: [
+      ['🌍 Every mass pulls','Anything with mass — you, a ball, a planet — pulls on everything else with mass. Bigger mass = bigger pull.'],
+      ['⬇️ Earth pulls hardest','Earth is huge, so it pulls you down with a strong force. That\'s the "weight" you feel.'],
+      ['🌕 Smaller world, weaker pull','The Moon has far less mass than Earth, so its gravity is only about 1/6th as strong.'],
+      ['🔴 Mars is in between','Mars is bigger than the Moon but smaller than Earth, so its gravity pull sits in the middle — about 38% of Earth\'s.'],
+    ],
+    fact: '🤯 <b>Mind-blowing part:</b> Your mass never changes — you\'re made of the same amount of "stuff" everywhere. But your <b>weight</b> changes, because weight is just how hard gravity pulls on your mass! A 60&nbsp;kg astronaut weighs like 60&nbsp;kg on Earth, but only like 10&nbsp;kg on the Moon.',
+    tryTitle: '🧪 Now try it yourself',
+    trySubtitle: 'Pick a world, then drop the ball and watch how fast it falls — and how high the astronaut can jump!',
+    planets: {earth:'🌍 Earth', moon:'🌕 Moon', mars:'🔴 Mars'},
+    planetNames: {earth:'EARTH', moon:'MOON', mars:'MARS'},
+    dropBtn: '⬇ Drop the ball', jumpBtn: '🦘 Jump!', tryReset: '↻ Reset',
+    tryResultDefault: 'Same jump push, different worlds — watch what happens!',
+    jumpResult: (label,px)=>'Jump height on '+label+': about '+px+' px — same push, different height!',
+    scenes: [
+      ['🌍 EVERY MASS PULLS','Anything with <b>mass</b> pulls on everything else — a ball, you, even a planet! The bigger the mass, the stronger the pull.'],
+      ['⬇️ FALLING ON EARTH','Drop a ball on Earth and gravity yanks it down fast — about <b>9.8 m/s</b> faster every second.'],
+      ['🌕 FALLING ON THE MOON','The Moon is much smaller, so its gravity pull is weak — only <b>1.62 m/s</b> faster every second. The same ball falls in slow motion!'],
+      ['🔴 FALLING ON MARS','Mars pulls harder than the Moon but softer than Earth — about <b>3.71 m/s</b> faster every second.'],
+      ['⚖️ SAME MASS, DIFFERENT WEIGHT','Your body never changes, but your <b>weight</b> does — because weight is just gravity pulling on your mass!'],
+    ],
+    canvasEverythingPulls: 'everything with mass pulls on everything else',
+    canvasFallLabel: (g,label)=>'g = '+g.toFixed(2)+' m/s² on '+label,
+    canvasKgf: 'kgf',
+    canvasMassNote: '(mass stays 60 kg)',
+    canvasTryLabel: (label,g)=>label+' — g = '+g+' m/s²',
+    canvasAstronaut: 'astronaut', canvasBall: 'ball',
+  },
+  te: {
+    langToggle: 'English',
+    backLink: '&larr; lahari.org కి తిరిగి',
+    pageTitle: '🪐 గురుత్వాకర్షణ ఎలా పనిచేస్తుంది',
+    pageSubtitle: 'వస్తువులు ఎందుకు కిందికి పడతాయి? చంద్రుడిపై మీరు ఎందుకు చాలా తేలికగా అనిపిస్తారు?',
+    playBtn: '▶ ప్లే', pauseBtn: '⏸ పాజ్', restartBtn: '⟲ మళ్ళీ మొదలు',
+    captionInitial: 'ప్రారంభించడానికి <b>ప్లే</b> నొక్కండి!',
+    captionEnd: '🎬 ముగింపు! మళ్ళీ చూడటానికి <b>మళ్ళీ మొదలు</b> నొక్కండి.',
+    steps: [
+      ['🌍 ప్రతి ద్రవ్యరాశి లాగుతుంది','ద్రవ్యరాశి ఉన్న ఏదైనా — మీరు, ఒక బంతి, ఒక గ్రహం — ద్రవ్యరాశి ఉన్న ప్రతిదాన్ని లాగుతుంది. ఎక్కువ ద్రవ్యరాశి = ఎక్కువ లాగుట.'],
+      ['⬇️ భూమి అత్యంత బలంగా లాగుతుంది','భూమి చాలా పెద్దది, కాబట్టి అది మిమ్మల్ని బలమైన శక్తితో కిందికి లాగుతుంది. మీరు అనుభవించేదే "బరువు".'],
+      ['🌕 చిన్న గ్రహం, బలహీనమైన లాగుట','చంద్రుడికి భూమి కంటే చాలా తక్కువ ద్రవ్యరాశి ఉంది, కాబట్టి దాని గురుత్వాకర్షణ దాదాపు 1/6వ వంతు మాత్రమే బలంగా ఉంటుంది.'],
+      ['🔴 అంగారకుడు మధ్యస్థంగా ఉంటాడు','అంగారకుడు చంద్రుడి కంటే పెద్దది కానీ భూమి కంటే చిన్నది, కాబట్టి దాని గురుత్వాకర్షణ మధ్యస్థంగా ఉంటుంది — భూమి లాగుటలో దాదాపు 38%.'],
+    ],
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> మీ ద్రవ్యరాశి ఎప్పుడూ మారదు — మీరు ఎక్కడైనా అదే మొత్తం "పదార్థం"తో తయారయ్యారు. కానీ మీ <b>బరువు</b> మారుతుంది, ఎందుకంటే బరువు అంటే గురుత్వాకర్షణ మీ ద్రవ్యరాశిని ఎంత బలంగా లాగుతుందో అనేదే! 60 కేజీల వ్యోమగామి భూమిపై 60 కేజీల బరువు ఉంటాడు, కానీ చంద్రుడిపై కేవలం 10 కేజీల బరువు మాత్రమే ఉంటాడు.',
+    tryTitle: '🧪 ఇప్పుడు మీరే ప్రయత్నించండి',
+    trySubtitle: 'ఒక గ్రహాన్ని ఎంచుకుని బంతిని వదలండి — అది ఎంత వేగంగా పడుతుందో, వ్యోమగామి ఎంత ఎత్తు దూకగలడో చూడండి!',
+    planets: {earth:'🌍 భూమి', moon:'🌕 చంద్రుడు', mars:'🔴 అంగారకుడు'},
+    planetNames: {earth:'భూమి', moon:'చంద్రుడు', mars:'అంగారకుడు'},
+    dropBtn: '⬇ బంతిని వదలండి', jumpBtn: '🦘 దూకండి!', tryReset: '↻ రీసెట్',
+    tryResultDefault: 'ఒకే దూకుడు శక్తి, వేర్వేరు గ్రహాలు — ఏమి జరుగుతుందో చూడండి!',
+    jumpResult: (label,px)=>label+' పై దూకిన ఎత్తు: దాదాపు '+px+' px — అదే శక్తి, వేర్వేరు ఎత్తు!',
+    scenes: [
+      ['🌍 ప్రతి ద్రవ్యరాశి లాగుతుంది','<b>ద్రవ్యరాశి</b> ఉన్న ఏదైనా అన్నిటినీ లాగుతుంది — ఒక బంతి, మీరు, ఒక గ్రహం కూడా! ద్రవ్యరాశి ఎంత ఎక్కువైతే, లాగుట అంత బలంగా ఉంటుంది.'],
+      ['⬇️ భూమిపై పడటం','భూమిపై బంతిని వదిలితే గురుత్వాకర్షణ దాన్ని వేగంగా కిందికి లాగుతుంది — ప్రతి సెకనుకు దాదాపు <b>9.8 మీ/సె</b> వేగం పెరుగుతుంది.'],
+      ['🌕 చంద్రుడిపై పడటం','చంద్రుడు చాలా చిన్నది, కాబట్టి దాని గురుత్వాకర్షణ బలహీనంగా ఉంటుంది — ప్రతి సెకనుకు కేవలం <b>1.62 మీ/సె</b> మాత్రమే వేగం పెరుగుతుంది. అదే బంతి నెమ్మదిగా పడుతుంది!'],
+      ['🔴 అంగారకుడిపై పడటం','అంగారకుడు చంద్రుడి కంటే ఎక్కువగా, భూమి కంటే తక్కువగా లాగుతాడు — ప్రతి సెకనుకు దాదాపు <b>3.71 మీ/సె</b> వేగం పెరుగుతుంది.'],
+      ['⚖️ అదే ద్రవ్యరాశి, వేర్వేరు బరువు','మీ శరీరం ఎప్పుడూ మారదు, కానీ మీ <b>బరువు</b> మారుతుంది — ఎందుకంటే బరువు అంటే గురుత్వాకర్షణ మీ ద్రవ్యరాశిని లాగుటే!'],
+    ],
+    canvasEverythingPulls: 'ద్రవ్యరాశి ఉన్న ప్రతిదీ అన్నిటినీ లాగుతుంది',
+    canvasFallLabel: (g,label)=>'g = '+g.toFixed(2)+' మీ/సె² '+label+' పై',
+    canvasKgf: 'కేజీ-బలం',
+    canvasMassNote: '(ద్రవ్యరాశి 60 కేజీలుగా ఉంటుంది)',
+    canvasTryLabel: (label,g)=>label+' — g = '+g+' మీ/సె²',
+    canvasAstronaut: 'వ్యోమగామి', canvasBall: 'బంతి',
+  }
+};
+let LANG = 'en';
+function tr(){ return T[LANG]; }
+
+function applyStaticText(){
+  const t = tr();
+  document.documentElement.lang = LANG;
+  document.getElementById('langToggle').textContent = t.langToggle;
+  document.getElementById('backLink').innerHTML = t.backLink;
+  document.getElementById('pageTitle').textContent = t.pageTitle;
+  document.getElementById('pageSubtitle').textContent = t.pageSubtitle;
+  document.getElementById('restartBtn').textContent = t.restartBtn;
+  for(let i=0;i<4;i++){
+    document.getElementById('s'+(i+1)+'t').textContent = t.steps[i][0];
+    document.getElementById('s'+(i+1)+'d').textContent = t.steps[i][1];
+  }
+  document.getElementById('factBox').innerHTML = t.fact;
+  document.getElementById('tryTitle').textContent = t.tryTitle;
+  document.getElementById('trySubtitle').textContent = t.trySubtitle;
+  const pp = document.querySelectorAll('#planetPick button');
+  pp[0].textContent = t.planets.earth; pp[1].textContent = t.planets.moon; pp[2].textContent = t.planets.mars;
+  document.getElementById('dropBtn').textContent = t.dropBtn;
+  document.getElementById('jumpBtn').textContent = t.jumpBtn;
+  document.getElementById('tryReset').textContent = t.tryReset;
+}
+
+document.getElementById('langToggle').addEventListener('click', () => {
+  LANG = LANG === 'en' ? 'te' : 'en';
+  applyStaticText();
+  if (window.__gravityRefresh) window.__gravityRefresh();
+  if (window.__tryRefresh) window.__tryRefresh();
+});
+applyStaticText();
+
 (function(){
   const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
   const W=canvas.width, H=canvas.height;
   const captionEl=document.getElementById('caption'), bannerEl=document.getElementById('banner'), progressBar=document.getElementById('progressBar');
   const playBtn=document.getElementById('playBtn'), restartBtn=document.getElementById('restartBtn');
 
-  const SCENES=[
-    {t:0,dur:5,banner:'🌍 EVERY MASS PULLS',caption:'Anything with <b>mass</b> pulls on everything else — a ball, you, even a planet! The bigger the mass, the stronger the pull.'},
-    {t:5,dur:6,banner:'⬇️ FALLING ON EARTH',caption:'Drop a ball on Earth and gravity yanks it down fast — about <b>9.8 m/s</b> faster every second.'},
-    {t:11,dur:6,banner:'🌕 FALLING ON THE MOON',caption:'The Moon is much smaller, so its gravity pull is weak — only <b>1.62 m/s</b> faster every second. The same ball falls in slow motion!'},
-    {t:17,dur:6,banner:'🔴 FALLING ON MARS',caption:'Mars pulls harder than the Moon but softer than Earth — about <b>3.71 m/s</b> faster every second.'},
-    {t:23,dur:7,banner:'⚖️ SAME MASS, DIFFERENT WEIGHT',caption:'Your body never changes, but your <b>weight</b> does — because weight is just gravity pulling on your mass!'},
-  ];
+  let simTime=0, playing=false, lastTs=null, captionOverride='initial';
   const totalDur=30;
-  let simTime=0, playing=false, lastTs=null;
 
-  function currentScene(t){ for(let i=SCENES.length-1;i>=0;i--) if(t>=SCENES[i].t) return i; return 0; }
+  function currentScene(t){
+    const scenes=tr().scenes;
+    const starts=[0,5,11,17,23];
+    for(let i=starts.length-1;i>=0;i--) if(t>=starts[i]) return i;
+    return 0;
+  }
 
   function drawPlanet(cx,cy,r,color,label){
     const grad=ctx.createRadialGradient(cx-r*0.3,cy-r*0.3,r*0.1,cx,cy,r);
@@ -139,7 +252,7 @@
   }
 
   function drawScene0(t){
-    drawPlanet(W/2,H/2,90,['#5da8ff','#1a3a7a'],'EARTH');
+    drawPlanet(W/2,H/2,90,['#5da8ff','#1a3a7a'],tr().planetNames.earth);
     const orbitR=200;
     for(let i=0;i<3;i++){
       const a=t*0.6+i*2.1;
@@ -149,7 +262,7 @@
       ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(W/2,H/2); ctx.stroke();
     }
     ctx.fillStyle='#9aa4cc'; ctx.font='14px Segoe UI'; ctx.textAlign='center';
-    ctx.fillText('everything with mass pulls on everything else', W/2, H-30);
+    ctx.fillText(tr().canvasEverythingPulls, W/2, H-30);
   }
 
   function drawFall(t,sceneStart,g,label,color){
@@ -165,15 +278,15 @@
     ctx.fillStyle='#ffd23f'; ctx.beginPath(); ctx.arc(dropX,y,16,0,Math.PI*2); ctx.fill();
     ctx.strokeStyle='#0b1020'; ctx.lineWidth=2; ctx.stroke();
     ctx.fillStyle='#9aa4cc'; ctx.font='700 14px Segoe UI'; ctx.textAlign='center';
-    ctx.fillText('g = '+g.toFixed(2)+' m/s² on '+label, dropX, 40);
-    // speedometer bar
+    ctx.fillText(tr().canvasFallLabel(g,label), dropX, 40);
     const speed=Math.min(1,g*cyc/12);
     ctx.strokeStyle='#2a3568'; ctx.strokeRect(dropX-60,floor+20,120,10);
     ctx.fillStyle=color[0]; ctx.fillRect(dropX-60,floor+20,120*speed,10);
   }
 
   function drawWeightCompare(t){
-    const worlds=[{label:'EARTH',g:9.8,color:['#5da8ff','#1a3a7a']},{label:'MOON',g:1.62,color:['#c9c9c9','#54545e']},{label:'MARS',g:3.71,color:['#e08a5e','#7a3d22']}];
+    const pn=tr().planetNames;
+    const worlds=[{label:pn.earth,g:9.8,color:['#5da8ff','#1a3a7a']},{label:pn.moon,g:1.62,color:['#c9c9c9','#54545e']},{label:pn.mars,g:3.71,color:['#e08a5e','#7a3d22']}];
     const baseW=60;
     worlds.forEach((w,i)=>{
       const cx=180+i*270;
@@ -181,9 +294,9 @@
       const weight=(baseW*w.g/9.8).toFixed(0);
       ctx.fillStyle='#ffd23f'; ctx.beginPath(); ctx.arc(cx,260,10+Number(weight)*0.15,0,Math.PI*2); ctx.fill();
       ctx.fillStyle='#eef2ff'; ctx.font='800 16px Segoe UI'; ctx.textAlign='center';
-      ctx.fillText(weight+' kgf', cx, 330);
+      ctx.fillText(weight+' '+tr().canvasKgf, cx, 330);
       ctx.fillStyle='#9aa4cc'; ctx.font='13px Segoe UI';
-      ctx.fillText('(mass stays 60 kg)', cx, 350);
+      ctx.fillText(tr().canvasMassNote, cx, 350);
     });
   }
 
@@ -192,12 +305,12 @@
     ctx.strokeStyle='rgba(110,160,205,.05)'; ctx.lineWidth=1;
     for(let x=0;x<W;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
     for(let y=0;y<H;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
-    const idx=currentScene(t), scene=SCENES[idx];
-    bannerEl.textContent=scene.banner; captionEl.innerHTML=scene.caption;
+    const idx=currentScene(t), scene=tr().scenes[idx];
+    bannerEl.textContent=scene[0]; captionEl.innerHTML=scene[1];
     if(idx===0) drawScene0(t);
-    else if(idx===1) drawFall(t,scene.t,9.8,'EARTH',['#5da8ff','#1a3a7a']);
-    else if(idx===2) drawFall(t,scene.t,1.62,'MOON',['#c9c9c9','#54545e']);
-    else if(idx===3) drawFall(t,scene.t,3.71,'MARS',['#e08a5e','#7a3d22']);
+    else if(idx===1) drawFall(t,5,9.8,tr().planetNames.earth,['#5da8ff','#1a3a7a']);
+    else if(idx===2) drawFall(t,11,1.62,tr().planetNames.moon,['#c9c9c9','#54545e']);
+    else if(idx===3) drawFall(t,17,3.71,tr().planetNames.mars,['#e08a5e','#7a3d22']);
     else drawWeightCompare(t);
     progressBar.style.width=Math.min(100,(t/totalDur)*100)+'%';
   }
@@ -208,66 +321,81 @@
     const dt=Math.min(0.05,(ts-lastTs)/1000); lastTs=ts;
     simTime+=dt;
     if(simTime>=totalDur){ simTime=totalDur; render(simTime); pause();
-      captionEl.innerHTML='🎬 The End! Press <b>Restart</b> to watch again.'; return; }
+      captionOverride='ended'; captionEl.innerHTML=tr().captionEnd; return; }
+    captionOverride=null;
     render(simTime); requestAnimationFrame(step);
   }
-  function play(){ if(playing) return; playing=true; lastTs=null; playBtn.textContent='⏸ Pause'; requestAnimationFrame(step); }
-  function pause(){ playing=false; playBtn.textContent='▶ Play'; }
-  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionEl.innerHTML='Press <b>Play</b> to start!'; }
+  function play(){ if(playing) return; playing=true; lastTs=null; captionOverride=null; playBtn.textContent=tr().pauseBtn; requestAnimationFrame(step); }
+  function pause(){ playing=false; playBtn.textContent=tr().playBtn; }
+  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionOverride='initial'; captionEl.innerHTML=tr().captionInitial; }
 
   playBtn.addEventListener('click',()=>playing?pause():play());
   restartBtn.addEventListener('click',restart);
+  playBtn.textContent=tr().playBtn;
   render(0);
+
+  window.__gravityRefresh = function(){
+    playBtn.textContent = playing ? tr().pauseBtn : tr().playBtn;
+    render(simTime);
+    if(captionOverride==='initial') captionEl.innerHTML=tr().captionInitial;
+    else if(captionOverride==='ended') captionEl.innerHTML=tr().captionEnd;
+  };
 })();
 
 (function(){
   const cv=document.getElementById('tryScene'), c=cv.getContext('2d');
   const w=cv.width,h=cv.height;
-  const worlds={
-    earth:{g:9.8,color:['#5da8ff','#1a3a7a'],label:'EARTH',jumpMul:1},
-    moon:{g:1.62,color:['#c9c9c9','#54545e'],label:'MOON',jumpMul:1},
-    mars:{g:3.71,color:['#e08a5e','#7a3d22'],label:'MARS',jumpMul:1}
-  };
+  const G={earth:9.8,moon:1.62,mars:3.71};
   let planet='earth';
   let ball={y:60,vy:0,falling:false,x:150};
-  let jumper={y:0,vy:0,jumping:false,x:420};
+  let jumper={y:0,vy:0,jumping:false,x:420,maxY:0};
   const floor=h-60;
   const resultEl=document.getElementById('tryResult');
+  let lastResult={type:'default'};
+
+  function updateResultText(){
+    const t=tr();
+    if(lastResult.type==='jump'){
+      resultEl.textContent = t.jumpResult(t.planetNames[lastResult.planet], lastResult.px);
+    } else {
+      resultEl.textContent = t.tryResultDefault;
+    }
+  }
 
   function draw(){
     c.clearRect(0,0,w,h); c.fillStyle='#04060f'; c.fillRect(0,0,w,h);
     c.strokeStyle='#2a3568'; c.lineWidth=3;
     c.beginPath(); c.moveTo(40,floor); c.lineTo(w-40,floor); c.stroke();
-    const wd=worlds[planet];
+    const g=G[planet];
+    const t=tr();
     c.fillStyle='#9aa4cc'; c.font='700 14px Segoe UI'; c.textAlign='center';
-    c.fillText(wd.label+' — g = '+wd.g+' m/s²', w/2, 30);
+    c.fillText(t.canvasTryLabel(t.planetNames[planet],g), w/2, 30);
 
-    // drop ball
     c.fillStyle='#ffd23f'; c.beginPath(); c.arc(ball.x,ball.y,14,0,Math.PI*2); c.fill();
     c.strokeStyle='#0b1020'; c.lineWidth=2; c.stroke();
 
-    // jumper (simple stick figure circle)
     c.fillStyle='#6dffb0';
     c.beginPath(); c.arc(jumper.x, floor-16-jumper.y, 16,0,Math.PI*2); c.fill();
     c.strokeStyle='#0b1020'; c.lineWidth=2; c.stroke();
     c.fillStyle='#eef2ff'; c.font='700 12px Segoe UI';
-    c.fillText('astronaut', jumper.x, floor+18);
-    c.fillText('ball', ball.x, floor+18);
+    c.fillText(t.canvasAstronaut, jumper.x, floor+18);
+    c.fillText(t.canvasBall, ball.x, floor+18);
   }
 
   function tick(){
-    const wd=worlds[planet];
+    const g=G[planet];
     const dt=1/60;
     if(ball.falling){
-      ball.vy+=wd.g*20*dt;
+      ball.vy+=g*20*dt;
       ball.y+=ball.vy*dt;
       if(ball.y>floor-14){ ball.y=floor-14; ball.falling=false; ball.vy=0; }
     }
     if(jumper.jumping){
-      jumper.vy-=wd.g*20*dt;
+      jumper.vy-=g*20*dt;
       jumper.y+=jumper.vy*dt;
       if(jumper.y<0){ jumper.y=0; jumper.jumping=false;
-        resultEl.textContent = 'Jump height on '+wd.label+': about '+jumper.maxY.toFixed(0)+' px — same push, different height!';
+        lastResult={type:'jump', planet, px:Math.round(jumper.maxY)};
+        updateResultText();
       } else if(jumper.y>jumper.maxY) jumper.maxY=jumper.y;
     }
     draw();
@@ -284,18 +412,26 @@
   document.getElementById('tryReset').addEventListener('click',()=>{
     ball={y:60,vy:0,falling:false,x:150};
     jumper={y:0,vy:0,jumping:false,x:420,maxY:0};
-    resultEl.textContent='Same jump push, different worlds — watch what happens!';
+    lastResult={type:'default'};
+    updateResultText();
   });
-  document.querySelectorAll('#planetPick button').forEach(btn=>{
+  document.querySelectorAll('#planetPick button').forEach((btn,i)=>{
+    const keys=['earth','moon','mars'];
     btn.addEventListener('click',()=>{
       document.querySelectorAll('#planetPick button').forEach(b=>b.classList.remove('on'));
       btn.classList.add('on');
-      planet=btn.dataset.p;
+      planet=keys[i];
     });
   });
 
+  updateResultText();
   draw();
   requestAnimationFrame(tick);
+
+  window.__tryRefresh = function(){
+    updateResultText();
+    draw();
+  };
 })();
 </script>
 </body>
