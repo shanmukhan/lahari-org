@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Probability & Statistics Basics</title>
+<style>
+  :root{--bg:#0b1020;--panel:#121830;--accent:#ffd23f;--accent2:#4fd3ff;--text:#eef2ff;--dim:#9aa4cc;}
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
+  .wrap{max-width:960px;margin:0 auto;}
+  a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  header{text-align:center;margin-bottom:20px;}
+  h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  header p{color:var(--dim);font-size:16px;margin:0;}
+  .player{background:#000;border-radius:16px;padding:10px;box-shadow:0 10px 40px rgba(0,0,0,.5),0 0 0 1px #222 inset;}
+  canvas{display:block;width:100%;height:auto;background:#04060f;border-radius:10px;}
+  .caption{margin-top:6px;background:#000c;border:1px solid #2a3568;border-radius:10px;padding:14px 18px;min-height:56px;font-size:clamp(16px,2.6vw,20px);line-height:1.4;text-align:center;}
+  .caption b{color:var(--accent);}
+  .controls{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:12px;flex-wrap:wrap;}
+  button{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;padding:10px 20px;font-size:15px;cursor:pointer;transition:transform .1s,background .2s;}
+  button:hover{background:#1c2450;transform:translateY(-1px);}
+  button.primary{background:linear-gradient(90deg,var(--accent2),#2f9fe0);color:#03101f;font-weight:700;border:none;}
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:26px;}
+  .step-card{background:var(--panel);border:1px solid #262f5c;border-radius:14px;padding:16px;}
+  .step-card .num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#16151a;font-weight:800;margin-bottom:8px;}
+  .step-card h3{margin:4px 0 6px;font-size:16px;}
+  .step-card p{margin:0;color:var(--dim);font-size:13px;line-height:1.45;}
+  .fact{margin-top:26px;background:linear-gradient(135deg,#1a2140,#0e1330);border:1px solid #2a3568;border-radius:14px;padding:18px 20px;text-align:center;font-size:16px;}
+  .fact b{color:var(--accent2);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="category-math.html">&larr; Back to Math Made Simple</a>
+  <header>
+    <h1>🎲 Probability & Statistics Basics</h1>
+    <p>A coin flip is 50/50 no matter what — but watch what happens the more times you flip it.</p>
+  </header>
+
+  <div class="player">
+    <canvas id="scene" width="900" height="420"></canvas>
+    <div class="caption" id="caption">Flip a coin many times and watch the results settle down.</div>
+  </div>
+  <div class="controls">
+    <button class="primary" id="flip1Btn">🪙 Flip Once</button>
+    <button id="flip100Btn">🪙 Flip 100 Times</button>
+    <button id="resetBtn">↻ Reset</button>
+  </div>
+
+  <div class="steps">
+    <div class="step-card"><div class="num">1</div><h3>🎲 Probability = a fraction of outcomes</h3>
+      <p>Probability measures how likely something is — a coin has 2 equally likely sides, so heads has a probability of 1 in 2.</p></div>
+    <div class="step-card"><div class="num">2</div><h3>🪙 A few flips can be lopsided</h3>
+      <p>Flip a coin just 5 times, and it's totally normal to get 4 heads and 1 tail — small samples can look "unfair" by chance.</p></div>
+    <div class="step-card"><div class="num">3</div><h3>📊 More flips settle toward 50/50</h3>
+      <p>Flip it 1,000 times, and the results settle very close to 50% heads, 50% tails — this is called the "Law of Large Numbers."</p></div>
+    <div class="step-card"><div class="num">4</div><h3>📈 Statistics: making sense of data</h3>
+      <p>Statistics is the toolbox for summarizing all that data — averages, spread, and patterns — instead of getting lost in individual results.</p></div>
+  </div>
+
+  <div class="fact">
+    🤯 <b>Mind-blowing part:</b> This is exactly why casinos always make money in the long run, even though any single player CAN win —
+    each game has odds slightly in the casino's favor, and over millions of plays, the Law of Large Numbers guarantees the casino comes
+    out ahead, even though no one can predict any single spin or hand.
+  </div>
+</div>
+
+<script>
+(function(){
+  const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  const captionEl=document.getElementById('caption');
+  let heads=0, tails=0, history=[];
+
+  function label(x,y,text,color){
+    ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
+    const tw=ctx.measureText(text).width;
+    ctx.fillStyle='rgba(4,6,15,0.75)'; ctx.fillRect(x-tw/2-8,y-16,tw+16,22);
+    ctx.fillStyle=color||'#9fc1de'; ctx.fillText(text,x,y);
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H); ctx.fillStyle='#04060f'; ctx.fillRect(0,0,W,H);
+    const total=heads+tails;
+    const pctH = total>0 ? heads/total : 0.5;
+    const pctT = total>0 ? tails/total : 0.5;
+
+    const barY=100, barH=160, barW=200;
+    const hX=W/2-260, tX=W/2+60;
+    ctx.fillStyle='#4fd3ff'; ctx.fillRect(hX,barY+barH*(1-pctH),barW,barH*pctH);
+    ctx.fillStyle='#ff9d5a'; ctx.fillRect(tX,barY+barH*(1-pctT),barW,barH*pctT);
+    ctx.strokeStyle='rgba(255,255,255,.2)'; ctx.lineWidth=2;
+    ctx.strokeRect(hX,barY,barW,barH); ctx.strokeRect(tX,barY,barW,barH);
+    ctx.strokeStyle='rgba(255,255,255,.4)'; ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(hX-20,barY+barH/2); ctx.lineTo(tX+barW+20,barY+barH/2); ctx.stroke(); ctx.setLineDash([]);
+    label((hX+tX+barW)/2,barY+barH/2-10,'50% (expected)','#eef2ff');
+
+    label(hX+barW/2,barY-14,'HEADS: '+heads+' ('+(pctH*100).toFixed(1)+'%)','#4fd3ff');
+    label(tX+barW/2,barY-14,'TAILS: '+tails+' ('+(pctT*100).toFixed(1)+'%)','#ff9d5a');
+
+    ctx.fillStyle='#eef2ff'; ctx.font='800 20px Segoe UI'; ctx.textAlign='center';
+    ctx.fillText('Total flips: '+total, W/2, barY+barH+60);
+
+    // recent history strip
+    const recent=history.slice(-40);
+    recent.forEach((h,i)=>{
+      ctx.font='20px Segoe UI'; ctx.textAlign='center';
+      ctx.fillText(h?'🔵':'🟠', 100+i*19, H-40);
+    });
+  }
+  function flipOnce(){
+    const h=Math.random()<0.5;
+    if(h) heads++; else tails++;
+    history.push(h);
+    draw();
+    const total=heads+tails;
+    captionEl.innerHTML = total<10
+      ? 'With just '+total+' flip(s), results can look uneven — that\'s totally normal.'
+      : 'After '+total+' flips, the ratio is settling toward 50/50.';
+  }
+  document.getElementById('flip1Btn').addEventListener('click',flipOnce);
+  document.getElementById('flip100Btn').addEventListener('click',()=>{
+    for(let i=0;i<100;i++){ const h=Math.random()<0.5; if(h) heads++; else tails++; history.push(h); }
+    draw();
+    captionEl.innerHTML='After '+(heads+tails)+' flips: '+((heads/(heads+tails))*100).toFixed(1)+'% heads — very close to 50%, just as the Law of Large Numbers predicts!';
+  });
+  document.getElementById('resetBtn').addEventListener('click',()=>{
+    heads=0; tails=0; history=[]; draw();
+    captionEl.innerHTML='Flip a coin many times and watch the results settle down.';
+  });
+  draw();
+})();
+</script>
+</body>
+</html>

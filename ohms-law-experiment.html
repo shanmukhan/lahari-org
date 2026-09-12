@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ohm's Law & Circuits</title>
+<style>
+  :root{--bg:#0b1020;--panel:#121830;--accent:#ffd23f;--accent2:#4fd3ff;--text:#eef2ff;--dim:#9aa4cc;}
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
+  .wrap{max-width:960px;margin:0 auto;}
+  a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  header{text-align:center;margin-bottom:20px;}
+  h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  header p{color:var(--dim);font-size:16px;margin:0;}
+  .player{background:#000;border-radius:16px;padding:10px;box-shadow:0 10px 40px rgba(0,0,0,.5),0 0 0 1px #222 inset;}
+  canvas{display:block;width:100%;height:auto;background:#04060f;border-radius:10px;}
+  .caption{margin-top:6px;background:#000c;border:1px solid #2a3568;border-radius:10px;padding:14px 18px;min-height:56px;font-size:clamp(16px,2.6vw,20px);line-height:1.4;text-align:center;}
+  .caption b{color:var(--accent);}
+  .controls{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:12px;flex-wrap:wrap;}
+  .slider-group{display:flex;flex-direction:column;align-items:center;gap:4px;}
+  .slider-group label{font-size:12px;color:var(--dim);}
+  input[type=range]{width:160px;accent-color:var(--accent2);}
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:26px;}
+  .step-card{background:var(--panel);border:1px solid #262f5c;border-radius:14px;padding:16px;}
+  .step-card .num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#16151a;font-weight:800;margin-bottom:8px;}
+  .step-card h3{margin:4px 0 6px;font-size:16px;}
+  .step-card p{margin:0;color:var(--dim);font-size:13px;line-height:1.45;}
+  .fact{margin-top:26px;background:linear-gradient(135deg,#1a2140,#0e1330);border:1px solid #2a3568;border-radius:14px;padding:18px 20px;text-align:center;font-size:16px;}
+  .fact b{color:var(--accent2);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="category-tech.html">&larr; Back to Everyday Tech</a>
+  <header>
+    <h1>🔋 Ohm's Law & Circuits</h1>
+    <p>Voltage, current, and resistance are all linked by one simple equation that runs every circuit you own.</p>
+  </header>
+
+  <div class="player">
+    <canvas id="scene" width="900" height="400"></canvas>
+    <div class="caption" id="caption">Adjust voltage and resistance and watch the current change.</div>
+  </div>
+  <div class="controls">
+    <div class="slider-group"><label>Voltage (V)</label><input type="range" id="voltSlider" min="1" max="12" value="6"></div>
+    <div class="slider-group"><label>Resistance (Ω)</label><input type="range" id="resSlider" min="1" max="20" value="4"></div>
+  </div>
+
+  <div class="steps">
+    <div class="step-card"><div class="num">1</div><h3>🔋 Voltage: the push</h3>
+      <p>Voltage is the "electrical pressure" pushing electrons through a circuit — more voltage means a stronger push.</p></div>
+    <div class="step-card"><div class="num">2</div><h3>🚧 Resistance: the friction</h3>
+      <p>Resistance is how much a material fights the flow of electrons — thin wires and certain materials resist more than others.</p></div>
+    <div class="step-card"><div class="num">3</div><h3>➗ Current = Voltage ÷ Resistance</h3>
+      <p><b>Ohm's Law</b>: I = V/R. More push (voltage) makes more current; more friction (resistance) makes less current.</p></div>
+    <div class="step-card"><div class="num">4</div><h3>💡 Every circuit obeys this</h3>
+      <p>From a flashlight to a supercomputer, every simple circuit follows this same relationship between voltage, current, and resistance.</p></div>
+  </div>
+
+  <div class="fact">
+    🤯 <b>Mind-blowing part:</b> This is exactly why a wall socket (high voltage) can be dangerous through your body (low resistance,
+    since you're full of salty water) but a 9-volt battery touched to your tongue just tingles — the resistance and voltage together
+    determine how much current actually flows through you, and current is what matters for a shock.
+  </div>
+</div>
+
+<script>
+(function(){
+  const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  const captionEl=document.getElementById('caption');
+  const voltSlider=document.getElementById('voltSlider'), resSlider=document.getElementById('resSlider');
+  let t=0;
+
+  function label(x,y,text,color){
+    ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
+    const tw=ctx.measureText(text).width;
+    ctx.fillStyle='rgba(4,6,15,0.75)'; ctx.fillRect(x-tw/2-8,y-16,tw+16,22);
+    ctx.fillStyle=color||'#9fc1de'; ctx.fillText(text,x,y);
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H); ctx.fillStyle='#04060f'; ctx.fillRect(0,0,W,H);
+    const V=+voltSlider.value, R=+resSlider.value;
+    const I=V/R;
+
+    const x1=200,x2=700,y1=150,y2=300;
+    ctx.strokeStyle='#c7c9d9'; ctx.lineWidth=4;
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x1,y2); ctx.lineTo(x2,y2); ctx.lineTo(x2,y1); ctx.closePath(); ctx.stroke();
+
+    // battery on left side
+    ctx.fillStyle='#2c3560'; ctx.fillRect(x1-35,(y1+y2)/2-30,70,60);
+    ctx.strokeStyle='#0b1020'; ctx.lineWidth=2; ctx.strokeRect(x1-35,(y1+y2)/2-30,70,60);
+    ctx.fillStyle='#ffd23f'; ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
+    ctx.fillText(V+'V',x1,(y1+y2)/2+5);
+
+    // resistor (zigzag) on top
+    const rx0=x1+80, rx1=x2-80, ry=y1;
+    ctx.strokeStyle='#ff9d5a'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(rx0,ry);
+    const teeth=8;
+    for(let i=0;i<=teeth;i++){
+      const x=rx0+(rx1-rx0)*(i/teeth);
+      const y=ry+(i%2===0?0:(i%4===1?-15:15));
+      ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    label((rx0+rx1)/2,ry-30,'resistor: '+R+'Ω','#ff9d5a');
+
+    // current dots flow speed proportional to I
+    const speed=Math.min(4,I)*40;
+    const perim=2*(x2-x1)+2*(y2-y1);
+    const n=Math.max(2,Math.round(I*2));
+    for(let i=0;i<n;i++){
+      const d=((t*speed)+i*(perim/n))%perim;
+      let ex,ey;
+      const segTop=x2-x1, segSide=y2-y1;
+      if(d<segTop){ ex=x1+d; ey=y1; }
+      else if(d<segTop+segSide){ ex=x2; ey=y1+(d-segTop); }
+      else if(d<segTop*2+segSide){ ex=x2-(d-segTop-segSide); ey=y2; }
+      else { ex=x1; ey=y2-(d-segTop*2-segSide); }
+      ctx.fillStyle='#4fd3ff'; ctx.beginPath(); ctx.arc(ex,ey,5,0,Math.PI*2); ctx.fill();
+    }
+
+    ctx.fillStyle='#eef2ff'; ctx.font='800 20px Segoe UI'; ctx.textAlign='center';
+    ctx.fillText('I = V / R = '+V+' / '+R+' = '+I.toFixed(2)+' A', W/2, y2+60);
+
+    captionEl.innerHTML = I<0.5 ? 'Low current — weak push or strong resistance.' :
+      I<3 ? 'Moderate current flowing through the circuit.' :
+      'Strong current — big push and/or low resistance!';
+  }
+  function loop(){ t+=0.03; draw(); requestAnimationFrame(loop); }
+  voltSlider.addEventListener('input',draw);
+  resSlider.addEventListener('input',draw);
+  draw(); requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
