@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Time Slows Down When You Move Fast</title>
+<style>
+  :root{--bg:#0b1020;--panel:#121830;--accent:#ffd23f;--accent2:#4fd3ff;--text:#eef2ff;--dim:#9aa4cc;}
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
+  .wrap{max-width:960px;margin:0 auto;}
+  a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  header{text-align:center;margin-bottom:20px;}
+  h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  header p{color:var(--dim);font-size:16px;margin:0;}
+  .player{background:#000;border-radius:16px;padding:10px;box-shadow:0 10px 40px rgba(0,0,0,.5),0 0 0 1px #222 inset;}
+  .progress-track{height:8px;background:#1c2340;border-radius:6px;overflow:hidden;margin-bottom:8px;}
+  .progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--accent2),var(--accent));transition:width .05s linear;}
+  canvas{display:block;width:100%;height:auto;background:#04060f;border-radius:10px;}
+  .banner-wrap{text-align:center;}
+  .banner{display:inline-block;margin:8px auto 0;padding:8px 22px;border-radius:999px;font-weight:800;color:#06180f;background:var(--accent2);}
+  .caption{margin-top:6px;background:#000c;border:1px solid #2a3568;border-radius:10px;padding:14px 18px;min-height:56px;font-size:clamp(16px,2.6vw,20px);line-height:1.4;text-align:center;}
+  .caption b{color:var(--accent);}
+  .controls{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:12px;flex-wrap:wrap;}
+  button{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;padding:10px 20px;font-size:15px;cursor:pointer;transition:transform .1s,background .2s;}
+  button:hover{background:#1c2450;transform:translateY(-1px);}
+  button.primary{background:linear-gradient(90deg,var(--accent2),#2f9fe0);color:#03101f;font-weight:700;border:none;}
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:26px;}
+  .step-card{background:var(--panel);border:1px solid #262f5c;border-radius:14px;padding:16px;}
+  .step-card .num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#16151a;font-weight:800;margin-bottom:8px;}
+  .step-card h3{margin:4px 0 6px;font-size:16px;}
+  .step-card p{margin:0;color:var(--dim);font-size:13px;line-height:1.45;}
+  .fact{margin-top:26px;background:linear-gradient(135deg,#1a2140,#0e1330);border:1px solid #2a3568;border-radius:14px;padding:18px 20px;text-align:center;font-size:16px;}
+  .fact b{color:var(--accent2);}
+  .try-title{text-align:center;font-size:clamp(20px,3.4vw,26px);font-weight:800;margin:34px 0 4px;}
+  .try-subtitle{text-align:center;color:var(--dim);margin:0 0 16px;}
+  .try-card{background:var(--panel);border:1px solid #262f5c;border-radius:14px;padding:14px;max-width:640px;margin:0 auto;}
+  .try-card canvas{display:block;width:100%;height:auto;background:#04060f;border-radius:10px;}
+  .try-controls{display:flex;gap:10px;margin-top:12px;justify-content:center;flex-wrap:wrap;align-items:center;}
+  input[type=range]{width:220px;accent-color:var(--accent2);}
+  .try-result{margin-top:8px;text-align:center;color:var(--dim);font-size:13px;min-height:36px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">&larr; Back to lahari.org</a>
+  <header>
+    <h1>⏳ Time Slows Down When You Move Fast</h1>
+    <p>If you flew near the speed of light and came back, you'd be younger than your twin who stayed home. Let's see why.</p>
+  </header>
+
+  <div class="player">
+    <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+    <canvas id="scene" width="900" height="460"></canvas>
+    <div class="banner-wrap"><span class="banner" id="banner">STEP 1</span></div>
+    <div class="caption" id="caption">Press <b>Play</b> to start!</div>
+  </div>
+  <div class="controls">
+    <button class="primary" id="playBtn">▶ Play</button>
+    <button id="restartBtn">⟲ Restart</button>
+  </div>
+
+  <div class="steps">
+    <div class="step-card"><div class="num">1</div><h3>🔦 A light clock</h3>
+      <p>Imagine a "clock" that ticks every time a beam of light bounces between two mirrors. Simple and perfectly accurate.</p></div>
+    <div class="step-card"><div class="num">2</div><h3>🚀 Put it on a spaceship</h3>
+      <p>If the ship flies past you, the light beam now has to travel diagonally — a LONGER path — to someone watching from outside.</p></div>
+    <div class="step-card"><div class="num">3</div><h3>⏱️ Longer path, same speed</h3>
+      <p>Since light's speed never changes, a longer path means the outside observer sees each "tick" take longer — the ship's clock looks slow!</p></div>
+    <div class="step-card"><div class="num">4</div><h3>👯 The twin paradox</h3>
+      <p>A twin who travels near light-speed and returns will have aged less than the twin who stayed on Earth — this is a real, measured effect!</p></div>
+  </div>
+
+  <div class="fact">
+    🤯 <b>Mind-blowing part:</b> This isn't just theory — it's tested every day. Fast-moving particles called muons, created high in our
+    atmosphere, survive long enough to reach the ground BECAUSE their internal "clock" runs slow at near-light-speed. Without time dilation, they'd decay first!
+  </div>
+
+  <div class="try-title">🧪 Now try it yourself</div>
+  <p class="try-subtitle">Drag the speed slider toward the speed of light and watch how much the traveler's clock slows down.</p>
+  <div class="try-card">
+    <canvas id="tryScene" width="600" height="300"></canvas>
+    <div class="try-controls">
+      <input type="range" id="speedSlider" min="0" max="99" value="0">
+      <button id="tryReset">↻ Reset</button>
+    </div>
+    <div class="try-result" id="tryResult">At 0% the speed of light, time passes normally for both.</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  const captionEl=document.getElementById('caption'), bannerEl=document.getElementById('banner'), progressBar=document.getElementById('progressBar');
+  const playBtn=document.getElementById('playBtn'), restartBtn=document.getElementById('restartBtn');
+
+  const SCENES=[
+    {t:0,dur:7,banner:'🔦 STEP 1: A LIGHT CLOCK',caption:'Picture a clock made of light bouncing between two mirrors, straight up and down. Each bounce = one "tick."'},
+    {t:7,dur:8,banner:'🚀 STEP 2: NOW PUT IT ON A SPACESHIP',caption:'The ship flies past you sideways. From YOUR view outside, the light doesn\'t just go up-down anymore — it has to zig-zag diagonally to keep up with the moving ship.'},
+    {t:15,dur:8,banner:'⏱️ STEP 3: A LONGER PATH, SAME SPEED LIMIT',caption:'Light\'s speed can never change. So if its path is longer, each "tick" must take MORE time — meaning the moving clock appears to run <b>slower</b> to you.'},
+    {t:23,dur:8,banner:'👯 STEP 4: THE TWIN PARADOX',caption:'If one twin flies out near light-speed and back while the other stays home, the traveling twin\'s clocks — and body — age <b>less</b>. They return younger!'},
+  ];
+  const totalDur=31;
+  let simTime=0, playing=false, lastTs=null;
+  function currentScene(t){ for(let i=SCENES.length-1;i>=0;i--) if(t>=SCENES[i].t) return i; return 0; }
+  function label(x,y,text,color){
+    ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
+    const tw=ctx.measureText(text).width;
+    ctx.fillStyle='rgba(4,6,15,0.75)'; ctx.fillRect(x-tw/2-8,y-16,tw+16,22);
+    ctx.fillStyle=color||'#9fc1de'; ctx.fillText(text,x,y);
+  }
+
+  function drawLightClockStatic(local){
+    const cx=W/2, top=140, bot=320;
+    ctx.strokeStyle='#4fd3ff'; ctx.lineWidth=4;
+    ctx.beginPath(); ctx.moveTo(cx-60,top); ctx.lineTo(cx+60,top); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx-60,bot); ctx.lineTo(cx+60,bot); ctx.stroke();
+    const bounce=Math.abs(((local*0.7)%2)-1);
+    const py=top+bounce*(bot-top);
+    ctx.fillStyle='#ffd23f'; ctx.beginPath(); ctx.arc(cx,py,8,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='rgba(255,210,63,.3)'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(cx,top); ctx.lineTo(cx,bot); ctx.stroke();
+    label(cx,top-30,'mirror','#4fd3ff');
+    label(cx,bot+30,'mirror','#4fd3ff');
+  }
+  function drawShipView(local,speedFrac){
+    const top=140, bot=320;
+    const shipX=100+((local*90*speedFrac)%700);
+    ctx.strokeStyle='#c7c9d9'; ctx.lineWidth=2;
+    ctx.strokeRect(shipX-40,top-20,80,bot-top+40);
+    ctx.fillStyle='#eef2ff'; ctx.font='700 12px Segoe UI'; ctx.textAlign='center';
+    ctx.fillText('ship',shipX,top-30);
+    // diagonal path traced
+    ctx.strokeStyle='rgba(255,210,63,.35)'; ctx.lineWidth=2;
+    ctx.beginPath();
+    for(let i=0;i<60;i++){
+      const t2=local-i*0.03; if(t2<0) continue;
+      const sx=100+((t2*90*speedFrac)%700);
+      const b2=Math.abs(((t2*0.7)%2)-1);
+      const yy=top+b2*(bot-top);
+      if(i===0) ctx.moveTo(sx,yy); else ctx.lineTo(sx,yy);
+    }
+    ctx.stroke();
+    const bounce=Math.abs(((local*0.7)%2)-1);
+    const py=top+bounce*(bot-top);
+    ctx.fillStyle='#ffd23f'; ctx.beginPath(); ctx.arc(shipX,py,7,0,Math.PI*2); ctx.fill();
+  }
+  function drawTwins(local){
+    ctx.fillStyle='#6dffb0'; ctx.beginPath(); ctx.arc(160,H/2,26,0,Math.PI*2); ctx.fill();
+    label(160,H/2+50,'twin who stayed home','#6dffb0');
+    const cyc=local%8;
+    let shipX;
+    if(cyc<4) shipX=220+cyc/4*560;
+    else shipX=220+(1-(cyc-4)/4)*560;
+    ctx.fillStyle='#c7c9d9';
+    ctx.beginPath(); ctx.moveTo(shipX-30,H/2+14); ctx.lineTo(shipX+30,H/2); ctx.lineTo(shipX-30,H/2-14); ctx.closePath(); ctx.fill();
+    label(shipX,H/2-40,'traveling twin (near light-speed)','#ffd23f');
+    // clocks
+    ctx.fillStyle='#eef2ff'; ctx.font='700 14px Segoe UI'; ctx.textAlign='center';
+    const homeYears=(local*1.2).toFixed(1);
+    const shipYears=(local*1.2*0.4).toFixed(1);
+    ctx.fillText('home clock: '+homeYears+' yrs passed', 160, H-40);
+    ctx.fillText('ship clock: '+shipYears+' yrs passed', shipX, H-70>H-70?H-70:H-70);
+  }
+
+  function render(t){
+    ctx.clearRect(0,0,W,H); ctx.fillStyle='#04060f'; ctx.fillRect(0,0,W,H);
+    for(let i=0;i<50;i++){ ctx.fillStyle='rgba(255,255,255,'+(0.08+0.3*((i*37)%10)/10)+')'; ctx.fillRect((i*53)%W,(i*97)%H,2,2); }
+    const idx=currentScene(t), scene=SCENES[idx], local=t-scene.t;
+    bannerEl.textContent=scene.banner; captionEl.innerHTML=scene.caption;
+    if(idx===0) drawLightClockStatic(local);
+    else if(idx===1) drawShipView(local,0.7);
+    else if(idx===2){ drawShipView(local,1); label(W/2,60,'longer zig-zag path = slower ticking clock','#eef2ff'); }
+    else drawTwins(local);
+    progressBar.style.width=Math.min(100,(t/totalDur)*100)+'%';
+  }
+  function step(ts){
+    if(!playing) return;
+    if(lastTs===null) lastTs=ts;
+    const dt=Math.min(0.05,(ts-lastTs)/1000); lastTs=ts;
+    simTime+=dt;
+    if(simTime>=totalDur){ simTime=totalDur; render(simTime); pause();
+      captionEl.innerHTML='🎬 The End! Press <b>Restart</b> to watch again.'; return; }
+    render(simTime); requestAnimationFrame(step);
+  }
+  function play(){ if(playing) return; playing=true; lastTs=null; playBtn.textContent='⏸ Pause'; requestAnimationFrame(step); }
+  function pause(){ playing=false; playBtn.textContent='▶ Play'; }
+  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionEl.innerHTML='Press <b>Play</b> to start!'; }
+  playBtn.addEventListener('click',()=>playing?pause():play());
+  restartBtn.addEventListener('click',restart);
+  render(0);
+})();
+
+(function(){
+  const cv=document.getElementById('tryScene'), c=cv.getContext('2d');
+  const w=cv.width,h=cv.height;
+  const slider=document.getElementById('speedSlider');
+  const resultEl=document.getElementById('tryResult');
+  let t=0;
+  function draw(){
+    c.clearRect(0,0,w,h); c.fillStyle='#04060f'; c.fillRect(0,0,w,h);
+    const v=(+slider.value)/100;
+    const gamma=1/Math.sqrt(Math.max(0.0001,1-v*v));
+    // two clocks: stationary and moving
+    const cx1=150, cx2=420, cy=140;
+    [cx1,cx2].forEach((cx,i)=>{
+      c.strokeStyle='#4fd3ff'; c.lineWidth=3;
+      c.beginPath(); c.arc(cx,cy,50,0,Math.PI*2); c.stroke();
+      const rate = i===0 ? 1 : 1/gamma;
+      const ang = t*rate*2 - Math.PI/2;
+      c.beginPath(); c.moveTo(cx,cy); c.lineTo(cx+Math.cos(ang)*40,cy+Math.sin(ang)*40); c.stroke();
+    });
+    c.fillStyle='#eef2ff'; c.font='700 13px Segoe UI'; c.textAlign='center';
+    c.fillText('stationary clock', cx1, cy+80);
+    c.fillText('clock at '+(v*100).toFixed(0)+'% light-speed', cx2, cy+80);
+    c.fillStyle='#ffd23f'; c.font='800 18px Segoe UI';
+    c.fillText('time dilation factor: ×'+gamma.toFixed(2), w/2, 250);
+    resultEl.textContent = v<0.05
+      ? 'At near-zero speed, both clocks tick at basically the same rate.'
+      : 'For every '+gamma.toFixed(2)+' seconds that pass for the stationary clock, only 1 second passes on the fast-moving one!';
+  }
+  function loop(){ t+=0.03; draw(); requestAnimationFrame(loop); }
+  slider.addEventListener('input',draw);
+  document.getElementById('tryReset').addEventListener('click',()=>{ slider.value=0; draw(); });
+  draw(); requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

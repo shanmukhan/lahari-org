@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elephant Toothpaste — A Chemistry Explosion!</title>
+<style>
+  :root{
+    --bg: #0b1020;
+    --panel: #121830;
+    --accent: #ffd23f;
+    --accent2: #4fd3ff;
+    --bad: #ff6767;
+    --good: #6dffb0;
+    --text: #eef2ff;
+    --dim: #9aa4cc;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family: "Segoe UI", Verdana, Arial, sans-serif;
+    background: radial-gradient(circle at top, #1b2450, #05070f 70%);
+    color: var(--text);
+    padding: 20px 16px 60px;
+  }
+  .wrap{ max-width: 960px; margin: 0 auto; }
+  header{ text-align:center; margin-bottom: 20px; }
+  h1{
+    font-size: clamp(24px, 5vw, 38px);
+    margin: 0 0 6px;
+    background: linear-gradient(90deg, var(--accent), #ff8fd0);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  header p{ color: var(--dim); font-size: 16px; margin:0; }
+
+  .player{
+    background: #000;
+    border-radius: 16px;
+    padding: 10px;
+    box-shadow: 0 10px 40px rgba(0,0,0,.5), 0 0 0 1px #222 inset;
+  }
+  .progress-track{
+    height: 8px;
+    background: #1c2340;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .progress-bar{
+    height:100%;
+    width:0%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent), #ff8fd0);
+    transition: width .05s linear;
+  }
+  canvas{
+    display:block;
+    width:100%;
+    height:auto;
+    background: #04060f;
+    border-radius: 10px;
+  }
+  .banner{
+    display:inline-block;
+    margin: 8px auto 0;
+    padding: 8px 22px;
+    border-radius: 999px;
+    font-weight: 800;
+  }
+  .banner-wrap{ text-align:center; }
+  .banner.guess{ color:#1a1a1a; background: var(--accent); animation: pulseBadge 1.4s ease-in-out infinite; }
+  .banner.react{ color:#1a0505; background: #ff8fd0; animation: slamBadge .5s ease-out; }
+  .banner.info{ color:#06180f; background: var(--good); }
+  @keyframes pulseBadge{ 0%,100%{ transform: scale(1); } 50%{ transform: scale(1.05); } }
+  @keyframes slamBadge{ 0%{ transform: scale(1.6); opacity:.3; } 60%{ transform: scale(0.95); opacity:1; } 100%{ transform: scale(1); } }
+
+  .caption{
+    margin-top: 6px;
+    background: #000c;
+    border: 1px solid #2a3568;
+    border-radius: 10px;
+    padding: 14px 18px;
+    min-height: 56px;
+    font-size: clamp(16px, 2.6vw, 20px);
+    line-height: 1.4;
+    text-align:center;
+  }
+  .caption b{ color: var(--accent); }
+  .controls{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap: 10px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+  button{
+    background: var(--panel);
+    color: var(--text);
+    border: 1px solid #2a3568;
+    border-radius: 999px;
+    padding: 10px 20px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: transform .1s, background .2s;
+  }
+  button:hover{ background:#1c2450; transform: translateY(-1px); }
+  button.primary{ background: linear-gradient(90deg, var(--accent2), #2f9fe0); color:#03101f; font-weight:700; border:none;}
+
+  .steps{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin-top: 26px;
+  }
+  .step-card{
+    background: var(--panel);
+    border: 1px solid #262f5c;
+    border-radius: 14px;
+    padding: 16px;
+  }
+  .step-card .num{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #16151a;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+  .step-card h3{ margin: 4px 0 6px; font-size: 17px; }
+  .step-card p{ margin:0; color: var(--dim); font-size: 14px; line-height:1.45; }
+
+  .fact{
+    margin-top: 26px;
+    background: linear-gradient(135deg, #1a2140, #0e1330);
+    border: 1px solid #2a3568;
+    border-radius: 14px;
+    padding: 18px 20px;
+    text-align:center;
+    font-size: 16px;
+  }
+  .fact b{ color: var(--accent2); }
+
+  .try-title{ text-align:center; font-size: clamp(20px,3.4vw,26px); font-weight:800; margin: 34px 0 4px; }
+  .try-subtitle{ text-align:center; color: var(--dim); margin: 0 0 16px; }
+  .try-card{ background: var(--panel); border: 1px solid #262f5c; border-radius: 14px; padding: 14px; max-width: 520px; margin: 0 auto; }
+  .try-card canvas{ display:block; width:100%; height:auto; background:#04060f; border-radius:10px; }
+  .try-card .try-controls{ display:flex; gap:10px; margin-top:12px; justify-content:center; flex-wrap:wrap; align-items:center; }
+  .try-card button{ padding: 8px 16px; font-size: 14px; }
+  .try-slider{ display:flex; align-items:center; gap:8px; color: var(--dim); font-size:14px; }
+  input[type=range]{ accent-color: var(--accent2); width: 140px; }
+  .try-result{ margin-top:8px; text-align:center; color: var(--dim); font-size: 13px; min-height: 18px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>🧪 Elephant Toothpaste</h1>
+    <p>A catalyst, a fizz, and a giant foam explosion — let's see chemistry in action like a video!</p>
+  </header>
+
+  <div class="player">
+    <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+    <canvas id="scene" width="900" height="460"></canvas>
+    <div class="banner-wrap"><span class="banner" id="banner"></span></div>
+    <div class="caption" id="caption">Press <b>Play</b> to start the show!</div>
+  </div>
+
+  <div class="controls">
+    <button class="primary" id="playBtn">▶ Play</button>
+    <button id="restartBtn">⟲ Restart</button>
+    <button id="slowBtn">🐢 Slow Motion</button>
+  </div>
+
+  <div class="steps">
+    <div class="step-card">
+      <div class="num">1</div>
+      <h3>🧴 The mix</h3>
+      <p>We start with hydrogen peroxide (like a strong version of the stuff in your first-aid kit), some dish soap, and a squirt of food coloring.</p>
+    </div>
+    <div class="step-card">
+      <div class="num">2</div>
+      <h3>⚡ Add the catalyst</h3>
+      <p>A pinch of dry yeast goes in. A <b>catalyst</b> is something that speeds up a reaction WITHOUT being used up itself.</p>
+    </div>
+    <div class="step-card">
+      <div class="num">3</div>
+      <h3>💨 Oxygen bubbles</h3>
+      <p>The yeast makes the peroxide break apart super fast into water + oxygen gas. The soap traps all that gas into millions of tiny bubbles — foam!</p>
+    </div>
+    <div class="step-card">
+      <div class="num">4</div>
+      <h3>🔥 It gets warm!</h3>
+      <p>This reaction is <b>exothermic</b> — it releases heat. If you touched the bottle right after, it would feel warm!</p>
+    </div>
+  </div>
+
+  <div class="fact">
+    🤯 <b>Mind-blowing part:</b> the yeast comes out of this reaction completely unchanged — that's exactly what makes it a <b>catalyst</b>. Real demos with strong peroxide can shoot foam several feet in the air, hot to the touch!
+  </div>
+
+  <div class="try-title">🧪 Now try it yourself</div>
+  <p class="try-subtitle">Pick how much catalyst to add, then trigger your own eruption.</p>
+  <div class="try-card">
+    <canvas id="tryScene" width="480" height="360"></canvas>
+    <div class="try-controls">
+      <button id="tryFire" class="primary">⚡ Add Catalyst!</button>
+      <button id="tryReset">↻ Reset</button>
+      <div class="try-slider">
+        <span>Catalyst:</span>
+        <input id="tryAmount" type="range" min="1" max="3" value="2" step="1">
+        <span id="tryAmountLabel">Medium</span>
+      </div>
+    </div>
+    <div class="try-result" id="tryResult"></div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  const canvas = document.getElementById('scene');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const captionEl = document.getElementById('caption');
+  const bannerEl = document.getElementById('banner');
+  const progressBar = document.getElementById('progressBar');
+  const playBtn = document.getElementById('playBtn');
+  const restartBtn = document.getElementById('restartBtn');
+  const slowBtn = document.getElementById('slowBtn');
+
+  // ---------- geometry ----------
+  const bottleCX = W/2;
+  const neckTopY = 130, neckBotY = 190, neckHalfW = 22;
+  const bodyTopY = 190, bodyBotY = 380, bodyHalfW = 62;
+  const trayY = 400, trayHalfW = 170, trayHalfH = 26;
+
+  // ---------- timeline ----------
+  const SCENES = [
+    { t:0,  dur:4, mode:'intro', banner:'🧴 THE SETUP', bannerClass:'info',
+      caption: 'This bottle has hydrogen peroxide, a squirt of dish soap, and food coloring for a splash of color.' },
+    { t:4,  dur:4, mode:'guess', banner:'❓ WHAT WILL HAPPEN?', bannerClass:'guess',
+      caption: 'We\'re about to drop in a pinch of dry yeast — a <b>catalyst</b>. What do you think will happen?' },
+    { t:8,  dur:2.2, mode:'drop', banner:'❓ WHAT WILL HAPPEN?', bannerClass:'guess',
+      caption: 'In it goes...' },
+    { t:10.2, dur:9, mode:'eruption', banner:'🎉 REACTION TIME!', bannerClass:'react',
+      caption: '💥 The yeast breaks the peroxide apart into water and oxygen gas — the soap traps it all into a huge foam eruption!' },
+    { t:19.2, dur:6, mode:'settle', banner:'🔬 WHY DID THAT HAPPEN?', bannerClass:'info',
+      caption: 'The yeast is a <b>catalyst</b> — it speeds up the reaction but comes out unchanged. This reaction also releases heat, so the bottle feels warm!' },
+    { t:25.2, dur:5, mode:'settle', banner:'🔬 WHY DID THAT HAPPEN?', bannerClass:'info',
+      caption: '🧪 Peroxide (H₂O₂) → Water + Oxygen, sped up by the catalyst. Soap just traps the oxygen bubbles so we can SEE it happen!' },
+  ];
+  const totalDur = 30.2;
+
+  let simTime = 0;
+  let playing = false;
+  let lastTs = null;
+  let speedMult = 1;
+
+  // foam state
+  let foamHeight = 0;      // column height above neck
+  let trayFoam = 0;        // accumulated puddle radius
+  let catalystDropped = false;
+  let catalystY = neckTopY - 40;
+
+  function currentSceneIndex(t){
+    for(let i=SCENES.length-1;i>=0;i--) if(t>=SCENES[i].t) return i;
+    return 0;
+  }
+
+  // ---------- static drawing ----------
+  function drawTray(){
+    ctx.save();
+    ctx.beginPath();
+    ctx.ellipse(bottleCX, trayY, trayHalfW, trayHalfH, 0, 0, Math.PI*2);
+    ctx.fillStyle = '#1c2340';
+    ctx.fill();
+    ctx.strokeStyle = '#33406e';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function bottlePath(){
+    ctx.beginPath();
+    ctx.moveTo(bottleCX-neckHalfW, neckTopY);
+    ctx.lineTo(bottleCX-neckHalfW, neckBotY);
+    ctx.quadraticCurveTo(bottleCX-bodyHalfW, neckBotY, bottleCX-bodyHalfW, neckBotY+30);
+    ctx.lineTo(bottleCX-bodyHalfW, bodyBotY-14);
+    ctx.quadraticCurveTo(bottleCX-bodyHalfW, bodyBotY, bottleCX-bodyHalfW+14, bodyBotY);
+    ctx.lineTo(bottleCX+bodyHalfW-14, bodyBotY);
+    ctx.quadraticCurveTo(bottleCX+bodyHalfW, bodyBotY, bottleCX+bodyHalfW, bodyBotY-14);
+    ctx.lineTo(bottleCX+bodyHalfW, neckBotY+30);
+    ctx.quadraticCurveTo(bottleCX+bodyHalfW, neckBotY, bottleCX+neckHalfW, neckBotY);
+    ctx.lineTo(bottleCX+neckHalfW, neckTopY);
+    ctx.closePath();
+  }
+
+  function drawBottle(liquidFrac){
+    ctx.save();
+    bottlePath();
+    ctx.clip();
+    // glass tint background
+    ctx.fillStyle = 'rgba(180,210,255,0.06)';
+    ctx.fillRect(bottleCX-bodyHalfW, neckTopY, bodyHalfW*2, bodyBotY-neckTopY);
+    // liquid
+    const liquidTop = bodyBotY - (bodyBotY-neckTopY)*liquidFrac;
+    const grad = ctx.createLinearGradient(0, liquidTop, 0, bodyBotY);
+    grad.addColorStop(0, '#ff8fd0');
+    grad.addColorStop(1, '#c93fa0');
+    ctx.fillStyle = grad;
+    ctx.fillRect(bottleCX-bodyHalfW, liquidTop, bodyHalfW*2, bodyBotY-liquidTop);
+    ctx.restore();
+    // outline
+    ctx.save();
+    bottlePath();
+    ctx.strokeStyle = '#8fa8d6';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.restore();
+    // shine
+    ctx.save();
+    ctx.globalAlpha = 0.15;
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(bottleCX-bodyHalfW+8, neckBotY+10, 10, bodyBotY-neckBotY-24);
+    ctx.restore();
+  }
+
+  function drawLabelBox(x,y,text){
+    ctx.font = '700 13px Segoe UI, Arial';
+    ctx.textAlign = 'center';
+    const tw = ctx.measureText(text).width;
+    ctx.fillStyle = 'rgba(4,6,15,0.75)';
+    ctx.fillRect(x-tw/2-8, y-16, tw+16, 22);
+    ctx.fillStyle = '#9fc1de';
+    ctx.fillText(text, x, y);
+  }
+
+  function drawCatalystSpoon(y, wobble){
+    ctx.save();
+    ctx.translate(bottleCX + wobble, y);
+    ctx.fillStyle = '#c7c9d9';
+    ctx.beginPath();
+    ctx.ellipse(0,0,14,9,0,0,Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle = '#8b8fa8';
+    ctx.fillRect(-3, 8, 6, 26);
+    // yeast granules
+    ctx.fillStyle = '#e8d9a0';
+    for(let i=0;i<8;i++){
+      const gx = (Math.random()-0.5)*18, gy = (Math.random()-0.5)*8;
+      ctx.beginPath(); ctx.arc(gx,gy,1.4,0,Math.PI*2); ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  // seeded mound bubble specs for stable foam eruption look
+  const moundSpecs = [];
+  (function initMound(){
+    for(let i=0;i<70;i++){
+      const angle = Math.random()*Math.PI*2;
+      const dist = Math.random()*trayHalfW*0.85;
+      moundSpecs.push({
+        dx: Math.cos(angle)*dist,
+        dy: Math.sin(angle)*dist*0.35,
+        r: 14 + Math.random()*20,
+        order: Math.random()
+      });
+    }
+  })();
+
+  function drawFoamColumn(height, t){
+    if(height <= 0) return;
+    const segs = Math.max(3, Math.floor(height/18));
+    for(let i=0;i<segs;i++){
+      const frac = i/segs;
+      const y = neckTopY - frac*height;
+      const wobble = Math.sin(t*6 + i*1.3)*6*(1-frac*0.4);
+      const rad = 20 + Math.sin(i*1.7+t*3)*4 + frac*6;
+      const hue = 320 - frac*40;
+      ctx.beginPath();
+      ctx.arc(bottleCX+wobble, y, rad, 0, Math.PI*2);
+      ctx.fillStyle = `hsla(${hue}, 85%, ${78-frac*10}%, 0.95)`;
+      ctx.fill();
+    }
+    // bubbly highlights
+    ctx.save();
+    for(let i=0;i<Math.min(24, height/6);i++){
+      const y = neckTopY - Math.random()*height;
+      const x = bottleCX + (Math.random()-0.5)*36;
+      ctx.beginPath();
+      ctx.arc(x,y, 2+Math.random()*2, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(255,255,255,0.55)';
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function drawTrayFoam(progress, t){
+    if(progress<=0) return;
+    ctx.save();
+    ctx.beginPath();
+    ctx.ellipse(bottleCX, trayY, trayHalfW, trayHalfH, 0, 0, Math.PI*2);
+    ctx.clip();
+    for(const spec of moundSpecs){
+      if(spec.order > progress) continue;
+      const wobble = Math.sin(t*4 + spec.dx)*2;
+      const hue = 320 - Math.abs(spec.dx)/trayHalfW*40;
+      ctx.beginPath();
+      ctx.arc(bottleCX+spec.dx, trayY+spec.dy+wobble, spec.r*Math.min(1,progress*1.4), 0, Math.PI*2);
+      ctx.fillStyle = `hsla(${hue}, 80%, 80%, 0.9)`;
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function drawSteamWisps(alpha, t){
+    ctx.save();
+    ctx.strokeStyle = `rgba(255,255,255,${alpha*0.35})`;
+    ctx.lineWidth = 2;
+    for(let i=0;i<3;i++){
+      const baseX = bottleCX - 30 + i*30;
+      ctx.beginPath();
+      for(let s=0;s<=20;s++){
+        const yy = neckTopY - 20 - s*8;
+        const xx = baseX + Math.sin(t*3 + s*0.5 + i)*6;
+        if(s===0) ctx.moveTo(xx,yy); else ctx.lineTo(xx,yy);
+      }
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  // ---------- main render ----------
+  function render(t){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = '#04060f'; ctx.fillRect(0,0,W,H);
+
+    const idx = currentSceneIndex(t);
+    const scene = SCENES[idx];
+    bannerEl.textContent = scene.banner;
+    bannerEl.className = 'banner ' + scene.bannerClass;
+    captionEl.innerHTML = scene.caption;
+
+    drawTray();
+
+    if(scene.mode === 'intro'){
+      drawBottle(0.55);
+      drawLabelBox(bottleCX-100, 220, 'H₂O₂ + soap');
+      drawLabelBox(bottleCX+100, 220, '+ food color');
+    }
+    else if(scene.mode === 'guess'){
+      drawBottle(0.55);
+      const bob = Math.sin(t*3)*4;
+      drawCatalystSpoon(neckTopY-40+bob, 0);
+      drawLabelBox(bottleCX, 60, 'YEAST — the catalyst?');
+    }
+    else if(scene.mode === 'drop'){
+      const local = t - scene.t;
+      const dropY = neckTopY - 40 + local*80;
+      drawBottle(0.55);
+      if(dropY < neckBotY+20) drawCatalystSpoon(dropY, 0);
+    }
+    else if(scene.mode === 'eruption'){
+      const local = t - scene.t;
+      const growPhase = Math.min(1, local/3);
+      foamHeight = growPhase*growPhase*(3-2*growPhase) * 210;
+      const overflowStart = 1.8;
+      trayFoam = Math.max(0, Math.min(1, (local-overflowStart)/6));
+      drawBottle(0.9);
+      drawTrayFoam(trayFoam, t);
+      drawFoamColumn(foamHeight, t);
+      drawSteamWisps(Math.min(1, local/2), t);
+    }
+    else if(scene.mode === 'settle'){
+      drawBottle(0.85);
+      drawTrayFoam(1, t*0.3);
+      drawFoamColumn(150 + Math.sin(t*1.5)*6, t*0.4);
+      drawLabelBox(bottleCX, 70, 'H₂O₂ --catalyst--> H₂O + O₂');
+    }
+
+    const pct = Math.min(100, (t/totalDur)*100);
+    progressBar.style.width = pct+'%';
+  }
+
+  function step(ts){
+    if(!playing) return;
+    if(lastTs===null) lastTs = ts;
+    const dt = Math.min(0.05, (ts-lastTs)/1000) * speedMult;
+    lastTs = ts;
+    simTime += dt;
+    if(simTime >= totalDur){
+      simTime = totalDur;
+      render(simTime);
+      pause();
+      captionEl.innerHTML = '🎬 The End! Press <b>Restart</b> to watch again.';
+      return;
+    }
+    render(simTime);
+    requestAnimationFrame(step);
+  }
+  function play(){ if(playing) return; playing=true; lastTs=null; playBtn.textContent='⏸ Pause'; requestAnimationFrame(step); }
+  function pause(){ playing=false; playBtn.textContent='▶ Play'; }
+  function restart(){
+    simTime = 0; foamHeight = 0; trayFoam = 0;
+    render(0);
+    captionEl.innerHTML = 'Press <b>Play</b> to start the show!';
+    progressBar.style.width = '0%';
+    pause();
+  }
+
+  playBtn.addEventListener('click', () => playing ? pause() : play());
+  restartBtn.addEventListener('click', restart);
+  slowBtn.addEventListener('click', () => {
+    speedMult = speedMult===1 ? 0.35 : 1;
+    slowBtn.textContent = speedMult===1 ? '🐢 Slow Motion' : '🐇 Normal Speed';
+  });
+
+  render(0);
+})();
+
+// ---------- Try It Yourself: interactive eruption ----------
+(function(){
+  const cv = document.getElementById('tryScene');
+  const c = cv.getContext('2d');
+  const w = cv.width, h = cv.height;
+  const bx = w/2;
+  const neckTopY = 90, neckBotY = 140, neckHalfW = 16;
+  const bodyBotY = 300, bodyHalfW = 46;
+  const trayY = 316, trayHalfW = 130, trayHalfH = 20;
+
+  let firing = false, t = 0, amount = 2, foamHeight = 0, trayFoam = 0, peakHeight = 0;
+  const amountLabels = {1:'Low', 2:'Medium', 3:'High'};
+  const amountEl = document.getElementById('tryAmountLabel');
+  const sliderEl = document.getElementById('tryAmount');
+  const resultEl = document.getElementById('tryResult');
+
+  const moundSpecs = [];
+  for(let i=0;i<60;i++){
+    const angle = Math.random()*Math.PI*2, dist = Math.random()*trayHalfW*0.85;
+    moundSpecs.push({dx:Math.cos(angle)*dist, dy:Math.sin(angle)*dist*0.35, r:10+Math.random()*16, order:Math.random()});
+  }
+
+  function bottlePath(){
+    c.beginPath();
+    c.moveTo(bx-neckHalfW, neckTopY);
+    c.lineTo(bx-neckHalfW, neckBotY);
+    c.quadraticCurveTo(bx-bodyHalfW, neckBotY, bx-bodyHalfW, neckBotY+22);
+    c.lineTo(bx-bodyHalfW, bodyBotY-10);
+    c.quadraticCurveTo(bx-bodyHalfW, bodyBotY, bx-bodyHalfW+10, bodyBotY);
+    c.lineTo(bx+bodyHalfW-10, bodyBotY);
+    c.quadraticCurveTo(bx+bodyHalfW, bodyBotY, bx+bodyHalfW, bodyBotY-10);
+    c.lineTo(bx+bodyHalfW, neckBotY+22);
+    c.quadraticCurveTo(bx+bodyHalfW, neckBotY, bx+neckHalfW, neckBotY);
+    c.lineTo(bx+neckHalfW, neckTopY);
+    c.closePath();
+  }
+
+  function draw(){
+    c.clearRect(0,0,w,h);
+    c.fillStyle = '#04060f'; c.fillRect(0,0,w,h);
+
+    // tray
+    c.beginPath(); c.ellipse(bx, trayY, trayHalfW, trayHalfH, 0,0,Math.PI*2);
+    c.fillStyle = '#1c2340'; c.fill(); c.strokeStyle='#33406e'; c.lineWidth=2; c.stroke();
+
+    // tray foam
+    if(trayFoam > 0){
+      c.save();
+      c.beginPath(); c.ellipse(bx, trayY, trayHalfW, trayHalfH, 0,0,Math.PI*2); c.clip();
+      for(const s of moundSpecs){
+        if(s.order > trayFoam) continue;
+        const hue = 320 - Math.abs(s.dx)/trayHalfW*40;
+        c.beginPath(); c.arc(bx+s.dx, trayY+s.dy, s.r*Math.min(1,trayFoam*1.4), 0, Math.PI*2);
+        c.fillStyle = `hsla(${hue},80%,80%,0.9)`; c.fill();
+      }
+      c.restore();
+    }
+
+    // bottle + liquid
+    c.save(); bottlePath(); c.clip();
+    c.fillStyle = 'rgba(180,210,255,0.06)'; c.fillRect(bx-bodyHalfW, neckTopY, bodyHalfW*2, bodyBotY-neckTopY);
+    const liquidTop = bodyBotY - (bodyBotY-neckTopY)*0.55;
+    const grad = c.createLinearGradient(0,liquidTop,0,bodyBotY);
+    grad.addColorStop(0,'#ff8fd0'); grad.addColorStop(1,'#c93fa0');
+    c.fillStyle = grad; c.fillRect(bx-bodyHalfW, liquidTop, bodyHalfW*2, bodyBotY-liquidTop);
+    c.restore();
+    c.save(); bottlePath(); c.strokeStyle='#8fa8d6'; c.lineWidth=3; c.stroke(); c.restore();
+
+    // foam column
+    if(foamHeight > 0){
+      const segs = Math.max(3, Math.floor(foamHeight/14));
+      for(let i=0;i<segs;i++){
+        const frac = i/segs;
+        const y = neckTopY - frac*foamHeight;
+        const wobble = Math.sin(t*6+i*1.3)*4*(1-frac*0.4);
+        const rad = 14 + Math.sin(i*1.7+t*3)*3 + frac*4;
+        const hue = 320 - frac*40;
+        c.beginPath(); c.arc(bx+wobble, y, rad, 0, Math.PI*2);
+        c.fillStyle = `hsla(${hue},85%,${78-frac*10}%,0.95)`; c.fill();
+      }
+    }
+
+    if(peakHeight > 0){
+      resultEl.textContent = `Foam height reached ${Math.round(peakHeight)}px — try a different catalyst amount!`;
+    }
+  }
+
+  function update(dt){
+    t += dt;
+    const maxHeight = 90 + amount*55;
+    if(firing){
+      const rate = 0.35 + amount*0.25;
+      foamHeight = Math.min(maxHeight, foamHeight + dt*maxHeight*rate);
+      if(foamHeight > maxHeight*0.5){
+        trayFoam = Math.min(1, trayFoam + dt*(0.15+amount*0.1));
+      }
+      peakHeight = Math.max(peakHeight, foamHeight);
+    } else {
+      foamHeight = Math.max(0, foamHeight - dt*40);
+    }
+  }
+
+  let last = performance.now();
+  function loop(now){
+    const dt = Math.min(0.05,(now-last)/1000); last = now;
+    update(dt); draw();
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+
+  document.getElementById('tryFire').addEventListener('click', () => {
+    firing = true;
+    setTimeout(() => { firing = false; }, 3500);
+  });
+  document.getElementById('tryReset').addEventListener('click', () => {
+    firing = false; foamHeight = 0; trayFoam = 0; peakHeight = 0; resultEl.textContent = '';
+  });
+  sliderEl.addEventListener('input', (e) => {
+    amount = +e.target.value;
+    amountEl.textContent = amountLabels[amount];
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Double-Slit Experiment — Explained Simply!</title>
+<style>
+  :root{
+    --bg: #0b1020;
+    --panel: #121830;
+    --accent: #ffd23f;
+    --accent2: #4fd3ff;
+    --bad: #ff6767;
+    --good: #6dffb0;
+    --text: #eef2ff;
+    --dim: #9aa4cc;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family: "Segoe UI", Verdana, Arial, sans-serif;
+    background: radial-gradient(circle at top, #1b2450, #05070f 70%);
+    color: var(--text);
+    padding: 20px 16px 60px;
+  }
+  .wrap{ max-width: 960px; margin: 0 auto; }
+  header{ text-align:center; margin-bottom: 20px; }
+  h1{
+    font-size: clamp(24px, 5vw, 38px);
+    margin: 0 0 6px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  header p{ color: var(--dim); font-size: 16px; margin:0; }
+
+  .player{
+    background: #000;
+    border-radius: 16px;
+    padding: 10px;
+    box-shadow: 0 10px 40px rgba(0,0,0,.5), 0 0 0 1px #222 inset;
+  }
+  .progress-track{
+    height: 8px;
+    background: #1c2340;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 8px;
+    position: relative;
+  }
+  .progress-bar{
+    height:100%;
+    width:0%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    transition: width .05s linear;
+  }
+  .act-marker{
+    position:absolute;
+    top:0; bottom:0;
+    width:2px;
+    background: rgba(255,255,255,.35);
+  }
+  canvas{
+    display:block;
+    width:100%;
+    height:auto;
+    background: #04060f;
+    border-radius: 10px;
+  }
+  .banner{
+    text-align:center;
+    font-weight: 800;
+    font-size: clamp(15px, 2.4vw, 19px);
+    padding: 6px 0 2px;
+    min-height: 26px;
+    letter-spacing: .3px;
+  }
+  .banner{
+    display:inline-block;
+    margin: 6px auto 0;
+    padding: 8px 22px;
+    border-radius: 999px;
+    font-weight: 800;
+  }
+  .banner-wrap{ text-align:center; }
+  .banner.guess{ color:#1a1a1a; background: var(--accent); animation: pulseBadge 1.4s ease-in-out infinite; }
+  .banner.reality{ color:#1a0505; background: var(--bad); animation: slamBadge .5s ease-out; }
+  .banner.wave{ color:#06180f; background: var(--good); }
+  @keyframes pulseBadge{ 0%,100%{ transform: scale(1); } 50%{ transform: scale(1.05); } }
+  @keyframes slamBadge{ 0%{ transform: scale(1.6); opacity:.3; } 60%{ transform: scale(0.95); opacity:1; } 100%{ transform: scale(1); } }
+
+  .caption{
+    margin-top: 6px;
+    background: #000c;
+    border: 1px solid #2a3568;
+    border-radius: 10px;
+    padding: 14px 18px;
+    min-height: 56px;
+    font-size: clamp(16px, 2.6vw, 20px);
+    line-height: 1.4;
+    text-align:center;
+  }
+  .caption b{ color: var(--accent); }
+  .controls{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap: 10px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+  button{
+    background: var(--panel);
+    color: var(--text);
+    border: 1px solid #2a3568;
+    border-radius: 999px;
+    padding: 10px 20px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: transform .1s, background .2s;
+  }
+  button:hover{ background:#1c2450; transform: translateY(-1px); }
+  button.primary{ background: linear-gradient(90deg, var(--accent2), #2f9fe0); color:#03101f; font-weight:700; border:none;}
+
+  .steps{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin-top: 26px;
+  }
+  .step-card{
+    background: var(--panel);
+    border: 1px solid #262f5c;
+    border-radius: 14px;
+    padding: 16px;
+  }
+  .step-card .num{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #16151a;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+  .step-card h3{ margin: 4px 0 6px; font-size: 17px; }
+  .step-card p{ margin:0; color: var(--dim); font-size: 14px; line-height:1.45; }
+
+  .fact{
+    margin-top: 26px;
+    background: linear-gradient(135deg, #1a2140, #0e1330);
+    border: 1px solid #2a3568;
+    border-radius: 14px;
+    padding: 18px 20px;
+    text-align:center;
+    font-size: 16px;
+  }
+  .fact b{ color: var(--accent2); }
+
+  .try-title{ text-align:center; font-size: clamp(20px,3.4vw,26px); font-weight:800; margin: 34px 0 4px; }
+  .try-subtitle{ text-align:center; color: var(--dim); margin: 0 0 16px; }
+  .try-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 760px){ .try-grid{ grid-template-columns: 1fr; } }
+  .try-card{ background: var(--panel); border: 1px solid #262f5c; border-radius: 14px; padding: 14px; }
+  .try-card h3{ margin: 2px 0 8px; font-size: 16px; }
+  .try-card canvas{ display:block; width:100%; height:auto; background:#04060f; border-radius:10px; }
+  .try-card .try-controls{ display:flex; gap:8px; margin-top:10px; justify-content:center; }
+  .try-card button{ padding: 8px 16px; font-size: 14px; }
+  .try-result{ margin-top:8px; text-align:center; color: var(--dim); font-size: 13px; min-height: 18px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>The Double-Slit Experiment</h1>
+    <p>Light plays a trick on us — watch the "wrong guess" first, then see what really happens!</p>
+  </header>
+
+  <div class="player">
+    <div class="progress-track">
+      <div class="progress-bar" id="progressBar"></div>
+      <div class="act-marker" id="marker1"></div>
+      <div class="act-marker" id="marker2"></div>
+    </div>
+    <canvas id="scene" width="900" height="460"></canvas>
+    <div class="banner-wrap"><span class="banner" id="banner"></span></div>
+    <div class="caption" id="caption">Press <b>Play</b> to start the show!</div>
+  </div>
+
+  <div class="controls">
+    <button class="primary" id="playBtn">▶ Play</button>
+    <button id="restartBtn">⟲ Restart</button>
+    <button id="slowBtn">🐢 Slow Motion</button>
+  </div>
+
+  <div class="steps">
+    <div class="step-card">
+      <div class="num">1</div>
+      <h3>🔵 The Guess: Particles</h3>
+      <p>If light is made of tiny balls (like marbles), firing them through two slits should make <b>two separate piles</b>, with an empty gap in between.</p>
+    </div>
+    <div class="step-card">
+      <div class="num">2</div>
+      <h3>🔴 The Reality Check</h3>
+      <p>Real light does NOT do that. It makes <b>stripes</b> — and surprisingly, there's a <b>bright</b> band exactly where the empty gap should have been!</p>
+    </div>
+    <div class="step-card">
+      <div class="num">3</div>
+      <h3>🟢 Try Waves Instead</h3>
+      <p>If light spreads out like ripples on water, each slit makes its own ripples. Where two crests meet, light adds up (bright). Crest meets dip? They cancel (dark).</p>
+    </div>
+    <div class="step-card">
+      <div class="num">4</div>
+      <h3>✅ It Matches!</h3>
+      <p>The wave picture produces <b>exactly</b> the striped pattern we really see — including the bright center. That's why we say light behaves like a wave.</p>
+    </div>
+  </div>
+
+  <div class="fact">
+    🤯 <b>Mind-blowing part:</b> even if you send light ONE tiny speck (a photon) at a time, after enough of them land, they still build up the exact same stripy pattern — as if each one traveled through <b>both</b> slits at once!
+  </div>
+
+  <div class="try-title">🧪 Now try it yourself</div>
+  <p class="try-subtitle">Fire your own particles at the two slits, side by side — the guess vs. reality, live.</p>
+  <div class="try-grid">
+    <div class="try-card">
+      <h3>❓ Particle guess: two marble piles?</h3>
+      <canvas id="tryParticle" width="420" height="260"></canvas>
+      <div class="try-controls">
+        <button id="tryParticleFire" class="primary">🔫 Fire marbles</button>
+        <button id="tryParticleReset">↻ Reset</button>
+      </div>
+      <div class="try-result" id="tryParticleResult"></div>
+    </div>
+    <div class="try-card">
+      <h3>✅ Wave reality: striped pattern</h3>
+      <canvas id="tryWave" width="420" height="260"></canvas>
+      <div class="try-controls">
+        <button id="tryWaveFire" class="primary">💡 Send photons</button>
+        <button id="tryWaveReset">↻ Reset</button>
+      </div>
+      <div class="try-result" id="tryWaveResult"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  const canvas = document.getElementById('scene');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const captionEl = document.getElementById('caption');
+  const bannerEl = document.getElementById('banner');
+  const progressBar = document.getElementById('progressBar');
+  const playBtn = document.getElementById('playBtn');
+  const restartBtn = document.getElementById('restartBtn');
+  const slowBtn = document.getElementById('slowBtn');
+
+  // ---------- geometry ----------
+  const sourceX = 60, sourceY = H/2;
+  const barrierX = 380;
+  const screenX = 830;
+  const slitGap = 46;
+  const slitHalf = 13;
+  const slit1Y = H/2 - slitGap;
+  const slit2Y = H/2 + slitGap;
+  const singleSlitY = H/2;
+
+  // ---------- timeline ----------
+  // mode groups: particleSingle, particleDouble, reveal, waveSingle, waveDouble, waveBuild
+  const SCENES = [
+    { t:0,  dur:5, mode:'particleSingle', banner:'❓ JUST A GUESS — keep watching!', bannerClass:'guess',
+      caption: '🔵 Let\'s pretend light is made of tiny particles, like marbles. Fire them through <b>ONE</b> slit...' },
+    { t:5,  dur:4, mode:'particleSingle', banner:'❓ JUST A GUESS — keep watching!', bannerClass:'guess',
+      caption: 'They pile up right behind the slit — exactly what we\'d expect from little balls!' },
+    { t:9,  dur:5, mode:'particleDouble', banner:'❓ JUST A GUESS — keep watching!', bannerClass:'guess',
+      caption: 'Now let\'s open a <b>SECOND</b> slit and fire marbles through both...' },
+    { t:14, dur:5, mode:'particleDouble', banner:'❓ JUST A GUESS — keep watching!', bannerClass:'guess',
+      caption: 'Our guess: TWO separate piles, with an <b>empty gap</b> in the middle.' },
+    { t:19, dur:6, mode:'reveal', banner:'❌ GUESS WAS WRONG!', bannerClass:'reality',
+      caption: '⚡ But real light does NOT do this! It makes <b>stripes</b> — with a <b>bright</b> band exactly where the gap should be!' },
+    { t:25, dur:4, mode:'waveSingle', banner:'🌊 NOW TESTING: LIGHT = A WAVE', bannerClass:'wave',
+      caption: '🌊 Let\'s try again, thinking of light as a WAVE — spreading out like ripples on water.' },
+    { t:29, dur:5, mode:'waveDouble', banner:'🌊 NOW TESTING: LIGHT = A WAVE', bannerClass:'wave',
+      caption: 'Each slit makes its own ripples. Two crests meet → light adds up, <b>BRIGHT</b>. A crest meets a dip → they cancel, <b>DARK</b>.' },
+    { t:34, dur:6, mode:'waveBuild', banner:'✅ MATCHES REALITY', bannerClass:'wave',
+      caption: '📸 This wave pattern matches <b>exactly</b> what real light does! That\'s why light behaves like a wave here.' },
+    { t:40, dur:4, mode:'waveBuild', banner:'✅ MATCHES REALITY', bannerClass:'wave',
+      caption: '🤯 And amazingly, even single tiny specks of light (photons) build this same pattern, one at a time!' },
+  ];
+  const totalDur = 44;
+
+  // markers between the 3 acts (particle guess / reveal / wave)
+  document.getElementById('marker1').style.left = (19/totalDur*100) + '%';
+  document.getElementById('marker2').style.left = (25/totalDur*100) + '%';
+
+  let simTime = 0;
+  let playing = false;
+  let lastTs = null;
+  let speedMult = 1;
+  let prevSceneIdx = -1;
+
+  // particle state
+  let flying = [];       // marbles in flight
+  let hist = new Array(70).fill(0);
+  const binH = H/70;
+  let spawnTimer = 0;
+
+  // wave-build dots
+  let landedDots = [];
+  let dotTimer = 0;
+
+  function intensityFringe(yFromCenter){
+    const k = 0.045;
+    const val = Math.cos(k*yFromCenter);
+    return val*val;
+  }
+  function intensityGlow(yFromCenter){
+    const sigma = 70;
+    return Math.exp(-(yFromCenter*yFromCenter)/(2*sigma*sigma));
+  }
+
+  function currentSceneIndex(t){
+    for(let i=SCENES.length-1;i>=0;i--) if(t>=SCENES[i].t) return i;
+    return 0;
+  }
+
+  // ---------- drawing helpers ----------
+  function drawGrid(){
+    ctx.strokeStyle = 'rgba(110,160,205,.05)';
+    ctx.lineWidth = 1;
+    for(let x=0;x<W;x+=40){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+    for(let y=0;y<H;y+=40){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+  }
+  function drawLabels(){
+    ctx.font = '700 13px Segoe UI, Arial';
+    ctx.textAlign = 'center';
+    [[sourceX,'SOURCE'],[barrierX,'BARRIER'],[screenX,'SCREEN']].forEach(([x,text])=>{
+      const tw = ctx.measureText(text).width;
+      ctx.fillStyle = 'rgba(4,6,15,0.75)';
+      ctx.fillRect(x - tw/2 - 8, 14, tw+16, 22);
+      ctx.fillStyle = '#9fc1de';
+      ctx.fillText(text, x, 30);
+    });
+  }
+  function drawSource(){
+    const grad = ctx.createRadialGradient(sourceX, sourceY, 0, sourceX, sourceY, 26);
+    grad.addColorStop(0, 'rgba(255,212,90,.95)');
+    grad.addColorStop(1, 'rgba(255,212,90,0)');
+    ctx.beginPath(); ctx.arc(sourceX, sourceY, 30, 0, Math.PI*2); ctx.fillStyle = grad; ctx.fill();
+    ctx.save();
+    ctx.shadowBlur = 16; ctx.shadowColor = '#ffd45a';
+    ctx.beginPath(); ctx.arc(sourceX, sourceY, 9, 0, Math.PI*2); ctx.fillStyle = '#ffd45a'; ctx.fill();
+    ctx.restore();
+    ctx.beginPath(); ctx.arc(sourceX-2, sourceY-2, 3, 0, Math.PI*2); ctx.fillStyle = '#fff4c5'; ctx.fill();
+  }
+  function drawScreen(){
+    ctx.fillStyle = '#20264a';
+    ctx.fillRect(screenX, 0, 8, H);
+  }
+  function drawBarrierSingle(){
+    ctx.fillStyle = '#3a4373';
+    ctx.fillRect(barrierX-6, 0, 12, singleSlitY - slitHalf);
+    ctx.fillRect(barrierX-6, singleSlitY + slitHalf, 12, H - (singleSlitY + slitHalf));
+  }
+  function drawBarrierDouble(){
+    ctx.fillStyle = '#3a4373';
+    ctx.fillRect(barrierX-6, 0, 12, slit1Y - slitHalf);
+    ctx.fillRect(barrierX-6, slit1Y + slitHalf, 12, (slit2Y-slitHalf)-(slit1Y+slitHalf));
+    ctx.fillRect(barrierX-6, slit2Y + slitHalf, 12, H - (slit2Y + slitHalf));
+  }
+  function drawWaveRings(cx, cy, t, maxR, color){
+    const spacing = 26, speed = 90;
+    const count = Math.ceil(maxR/spacing)+1;
+    for(let i=0;i<count;i++){
+      let r = ((t*speed) + i*spacing) % maxR;
+      if(r<4) continue;
+      const alpha = 0.55*(1-r/maxR);
+      if(alpha<=0.02) continue;
+      ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2);
+      ctx.strokeStyle = color.replace('ALPHA', alpha.toFixed(3));
+      ctx.lineWidth = 2; ctx.stroke();
+    }
+  }
+  function clipRightOfBarrier(){
+    ctx.save(); ctx.beginPath(); ctx.rect(barrierX,0,W-barrierX,H); ctx.clip();
+  }
+
+  // ---------- particle mode ----------
+  function resetParticles(){ flying = []; hist.fill(0); spawnTimer = 0; }
+
+  function spawnParticles(dt, double){
+    spawnTimer += dt;
+    const interval = 0.06;
+    while(spawnTimer > interval){
+      spawnTimer -= interval;
+      let targetSlitY = double ? (Math.random()<0.5 ? slit1Y : slit2Y) : singleSlitY;
+      const noise = (Math.random()-0.5) * (double ? 34 : 30);
+      flying.push({ x: sourceX, y: sourceY, targetY: targetSlitY, landY: targetSlitY + noise, phase:'toSlit', slitY: targetSlitY });
+    }
+  }
+
+  function updateParticles(dt){
+    const speed = 620; // px/sec
+    for(const p of flying){
+      if(p.phase==='toSlit'){
+        const dx = barrierX - p.x, dy = p.slitY - p.y;
+        const dist = Math.hypot(dx,dy) || 1;
+        const step = speed*dt;
+        if(step >= dist){ p.x = barrierX; p.y = p.slitY; p.phase='toScreen'; }
+        else { p.x += dx/dist*step; p.y += dy/dist*step; }
+      } else if(p.phase==='toScreen'){
+        const dx = screenX - p.x, dy = p.landY - p.y;
+        const dist = Math.hypot(dx,dy) || 1;
+        const step = speed*dt;
+        if(step >= dist){ p.phase='landed'; }
+        else { p.x += dx/dist*step; p.y += dy/dist*step; }
+      }
+    }
+    for(let i=flying.length-1;i>=0;i--){
+      if(flying[i].phase==='landed'){
+        const bin = Math.max(0, Math.min(hist.length-1, Math.floor(flying[i].landY/binH)));
+        hist[bin]++;
+        flying.splice(i,1);
+      }
+    }
+  }
+
+  function drawFlyingParticles(){
+    ctx.save();
+    ctx.shadowBlur = 10; ctx.shadowColor = '#ffd23f';
+    ctx.fillStyle = '#ffd23f';
+    for(const p of flying){
+      ctx.beginPath(); ctx.arc(p.x,p.y,3.6,0,Math.PI*2); ctx.fill();
+    }
+    ctx.restore();
+  }
+  function drawPile(alpha){
+    for(let i=0;i<hist.length;i++){
+      const c = hist[i];
+      if(!c) continue;
+      const w = Math.min(c*2.2, 150);
+      ctx.fillStyle = `rgba(200,190,255,${alpha*0.85})`;
+      ctx.fillRect(screenX - w, i*binH, w, binH-1);
+    }
+  }
+
+  // ---------- wave-build dots (matches real fringe) ----------
+  function maybeAddDot(dt){
+    dotTimer += dt;
+    const interval = 0.045;
+    while(dotTimer > interval && landedDots.length < 260){
+      dotTimer -= interval;
+      let y, tries=0;
+      do{ y = Math.random()*H; tries++; } while(Math.random() > intensityFringe(y-H/2) && tries<30);
+      landedDots.push({y, born: simTime});
+    }
+  }
+  function drawDots(){
+    ctx.save();
+    ctx.shadowBlur = 8; ctx.shadowColor = '#ffffff';
+    for(const d of landedDots){
+      const age = simTime - d.born;
+      const a = Math.min(1, age*3);
+      ctx.beginPath(); ctx.arc(screenX+4, d.y, 2.6, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(255,255,255,${a})`; ctx.fill();
+    }
+    ctx.restore();
+  }
+  function drawBrightBandLabels(alphaMul){
+    ctx.save();
+    ctx.font = '700 11px Segoe UI, Arial';
+    ctx.textAlign = 'left';
+    for(let k=-2;k<=2;k++){
+      const by = H/2 + k * (Math.PI/0.045);
+      if(by < 20 || by > H-10) continue;
+      const val = intensityFringe(by-H/2);
+      if(val < 0.85) continue;
+      ctx.strokeStyle = `rgba(255,255,255,${0.3*alphaMul})`;
+      ctx.setLineDash([3,4]);
+      ctx.beginPath(); ctx.moveTo(screenX-160, by); ctx.lineTo(screenX-2, by); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = `rgba(255,255,255,${0.9*alphaMul})`;
+      ctx.fillText('BRIGHT', screenX-72, by-5);
+    }
+    ctx.restore();
+  }
+  function drawFringeGradient(alphaMul){
+    const bandWidth = 40;
+    for(let y=0;y<H;y+=2){
+      const val = intensityFringe(y-H/2);
+      ctx.fillStyle = `rgba(255,246,200, ${(val*0.9*alphaMul).toFixed(3)})`;
+      ctx.fillRect(screenX-bandWidth, y, bandWidth, 2);
+    }
+  }
+  function drawGlowGradient(alphaMul){
+    const bandWidth = 40;
+    for(let y=0;y<H;y+=2){
+      const val = intensityGlow(y-H/2);
+      ctx.fillStyle = `rgba(255,246,200, ${(val*0.9*alphaMul).toFixed(3)})`;
+      ctx.fillRect(screenX-bandWidth, y, bandWidth, 2);
+    }
+  }
+
+  function drawGapHighlight(alpha){
+    const top = H/2 - (slitGap - slitHalf) + 4;
+    const bot = H/2 + (slitGap - slitHalf) - 4;
+    ctx.save();
+    ctx.strokeStyle = `rgba(255,103,103,${alpha})`;
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6,5]);
+    ctx.strokeRect(screenX-150, top, 150, bot-top);
+    ctx.fillStyle = `rgba(255,103,103,${alpha})`;
+    ctx.font = 'bold 14px Segoe UI, Arial';
+    ctx.textAlign = 'right';
+    ctx.fillText('expected: EMPTY', screenX-8, top-8);
+    ctx.restore();
+  }
+  function drawFrameBadge(t, mode, sceneStartT){
+    let color, dashed;
+    if(mode==='particleSingle' || mode==='particleDouble'){
+      color = '#ffd23f'; dashed = true;
+    } else if(mode==='reveal'){
+      color = '#ff6767'; dashed = false;
+    } else {
+      color = '#6dffb0'; dashed = false;
+    }
+    const local = t - sceneStartT;
+
+    // brief red flash when the reveal begins
+    if(mode==='reveal' && local < 0.4){
+      const a = Math.max(0, 1 - local/0.4) * 0.35;
+      ctx.fillStyle = `rgba(255,70,70,${a})`;
+      ctx.fillRect(0,0,W,H);
+    }
+
+    // dashed / solid frame around the whole scene — the text badge lives in the
+    // HTML banner below the canvas so it can never get clipped or scaled off-screen
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 4;
+    if(dashed) ctx.setLineDash([10,6]);
+    ctx.strokeRect(4,4,W-8,H-8);
+    ctx.restore();
+  }
+
+  function drawBrightArrow(alpha){
+    ctx.save();
+    ctx.strokeStyle = `rgba(109,255,176,${alpha})`;
+    ctx.fillStyle = `rgba(109,255,176,${alpha})`;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(screenX-190, H/2-46);
+    ctx.lineTo(screenX-30, H/2-4);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(screenX-30, H/2-4);
+    ctx.lineTo(screenX-42, H/2-10);
+    ctx.lineTo(screenX-40, H/2+2);
+    ctx.closePath(); ctx.fill();
+    ctx.font = 'bold 14px Segoe UI, Arial';
+    ctx.textAlign = 'right';
+    ctx.fillText('actually BRIGHT here!', screenX-192, H/2-50);
+    ctx.restore();
+  }
+
+  // ---------- main render ----------
+  function render(t){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = '#04060f'; ctx.fillRect(0,0,W,H);
+    drawGrid();
+
+    const idx = currentSceneIndex(t);
+    const scene = SCENES[idx];
+
+    if(idx !== prevSceneIdx){
+      // transitions: reset state when entering a new mode group
+      const enteringDouble = scene.mode === 'particleDouble' && SCENES[prevSceneIdx] && SCENES[prevSceneIdx].mode !== 'particleDouble';
+      const enteringSingle = scene.mode === 'particleSingle' && (prevSceneIdx === -1 || (SCENES[prevSceneIdx] && SCENES[prevSceneIdx].mode !== 'particleSingle'));
+      if(enteringDouble || enteringSingle) resetParticles();
+      if(scene.mode === 'waveBuild' && SCENES[prevSceneIdx] && SCENES[prevSceneIdx].mode !== 'waveBuild'){
+        landedDots = []; dotTimer = 0;
+      }
+      prevSceneIdx = idx;
+    }
+
+    bannerEl.textContent = scene.banner;
+    bannerEl.className = 'banner ' + scene.bannerClass;
+    captionEl.innerHTML = scene.caption;
+
+    const dt = 1/60 * speedMult;
+
+    if(scene.mode === 'particleSingle'){
+      drawBarrierSingle();
+      spawnParticles(dt, false);
+      updateParticles(dt);
+      drawScreen();
+      drawPile(1);
+      drawFlyingParticles();
+      drawSource();
+    }
+    else if(scene.mode === 'particleDouble'){
+      drawBarrierDouble();
+      spawnParticles(dt, true);
+      updateParticles(dt);
+      drawScreen();
+      drawPile(1);
+      drawFlyingParticles();
+      drawSource();
+    }
+    else if(scene.mode === 'reveal'){
+      drawBarrierDouble();
+      drawScreen();
+      const local = t - scene.t; // 0..6
+      const pileAlpha = Math.max(0, 1 - Math.max(0, local-1.5)/2);
+      const fringeAlpha = Math.min(1, Math.max(0, (local-1.5)/2));
+      drawPile(pileAlpha);
+      if(local < 2.2) drawGapHighlight(Math.min(1, local/0.8) * pileAlpha);
+      drawFringeGradient(fringeAlpha);
+      if(local > 3.2){
+        drawBrightArrow(Math.min(1,(local-3.2)/0.8));
+        drawBrightBandLabels(Math.min(1,(local-3.2)/0.8));
+      }
+      drawSource();
+    }
+    else if(scene.mode === 'waveSingle'){
+      drawWaveRings(sourceX, sourceY, t, barrierX-sourceX+20, 'rgba(79,211,255,ALPHA)');
+      drawSource();
+      drawBarrierSingle();
+      clipRightOfBarrier();
+      drawWaveRings(barrierX, singleSlitY, t, W-barrierX+40, 'rgba(255,210,63,ALPHA)');
+      ctx.restore();
+      drawScreen();
+      drawGlowGradient(1);
+    }
+    else if(scene.mode === 'waveDouble'){
+      drawWaveRings(sourceX, sourceY, t, barrierX-sourceX+20, 'rgba(79,211,255,0.25)');
+      drawSource();
+      drawBarrierDouble();
+      clipRightOfBarrier();
+      drawWaveRings(barrierX, slit1Y, t, W-barrierX+40, 'rgba(255,210,63,ALPHA)');
+      drawWaveRings(barrierX, slit2Y, t, W-barrierX+40, 'rgba(255,182,63,ALPHA)');
+      ctx.restore();
+      drawScreen();
+      const local = t - scene.t;
+      drawFringeGradient(Math.min(1, local/2));
+    }
+    else if(scene.mode === 'waveBuild'){
+      drawWaveRings(sourceX, sourceY, t, barrierX-sourceX+20, 'rgba(79,211,255,0.2)');
+      drawSource();
+      drawBarrierDouble();
+      clipRightOfBarrier();
+      drawWaveRings(barrierX, slit1Y, t, W-barrierX+40, 'rgba(255,210,63,0.35)');
+      drawWaveRings(barrierX, slit2Y, t, W-barrierX+40, 'rgba(255,182,63,0.35)');
+      ctx.restore();
+      drawScreen();
+      drawFringeGradient(1);
+      drawBrightBandLabels(1);
+      maybeAddDot(dt);
+      drawDots();
+    }
+
+    drawLabels();
+    drawFrameBadge(t, scene.mode, scene.t);
+
+    const pct = Math.min(100, (t/totalDur)*100);
+    progressBar.style.width = pct+'%';
+  }
+
+  function step(ts){
+    if(!playing) return;
+    if(lastTs===null) lastTs = ts;
+    const dt = Math.min(0.05, (ts-lastTs)/1000) * speedMult;
+    lastTs = ts;
+    simTime += dt;
+    if(simTime >= totalDur){
+      simTime = totalDur;
+      render(simTime);
+      pause();
+      captionEl.innerHTML = '🎬 The End! Press <b>Restart</b> to watch again.';
+      return;
+    }
+    render(simTime);
+    requestAnimationFrame(step);
+  }
+  function play(){ if(playing) return; playing=true; lastTs=null; playBtn.textContent='⏸ Pause'; requestAnimationFrame(step); }
+  function pause(){ playing=false; playBtn.textContent='▶ Play'; }
+  function restart(){
+    simTime = 0; prevSceneIdx = -1;
+    resetParticles(); landedDots = []; dotTimer = 0;
+    render(0);
+    captionEl.innerHTML = 'Press <b>Play</b> to start the show!';
+    progressBar.style.width = '0%';
+    pause();
+  }
+
+  playBtn.addEventListener('click', () => playing ? pause() : play());
+  restartBtn.addEventListener('click', restart);
+  slowBtn.addEventListener('click', () => {
+    speedMult = speedMult===1 ? 0.35 : 1;
+    slowBtn.textContent = speedMult===1 ? '🐢 Slow Motion' : '🐇 Normal Speed';
+  });
+
+  render(0);
+})();
+
+// ---------- Try It Yourself: two hands-on mini experiments ----------
+(function(){
+  function setupMini(canvasId, fireBtnId, resetBtnId, resultId, kind){
+    const cv = document.getElementById(canvasId);
+    const c = cv.getContext('2d');
+    const w = cv.width, h = cv.height;
+    const srcX = 40, wallX = 190, scrX = 370;
+    const s1 = h/2 - 34, s2 = h/2 + 34, halfGap = 10;
+    let firing = false, spawnT = 0, flying = [], hist = new Array(60).fill(0);
+    const binH = h/60;
+
+    function intensityFringe(dy){ const v = Math.cos(dy*0.07); return v*v; }
+
+    function spawn(){
+      if(kind === 'particle'){
+        const slitY = Math.random()<0.5 ? s1 : s2;
+        const noise = (Math.random()-0.5)*26;
+        flying.push({x:srcX, y:h/2, phase:'toSlit', slitY, landY: slitY+noise});
+      } else {
+        const slitY = Math.random()<0.5 ? s1 : s2;
+        let y, tries=0;
+        do{ y = Math.random()*h; tries++; } while(Math.random() > intensityFringe(y-h/2) && tries<25);
+        flying.push({x:srcX, y:h/2, phase:'toSlit', slitY, landY: y});
+      }
+    }
+
+    function update(dt){
+      if(firing){
+        spawnT += dt;
+        const interval = kind==='particle' ? 0.05 : 0.03;
+        while(spawnT > interval){ spawnT -= interval; spawn(); }
+      }
+      const speed = 340;
+      for(const p of flying){
+        if(p.phase==='toSlit'){
+          const dx = wallX-p.x, dy = p.slitY-p.y, dist = Math.hypot(dx,dy)||1, step = speed*dt;
+          if(step>=dist){ p.x=wallX; p.y=p.slitY; p.phase='toScreen'; }
+          else { p.x+=dx/dist*step; p.y+=dy/dist*step; }
+        } else if(p.phase==='toScreen'){
+          const dx = scrX-p.x, dy = p.landY-p.y, dist = Math.hypot(dx,dy)||1, step = speed*dt;
+          if(step>=dist){ p.phase='landed'; }
+          else { p.x+=dx/dist*step; p.y+=dy/dist*step; }
+        }
+      }
+      for(let i=flying.length-1;i>=0;i--){
+        if(flying[i].phase==='landed'){
+          const bin = Math.max(0, Math.min(hist.length-1, Math.floor(flying[i].landY/binH)));
+          hist[bin]++;
+          flying.splice(i,1);
+        }
+      }
+    }
+
+    function draw(){
+      c.clearRect(0,0,w,h);
+      c.fillStyle = '#04060f'; c.fillRect(0,0,w,h);
+
+      // source
+      const g = c.createRadialGradient(srcX,h/2,0,srcX,h/2,18);
+      g.addColorStop(0,'rgba(255,212,90,.9)'); g.addColorStop(1,'rgba(255,212,90,0)');
+      c.fillStyle = g; c.beginPath(); c.arc(srcX,h/2,20,0,Math.PI*2); c.fill();
+      c.fillStyle = '#ffd45a'; c.beginPath(); c.arc(srcX,h/2,5,0,Math.PI*2); c.fill();
+
+      // wall
+      c.fillStyle = '#3a4373';
+      c.fillRect(wallX-4, 0, 8, s1-halfGap);
+      c.fillRect(wallX-4, s1+halfGap, 8, (s2-halfGap)-(s1+halfGap));
+      c.fillRect(wallX-4, s2+halfGap, 8, h-(s2+halfGap));
+
+      // screen
+      c.fillStyle = '#20264a'; c.fillRect(scrX, 0, 5, h);
+
+      // predicted / real pattern
+      for(let y=0;y<h;y+=2){
+        let val;
+        if(kind==='particle'){
+          const a = Math.exp(-((y-s1)**2)/(2*20*20));
+          const b = Math.exp(-((y-s2)**2)/(2*20*20));
+          val = Math.min(1, a+b);
+        } else {
+          val = intensityFringe(y-h/2);
+        }
+        c.fillStyle = `rgba(255,246,200,${val*0.5})`;
+        c.fillRect(scrX-26, y, 26, 2);
+      }
+
+      // histogram / dots
+      if(kind==='particle'){
+        for(let i=0;i<hist.length;i++){
+          const cnt = hist[i]; if(!cnt) continue;
+          const bw = Math.min(cnt*1.6, 80);
+          c.fillStyle = 'rgba(200,190,255,.85)';
+          c.fillRect(scrX-bw, i*binH, bw, binH-1);
+        }
+      } else {
+        c.save(); c.shadowBlur=6; c.shadowColor='#fff';
+        for(let i=0;i<hist.length;i++){
+          const cnt = hist[i]; if(!cnt) continue;
+          for(let n=0;n<Math.min(cnt,40);n++){
+            c.fillStyle = 'rgba(255,255,255,.9)';
+            c.beginPath(); c.arc(scrX+3, i*binH + (n%3)*1.2, 1.6, 0, Math.PI*2); c.fill();
+          }
+        }
+        c.restore();
+      }
+
+      // flying particles
+      c.save(); c.shadowBlur=8; c.shadowColor='#ffd23f'; c.fillStyle='#ffd23f';
+      for(const p of flying){ c.beginPath(); c.arc(p.x,p.y,2.8,0,Math.PI*2); c.fill(); }
+      c.restore();
+
+      const total = hist.reduce((a,b)=>a+b,0);
+      document.getElementById(resultId).textContent = total > 0
+        ? (kind==='particle' ? `${total} marbles landed — see the two piles?` : `${total} photons landed — see the stripes forming?`)
+        : '';
+    }
+
+    let last = performance.now();
+    function loop(now){
+      const dt = Math.min(0.05, (now-last)/1000); last = now;
+      update(dt); draw();
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+
+    document.getElementById(fireBtnId).addEventListener('click', () => { firing = !firing; document.getElementById(fireBtnId).textContent = firing ? '⏸ Stop' : (kind==='particle' ? '🔫 Fire marbles' : '💡 Send photons'); });
+    document.getElementById(resetBtnId).addEventListener('click', () => { firing=false; flying=[]; hist.fill(0); document.getElementById(fireBtnId).textContent = kind==='particle' ? '🔫 Fire marbles' : '💡 Send photons'; });
+  }
+
+  setupMini('tryParticle','tryParticleFire','tryParticleReset','tryParticleResult','particle');
+  setupMini('tryWave','tryWaveFire','tryWaveReset','tryWaveResult','wave');
+})();
+</script>
+</body>
+</html>

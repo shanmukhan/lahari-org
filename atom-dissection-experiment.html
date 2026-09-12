@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dissecting an Atom</title>
+<style>
+  :root{--bg:#0b1020;--panel:#121830;--accent:#ffd23f;--accent2:#4fd3ff;--text:#eef2ff;--dim:#9aa4cc;}
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
+  .wrap{max-width:960px;margin:0 auto;}
+  a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  header{text-align:center;margin-bottom:20px;}
+  h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  header p{color:var(--dim);font-size:16px;margin:0;}
+  .player{background:#000;border-radius:16px;padding:10px;box-shadow:0 10px 40px rgba(0,0,0,.5),0 0 0 1px #222 inset;}
+  canvas{display:block;width:100%;height:auto;background:#04060f;border-radius:10px;cursor:pointer;}
+  .caption{margin-top:6px;background:#000c;border:1px solid #2a3568;border-radius:10px;padding:14px 18px;min-height:56px;font-size:clamp(16px,2.6vw,20px);line-height:1.4;text-align:center;}
+  .caption b{color:var(--accent);}
+  .hint{text-align:center;color:var(--dim);font-size:13px;margin-top:8px;}
+  .controls{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:12px;flex-wrap:wrap;}
+  button{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;padding:10px 20px;font-size:15px;cursor:pointer;transition:transform .1s,background .2s;}
+  button:hover{background:#1c2450;transform:translateY(-1px);}
+  button.primary{background:linear-gradient(90deg,var(--accent2),#2f9fe0);color:#03101f;font-weight:700;border:none;}
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:26px;}
+  .step-card{background:var(--panel);border:1px solid #262f5c;border-radius:14px;padding:16px;cursor:pointer;transition:border-color .2s;}
+  .step-card:hover{border-color:var(--accent2);}
+  .step-card .num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#16151a;font-weight:800;margin-bottom:8px;}
+  .step-card h3{margin:4px 0 6px;font-size:16px;}
+  .step-card p{margin:0;color:var(--dim);font-size:13px;line-height:1.45;}
+  .fact{margin-top:26px;background:linear-gradient(135deg,#1a2140,#0e1330);border:1px solid #2a3568;border-radius:14px;padding:18px 20px;text-align:center;font-size:16px;}
+  .fact b{color:var(--accent2);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">&larr; Back to lahari.org</a>
+  <header>
+    <h1>🔬 Dissecting an Atom</h1>
+    <p>Click each part of the atom below to pull it apart, layer by layer, and see what's really inside.</p>
+  </header>
+
+  <div class="player">
+    <canvas id="scene" width="900" height="460"></canvas>
+    <div class="caption" id="caption">Click on a part of the atom (or a card below) to explore it!</div>
+  </div>
+  <p class="hint">🖱️ Click the electrons, the nucleus, or a proton/neutron to zoom in</p>
+  <div class="controls">
+    <button class="primary" id="resetBtn">↻ Whole Atom View</button>
+  </div>
+
+  <div class="steps">
+    <div class="step-card" data-part="whole"><div class="num">•</div><h3>⚛️ The whole atom</h3>
+      <p>Mostly empty space! If the nucleus were the size of a marble, the electrons would orbit almost a kilometer away.</p></div>
+    <div class="step-card" data-part="electron"><div class="num">1</div><h3>⚡ Electrons</h3>
+      <p>Tiny, negatively-charged particles that zoom around the nucleus in a fuzzy cloud — they're what makes chemistry happen.</p></div>
+    <div class="step-card" data-part="nucleus"><div class="num">2</div><h3>🎯 The nucleus</h3>
+      <p>The dense center, made of protons and neutrons packed tightly together, held by the strong nuclear force.</p></div>
+    <div class="step-card" data-part="proton"><div class="num">3</div><h3>🔴 Protons</h3>
+      <p>Positively-charged particles. The number of protons decides which element it is (1 = hydrogen, 6 = carbon...).</p></div>
+    <div class="step-card" data-part="neutron"><div class="num">4</div><h3>⚪ Neutrons</h3>
+      <p>No electric charge. They add mass and help hold the nucleus together without pushing protons apart.</p></div>
+    <div class="step-card" data-part="quark"><div class="num">5</div><h3>🔸 Quarks (inside protons)</h3>
+      <p>Zoom in even further: protons and neutrons are each built from 3 tinier particles called quarks!</p></div>
+  </div>
+
+  <div class="fact">
+    🤯 <b>Mind-blowing part:</b> An atom is almost entirely empty space. If you removed all the empty space from every atom in every human on Earth,
+    all 8 billion of us would fit into a space smaller than a sugar cube!
+  </div>
+</div>
+
+<script>
+(function(){
+  const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  const captionEl=document.getElementById('caption');
+  let part='whole', t=0;
+
+  const CAPTIONS={
+    whole:'This is a <b>carbon atom</b>: 6 protons, 6 neutrons, and 6 electrons — mostly empty space between a tiny nucleus and its electron cloud.',
+    electron:'<b>Electrons</b> are tiny and carry a negative charge. They don\'t orbit like planets exactly — they exist in a fuzzy "probability cloud" around the nucleus.',
+    nucleus:'The <b>nucleus</b> holds almost all the atom\'s mass in a space 10,000 times smaller than the whole atom — packed with protons and neutrons.',
+    proton:'A <b>proton</b> carries a positive charge. Its count defines the element: 1 proton = hydrogen, 2 = helium, 6 = carbon, and so on.',
+    neutron:'A <b>neutron</b> has no charge at all. It adds mass and helps "glue" the nucleus together against the protons\' repulsion.',
+    quark:'Zoom in past the proton itself: it\'s made of <b>3 quarks</b> (two "up" and one "down") bound by the strong force — this is about as deep as physics has looked!'
+  };
+
+  function label(x,y,text,color){
+    ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
+    const tw=ctx.measureText(text).width;
+    ctx.fillStyle='rgba(4,6,15,0.75)'; ctx.fillRect(x-tw/2-8,y-16,tw+16,22);
+    ctx.fillStyle=color||'#9fc1de'; ctx.fillText(text,x,y);
+  }
+
+  function orbitPoint(cx,cy,rx,ry,angle,rot){
+    const ex=Math.cos(angle)*rx, ey=Math.sin(angle)*ry;
+    return [cx+ex*Math.cos(rot)-ey*Math.sin(rot), cy+ex*Math.sin(rot)+ey*Math.cos(rot)];
+  }
+  function drawWhole(){
+    const cx=W/2,cy=H/2;
+    for(let i=0;i<3;i++){ ctx.strokeStyle='rgba(79,211,255,.5)'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.ellipse(cx,cy,110+i*40,50+i*18,i*0.7+t*0.2,0,Math.PI*2); ctx.stroke(); }
+    for(let i=0;i<6;i++){
+      const shell=i%3, a=t*(1+shell*0.3)+i*1.6;
+      const rx=110+shell*40, ry=50+shell*18, rot=shell*0.7+t*0.2;
+      const [ex,ey]=orbitPoint(cx,cy,rx,ry,a,rot);
+      ctx.fillStyle='#4fd3ff'; ctx.beginPath(); ctx.arc(ex,ey,6,0,Math.PI*2); ctx.fill();
+    }
+    const nucParts=[];
+    for(let i=0;i<12;i++){
+      const a=i*(Math.PI*2/12), r=14;
+      nucParts.push([cx+Math.cos(a)*r,cy+Math.sin(a)*r, i%2===0?'#ff8f8f':'#c7c9d9']);
+    }
+    nucParts.forEach(([x,y,c])=>{ ctx.fillStyle=c; ctx.beginPath(); ctx.arc(x,y,10,0,Math.PI*2); ctx.fill(); });
+    label(cx,cy+180,'6 protons + 6 neutrons + 6 electrons = CARBON','#eef2ff');
+    label(cx,cy-190,'electrons (click to zoom)','#4fd3ff');
+  }
+  function drawElectron(){
+    const cx=W/2,cy=H/2;
+    ctx.fillStyle='#4fd3ff'; ctx.beginPath(); ctx.arc(cx,cy,50,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#0b1020'; ctx.font='800 30px Segoe UI'; ctx.textAlign='center'; ctx.fillText('−',cx,cy+11);
+    label(cx,cy-90,'ELECTRON','#4fd3ff');
+    label(cx,cy+90,'negative charge · almost no mass · zips around the nucleus','#eef2ff');
+  }
+  function drawNucleus(){
+    const cx=W/2,cy=H/2;
+    for(let i=0;i<20;i++){
+      const a=i*2.4, r=30+((i*13)%40);
+      const x=cx+Math.cos(a)*r, y=cy+Math.sin(a)*r*0.8;
+      ctx.fillStyle= i%2===0 ? '#ff8f8f' : '#c7c9d9';
+      ctx.beginPath(); ctx.arc(x,y,16,0,Math.PI*2); ctx.fill();
+    }
+    label(cx,cy-140,'NUCLEUS','#ff8f8f');
+    label(cx,cy+150,'protons (red) + neutrons (grey) packed tight','#eef2ff');
+  }
+  function drawProton(){
+    const cx=W/2,cy=H/2;
+    ctx.fillStyle='#ff8f8f'; ctx.beginPath(); ctx.arc(cx,cy,55,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#0b1020'; ctx.font='800 30px Segoe UI'; ctx.textAlign='center'; ctx.fillText('+',cx,cy+11);
+    label(cx,cy-95,'PROTON','#ff8f8f');
+    label(cx,cy+95,'positive charge · defines the element','#eef2ff');
+  }
+  function drawNeutron(){
+    const cx=W/2,cy=H/2;
+    ctx.fillStyle='#c7c9d9'; ctx.beginPath(); ctx.arc(cx,cy,55,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#0b1020'; ctx.font='800 24px Segoe UI'; ctx.textAlign='center'; ctx.fillText('0',cx,cy+9);
+    label(cx,cy-95,'NEUTRON','#c7c9d9');
+    label(cx,cy+95,'no charge · adds mass · helps hold nucleus together','#eef2ff');
+  }
+  function drawQuark(){
+    const cx=W/2,cy=H/2;
+    ctx.fillStyle='#ff8f8f'; ctx.globalAlpha=0.12; ctx.beginPath(); ctx.arc(cx,cy,150,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1;
+    const quarks=[[0,-70,'#ffd23f','up','+2/3'],[-60,55,'#4fd3ff','up','+2/3'],[60,55,'#6dffb0','down','−1/3']];
+    quarks.forEach(([dx,dy,c,name,charge],i)=>{
+      const wob=Math.sin(t*3+i)*6;
+      ctx.fillStyle=c; ctx.beginPath(); ctx.arc(cx+dx,cy+dy+wob,22,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#0b1020'; ctx.font='800 13px Segoe UI'; ctx.fillText(name,cx+dx,cy+dy+wob+4);
+      label(cx+dx,cy+dy+wob+40,'charge '+charge,c);
+    });
+    label(cx,cy-140,'3 QUARKS inside one proton','#eef2ff');
+  }
+
+  const DRAW={whole:drawWhole,electron:drawElectron,nucleus:drawNucleus,proton:drawProton,neutron:drawNeutron,quark:drawQuark};
+
+  function render(){
+    ctx.clearRect(0,0,W,H); ctx.fillStyle='#04060f'; ctx.fillRect(0,0,W,H);
+    for(let i=0;i<40;i++){ ctx.fillStyle='rgba(255,255,255,'+(0.08+0.3*((i*37)%10)/10)+')'; ctx.fillRect((i*53)%W,(i*97)%H,2,2); }
+    DRAW[part]();
+    captionEl.innerHTML=CAPTIONS[part];
+  }
+  function loop(){ t+=0.03; render(); requestAnimationFrame(loop); }
+
+  function setPart(p){ part=p; render(); }
+  canvas.addEventListener('click',(e)=>{
+    const rect=canvas.getBoundingClientRect();
+    const x=(e.clientX-rect.left)*(W/rect.width), y=(e.clientY-rect.top)*(H/rect.height);
+    const cx=W/2, cy=H/2, d=Math.hypot(x-cx,y-cy);
+    if(part==='whole'){
+      if(d<40) setPart('nucleus');
+      else if(d<230) setPart('electron');
+    } else if(part==='nucleus'){
+      setPart(Math.random()>0.5?'proton':'neutron');
+    } else if(part==='proton'){
+      setPart('quark');
+    } else if(part==='quark' || part==='neutron' || part==='electron'){
+      setPart('whole');
+    }
+  });
+  document.getElementById('resetBtn').addEventListener('click',()=>setPart('whole'));
+  document.querySelectorAll('.step-card').forEach(card=>{
+    card.addEventListener('click',()=>setPart(card.dataset.part));
+  });
+
+  render(); requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hydrogen vs Helium Atoms</title>
+<style>
+  :root{--bg:#0b1020;--panel:#121830;--accent:#ffd23f;--accent2:#4fd3ff;--text:#eef2ff;--dim:#9aa4cc;}
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
+  .wrap{max-width:960px;margin:0 auto;}
+  a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  header{text-align:center;margin-bottom:20px;}
+  h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  header p{color:var(--dim);font-size:16px;margin:0;}
+  .player{background:#000;border-radius:16px;padding:10px;box-shadow:0 10px 40px rgba(0,0,0,.5),0 0 0 1px #222 inset;}
+  canvas{display:block;width:100%;height:auto;background:#04060f;border-radius:10px;}
+  .caption{margin-top:6px;background:#000c;border:1px solid #2a3568;border-radius:10px;padding:14px 18px;min-height:56px;font-size:clamp(16px,2.6vw,20px);line-height:1.4;text-align:center;}
+  .caption b{color:var(--accent);}
+  .controls{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:12px;flex-wrap:wrap;}
+  button{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;padding:10px 20px;font-size:15px;cursor:pointer;transition:transform .1s,background .2s;}
+  button:hover{background:#1c2450;transform:translateY(-1px);}
+  button.on{background:var(--accent);color:#16151a;font-weight:800;}
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:26px;}
+  .step-card{background:var(--panel);border:1px solid #262f5c;border-radius:14px;padding:16px;}
+  .step-card .num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#16151a;font-weight:800;margin-bottom:8px;}
+  .step-card h3{margin:4px 0 6px;font-size:16px;}
+  .step-card p{margin:0;color:var(--dim);font-size:13px;line-height:1.45;}
+  .fact{margin-top:26px;background:linear-gradient(135deg,#1a2140,#0e1330);border:1px solid #2a3568;border-radius:14px;padding:18px 20px;text-align:center;font-size:16px;}
+  .fact b{color:var(--accent2);}
+  table.compare{width:100%;border-collapse:collapse;margin-top:26px;background:var(--panel);border-radius:14px;overflow:hidden;}
+  table.compare th,table.compare td{padding:12px 14px;text-align:center;border-bottom:1px solid #262f5c;font-size:14px;}
+  table.compare th{background:#1a2140;color:var(--accent2);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">&larr; Back to lahari.org</a>
+  <header>
+    <h1>🧪 Hydrogen vs Helium Atoms</h1>
+    <p>The two simplest atoms in the universe — and the two that filled it first. Let's look inside both.</p>
+  </header>
+
+  <div class="player">
+    <canvas id="scene" width="900" height="460"></canvas>
+    <div class="caption" id="caption">Watching Hydrogen — the simplest atom of all!</div>
+  </div>
+  <div class="controls">
+    <button class="on" id="hBtn">⚛️ Hydrogen (H)</button>
+    <button id="heBtn">⚛️ Helium (He)</button>
+  </div>
+
+  <table class="compare">
+    <tr><th></th><th>Hydrogen (H)</th><th>Helium (He)</th></tr>
+    <tr><td>Protons</td><td>1</td><td>2</td></tr>
+    <tr><td>Neutrons</td><td>0 (usually)</td><td>2</td></tr>
+    <tr><td>Electrons</td><td>1</td><td>2</td></tr>
+    <tr><td>Atomic number</td><td>1</td><td>2</td></tr>
+    <tr><td>Fun fact</td><td>Most common element in the universe</td><td>Makes your voice squeaky — and balloons float!</td></tr>
+  </table>
+
+  <div class="steps">
+    <div class="step-card"><div class="num">1</div><h3>⚛️ Hydrogen: the simplest atom</h3>
+      <p>Just 1 proton in the nucleus and 1 electron zipping around it. No neutrons in the most common version. It's the lightest, simplest element that exists.</p></div>
+    <div class="step-card"><div class="num">2</div><h3>⚛️ Helium: one step up</h3>
+      <p>2 protons AND 2 neutrons packed into the nucleus, with 2 electrons circling outside. It's the second-simplest and second-lightest element.</p></div>
+    <div class="step-card"><div class="num">3</div><h3>🎈 Why helium floats</h3>
+      <p>Helium atoms are much lighter than the nitrogen and oxygen molecules that make up air, so a balloon full of helium floats upward.</p></div>
+    <div class="step-card"><div class="num">4</div><h3>🌌 Made in the Big Bang</h3>
+      <p>Hydrogen and helium were the very first atoms to form in the early universe, before any stars existed.</p></div>
+  </div>
+
+  <div class="fact">
+    🤯 <b>Mind-blowing part:</b> Helium is named after <b>Helios</b>, the Greek word for the Sun — because it was discovered in
+    sunlight (using a special instrument) in 1868, a full 27 years before it was ever found on Earth!
+  </div>
+</div>
+
+<script>
+(function(){
+  const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  const captionEl=document.getElementById('caption');
+  const hBtn=document.getElementById('hBtn'), heBtn=document.getElementById('heBtn');
+  let mode='h', t=0;
+
+  function label(x,y,text,color){
+    ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
+    const tw=ctx.measureText(text).width;
+    ctx.fillStyle='rgba(4,6,15,0.75)'; ctx.fillRect(x-tw/2-8,y-16,tw+16,22);
+    ctx.fillStyle=color||'#9fc1de'; ctx.fillText(text,x,y);
+  }
+  function bigLabel(x,y,text,color){ ctx.font='800 22px Segoe UI'; ctx.textAlign='center'; ctx.fillStyle=color; ctx.fillText(text,x,y); }
+  function orbitPoint(cx,cy,rx,ry,angle,rot){
+    const ex=Math.cos(angle)*rx, ey=Math.sin(angle)*ry;
+    return [cx+ex*Math.cos(rot)-ey*Math.sin(rot), cy+ex*Math.sin(rot)+ey*Math.cos(rot)];
+  }
+
+  function drawHydrogen(){
+    const cx=W/2,cy=H/2, rot=t*0.3;
+    ctx.strokeStyle='rgba(79,211,255,.5)'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.ellipse(cx,cy,150,70,rot,0,Math.PI*2); ctx.stroke();
+    const a=t*1.2;
+    const [ex,ey]=orbitPoint(cx,cy,150,70,a,rot);
+    ctx.fillStyle='#4fd3ff'; ctx.beginPath(); ctx.arc(ex,ey,10,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#0b1020'; ctx.font='800 12px Segoe UI'; ctx.textAlign='center'; ctx.fillText('−',ex,ey+4);
+
+    ctx.fillStyle='#ff8f8f'; ctx.beginPath(); ctx.arc(cx,cy,22,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#0b1020'; ctx.font='800 20px Segoe UI'; ctx.fillText('+',cx,cy+7);
+
+    bigLabel(cx,60,'HYDROGEN (H)','#ffd23f');
+    label(cx,cy+110,'1 PROTON','#ff8f8f');
+    label(cx,cy-110,'1 ELECTRON','#4fd3ff');
+    label(cx,H-30,'atomic number 1 · lightest element in the universe','#eef2ff');
+  }
+  function drawHelium(){
+    const cx=W/2,cy=H/2, rot=t*0.3;
+    ctx.strokeStyle='rgba(79,211,255,.5)'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.ellipse(cx,cy,160,80,rot,0,Math.PI*2); ctx.stroke();
+    [0,Math.PI].forEach((off,i)=>{
+      const a=t*1.2+off;
+      const [x,y]=orbitPoint(cx,cy,160,80,a,rot);
+      ctx.fillStyle='#4fd3ff'; ctx.beginPath(); ctx.arc(x,y,10,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#0b1020'; ctx.font='800 12px Segoe UI'; ctx.textAlign='center'; ctx.fillText('−',x,y+4);
+    });
+    const nuc=[[-13,-8,'#ff8f8f','+'],[13,-8,'#c7c9d9','0'],[-13,10,'#c7c9d9','0'],[13,10,'#ff8f8f','+']];
+    nuc.forEach(([dx,dy,c,sym])=>{
+      ctx.fillStyle=c; ctx.beginPath(); ctx.arc(cx+dx,cy+dy,15,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#0b1020'; ctx.font='800 13px Segoe UI'; ctx.fillText(sym,cx+dx,cy+dy+4);
+    });
+    bigLabel(cx,60,'HELIUM (He)','#ffd23f');
+    label(cx,cy+130,'2 PROTONS + 2 NEUTRONS','#eef2ff');
+    label(cx,cy-140,'2 ELECTRONS','#4fd3ff');
+    label(cx,H-30,'atomic number 2 · lighter than air, so balloons float','#eef2ff');
+  }
+
+  function render(){
+    ctx.clearRect(0,0,W,H); ctx.fillStyle='#04060f'; ctx.fillRect(0,0,W,H);
+    for(let i=0;i<40;i++){ ctx.fillStyle='rgba(255,255,255,'+(0.08+0.3*((i*37)%10)/10)+')'; ctx.fillRect((i*53)%W,(i*97)%H,2,2); }
+    if(mode==='h'){ drawHydrogen(); captionEl.innerHTML='<b>Hydrogen</b>: just 1 proton and 1 electron — the simplest, most abundant atom in the universe.'; }
+    else { drawHelium(); captionEl.innerHTML='<b>Helium</b>: 2 protons, 2 neutrons, and 2 electrons — one step more complex than hydrogen.'; }
+  }
+  function loop(){ t+=0.02; render(); requestAnimationFrame(loop); }
+
+  hBtn.addEventListener('click',()=>{ mode='h'; hBtn.classList.add('on'); heBtn.classList.remove('on'); });
+  heBtn.addEventListener('click',()=>{ mode='he'; heBtn.classList.add('on'); hBtn.classList.remove('on'); });
+
+  render(); requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

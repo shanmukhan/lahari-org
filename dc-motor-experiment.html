@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How a DC Motor Works</title>
+<style>
+  :root{
+    --bg: #0b1020;
+    --panel: #121830;
+    --accent: #ffd23f;
+    --accent2: #4fd3ff;
+    --bad: #ff6767;
+    --good: #6dffb0;
+    --text: #eef2ff;
+    --dim: #9aa4cc;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family: "Segoe UI", Verdana, Arial, sans-serif;
+    background: radial-gradient(circle at top, #1b2450, #05070f 70%);
+    color: var(--text);
+    padding: 20px 16px 60px;
+  }
+  .wrap{ max-width: 960px; margin: 0 auto; }
+  header{ text-align:center; margin-bottom: 20px; }
+  h1{
+    font-size: clamp(24px, 5vw, 38px);
+    margin: 0 0 6px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  header p{ color: var(--dim); font-size: 16px; margin:0; }
+
+  .player{
+    background: #000;
+    border-radius: 16px;
+    padding: 10px;
+    box-shadow: 0 10px 40px rgba(0,0,0,.5), 0 0 0 1px #222 inset;
+  }
+  .progress-track{
+    height: 8px;
+    background: #1c2340;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 8px;
+    position: relative;
+  }
+  .progress-bar{
+    height:100%;
+    width:0%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    transition: width .05s linear;
+  }
+  .act-marker{ position:absolute; top:0; bottom:0; width:2px; background: rgba(255,255,255,.35); }
+  canvas{
+    display:block;
+    width:100%;
+    height:auto;
+    background: #04060f;
+    border-radius: 10px;
+  }
+  .banner{
+    display:inline-block;
+    margin: 8px auto 0;
+    padding: 8px 22px;
+    border-radius: 999px;
+    font-weight: 800;
+  }
+  .banner-wrap{ text-align:center; }
+  .banner.learn{ color:#06180f; background: var(--accent2); }
+  .banner.build{ color:#1a1a1a; background: var(--accent); }
+  .banner.bad{ color:#1a0505; background: var(--bad); animation: pulseBadge 1.2s ease-in-out infinite; }
+  .banner.good{ color:#06180f; background: var(--good); animation: slamBadge .5s ease-out; }
+  @keyframes pulseBadge{ 0%,100%{ transform: scale(1); } 50%{ transform: scale(1.05); } }
+  @keyframes slamBadge{ 0%{ transform: scale(1.5); opacity:.3; } 60%{ transform: scale(0.95); opacity:1; } 100%{ transform: scale(1); } }
+
+  .caption{
+    margin-top: 6px;
+    background: #000c;
+    border: 1px solid #2a3568;
+    border-radius: 10px;
+    padding: 14px 18px;
+    min-height: 56px;
+    font-size: clamp(16px, 2.6vw, 20px);
+    line-height: 1.4;
+    text-align:center;
+  }
+  .caption b{ color: var(--accent); }
+  .controls{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap: 10px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+  button{
+    background: var(--panel);
+    color: var(--text);
+    border: 1px solid #2a3568;
+    border-radius: 999px;
+    padding: 10px 20px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: transform .1s, background .2s;
+  }
+  button:hover{ background:#1c2450; transform: translateY(-1px); }
+  button.primary{ background: linear-gradient(90deg, var(--accent2), #2f9fe0); color:#03101f; font-weight:700; border:none;}
+
+  .steps{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 14px;
+    margin-top: 26px;
+  }
+  .step-card{
+    background: var(--panel);
+    border: 1px solid #262f5c;
+    border-radius: 14px;
+    padding: 16px;
+  }
+  .step-card .num{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #16151a;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+  .step-card h3{ margin: 4px 0 6px; font-size: 16px; }
+  .step-card p{ margin:0; color: var(--dim); font-size: 13px; line-height:1.45; }
+
+  .fact{
+    margin-top: 26px;
+    background: linear-gradient(135deg, #1a2140, #0e1330);
+    border: 1px solid #2a3568;
+    border-radius: 14px;
+    padding: 18px 20px;
+    text-align:center;
+    font-size: 16px;
+  }
+  .fact b{ color: var(--accent2); }
+
+  .try-title{ text-align:center; font-size: clamp(20px,3.4vw,26px); font-weight:800; margin: 34px 0 4px; }
+  .try-subtitle{ text-align:center; color: var(--dim); margin: 0 0 16px; }
+  .try-card{ background: var(--panel); border: 1px solid #262f5c; border-radius: 14px; padding: 14px; max-width: 560px; margin: 0 auto; }
+  .try-card canvas{ display:block; width:100%; height:auto; background:#04060f; border-radius:10px; }
+  .try-card .try-controls{ display:flex; gap:10px; margin-top:12px; justify-content:center; flex-wrap:wrap; align-items:center; }
+  .try-card button{ padding: 8px 16px; font-size: 14px; }
+  .try-result{ margin-top:8px; text-align:center; color: var(--dim); font-size: 13px; min-height: 18px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>⚙️ How a DC Motor Works</h1>
+    <p>From magnets, to electricity making magnetism, to a coil that spins forever — step by step.</p>
+  </header>
+
+  <div class="player">
+    <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+    <canvas id="scene" width="900" height="460"></canvas>
+    <div class="banner-wrap"><span class="banner" id="banner"></span></div>
+    <div class="caption" id="caption">Press <b>Play</b> to start the show!</div>
+  </div>
+
+  <div class="controls">
+    <button class="primary" id="playBtn">▶ Play</button>
+    <button id="restartBtn">⟲ Restart</button>
+    <button id="slowBtn">🐢 Slow Motion</button>
+  </div>
+
+  <div class="steps">
+    <div class="step-card">
+      <div class="num">1</div>
+      <h3>🧲 Magnets have poles</h3>
+      <p>Every magnet has a NORTH and a SOUTH end. Opposite poles attract, same poles repel.</p>
+    </div>
+    <div class="step-card">
+      <div class="num">2</div>
+      <h3>⚡ Electricity → magnetism</h3>
+      <p>Current flowing through a wire makes its own magnetic field. Coil the wire and the field gets strong — an electromagnet!</p>
+    </div>
+    <div class="step-card">
+      <div class="num">3</div>
+      <h3>👉 A push is born</h3>
+      <p>Put that coil between a magnet's N and S poles, and each side of the coil gets pushed — it starts to turn.</p>
+    </div>
+    <div class="step-card">
+      <div class="num">4</div>
+      <h3>🔁 The commutator trick</h3>
+      <p>A commutator flips the current every half-turn, so the push always spins the coil the SAME way — forever.</p>
+    </div>
+  </div>
+
+  <div class="fact">
+    🤯 <b>Mind-blowing part:</b> without the commutator, the coil would just wobble back and forth and stop. That tiny flipping trick is the difference between a wobble and a motor spinning thousands of times a minute!
+  </div>
+
+  <div class="try-title">🧪 Now try it yourself</div>
+  <p class="try-subtitle">Flip the commutator switch on and off and watch what happens to the coil.</p>
+  <div class="try-card">
+    <canvas id="tryScene" width="480" height="320"></canvas>
+    <div class="try-controls">
+      <button id="tryToggle" class="primary">🔁 Commutator: ON</button>
+      <button id="tryReset">↻ Reset</button>
+    </div>
+    <div class="try-result" id="tryResult"></div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  const canvas = document.getElementById('scene');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const captionEl = document.getElementById('caption');
+  const bannerEl = document.getElementById('banner');
+  const progressBar = document.getElementById('progressBar');
+  const playBtn = document.getElementById('playBtn');
+  const restartBtn = document.getElementById('restartBtn');
+  const slowBtn = document.getElementById('slowBtn');
+
+  // ---------- shared motor geometry (used from scene 'combine' onward) ----------
+  const motorCX = 450, motorCY = 240, coilR = 85;
+  const gapHalf = 140, poleW = 90, poleH = 170;
+  const NPoleX0 = motorCX - gapHalf - poleW, NPoleX1 = motorCX - gapHalf;
+  const SPoleX0 = motorCX + gapHalf, SPoleX1 = motorCX + gapHalf + poleW;
+  const poleY0 = motorCY - poleH/2, poleY1 = motorCY + poleH/2;
+
+  // ---------- timeline ----------
+  const SCENES = [
+    { t:0,   dur:5,  mode:'magnetIntro', banner:'🧲 STEP 1: MAGNETS', bannerClass:'learn',
+      caption: 'Every magnet has two ends, called <b>POLES</b>: a NORTH pole (N) and a SOUTH pole (S).' },
+    { t:5,   dur:6,  mode:'magnetForces', banner:'🧲 STEP 1: MAGNETS', bannerClass:'learn',
+      caption: 'Opposite poles <b>ATTRACT</b> — they pull together. Same poles <b>REPEL</b> — they push apart.' },
+    { t:11,  dur:4,  mode:'fieldLines', banner:'🧲 STEP 1: MAGNETS', bannerClass:'learn',
+      caption: 'Magnets also have an invisible force field around them, flowing from N to S.' },
+    { t:15,  dur:4,  mode:'wireOff', banner:'⚡ STEP 2: ELECTRICITY', bannerClass:'learn',
+      caption: 'Here\'s a plain wire with NO electricity flowing. Nothing magnetic is happening yet.' },
+    { t:19,  dur:6,  mode:'wireOn', banner:'⚡ STEP 2: ELECTRICITY', bannerClass:'learn',
+      caption: '⚡ Now current flows through it! Electricity creates its <b>own magnetic field</b>, circling around the wire!' },
+    { t:25,  dur:7,  mode:'coil', banner:'⚡ STEP 2: ELECTRICITY', bannerClass:'learn',
+      caption: 'Coil the wire into loops and all those little fields <b>ADD UP</b> — now it\'s an <b>ELECTROMAGNET</b>, with its own N and S ends!' },
+    { t:32,  dur:5,  mode:'combine', banner:'🔧 STEP 3: BUILD THE MOTOR', bannerClass:'build',
+      caption: 'Now place that coil between a strong permanent magnet\'s N and S poles...' },
+    { t:37,  dur:5,  mode:'force', banner:'🔧 STEP 3: BUILD THE MOTOR', bannerClass:'build',
+      caption: 'Electricity + magnetism = a <b>PUSH</b>! One side of the coil gets shoved up, the other down — it starts to spin!' },
+    { t:42,  dur:6,  mode:'noCommutator', banner:'❌ WITHOUT THE TRICK', bannerClass:'bad',
+      caption: '❌ But keep watching: as it turns, the push starts to <b>fight itself</b> — the coil just wobbles back and forth instead of spinning around!' },
+    { t:48,  dur:7,  mode:'commutator', banner:'✅ THE COMMUTATOR TRICK', bannerClass:'good',
+      caption: '✅ A <b>COMMUTATOR</b> (that split ring) flips the current every half-turn — so the push always spins it the SAME way!' },
+    { t:55,  dur:7,  mode:'fullSpin', banner:'⚙️ A COMPLETE DC MOTOR', bannerClass:'good',
+      caption: 'Battery + coil + magnet + commutator, all together — a DC motor that spins and spins!' },
+  ];
+  const totalDur = 62;
+
+  document.querySelectorAll('.act-marker').forEach(m=>m.remove());
+  [32,42,48].forEach(markT=>{
+    const m = document.createElement('div');
+    m.className = 'act-marker';
+    m.style.left = (markT/totalDur*100) + '%';
+    document.querySelector('.progress-track').appendChild(m);
+  });
+
+  let simTime = 0, playing = false, lastTs = null, speedMult = 1;
+
+  function currentSceneIndex(t){
+    for(let i=SCENES.length-1;i>=0;i--) if(t>=SCENES[i].t) return i;
+    return 0;
+  }
+
+  // ============ generic helpers ============
+  function label(x,y,text,color){
+    ctx.font = '700 13px Segoe UI, Arial';
+    ctx.textAlign = 'center';
+    const tw = ctx.measureText(text).width;
+    ctx.fillStyle = 'rgba(4,6,15,0.75)';
+    ctx.fillRect(x-tw/2-8, y-16, tw+16, 22);
+    ctx.fillStyle = color || '#9fc1de';
+    ctx.fillText(text, x, y);
+  }
+  function bigLabel(x,y,text,color){
+    ctx.font = '800 20px Segoe UI, Arial';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = color;
+    ctx.fillText(text, x, y);
+  }
+
+  // ============ bar magnet ============
+  function drawBarMagnet(cx,cy,len,thick, wobble){
+    wobble = wobble || 0;
+    ctx.save();
+    ctx.translate(cx+wobble, cy);
+    ctx.fillStyle = '#e14b4b';
+    ctx.fillRect(-len/2, -thick/2, len/2, thick);
+    ctx.fillStyle = '#3f7fe0';
+    ctx.fillRect(0, -thick/2, len/2, thick);
+    ctx.strokeStyle = '#0b1020'; ctx.lineWidth = 3;
+    ctx.strokeRect(-len/2, -thick/2, len, thick);
+    bigLabel(-len/4, 7, 'N', '#fff');
+    bigLabel(len/4, 7, 'S', '#fff');
+    ctx.restore();
+  }
+
+  function drawFieldLinesAroundMagnet(cx,cy,len,thick){
+    ctx.save();
+    ctx.strokeStyle = 'rgba(120,220,255,0.55)';
+    ctx.lineWidth = 2;
+    for(let i=0;i<4;i++){
+      const spread = 30 + i*22;
+      ctx.beginPath();
+      ctx.moveTo(cx-len/2, cy - thick/2 - 4 - i*2);
+      ctx.quadraticCurveTo(cx, cy - thick/2 - spread, cx+len/2, cy - thick/2 - 4 - i*2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx-len/2, cy + thick/2 + 4 + i*2);
+      ctx.quadraticCurveTo(cx, cy + thick/2 + spread, cx+len/2, cy + thick/2 + 4 + i*2);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawArrow(x1,y1,x2,y2,color){
+    ctx.save();
+    ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    const a = Math.atan2(y2-y1,x2-x1);
+    ctx.beginPath();
+    ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-11*Math.cos(a-0.4), y2-11*Math.sin(a-0.4));
+    ctx.lineTo(x2-11*Math.cos(a+0.4), y2-11*Math.sin(a+0.4));
+    ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+
+  // ============ mode: magnetIntro ============
+  function drawMagnetIntro(t){
+    drawFieldLinesAroundMagnet(W/2, H/2, 260, 60);
+    drawBarMagnet(W/2, H/2, 260, 60);
+    label(W/2-130, H/2-60, 'NORTH POLE', '#ff9d9d');
+    label(W/2+130, H/2-60, 'SOUTH POLE', '#9dc4ff');
+  }
+
+  // ============ mode: magnetForces ============
+  function drawMagnetForces(t, sceneStart){
+    const local = t - sceneStart;
+    const cyc = local % 6;
+    let gap, showArrows, text;
+    if(cyc < 3){
+      // attract: N...S approaching
+      const prog = Math.min(1, cyc/2.2);
+      gap = 170 - prog*100;
+      text = 'ATTRACT';
+    } else {
+      const prog = Math.min(1, (cyc-3)/2.2);
+      gap = 70 + prog*100;
+      text = 'REPEL';
+    }
+    const leftCx = W/2 - gap/2 - 65;
+    const rightCx = W/2 + gap/2 + 65;
+    drawBarMagnet(leftCx, H/2, 130, 50);
+    if(cyc < 3){
+      // left magnet's facing side is S (its right half); keep right magnet
+      // normal too, so its facing (left) side is N — opposite poles meet, attract
+      drawBarMagnet(rightCx, H/2, 130, 50);
+      drawArrow(rightCx-90, H/2-40, leftCx+90, H/2-40, '#6dffb0');
+      drawArrow(leftCx+90, H/2+40, rightCx-90, H/2+40, '#6dffb0');
+    } else {
+      // reverse the right magnet so its facing (left) side is also S —
+      // same poles meet, repel
+      drawBarMagnetReversed(rightCx, H/2, 130, 50);
+      drawArrow(W/2-20, H/2-40, W/2-70, H/2-40, '#ff8f8f');
+      drawArrow(W/2+20, H/2-40, W/2+70, H/2-40, '#ff8f8f');
+    }
+    bigLabel(W/2, H/2+110, text, cyc<3 ? '#6dffb0' : '#ff8f8f');
+  }
+  function drawBarMagnetReversed(cx,cy,len,thick){
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.fillStyle = '#3f7fe0';
+    ctx.fillRect(-len/2, -thick/2, len/2, thick);
+    ctx.fillStyle = '#e14b4b';
+    ctx.fillRect(0, -thick/2, len/2, thick);
+    ctx.strokeStyle = '#0b1020'; ctx.lineWidth = 3;
+    ctx.strokeRect(-len/2, -thick/2, len, thick);
+    bigLabel(-len/4, 7, 'S', '#fff');
+    bigLabel(len/4, 7, 'N', '#fff');
+    ctx.restore();
+  }
+
+  // ============ mode: fieldLines ============
+  function drawFieldLinesScene(t){
+    drawFieldLinesAroundMagnet(W/2, H/2, 260, 60);
+    drawBarMagnet(W/2, H/2, 260, 60);
+    label(W/2, H/2-120, 'invisible force field, N → S', '#8fd2ff');
+  }
+
+  // ============ mode: wireOff / wireOn ============
+  function drawWireScene(t, on){
+    const cx = W/2, cy = H/2;
+    ctx.save();
+    ctx.strokeStyle = '#c7c9d9'; ctx.lineWidth = 8; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(cx, cy-140); ctx.lineTo(cx, cy+140); ctx.stroke();
+    ctx.restore();
+    label(cx, cy-160, 'A WIRE', '#c7c9d9');
+
+    if(on){
+      ctx.save();
+      ctx.fillStyle = '#ffd23f'; ctx.shadowBlur=14; ctx.shadowColor='#ffd23f';
+      for(let i=0;i<8;i++){
+        const y = cy-140 + ((t*160 + i*36) % 280);
+        ctx.beginPath(); ctx.arc(cx, y, 4.5, 0, Math.PI*2); ctx.fill();
+      }
+      ctx.restore();
+
+      ctx.save();
+      ctx.strokeStyle = 'rgba(79,211,255,0.55)'; ctx.lineWidth = 2;
+      for(let i=0;i<4;i++){
+        const r = 26 + i*24 + (t*30)%24;
+        if(r > 130) continue;
+        ctx.globalAlpha = Math.max(0, 1 - r/130);
+        ctx.beginPath(); ctx.ellipse(cx, cy, r*0.42, r, 0, 0, Math.PI*2); ctx.stroke();
+      }
+      ctx.restore();
+      label(cx, cy+170, '⚡ current flowing → magnetic field appears!', '#8fd2ff');
+    } else {
+      label(cx, cy+170, 'no current = no magnetic field', '#9aa4cc');
+    }
+  }
+
+  // ============ mode: coil ============
+  function drawCoilScene(t){
+    const cx = W/2, cy = H/2;
+    const loops = 4, spacing = 46, w0 = cx - (loops-1)*spacing/2;
+    ctx.save();
+    ctx.strokeStyle = '#ffd23f'; ctx.lineWidth = 5;
+    for(let i=0;i<loops;i++){
+      ctx.beginPath();
+      ctx.ellipse(w0+i*spacing, cy, 20, 70, 0, 0, Math.PI*2);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    // field arrows through the coil, exiting at N/S ends
+    for(let dy=-40; dy<=40; dy+=40){
+      drawArrow(w0-70, cy+dy, w0+(loops-1)*spacing+70, cy+dy, 'rgba(79,211,255,0.7)');
+    }
+    label(w0-90, cy-100, 'N', '#ff9d9d');
+    label(w0+(loops-1)*spacing+90, cy-100, 'S', '#9dc4ff');
+    label(cx, cy+120, 'ELECTROMAGNET (coiled wire)', '#ffd23f');
+  }
+
+  // ============ shared motor scene pieces ============
+  function drawPoles(){
+    ctx.fillStyle = '#e14b4b';
+    ctx.fillRect(NPoleX0, poleY0, poleW, poleH);
+    ctx.fillStyle = '#3f7fe0';
+    ctx.fillRect(SPoleX0, poleY0, poleW, poleH);
+    ctx.strokeStyle = '#0b1020'; ctx.lineWidth = 3;
+    ctx.strokeRect(NPoleX0, poleY0, poleW, poleH);
+    ctx.strokeRect(SPoleX0, poleY0, poleW, poleH);
+    bigLabel(NPoleX0+poleW/2, motorCY+7, 'N', '#fff');
+    bigLabel(SPoleX0+poleW/2, motorCY+7, 'S', '#fff');
+    // field arrows across the gap
+    for(let dy=-60; dy<=60; dy+=40){
+      drawArrow(NPoleX1+14, motorCY+dy, SPoleX0-14, motorCY+dy, 'rgba(255,255,255,0.18)');
+    }
+  }
+
+  function drawWireDot(x,y,type,active){
+    ctx.save();
+    ctx.beginPath(); ctx.arc(x,y,16,0,Math.PI*2);
+    ctx.fillStyle = active ? '#ffd23f' : '#7a7f9e';
+    ctx.shadowBlur = active ? 12 : 0; ctx.shadowColor = '#ffd23f';
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = '#0b1020'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = '#0b1020';
+    ctx.font = '800 16px Segoe UI, Arial';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(type==='dot' ? '•' : '×', x, y+1);
+    ctx.restore();
+  }
+
+  function drawCoilAt(angleDeg, opts){
+    opts = opts || {};
+    const a = angleDeg*Math.PI/180;
+    const x1 = motorCX + coilR*Math.cos(a), y1 = motorCY - coilR*Math.sin(a);
+    const x2 = motorCX - coilR*Math.cos(a), y2 = motorCY + coilR*Math.sin(a);
+    ctx.save();
+    ctx.strokeStyle = '#c7c9d9'; ctx.lineWidth = 4;
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    ctx.restore();
+
+    let type1, type2;
+    if(opts.commutated){
+      // whichever wire is currently in the upper half is relabeled "dot" (current out)
+      type1 = y1 < motorCY ? 'dot' : 'cross';
+      type2 = y1 < motorCY ? 'cross' : 'dot';
+    } else {
+      // identity fixed to the physical wire regardless of position
+      type1 = 'dot'; type2 = 'cross';
+    }
+    drawWireDot(x1,y1,type1,true);
+    drawWireDot(x2,y2,type2,true);
+
+    if(opts.showForce){
+      const upIsX1 = y1 < y2;
+      const fx1 = upIsX1 ? x1 : x2, fy1 = upIsX1 ? y1 : y2;
+      const fx2 = upIsX1 ? x2 : x1, fy2 = upIsX1 ? y2 : y1;
+      const mag = opts.forceMag !== undefined ? opts.forceMag : 1;
+      if(mag > 0.02){
+        drawArrow(fx1, fy1, fx1, fy1-40*mag, '#6dffb0');
+        drawArrow(fx2, fy2, fx2, fy2+40*mag, '#ff8f8f');
+      } else if(mag < -0.02){
+        drawArrow(fx1, fy1, fx1, fy1+40*Math.abs(mag), '#ff8f8f');
+        drawArrow(fx2, fy2, fx2, fy2-40*Math.abs(mag), '#6dffb0');
+      }
+    }
+    return {x1,y1,x2,y2};
+  }
+
+  function drawCommutatorInset(cx,cy,angleDeg,active){
+    const r = 34;
+    ctx.save();
+    ctx.strokeStyle = '#33406e'; ctx.lineWidth = 2;
+    ctx.strokeRect(cx-70, cy-58, 140, 116);
+    label(cx, cy-64, 'COMMUTATOR (close-up)', '#9fc1de');
+
+    if(active){
+      const a = angleDeg*Math.PI/180;
+      ctx.save();
+      ctx.translate(cx,cy);
+      ctx.beginPath(); ctx.arc(0,0,r,-a,Math.PI-a); ctx.closePath();
+      ctx.fillStyle = '#ffd23f'; ctx.fill();
+      ctx.beginPath(); ctx.arc(0,0,r,Math.PI-a,Math.PI*2-a); ctx.closePath();
+      ctx.fillStyle = '#4fd3ff'; ctx.fill();
+      ctx.strokeStyle = '#0b1020'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.restore();
+      // fixed brushes at left(180) and right(0)
+      const flipZone = Math.abs(((angleDeg%180)+180)%180) ;
+      const flipping = flipZone < 8 || flipZone > 172;
+      ['left','right'].forEach(side=>{
+        const bx = side==='left' ? cx-r-14 : cx+r+14;
+        ctx.fillStyle = flipping ? '#ffffff' : '#8b8fa8';
+        ctx.fillRect(bx-6, cy-9, 12, 18);
+      });
+    } else {
+      // no commutator: wires connect straight through, no ring
+      ctx.strokeStyle = '#7a7f9e'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(cx-r,cy); ctx.lineTo(cx+r,cy); ctx.stroke();
+      label(cx, cy+42, 'wires stay fixed — no flip', '#7a7f9e');
+    }
+    ctx.restore();
+  }
+
+  function drawBatteryAndBrushes(){
+    ctx.save();
+    ctx.strokeStyle = '#c7c9d9'; ctx.lineWidth = 4;
+    ctx.beginPath(); ctx.moveTo(motorCX-30, motorCY+coilR+30); ctx.lineTo(motorCX-30, motorCY+coilR+70); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(motorCX+30, motorCY+coilR+30); ctx.lineTo(motorCX+30, motorCY+coilR+70); ctx.stroke();
+    ctx.fillStyle = '#2c3560';
+    ctx.fillRect(motorCX-50, motorCY+coilR+70, 100, 34);
+    ctx.strokeRect(motorCX-50, motorCY+coilR+70, 100, 34);
+    ctx.fillStyle = '#ffd23f';
+    ctx.font='800 16px Segoe UI, Arial'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('+  BATTERY  −', motorCX, motorCY+coilR+87);
+    ctx.restore();
+  }
+
+  // ============ mode: combine ============
+  function drawCombine(t, sceneStart){
+    const local = t - sceneStart;
+    drawPoles();
+    const drop = Math.min(1, local/2);
+    ctx.save();
+    ctx.globalAlpha = drop;
+    ctx.fillStyle = '#ffd23f';
+    ctx.fillRect(motorCX-14, motorCY-14, 28, 28);
+    ctx.strokeStyle='#0b1020'; ctx.lineWidth=2; ctx.strokeRect(motorCX-14, motorCY-14, 28, 28);
+    ctx.restore();
+    label(motorCX, motorCY-50, 'COIL (electromagnet)', '#ffd23f');
+    label(motorCX, 90, 'PERMANENT MAGNET (fixed)', '#8fd2ff');
+  }
+
+  // ============ mode: force ============
+  function drawForceScene(t, sceneStart){
+    const local = t - sceneStart;
+    drawPoles();
+    const angle = local*8; // slow start
+    drawCoilAt(angle, {showForce:true, forceMag: Math.min(1,local/2), commutated:false});
+    drawBatteryAndBrushes();
+  }
+
+  // ============ mode: noCommutator ============
+  function drawNoCommutator(t, sceneStart){
+    const local = t - sceneStart;
+    drawPoles();
+    const baseAngle = 16;
+    const swing = 68*Math.sin(local*0.9);
+    const angle = baseAngle + swing;
+    const forceMag = Math.cos(local*0.9); // shrinks to 0 then reverses sign
+    const info = drawCoilAt(angle, {showForce:true, forceMag, commutated:false});
+    drawBatteryAndBrushes();
+    drawCommutatorInset(770, 110, angle, false);
+    if(Math.abs(forceMag) < 0.12){
+      bigLabel(motorCX, 60, 'PUSH FADES / REVERSES!', '#ff8f8f');
+    }
+  }
+
+  // ============ mode: commutator ============
+  function drawCommutatorScene(t, sceneStart){
+    const local = t - sceneStart;
+    drawPoles();
+    const angle = local*70;
+    drawCoilAt(angle, {showForce:true, forceMag:1, commutated:true});
+    drawBatteryAndBrushes();
+    drawCommutatorInset(770, 110, angle, true);
+  }
+
+  // ============ mode: fullSpin ============
+  function drawFullSpin(t, sceneStart){
+    const local = t - sceneStart;
+    drawPoles();
+    const angle = local*80;
+    drawCoilAt(angle, {showForce:false, commutated:true});
+    drawBatteryAndBrushes();
+    drawCommutatorInset(770, 110, angle, true);
+    label(motorCX, 50, 'A COMPLETE DC MOTOR', '#6dffb0');
+  }
+
+  // ============ main render ============
+  function render(t){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = '#04060f'; ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle = 'rgba(110,160,205,.05)'; ctx.lineWidth = 1;
+    for(let x=0;x<W;x+=40){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+    for(let y=0;y<H;y+=40){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+    const idx = currentSceneIndex(t);
+    const scene = SCENES[idx];
+    bannerEl.textContent = scene.banner;
+    bannerEl.className = 'banner ' + scene.bannerClass;
+    captionEl.innerHTML = scene.caption;
+
+    switch(scene.mode){
+      case 'magnetIntro': drawMagnetIntro(t); break;
+      case 'magnetForces': drawMagnetForces(t, scene.t); break;
+      case 'fieldLines': drawFieldLinesScene(t); break;
+      case 'wireOff': drawWireScene(t, false); break;
+      case 'wireOn': drawWireScene(t, true); break;
+      case 'coil': drawCoilScene(t); break;
+      case 'combine': drawCombine(t, scene.t); break;
+      case 'force': drawForceScene(t, scene.t); break;
+      case 'noCommutator': drawNoCommutator(t, scene.t); break;
+      case 'commutator': drawCommutatorScene(t, scene.t); break;
+      case 'fullSpin': drawFullSpin(t, scene.t); break;
+    }
+
+    const pct = Math.min(100, (t/totalDur)*100);
+    progressBar.style.width = pct+'%';
+  }
+
+  function step(ts){
+    if(!playing) return;
+    if(lastTs===null) lastTs = ts;
+    const dt = Math.min(0.05, (ts-lastTs)/1000) * speedMult;
+    lastTs = ts;
+    simTime += dt;
+    if(simTime >= totalDur){
+      simTime = totalDur;
+      render(simTime);
+      pause();
+      captionEl.innerHTML = '🎬 The End! Press <b>Restart</b> to watch again.';
+      return;
+    }
+    render(simTime);
+    requestAnimationFrame(step);
+  }
+  function play(){ if(playing) return; playing=true; lastTs=null; playBtn.textContent='⏸ Pause'; requestAnimationFrame(step); }
+  function pause(){ playing=false; playBtn.textContent='▶ Play'; }
+  function restart(){
+    simTime = 0;
+    render(0);
+    captionEl.innerHTML = 'Press <b>Play</b> to start the show!';
+    progressBar.style.width = '0%';
+    pause();
+  }
+
+  playBtn.addEventListener('click', () => playing ? pause() : play());
+  restartBtn.addEventListener('click', restart);
+  slowBtn.addEventListener('click', () => {
+    speedMult = speedMult===1 ? 0.35 : 1;
+    slowBtn.textContent = speedMult===1 ? '🐢 Slow Motion' : '🐇 Normal Speed';
+  });
+
+  render(0);
+})();
+
+// ---------- Try It Yourself: commutator on/off toggle ----------
+(function(){
+  const cv = document.getElementById('tryScene');
+  const c = cv.getContext('2d');
+  const w = cv.width, h = cv.height;
+  const cx = w/2, cy = h/2, r = 70;
+  const gapHalf = 110, poleW = 60, poleH = 130;
+
+  let angle = 10, on = true, t = 0, spins = 0, lastAngleMod = 0;
+  const toggleBtn = document.getElementById('tryToggle');
+  const resultEl = document.getElementById('tryResult');
+
+  function drawArrow(x1,y1,x2,y2,color){
+    c.save();
+    c.strokeStyle = color; c.fillStyle = color; c.lineWidth = 3;
+    c.beginPath(); c.moveTo(x1,y1); c.lineTo(x2,y2); c.stroke();
+    const a = Math.atan2(y2-y1,x2-x1);
+    c.beginPath();
+    c.moveTo(x2,y2);
+    c.lineTo(x2-9*Math.cos(a-0.4), y2-9*Math.sin(a-0.4));
+    c.lineTo(x2-9*Math.cos(a+0.4), y2-9*Math.sin(a+0.4));
+    c.closePath(); c.fill();
+    c.restore();
+  }
+
+  function draw(){
+    c.clearRect(0,0,w,h);
+    c.fillStyle = '#04060f'; c.fillRect(0,0,w,h);
+
+    const NPoleX1 = cx-gapHalf, SPoleX0 = cx+gapHalf;
+    c.fillStyle = '#e14b4b'; c.fillRect(NPoleX1-poleW, cy-poleH/2, poleW, poleH);
+    c.fillStyle = '#3f7fe0'; c.fillRect(SPoleX0, cy-poleH/2, poleW, poleH);
+    c.strokeStyle='#0b1020'; c.lineWidth=2;
+    c.strokeRect(NPoleX1-poleW, cy-poleH/2, poleW, poleH);
+    c.strokeRect(SPoleX0, cy-poleH/2, poleW, poleH);
+    c.fillStyle='#fff'; c.font='800 18px Segoe UI, Arial'; c.textAlign='center'; c.textBaseline='middle';
+    c.fillText('N', NPoleX1-poleW/2, cy);
+    c.fillText('S', SPoleX0+poleW/2, cy);
+
+    const a = angle*Math.PI/180;
+    const x1 = cx + r*Math.cos(a), y1 = cy - r*Math.sin(a);
+    const x2 = cx - r*Math.cos(a), y2 = cy + r*Math.sin(a);
+    c.strokeStyle = '#c7c9d9'; c.lineWidth = 4;
+    c.beginPath(); c.moveTo(x1,y1); c.lineTo(x2,y2); c.stroke();
+
+    let type1, type2;
+    if(on){ type1 = y1<cy ? 'dot':'cross'; type2 = y1<cy ? 'cross':'dot'; }
+    else { type1='dot'; type2='cross'; }
+    [[x1,y1,type1],[x2,y2,type2]].forEach(([x,y,type])=>{
+      c.beginPath(); c.arc(x,y,13,0,Math.PI*2);
+      c.fillStyle = '#ffd23f'; c.fill();
+      c.strokeStyle='#0b1020'; c.lineWidth=2; c.stroke();
+      c.fillStyle='#0b1020'; c.font='800 14px Segoe UI, Arial';
+      c.fillText(type==='dot' ? '•' : '×', x, y+1);
+    });
+
+    const upIs1 = y1<y2;
+    const fx1 = upIs1?x1:x2, fy1 = upIs1?y1:y2, fx2 = upIs1?x2:x1, fy2 = upIs1?y2:y1;
+    if(on){
+      drawArrow(fx1,fy1,fx1,fy1-32,'#6dffb0');
+      drawArrow(fx2,fy2,fx2,fy2+32,'#ff8f8f');
+    }
+
+    c.font='700 13px Segoe UI, Arial'; c.textAlign='center';
+    c.fillStyle = on ? '#6dffb0' : '#ff8f8f';
+    c.fillText(on ? 'Spinning smoothly!' : 'Wobbling, not spinning!', cx, h-16);
+  }
+
+  function update(dt){
+    t += dt;
+    if(on){
+      angle += dt*130;
+      spins = Math.floor(angle/360);
+      resultEl.textContent = `Full spins so far: ${spins}`;
+    } else {
+      // physically-fixed wire identity => oscillation around start
+      angle = 10 + 55*Math.sin(t*1.1);
+      resultEl.textContent = 'No commutator: it just rocks back and forth.';
+    }
+  }
+
+  let last = performance.now();
+  function loop(now){
+    const dt = Math.min(0.05,(now-last)/1000); last = now;
+    update(dt); draw();
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+
+  toggleBtn.addEventListener('click', () => {
+    on = !on;
+    toggleBtn.textContent = on ? '🔁 Commutator: ON' : '🔁 Commutator: OFF';
+    t = 0;
+  });
+  document.getElementById('tryReset').addEventListener('click', () => {
+    angle = 10; spins = 0; t = 0; on = true;
+    toggleBtn.textContent = '🔁 Commutator: ON';
+    resultEl.textContent = '';
+  });
+})();
+</script>
+</body>
+</html>
