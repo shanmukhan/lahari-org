@@ -9,7 +9,11 @@
   *{box-sizing:border-box;}
   body{margin:0;font-family:"Segoe UI",Verdana,Arial,sans-serif;background:radial-gradient(circle at top,#1b2450,#05070f 70%);color:var(--text);padding:20px 16px 60px;}
   .wrap{max-width:960px;margin:0 auto;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
   a.back{color:var(--accent2);text-decoration:none;font-weight:700;}
+  button.lang-toggle{background:var(--panel);color:var(--text);border:1px solid #2a3568;border-radius:999px;
+    padding:7px 16px;font-size:13px;cursor:pointer;font-weight:700;}
+  button.lang-toggle:hover{background:#1c2450;}
   header{text-align:center;margin-bottom:20px;}
   h1{font-size:clamp(24px,5vw,38px);margin:10px 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
   header p{color:var(--dim);font-size:16px;margin:0;}
@@ -36,10 +40,13 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="index.html">&larr; Back to lahari.org</a>
+  <div class="topbar">
+    <a class="back" href="index.html" id="backLink">&larr; Back to lahari.org</a>
+    <button class="lang-toggle" id="langToggle">తెలుగు</button>
+  </div>
   <header>
-    <h1>💥 The Big Bang Story</h1>
-    <p>How did EVERYTHING — all space, all matter, all time — get its start? Let's watch 13.8 billion years happen.</p>
+    <h1 id="pageTitle">💥 The Big Bang Story</h1>
+    <p id="pageSubtitle">How did EVERYTHING — all space, all matter, all time — get its start? Let's watch 13.8 billion years happen.</p>
   </header>
 
   <div class="player">
@@ -56,40 +63,122 @@
   </div>
 
   <div class="steps">
-    <div class="step-card"><div class="num">1</div><h3>💥 A tiny, hot start</h3>
-      <p>13.8 billion years ago, everything we know — all space and matter — was packed into an unimaginably tiny, hot point.</p></div>
-    <div class="step-card"><div class="num">2</div><h3>🎈 Space itself stretched</h3>
-      <p>It didn't explode "into" space — space itself began expanding, carrying everything along with it, and still is today!</p></div>
-    <div class="step-card"><div class="num">3</div><h3>⚛️ Particles, then atoms</h3>
-      <p>As it cooled, tiny particles formed, then joined into the first simple atoms — mostly hydrogen and helium.</p></div>
-    <div class="step-card"><div class="num">4</div><h3>⭐ Stars and galaxies light up</h3>
-      <p>Gravity pulled gas clouds together until they got hot enough to shine — the first stars, then galaxies, were born.</p></div>
+    <div class="step-card"><div class="num">1</div><h3 id="s1t">💥 A tiny, hot start</h3>
+      <p id="s1d">13.8 billion years ago, everything we know — all space and matter — was packed into an unimaginably tiny, hot point.</p></div>
+    <div class="step-card"><div class="num">2</div><h3 id="s2t">🎈 Space itself stretched</h3>
+      <p id="s2d">It didn't explode "into" space — space itself began expanding, carrying everything along with it, and still is today!</p></div>
+    <div class="step-card"><div class="num">3</div><h3 id="s3t">⚛️ Particles, then atoms</h3>
+      <p id="s3d">As it cooled, tiny particles formed, then joined into the first simple atoms — mostly hydrogen and helium.</p></div>
+    <div class="step-card"><div class="num">4</div><h3 id="s4t">⭐ Stars and galaxies light up</h3>
+      <p id="s4d">Gravity pulled gas clouds together until they got hot enough to shine — the first stars, then galaxies, were born.</p></div>
   </div>
 
-  <div class="fact">
+  <div class="fact" id="factBox">
     🤯 <b>Mind-blowing part:</b> Every atom in your body — except the hydrogen — was cooked inside a star that
     exploded billions of years ago. You are, quite literally, made of <b>stardust</b>!
   </div>
 </div>
 
 <script>
+const T = {
+  en: {
+    langToggle: 'తెలుగు', backLink: '&larr; Back to lahari.org',
+    pageTitle: '💥 The Big Bang Story',
+    pageSubtitle: 'How did EVERYTHING — all space, all matter, all time — get its start? Let\'s watch 13.8 billion years happen.',
+    playBtn: '▶ Play', pauseBtn: '⏸ Pause', restartBtn: '⟲ Restart',
+    slowBtn: '🐢 Slow Motion', normalBtn: '🐇 Normal Speed',
+    captionInitial: 'Press <b>Play</b> to start the show!',
+    captionEnd: '🎬 The End! Press <b>Restart</b> to watch again.',
+    steps: [
+      ['💥 A tiny, hot start','13.8 billion years ago, everything we know — all space and matter — was packed into an unimaginably tiny, hot point.'],
+      ['🎈 Space itself stretched','It didn\'t explode "into" space — space itself began expanding, carrying everything along with it, and still is today!'],
+      ['⚛️ Particles, then atoms','As it cooled, tiny particles formed, then joined into the first simple atoms — mostly hydrogen and helium.'],
+      ['⭐ Stars and galaxies light up','Gravity pulled gas clouds together until they got hot enough to shine — the first stars, then galaxies, were born.'],
+    ],
+    fact: '🤯 <b>Mind-blowing part:</b> Every atom in your body — except the hydrogen — was cooked inside a star that exploded billions of years ago. You are, quite literally, made of <b>stardust</b>!',
+    scenes: [
+      ['💥 T = 0: THE TINIEST BEGINNING','13.8 billion years ago, all the space, matter, and energy we know was squeezed into a point smaller than an atom — incredibly hot and dense.'],
+      ['🎈 SPACE ITSELF EXPANDS','Then — the Big Bang! Space itself began to stretch outward in every direction, carrying everything along, like dots on an inflating balloon.'],
+      ['⚛️ PARTICLES APPEAR','As the universe expanded, it cooled. Tiny particles — quarks, electrons — formed, then combined into protons and neutrons.'],
+      ['🔵 FIRST ATOMS FORM','About 380,000 years later, it was cool enough for electrons to join nuclei — the first atoms formed: mostly <b>hydrogen</b> and <b>helium</b>.'],
+      ['⭐ GRAVITY LIGHTS THE FIRST STARS','Gravity slowly pulled huge clouds of hydrogen gas together. Where they got dense and hot enough, nuclear fusion ignited — the first <b>stars</b> switched on!'],
+      ['🌌 GALAXIES AND US','Stars gathered into <b>galaxies</b>. Some stars exploded, scattering heavier elements — the ingredients for planets, and eventually, for life like us.'],
+    ],
+    canvas: {
+      hotPoint: 'all of space and matter, in one tiny hot point',
+      expansion: 'space itself stretches — everything rushes apart',
+      particles: 'quarks and electrons zip around in the hot soup',
+      atoms: 'electrons join nuclei — the first hydrogen & helium atoms!',
+      stars: 'gravity pulls gas together until stars ignite',
+      galaxies: 'galaxies form — one day, one will hold our Sun and Earth',
+    },
+  },
+  te: {
+    langToggle: 'English', backLink: '&larr; lahari.org కి తిరిగి',
+    pageTitle: '💥 బిగ్ బ్యాంగ్ కథ',
+    pageSubtitle: 'అన్నీ — మొత్తం అంతరిక్షం, మొత్తం పదార్థం, మొత్తం కాలం — ఎలా ప్రారంభమయ్యాయి? 1,380 కోట్ల సంవత్సరాలు జరగడం చూద్దాం.',
+    playBtn: '▶ ప్లే', pauseBtn: '⏸ పాజ్', restartBtn: '⟲ మళ్ళీ మొదలు',
+    slowBtn: '🐢 నెమ్మది చలనం', normalBtn: '🐇 సాధారణ వేగం',
+    captionInitial: 'ప్రదర్శన ప్రారంభించడానికి <b>ప్లే</b> నొక్కండి!',
+    captionEnd: '🎬 ముగింపు! మళ్ళీ చూడటానికి <b>మళ్ళీ మొదలు</b> నొక్కండి.',
+    steps: [
+      ['💥 ఒక చిన్న, వేడి ప్రారంభం','1,380 కోట్ల సంవత్సరాల క్రితం, మనకు తెలిసిన ప్రతిదీ — మొత్తం అంతరిక్షం మరియు పదార్థం — ఊహించలేనంత చిన్న, వేడి బిందువులో నిండి ఉంది.'],
+      ['🎈 అంతరిక్షమే సాగింది','ఇది అంతరిక్షంలోకి పేలలేదు — అంతరిక్షమే విస్తరించడం ప్రారంభించింది, తనతో పాటు ప్రతిదాన్ని తీసుకువెళుతూ, మరియు ఇప్పటికీ అలానే ఉంది!'],
+      ['⚛️ కణాలు, తర్వాత పరమాణువులు','అది చల్లబడుతున్నప్పుడు, చిన్న కణాలు ఏర్పడ్డాయి, తర్వాత మొదటి సాధారణ పరమాణువులుగా కలిశాయి — ఎక్కువగా హైడ్రోజన్ మరియు హీలియం.'],
+      ['⭐ నక్షత్రాలు మరియు గెలాక్సీలు వెలుగుతాయి','గురుత్వాకర్షణ వాయు మేఘాలను కలిపి లాగింది, అవి ప్రకాశించేంత వేడిగా మారే వరకు — మొదటి నక్షత్రాలు, తర్వాత గెలాక్సీలు, జన్మించాయి.'],
+    ],
+    fact: '🤯 <b>ఆశ్చర్యకరమైన విషయం:</b> మీ శరీరంలోని ప్రతి పరమాణువు — హైడ్రోజన్ తప్ప — బిలియన్ల సంవత్సరాల క్రితం పేలిన నక్షత్రం లోపల తయారైంది. మీరు నిజంగా <b>నక్షత్ర ధూళి</b>తో తయారయ్యారు!',
+    scenes: [
+      ['💥 T = 0: అతి చిన్న ప్రారంభం','1,380 కోట్ల సంవత్సరాల క్రితం, మనకు తెలిసిన మొత్తం అంతరిక్షం, పదార్థం, శక్తి అన్నీ పరమాణువు కంటే చిన్న బిందువులోకి నొక్కబడ్డాయి — అమితంగా వేడిగా మరియు సాంద్రంగా.'],
+      ['🎈 అంతరిక్షమే విస్తరిస్తుంది','తర్వాత — బిగ్ బ్యాంగ్! అంతరిక్షమే అన్ని దిశలలో బయటికి సాగడం ప్రారంభించింది, ఉబ్బుతున్న బెలూన్‌పై చుక్కల్లా ప్రతిదాన్ని తీసుకువెళుతూ.'],
+      ['⚛️ కణాలు కనిపిస్తాయి','విశ్వం విస్తరిస్తున్నప్పుడు, అది చల్లబడింది. చిన్న కణాలు — క్వార్కులు, ఎలక్ట్రాన్లు — ఏర్పడ్డాయి, తర్వాత ప్రోటాన్లు మరియు న్యూట్రాన్లుగా కలిశాయి.'],
+      ['🔵 మొదటి పరమాణువులు ఏర్పడతాయి','దాదాపు 3,80,000 సంవత్సరాల తర్వాత, ఎలక్ట్రాన్లు కేంద్రకాలతో కలవడానికి సరిపడా చల్లగా మారింది — మొదటి పరమాణువులు ఏర్పడ్డాయి: ఎక్కువగా <b>హైడ్రోజన్</b> మరియు <b>హీలియం</b>.'],
+      ['⭐ గురుత్వాకర్షణ మొదటి నక్షత్రాలను వెలిగిస్తుంది','గురుత్వాకర్షణ నెమ్మదిగా భారీ హైడ్రోజన్ వాయు మేఘాలను కలిపి లాగింది. అవి తగినంత సాంద్రంగా మరియు వేడిగా మారిన చోట, న్యూక్లియర్ ఫ్యూజన్ రాజుకుంది — మొదటి <b>నక్షత్రాలు</b> వెలిగాయి!'],
+      ['🌌 గెలాక్సీలు మరియు మనం','నక్షత్రాలు <b>గెలాక్సీలుగా</b> సమావేశమయ్యాయి. కొన్ని నక్షత్రాలు పేలిపోయాయి, బరువైన మూలకాలను చెల్లాచెదురు చేశాయి — గ్రహాలకు, చివరికి మనలాంటి జీవానికి కావాల్సిన పదార్థాలు.'],
+    ],
+    canvas: {
+      hotPoint: 'మొత్తం అంతరిక్షం మరియు పదార్థం, ఒక చిన్న వేడి బిందువులో',
+      expansion: 'అంతరిక్షమే సాగుతుంది — ప్రతిదీ దూరంగా పరుగెడుతుంది',
+      particles: 'క్వార్కులు మరియు ఎలక్ట్రాన్లు వేడి సూప్‌లో తిరుగుతాయి',
+      atoms: 'ఎలక్ట్రాన్లు కేంద్రకాలతో కలుస్తాయి — మొదటి హైడ్రోజన్ & హీలియం పరమాణువులు!',
+      stars: 'నక్షత్రాలు రాజుకునే వరకు గురుత్వాకర్షణ వాయువును కలుపుతుంది',
+      galaxies: 'గెలాక్సీలు ఏర్పడతాయి — ఒక రోజు, ఒకటి మన సూర్యుడిని మరియు భూమిని కలిగి ఉంటుంది',
+    },
+  }
+};
+let LANG='en';
+function tr(){ return T[LANG]; }
+function applyStaticText(){
+  const t=tr();
+  document.documentElement.lang=LANG;
+  document.getElementById('langToggle').textContent=t.langToggle;
+  document.getElementById('backLink').innerHTML=t.backLink;
+  document.getElementById('pageTitle').textContent=t.pageTitle;
+  document.getElementById('pageSubtitle').textContent=t.pageSubtitle;
+  document.getElementById('restartBtn').textContent=t.restartBtn;
+  for(let i=0;i<4;i++){
+    document.getElementById('s'+(i+1)+'t').textContent=t.steps[i][0];
+    document.getElementById('s'+(i+1)+'d').textContent=t.steps[i][1];
+  }
+  document.getElementById('factBox').innerHTML=t.fact;
+}
+document.getElementById('langToggle').addEventListener('click',()=>{
+  LANG = LANG==='en' ? 'te' : 'en';
+  applyStaticText();
+  if(window.__bigBangRefresh) window.__bigBangRefresh();
+});
+applyStaticText();
+
 (function(){
   const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
   const W=canvas.width, H=canvas.height;
   const captionEl=document.getElementById('caption'), bannerEl=document.getElementById('banner'), progressBar=document.getElementById('progressBar');
   const playBtn=document.getElementById('playBtn'), restartBtn=document.getElementById('restartBtn'), slowBtn=document.getElementById('slowBtn');
 
-  const SCENES=[
-    {t:0,dur:6,banner:'💥 T = 0: THE TINIEST BEGINNING',caption:'13.8 billion years ago, all the space, matter, and energy we know was squeezed into a point smaller than an atom — incredibly hot and dense.'},
-    {t:6,dur:7,banner:'🎈 SPACE ITSELF EXPANDS',caption:'Then — the Big Bang! Space itself began to stretch outward in every direction, carrying everything along, like dots on an inflating balloon.'},
-    {t:13,dur:7,banner:'⚛️ PARTICLES APPEAR',caption:'As the universe expanded, it cooled. Tiny particles — quarks, electrons — formed, then combined into protons and neutrons.'},
-    {t:20,dur:7,banner:'🔵 FIRST ATOMS FORM',caption:'About 380,000 years later, it was cool enough for electrons to join nuclei — the first atoms formed: mostly <b>hydrogen</b> and <b>helium</b>.'},
-    {t:27,dur:8,banner:'⭐ GRAVITY LIGHTS THE FIRST STARS',caption:'Gravity slowly pulled huge clouds of hydrogen gas together. Where they got dense and hot enough, nuclear fusion ignited — the first <b>stars</b> switched on!'},
-    {t:35,dur:8,banner:'🌌 GALAXIES AND US',caption:'Stars gathered into <b>galaxies</b>. Some stars exploded, scattering heavier elements — the ingredients for planets, and eventually, for life like us.'},
-  ];
+  const starts=[0,6,13,20,27,35];
+  let simTime=0, playing=false, lastTs=null, speedMult=1, captionOverride='initial';
   const totalDur=43;
-  let simTime=0, playing=false, lastTs=null, speedMult=1;
-  function currentScene(t){ for(let i=SCENES.length-1;i>=0;i--) if(t>=SCENES[i].t) return i; return 0; }
+  function currentScene(t){ for(let i=starts.length-1;i>=0;i--) if(t>=starts[i]) return i; return 0; }
 
   function drawHotPoint(t,local){
     const pulse=8+Math.sin(local*6)*3;
@@ -98,7 +187,7 @@
     ctx.fillStyle=g; ctx.beginPath(); ctx.arc(W/2,H/2,pulse*6,0,Math.PI*2); ctx.fill();
     ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(W/2,H/2,pulse,0,Math.PI*2); ctx.fill();
     ctx.fillStyle='#9aa4cc'; ctx.font='14px Segoe UI'; ctx.textAlign='center';
-    ctx.fillText('all of space and matter, in one tiny hot point', W/2, H-40);
+    ctx.fillText(tr().canvas.hotPoint, W/2, H-40);
   }
   function drawExpansion(t,local){
     const scale=1+local*local*0.15;
@@ -114,7 +203,7 @@
     }
     ctx.restore();
     ctx.fillStyle='#9aa4cc'; ctx.font='14px Segoe UI'; ctx.textAlign='center';
-    ctx.fillText('space itself stretches — everything rushes apart', W/2, H-30);
+    ctx.fillText(tr().canvas.expansion, W/2, H-30);
   }
   function drawParticles(t,local){
     for(let i=0;i<70;i++){
@@ -125,7 +214,7 @@
       ctx.beginPath(); ctx.arc(x,y,4,0,Math.PI*2); ctx.fill();
     }
     ctx.fillStyle='#9aa4cc'; ctx.font='14px Segoe UI'; ctx.textAlign='center';
-    ctx.fillText('quarks and electrons zip around in the hot soup', W/2, H-30);
+    ctx.fillText(tr().canvas.particles, W/2, H-30);
   }
   function drawAtoms(t,local){
     const positions=[[W/2-220,H/2-40],[W/2,H/2+60],[W/2+220,H/2-60],[W/2-80,H/2+120],[W/2+120,H/2+100]];
@@ -138,7 +227,7 @@
       ctx.fillStyle='#4fd3ff'; ctx.beginPath(); ctx.arc(px,py,4,0,Math.PI*2); ctx.fill();
     });
     ctx.fillStyle='#9aa4cc'; ctx.font='14px Segoe UI'; ctx.textAlign='center';
-    ctx.fillText('electrons join nuclei — the first hydrogen & helium atoms!', W/2, H-30);
+    ctx.fillText(tr().canvas.atoms, W/2, H-30);
   }
   function drawStars(t,local){
     for(let i=0;i<50;i++){ ctx.fillStyle='rgba(255,255,255,'+(0.1+0.4*((i*37)%10)/10)+')'; ctx.fillRect((i*53)%W,(i*97)%H,2,2); }
@@ -151,7 +240,7 @@
       ctx.fillStyle='#fff6c8'; ctx.beginPath(); ctx.arc(x,y,6,0,Math.PI*2); ctx.fill();
     }
     ctx.fillStyle='#9aa4cc'; ctx.font='14px Segoe UI'; ctx.textAlign='center';
-    ctx.fillText('gravity pulls gas together until stars ignite', W/2, H-30);
+    ctx.fillText(tr().canvas.stars, W/2, H-30);
   }
   function drawGalaxies(t,local){
     ctx.save(); ctx.translate(W/2,H/2);
@@ -166,13 +255,13 @@
     for(let i=0;i<6;i++){ ctx.save(); ctx.translate(150+i*130,80+((i*53)%40)); ctx.rotate(i);
       ctx.fillStyle='rgba(180,200,255,.5)'; ctx.beginPath(); ctx.ellipse(0,0,10,4,0,0,Math.PI*2); ctx.fill(); ctx.restore(); }
     ctx.fillStyle='#9aa4cc'; ctx.font='14px Segoe UI'; ctx.textAlign='center';
-    ctx.fillText('galaxies form — one day, one will hold our Sun and Earth', W/2, H-30);
+    ctx.fillText(tr().canvas.galaxies, W/2, H-30);
   }
 
   function render(t){
     ctx.clearRect(0,0,W,H); ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
-    const idx=currentScene(t), scene=SCENES[idx], local=t-scene.t;
-    bannerEl.textContent=scene.banner; captionEl.innerHTML=scene.caption;
+    const idx=currentScene(t), scene=tr().scenes[idx], local=t-starts[idx];
+    bannerEl.textContent=scene[0]; captionEl.innerHTML=scene[1];
     if(idx===0) drawHotPoint(t,local);
     else if(idx===1) drawExpansion(t,local);
     else if(idx===2) drawParticles(t,local);
@@ -187,16 +276,26 @@
     const dt=Math.min(0.05,(ts-lastTs)/1000)*speedMult; lastTs=ts;
     simTime+=dt;
     if(simTime>=totalDur){ simTime=totalDur; render(simTime); pause();
-      captionEl.innerHTML='🎬 The End! Press <b>Restart</b> to watch again.'; return; }
+      captionOverride='ended'; captionEl.innerHTML=tr().captionEnd; return; }
+    captionOverride=null;
     render(simTime); requestAnimationFrame(step);
   }
-  function play(){ if(playing) return; playing=true; lastTs=null; playBtn.textContent='⏸ Pause'; requestAnimationFrame(step); }
-  function pause(){ playing=false; playBtn.textContent='▶ Play'; }
-  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionEl.innerHTML='Press <b>Play</b> to start the show!'; }
+  function play(){ if(playing) return; playing=true; lastTs=null; captionOverride=null; playBtn.textContent=tr().pauseBtn; requestAnimationFrame(step); }
+  function pause(){ playing=false; playBtn.textContent=tr().playBtn; }
+  function restart(){ simTime=0; render(0); pause(); progressBar.style.width='0%'; captionOverride='initial'; captionEl.innerHTML=tr().captionInitial; }
   playBtn.addEventListener('click',()=>playing?pause():play());
   restartBtn.addEventListener('click',restart);
-  slowBtn.addEventListener('click',()=>{ speedMult = speedMult===1?0.35:1; slowBtn.textContent = speedMult===1?'🐢 Slow Motion':'🐇 Normal Speed'; });
+  slowBtn.addEventListener('click',()=>{ speedMult = speedMult===1?0.35:1; slowBtn.textContent = speedMult===1?tr().slowBtn:tr().normalBtn; });
+  playBtn.textContent=tr().playBtn;
   render(0);
+
+  window.__bigBangRefresh=function(){
+    playBtn.textContent = playing ? tr().pauseBtn : tr().playBtn;
+    slowBtn.textContent = speedMult===1 ? tr().slowBtn : tr().normalBtn;
+    render(simTime);
+    if(captionOverride==='initial') captionEl.innerHTML=tr().captionInitial;
+    else if(captionOverride==='ended') captionEl.innerHTML=tr().captionEnd;
+  };
 })();
 </script>
 </body>
