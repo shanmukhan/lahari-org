@@ -148,12 +148,14 @@ const T = {
       ['⬇️ FALLING ON EARTH','Drop a ball on Earth and gravity yanks it down fast — about <b>9.8 m/s</b> faster every second.'],
       ['🌕 FALLING ON THE MOON','The Moon is much smaller, so its gravity pull is weak — only <b>1.62 m/s</b> faster every second. The same ball falls in slow motion!'],
       ['🔴 FALLING ON MARS','Mars pulls harder than the Moon but softer than Earth — about <b>3.71 m/s</b> faster every second.'],
+      ['🌍🌕🔴 ALL THREE AT ONCE','Drop the same ball on Earth, the Moon, and Mars at the exact same moment — Earth\'s stronger gravity wins the race to the ground!'],
       ['⚖️ SAME MASS, DIFFERENT WEIGHT','Your body never changes, but your <b>weight</b> does — because weight is just gravity pulling on your mass!'],
     ],
     canvasEverythingPulls: 'everything with mass pulls on everything else',
     canvasFallLabel: (g,label)=>'g = '+g.toFixed(2)+' m/s² on '+label,
     canvasKgf: 'kgf',
     canvasMassNote: '(mass stays 60 kg)',
+    canvasCompareCaption: 'Same ball, same drop, same time — watch who lands first!',
     canvasTryLabel: (label,g)=>label+' — g = '+g+' m/s²',
     canvasAstronaut: 'astronaut', canvasBall: 'ball',
   },
@@ -184,12 +186,14 @@ const T = {
       ['⬇️ భూమిపై పడటం','భూమిపై బంతిని వదిలితే గురుత్వాకర్షణ దాన్ని వేగంగా కిందికి లాగుతుంది — ప్రతి సెకనుకు దాదాపు <b>9.8 మీ/సె</b> వేగం పెరుగుతుంది.'],
       ['🌕 చంద్రుడిపై పడటం','చంద్రుడు చాలా చిన్నది, కాబట్టి దాని గురుత్వాకర్షణ బలహీనంగా ఉంటుంది — ప్రతి సెకనుకు కేవలం <b>1.62 మీ/సె</b> మాత్రమే వేగం పెరుగుతుంది. అదే బంతి నెమ్మదిగా పడుతుంది!'],
       ['🔴 అంగారకుడిపై పడటం','అంగారకుడు చంద్రుడి కంటే ఎక్కువగా, భూమి కంటే తక్కువగా లాగుతాడు — ప్రతి సెకనుకు దాదాపు <b>3.71 మీ/సె</b> వేగం పెరుగుతుంది.'],
+      ['🌍🌕🔴 మూడూ ఒకేసారి','ఒకే బంతిని భూమి, చంద్రుడు, అంగారకుడిపై సరిగ్గా ఒకే క్షణంలో వదిలితే — భూమి యొక్క బలమైన గురుత్వాకర్షణ ముందుగా నేలను తాకుతుంది!'],
       ['⚖️ అదే ద్రవ్యరాశి, వేర్వేరు బరువు','మీ శరీరం ఎప్పుడూ మారదు, కానీ మీ <b>బరువు</b> మారుతుంది — ఎందుకంటే బరువు అంటే గురుత్వాకర్షణ మీ ద్రవ్యరాశిని లాగుటే!'],
     ],
     canvasEverythingPulls: 'ద్రవ్యరాశి ఉన్న ప్రతిదీ అన్నిటినీ లాగుతుంది',
     canvasFallLabel: (g,label)=>'g = '+g.toFixed(2)+' మీ/సె² '+label+' పై',
     canvasKgf: 'కేజీ-బలం',
     canvasMassNote: '(ద్రవ్యరాశి 60 కేజీలుగా ఉంటుంది)',
+    canvasCompareCaption: 'ఒకే బంతి, ఒకే వదులుట, ఒకే సమయం — ఎవరు ముందు నేలను తాకుతారో చూడండి!',
     canvasTryLabel: (label,g)=>label+' — g = '+g+' మీ/సె²',
     canvasAstronaut: 'వ్యోమగామి', canvasBall: 'బంతి',
   }
@@ -234,11 +238,11 @@ applyStaticText();
   const playBtn=document.getElementById('playBtn'), restartBtn=document.getElementById('restartBtn');
 
   let simTime=0, playing=false, lastTs=null, captionOverride='initial';
-  const totalDur=30;
+  const totalDur=35;
 
   function currentScene(t){
     const scenes=tr().scenes;
-    const starts=[0,5,11,17,23];
+    const starts=[0,5,11,17,23,29];
     for(let i=starts.length-1;i>=0;i--) if(t>=starts[i]) return i;
     return 0;
   }
@@ -284,6 +288,29 @@ applyStaticText();
     ctx.fillStyle=color[0]; ctx.fillRect(dropX-60,floor+20,120*speed,10);
   }
 
+  function drawFallCompare(t,sceneStart){
+    const local=t-sceneStart;
+    const cyc=local%3;
+    const pn=tr().planetNames;
+    const worlds=[{label:pn.earth,g:9.8,color:['#5da8ff','#1a3a7a']},{label:pn.moon,g:1.62,color:['#c9c9c9','#54545e']},{label:pn.mars,g:3.71,color:['#e08a5e','#7a3d22']}];
+    const y0=70, floor=H-90;
+    worlds.forEach((w,i)=>{
+      const cx=150+i*300;
+      ctx.strokeStyle='#2a3568'; ctx.lineWidth=3;
+      ctx.beginPath(); ctx.moveTo(cx-70,floor); ctx.lineTo(cx+70,floor); ctx.stroke();
+      let y=y0+0.5*w.g*40*cyc*cyc;
+      if(y>floor) y=floor;
+      ctx.fillStyle='#ffd23f'; ctx.beginPath(); ctx.arc(cx,y,14,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle='#0b1020'; ctx.lineWidth=2; ctx.stroke();
+      ctx.fillStyle='#eef2ff'; ctx.font='700 13px Segoe UI'; ctx.textAlign='center';
+      ctx.fillText(w.label, cx, floor+22);
+      ctx.fillStyle='#9aa4cc'; ctx.font='12px Segoe UI';
+      ctx.fillText('g = '+w.g, cx, floor+38);
+    });
+    ctx.fillStyle='#9aa4cc'; ctx.font='14px Segoe UI'; ctx.textAlign='center';
+    ctx.fillText(tr().canvasCompareCaption, W/2, 30);
+  }
+
   function drawWeightCompare(t){
     const pn=tr().planetNames;
     const worlds=[{label:pn.earth,g:9.8,color:['#5da8ff','#1a3a7a']},{label:pn.moon,g:1.62,color:['#c9c9c9','#54545e']},{label:pn.mars,g:3.71,color:['#e08a5e','#7a3d22']}];
@@ -311,6 +338,7 @@ applyStaticText();
     else if(idx===1) drawFall(t,5,9.8,tr().planetNames.earth,['#5da8ff','#1a3a7a']);
     else if(idx===2) drawFall(t,11,1.62,tr().planetNames.moon,['#c9c9c9','#54545e']);
     else if(idx===3) drawFall(t,17,3.71,tr().planetNames.mars,['#e08a5e','#7a3d22']);
+    else if(idx===4) drawFallCompare(t,23);
     else drawWeightCompare(t);
     progressBar.style.width=Math.min(100,(t/totalDur)*100)+'%';
   }
